@@ -74,7 +74,8 @@ object MenuInfo {
     Menu("Wenda", S.loc("wenda", <span><i class="icon-question-sign"></i> 问答</span>)) / "wenda" / ** >> LocGroup("main"),
     Menu("Story", S.loc("story", <span><i class="icon-book"></i> 日志</span>)) / "story" / ** >> LocGroup("main"),
     Menu("Album", S.loc("album", <span><i class="icon-folder-open-alt"></i> 专辑</span>)) / "album" / ** >> LocGroup("main"),
-    Menu("Resource", S.loc("resource", <span><i class="icon-table"></i> 资源</span>)) / "resource" / ** >> LocGroup("main"))
+    Menu("Resource", S.loc("resource", <span><i class="icon-table"></i> 资源</span>)) / "resource" / ** >> LocGroup("main"),
+    Menu("用户后台") / "user" / ** >> IfUserLoggedIn >> LocGroup("user"))
 
   /*Menu("首页") / "index" >> LocGroup("main"),
     Menu("商标集市") / "market" / ** >> LocGroup("main"),

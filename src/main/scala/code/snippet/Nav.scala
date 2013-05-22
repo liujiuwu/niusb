@@ -36,7 +36,7 @@ object Nav {
   def userStatus = User.currentUser match {
     case Full(user) =>
       <li class="dropdown">
-        <a href="#" class="user_index dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> { if (user.name.get.isEmpty()) user.mobile.get else user.name.get } <b class='caret'></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> { if (user.name.get.isEmpty()) user.mobile.get else user.name.get } <b class='caret'></b></a>
         <ul class="dropdown-menu">
           <li><a href="/user/profile"><span><i class="icon-edit"></i> 帐户信息</span></a></li>
           <li><a href="/user/brand/add"><span><i class="icon-plus"></i> 发布商标</span></a></li>
@@ -54,7 +54,7 @@ object Nav {
       //JsRaw("$('#loginDialog').modal('hide')")
       mobileVar.is match {
         case Full(mobile) =>
-        println(mobile)
+          println(mobile)
           User.find(By(User.mobile, mobile)) match {
             case Full(user) =>
               User.logUserIn(user)
@@ -65,7 +65,7 @@ object Nav {
               user.password("123456")
               user.validate match {
                 case Nil => user.save
-                case errors => println("============----"+errors)
+                case errors => println("============----" + errors)
               }
             }
           }
