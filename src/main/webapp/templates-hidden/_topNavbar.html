@@ -1,17 +1,53 @@
-<div class="g-hd">
-	<div class="g-doc">
-		<div class="m-hd">
-			<a class="u-logo" hidefocus href="http://quan.163.com">网易优惠券</a>
-			<ul class="m-nav">
-				<li><a class="nav nav-slt" hidefocus href="/main.do"><span><i class="icon-home"></i> 首页</span></a></li>
-				<li><span class="u-ico1-1"></span></li>
-				<li><a class="nav" hidefocus href="/brand-sale/0-new.do?jump=q_g_nav_brand"><span><i class="icon-globe"></i> 商标集市</span></a></li>
-				<li><span class="u-ico1-1"></span></li>
-				<li><a class="nav" hidefocus href="/hui/top.do?jump=q_g_nav_yhq"><span><i class="icon-question-sign"></i> 问答频道</span></a></li>
-				<li><span class="u-ico1-1"></span></li>
-				<li><a class="nav" hidefocus href="/nav.do?jump=q_g_nav_scdh"><span><i class="icon-search"></i> 商标查询</span></a></li>
-			</ul>
-			<div class="m-info"></div>
+<lift:children>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+				</button>
+				<a class="brand" href="./index.html">牛标网</a>
+				<div class="nav-collapse collapse" data-lift="Nav.currentActiveLink?eager_eval=true">
+					<ul class="nav">
+						<li class="home"><a href="/"><span><i class="icon-home"></i> 首页</span></a></li>
+						<li class="market"><a href="/market/"><span><i class="icon-globe"></i> 商标集市</span></a></li>
+						<li class="wenda"><a href="/wenda/"><span><i class="icon-question-sign"></i> 问答频道</span></a></li>
+						<li class="brand-search"><a href="/brand-search"><span><i class="icon-search"></i> 商标查询</span></a></li>
+					</ul>
+					<ul class="nav pull-right">
+						<span data-lift="Nav.userStatus" />
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
-</div>
+	<lift:test_cond.loggedout>
+		<div id="login" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+			<form class="form-horizontal" data-lift="Nav.login?form=post">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3 id="loginModalLabel">会员登录或注册</h3>
+				</div>
+				<div class="modal-body">
+
+					<div class="control-group">
+						<label class="control-label" for="mobile">手机号</label>
+						<div class="controls">
+							<input type="text" id="mobile" placeholder="登录的手机号">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="password">验证码或密码</label>
+						<div class="controls">
+							<input type="password" id="password" placeholder="使用验证码或密码登录">
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+					<button type="submit" class="btn btn-primary">登录</button>
+				</div>
+			</form>
+		</div>
+	</lift:test_cond.loggedout>
+</lift:children>

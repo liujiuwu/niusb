@@ -15,7 +15,7 @@ import net.liftweb.http.Req
 import net.liftweb.http.RewriteRequest
 import net.liftweb.http.RewriteResponse
 import net.liftweb.mapper.Schemifier
-import net.liftweb.sitemap.{** => **}
+import net.liftweb.sitemap.{ ** => ** }
 import net.liftweb.sitemap.Loc.Hidden
 import net.liftweb.sitemap.Loc.LocGroup
 import net.liftweb.sitemap.LocPath.stringToLocPath
@@ -23,12 +23,14 @@ import net.liftweb.sitemap.Menu
 import net.liftweb.sitemap.SiteMap
 import net.liftweb.util.Vendor.valToVender
 import net.liftweb.sitemap.Loc
+import code.model.Brand
+import net.liftweb.http.RedirectResponse
 
 class Boot {
   def boot {
     LiftRules.addToPackages("code")
     DB.defineConnectionManager(DefaultConnectionIdentifier, MyDBVendor)
-    Schemifier.schemify(true, Schemifier.infoF _, User)
+    Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
 
     FoBo.InitParam.JQuery = FoBo.JQuery191
     FoBo.InitParam.ToolKit = FoBo.Bootstrap231
@@ -39,6 +41,11 @@ class Boot {
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
     LiftRules.early.append(_.setCharacterEncoding("utf-8"))
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
+
+    LiftRules.loggedInTest = Full(
+      () => {
+        User.loggedIn_?
+      })
 
     LiftRules.setSiteMapFunc(() => User.sitemapMutator(MenuInfo.sitemap))
 
@@ -54,11 +61,15 @@ object MenuInfo {
   import Loc._
   import scala.xml._
 
+  val IfUserLoggedIn = If(() => User.loggedIn_?, () => RedirectResponse("/"))
+  val HiddenSign = Unless(() => User.loggedIn_?, () => RedirectResponse("/user/"))
+
   val menus = List(
     Menu("首页") / "index" >> LocGroup("main"),
-    Menu("商标集市") / "meinv" / ** >> LocGroup("main"),
-    Menu("商标查询/注册") / "shuaige" / ** >> LocGroup("main"),
-    Menu("问答频道") / "keai" / ** >> LocGroup("main"))
+    Menu("商标集市") / "market" / ** >> LocGroup("main"),
+    Menu("商标查询") / "brand-search" / ** >> LocGroup("main"),
+    Menu("问答频道") / "wenda" / ** >> LocGroup("main"),
+    Menu("用户后台") / "user" / ** >> IfUserLoggedIn >> LocGroup("user"))
 
   def sitemap() = SiteMap(menus: _*)
 }

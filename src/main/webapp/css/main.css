@@ -1,126 +1,95 @@
-body{
- background:#F7F7F7;
+/* reset */
+html,body,h1,h2,h3,h4,h5,h6,div,dl,dt,dd,ul,ol,li,p,blockquote,pre,hr,figure,table,caption,th,td,form,fieldset,legend,input,button,textarea,menu {
+	margin: 0;
+	padding: 0;
 }
 
-.g-hd {
-	position: relative;
-	z-index: 99;
-	height: 70px;
-	background: #ee472c
-}
-
-.g-bd {
-	padding-top: 20px;
-}
-
-.g-doc {
-	width: 960px;
-	height: 100%;
-	margin: 0 auto;
-	text-align: left
-}
-
-.g-ft {
-	height: 220px;
-	margin-top: 45px;
-	background: #ececec
-}
-
-.m-hd {
-	position: relative;
-	height: 100%
-}
-
-.m-hd .u-logo {
-	position: absolute;
-	top: 16px;
-	left: -13px
-}
-
-.m-hd .m-nav {
-	position: absolute;
-	top: 29px;
-	left: 150px
-}
-
-.m-nav {
-	height: 41px
-}
-
-.m-nav ul {
-	float: left;
-	display: inline
-}
-
-.m-nav li {
-	float: left;
-	height: 41px
-}
-
-.m-nav .nav {
-	display: inline-block;
-	height: 28px;
-	font-weight: 400;
-	line-height: 28px;
-	padding: 0 10px;
-	font-size: 16px;
-	color: #fff
-}
-
-.m-nav .nav:hover {
-	text-decoration: none;
-	color: #fad7d7
-}
-
-.m-nav .u-ico1-1 {
-	display: inline-block;
-	width: 1px;
-	height: 18px;
-	font-size: 0;
-	margin: 5px 5px 0 5px;
-	background-position: -150px -100px
-}
-
-.m-nav .nav-slt {
-	background: #d32e00
-}
-
-.m-nav .nav-slt:hover {
-	color: #fff
-}
-
-.m-nav .nav-ico {
-	position: relative;
-	padding-right: 23px
-}
-
-.m-nav .u-ico {
-	position: absolute;
-	top: 15px;
-	right: 10px
-}
-
-.u-logo {
-	background: url(../img/sprite.png) no-repeat 0 -220px;
-	text-indent: -20000px;
-	overflow: hidden;
+header,footer,section,article,aside,nav,hgroup,address,figure,figcaption,menu,details {
 	display: block;
-	width: 156px;
-	height: 54px;
 }
 
-
-.m-pop .arrow,.u-ico,.m-search,.m-search .ipt,.m-search .sbtn,.m-gotop .gotop,.m-gotop .comment,.m-more a,.m-more .arrow,.u-ico1-1,.m-message,.m-message .msgnum,.m-message .msgnums {
-	background: url(../img/sprite.png) no-repeat -9999px -9999px
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 
-.m-nav .u-ico1-1 {
-	display: inline-block;
-	width: 1px;
-	height: 18px;
-	font-size: 0;
-	margin: 5px 5px 0 5px;
-	background-position: -150px -100px
+caption,th {
+	text-align: left;
+	font-weight: normal;
+}
+
+html,body,fieldset,img,iframe,abbr {
+	border: 0;
+}
+
+i,cite,em,var,address,dfn {
+	font-style: normal;
+}
+
+[hidefocus],summary {
+	outline: 0;
+}
+
+li {
+	list-style: none;
+}
+
+h1,h2,h3,h4,h5,h6,small {
+	font-size: 100%;
+}
+
+sup,sub {
+	font-size: 83%;
+}
+
+pre,code,kbd,samp {
+	font-family: inherit;
+}
+
+q:before,q:after {
+	content: none;
+}
+
+textarea {
+	overflow: auto;
+	resize: none;
+}
+
+label,summary {
+	cursor: default;
+}
+
+a,button {
+	cursor: pointer;
+}
+
+h1,h2,h3,h4,h5,h6,em,strong,b {
+	font-weight: bold;
+}
+
+del,ins,u,s,a,a:hover {
+	text-decoration: none;
+}
+
+body,textarea,input,button,select,keygen,legend {
+	font: 12px/1.14 tahoma, arial, "Hiragino Sans GB", "Microsoft Yahei", \5b8b\4f53;
+	color: #333;
+	outline: 0;
+}
+
+body {
+	background: #fff;
+}
+
+a,a:hover {
+	color: #333;
+}
+
+body {
+	background: #F7F7F7;
+	font-size: 13px;
+	line-height: 18px;
+	padding-top:60px;
 }
 
 .ui-box {
@@ -131,8 +100,8 @@ body{
 	zoom: 1;
 }
 
-.ui-box .ui-box-content{
-	padding:5px;
+.ui-box .ui-box-content {
+	padding: 5px;
 }
 
 .ui-box .ui-boxbg {
