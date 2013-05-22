@@ -13,8 +13,8 @@ class User extends MegaProtoUser[User] with CreatedUpdated {
 
   object name extends MappedString(this, 20) {
     override def validations = valMinLen(2, "真实姓名或昵称，不少于2个字。") _ :: super.validations
-
   }
+
   object gender extends MappedGender(this)
 
   object mobile extends MappedString(this, 15) {
@@ -55,4 +55,6 @@ object User extends User with MetaMegaProtoUser[User] {
   override def dbTableName = "users"
 
   override def fieldOrder = List(id, email, name, gender, mobile, phone, qq, userType, enabled, address, locale, timezone, password, lastLoginTime, loginTime)
+
+  override def signupFields: List[FieldPointerType] = List(mobile, password)
 }

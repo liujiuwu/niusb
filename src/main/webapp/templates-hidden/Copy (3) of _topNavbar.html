@@ -6,8 +6,13 @@
 					<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
 				</button>
 				<a class="brand" href="./index.html">牛标网</a>
-				<div class="nav-collapse collapse">
-					<ul class="nav" data-lift="Menus.group?group=topbar"></ul>
+				<div class="nav-collapse collapse" data-lift="Nav.currentActiveLink?eager_eval=true">
+					<ul class="nav">
+						<li class="home"><a href="/"><span><i class="icon-home"></i> 首页</span></a></li>
+						<li class="market"><a href="/market/"><span><i class="icon-globe"></i> 商标集市</span></a></li>
+						<li class="wenda"><a href="/wenda/"><span><i class="icon-question-sign"></i> 问答频道</span></a></li>
+						<li class="brand-search"><a href="/brand-search"><span><i class="icon-search"></i> 商标查询</span></a></li>
+					</ul>
 					<ul class="nav pull-right">
 						<span data-lift="Nav.userStatus" />
 					</ul>
@@ -16,33 +21,33 @@
 		</div>
 	</div>
 	<lift:test_cond.loggedout>
-		<form data-lift="form.ajax?class=form-horizontal">
-			<div id="loginDialog" data-lift="Nav.login" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+		<div id="login" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+			<form class="form-horizontal" data-lift="Nav.login?form=post">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h3 id="loginModalLabel">会员登录或注册</h3>
 				</div>
 				<div class="modal-body">
+
 					<div class="control-group">
 						<label class="control-label" for="mobile">手机号</label>
 						<div class="controls">
-							<input type="text" id="mobile" name="mobile" placeholder="登录的手机号">
+							<input type="text" id="mobile" placeholder="登录的手机号">
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="pwd">验证码或密码</label>
+						<label class="control-label" for="password">验证码或密码</label>
 						<div class="controls">
-							<input type="password" id="pwd" name="pwd" placeholder="使用验证码或密码登录">
+							<input type="password" id="password" placeholder="使用验证码或密码登录">
 						</div>
 					</div>
-					<div id="ajax_example2_list"></div>
+
 				</div>
 				<div class="modal-footer">
 					<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
 					<button type="submit" class="btn btn-primary">登录</button>
-					<input name="sub" />
 				</div>
-			</div>
-		</form>
+			</form>
+		</div>
 	</lift:test_cond.loggedout>
 </lift:children>
