@@ -85,8 +85,8 @@ object Nav {
     "@mobile" #> ajaxText(mobileVar.get.openOr(""), mobile => {
       mobileVar(Box.legacyNullTest(mobile))
       mobile match {
-        case mobileRegx(mp, ms) =>
-        case _ => Alert("不合法的手机号")
+        case mobileRegx(mp, ms) => JsRaw("""$("#gp-mobile").removeClass("success error warning")""")
+        case _ => JsRaw("""$("#gp-mobile").removeClass("success error warning");$("#t-mobile").addClass("error")""")
       }
     }) &
       "@pwd" #> password(pwdVar.get.openOr(""), pwd => pwdVar(Box.legacyNullTest(pwd))) &
