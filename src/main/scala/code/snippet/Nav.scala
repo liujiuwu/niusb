@@ -50,10 +50,9 @@ object Nav {
   }
 
   def login = {
+    val mobileRegx = """^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])(\d{8})$""".r
     def process(): JsCmd = {
       //JsRaw("$('#loginDialog').modal('hide')")
-      val mobileRegx = """^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])(\d{8})$""".r
-
       mobileVar.get match {
         case Full(mobile) => mobile match {
           case mobileRegx(mp, ms) =>
@@ -83,7 +82,13 @@ object Nav {
       }
     }
 
-    "@mobile" #> text(mobileVar.get.openOr(""), mobile => mobileVar(Box.legacyNullTest(mobile))) &
+    "@mobile" #> ajaxText(mobileVar.get.openOr(""), mobile => {
+      mobileVar(Box.legacyNullTest(mobile))
+      mobile match {
+        case mobileRegx(mp, ms) =>
+        case _ => Alert("不合法的手机号")
+      }
+    }) &
       "@pwd" #> password(pwdVar.get.openOr(""), pwd => pwdVar(Box.legacyNullTest(pwd))) &
       "@sub" #> hidden(process)
   }
