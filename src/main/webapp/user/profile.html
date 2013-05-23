@@ -5,57 +5,49 @@
 		</h2>
 	</div>
 	<div class="box-content">
-		<form class="form-horizontal">
-			<fieldset>
-				<div class="control-group">
-					<label for="focusedInput" class="control-label">Focused input</label>
+		<div class="alert alert-info">请放心填写，此信息只用于商标交易洽谈，不会泄露另作它用。</div>
+		<div id="opt_tip" class="alert hide"></div>
+		<form data-lift="form.ajax?class=form-horizontal">
+			<fieldset data-lift="user.UserOps.update">
+				<div id="group_name" class="control-group">
+					<label for="name" class="control-label">姓名</label>
 					<div class="controls">
-						<input type="text" value="This is focused…" id="focusedInput" class="input-xlarge focused">
+						<input type="text" id="name" name="name" placeholder="输入您的姓名以方便联系"> <span id="error_name" class="help-inline"></span>
 					</div>
 				</div>
-				<div class="control-group">
-					<label class="control-label">Uneditable input</label>
+				<div id="group_gender" class="control-group">
+					<label for="qq" class="control-label">性别</label>
 					<div class="controls">
-						<span class="input-xlarge uneditable-input">Some value here</span>
+						<input type="text" id="gender" name="gender" placeholder="填写您的QQ号码方便线上交谈"> <span id="error_gender" class="help-inline"></span>
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="disabledInput" class="control-label">Disabled input</label>
+				<div id="group_email" class="control-group">
+					<label for="email" class="control-label">邮箱地址</label>
 					<div class="controls">
-						<input type="text" disabled="" placeholder="Disabled input here…" id="disabledInput" class="input-xlarge disabled">
+						<input type="text" id="email" name="email" placeholder="填写您的常用邮箱地址"> <span id="error_email" class="help-inline"></span>
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="optionsCheckbox2" class="control-label">Disabled checkbox</label>
+				<div id="group_qq" class="control-group">
+					<label for="qq" class="control-label">QQ号码</label>
 					<div class="controls">
-						<label class="checkbox">
-							<div class="checker disabled" id="uniform-optionsCheckbox2">
-								<span><input type="checkbox" disabled="" value="option1" id="optionsCheckbox2"></span>
-							</div> This is a disabled checkbox
-						</label>
+						<input type="text" id="qq" name="qq" placeholder="填写您的QQ号码方便线上交谈"> <span id="error_qq" class="help-inline"></span>
 					</div>
 				</div>
-				<div class="control-group warning">
-					<label for="inputWarning" class="control-label">Input with warning</label>
+				<div id="group_phone" class="control-group">
+					<label for="phone" class="control-label">联系电话(座机)</label>
 					<div class="controls">
-						<input type="text" id="inputWarning"> <span class="help-inline">Something may have gone wrong</span>
+						<input type="text" id="phone" name="phone" placeholder="区号-电话号码"> <span id="error_phone" class="help-inline"></span>
 					</div>
 				</div>
-				<div class="control-group error">
-					<label for="inputError" class="control-label">Input with error</label>
+				<div id="group_address" class="control-group">
+					<label for="address" class="control-label">联系地址</label>
 					<div class="controls">
-						<input type="text" id="inputError"> <span class="help-inline">Please correct the error</span>
-					</div>
-				</div>
-				<div class="control-group success">
-					<label for="inputSuccess" class="control-label">Input with success</label>
-					<div class="controls">
-						<input type="text" id="inputSuccess"> <span class="help-inline">Woohoo!</span>
+						<input type="text" id="address" name="address" placeholder="请准确填写联系地址方便我们快递资料" class="span6"> <span id="error_address" class="help-inline"></span>
 					</div>
 				</div>
 				<div class="form-actions">
-					<button class="btn btn-primary" type="submit">Save changes</button>
-					<button class="btn">Cancel</button>
+					<button class="btn btn-primary" type="submit">保存个人信息</button>
+					<button name="sub"/>
 				</div>
 			</fieldset>
 		</form>

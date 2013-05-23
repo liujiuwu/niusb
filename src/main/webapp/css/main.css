@@ -268,7 +268,6 @@ body {
 =================================================================== */
 
 .form-actions {
-  	padding: 19px 20px 20px;
   	margin: 20px -10px -10px -10px;
   	background-color: #f5f5f5;
   	border-top: 1px solid #e5e5e5;
@@ -284,4 +283,8 @@ body {
 
 .form-actions:after {
  	clear: both;
+}
+
+.form-horizontal .form-actions{
+	padding-left:190px;
 }
