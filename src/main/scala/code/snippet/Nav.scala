@@ -17,6 +17,7 @@ import scala.xml.Text
 import net.liftweb.common.Box
 import net.liftweb.common.Empty
 import net.liftweb.http.js.JE.JsRaw
+import code.lib.WebHelper
 
 object Nav {
   private object mobileVar extends RequestVar[Box[String]](Empty)
@@ -85,8 +86,8 @@ object Nav {
     "@mobile" #> ajaxText(mobileVar.get.openOr(""), mobile => {
       mobileVar(Box.legacyNullTest(mobile))
       mobile match {
-        case mobileRegx(mp, ms) => JsRaw("""$("#gp-mobile").removeClass("success error warning")""")
-        case _ => JsRaw("""$("#gp-mobile").removeClass("success error warning");$("#t-mobile").addClass("error")""")
+        case mobileRegx(mp, ms) => WebHelper.removeFormError("mobile")
+        case _ => WebHelper.formError("mobile", "错误的手机号")
       }
     }) &
       "@pwd" #> password(pwdVar.get.openOr(""), pwd => pwdVar(Box.legacyNullTest(pwd))) &
