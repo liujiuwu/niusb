@@ -25,10 +25,11 @@ object Test extends App {
     case _ =>
   }*/
 
-  val userUrl = """(^/user.*)""".r
-  "/user/brand/adds" match {
-    case userUrl(url) => println(url)
-    case _ => println("**********")
+  val mobile = "13826526941"
+  val mobileRegx = """^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])(\d{8})$""".r
+  mobile match {
+    case mobileRegx(m,n) => println(m+n)
+    case _ => println("错误的手机号")
   }
 
 }

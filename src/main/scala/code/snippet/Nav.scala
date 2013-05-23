@@ -38,9 +38,9 @@ object Nav {
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> { if (user.name.get.isEmpty()) user.mobile.get else user.name.get } <b class='caret'></b></a>
         <ul class="dropdown-menu">
-          <li><a href="/user/profile"><span><i class="icon-edit"></i> 帐户信息</span></a></li>
-          <li><a href="/user/brand/add"><span><i class="icon-plus"></i> 发布商标</span></a></li>
-          <li><a href="/user/brand/"><span><i class="icon-list"></i> 我的商标</span></a></li>
+          <lift:Menu.group group="userMenu">
+            <li><menu:bind/></li>
+          </lift:Menu.group>
           <li class="divider"></li>
           <li class="last"><a href="/user/sign_out"><span><i class="icon-signout"></i> 退出</span></a></li>
         </ul>
@@ -52,31 +52,39 @@ object Nav {
   def login = {
     def process(): JsCmd = {
       //JsRaw("$('#loginDialog').modal('hide')")
-      mobileVar.is match {
-        case Full(mobile) =>
-          println(mobile)
-          User.find(By(User.mobile, mobile)) match {
-            case Full(user) =>
-              User.logUserIn(user)
-              S.redirectTo("/")
-            case _ => {
-              val user = new User
-              user.mobile(mobile)
-              user.password("123456")
-              user.validate match {
-                case Nil => user.save
-                case errors => println("============----" + errors)
+      val mobileRegx = """^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])(\d{8})$""".r
+
+      mobileVar.get match {
+        case Full(mobile) => mobile match {
+          case mobileRegx(mp, ms) =>
+            User.find(By(User.mobile, mp + ms)) match {
+              case Full(user) =>
+                User.logUserIn(user)
+                S.redirectTo("/")
+              case _ => {
+                val user = new User
+                user.mobile(mobile)
+                user.password("123456")
+                user.validate match {
+                  case Nil =>
+                    if (user.save) {
+                      User.logUserIn(user)
+                      S.redirectTo("/")
+                    } else {
+                      Alert("注册失败，请稍候重试！")
+                    }
+                  case errors => println("============----" + errors)
+                }
               }
             }
-          }
-        case _ => Alert("mobile is empty")
+          case _ => Alert("手机号码错误")
+        }
+        case _ => Alert("手机号码错误")
       }
-
-      Alert("fail")
     }
 
-    "@mobile" #> text(mobileVar.get.openOr(""), mobile => mobileVar(Full(mobile))) &
-      "@pwd" #> password(pwdVar.get.openOr(""), pwd => pwdVar(Full(pwd))) &
+    "@mobile" #> text(mobileVar.get.openOr(""), mobile => mobileVar(Box.legacyNullTest(mobile))) &
+      "@pwd" #> password(pwdVar.get.openOr(""), pwd => pwdVar(Box.legacyNullTest(pwd))) &
       "@sub" #> hidden(process)
   }
 

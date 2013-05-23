@@ -24,7 +24,10 @@ object Site {
     Menu("Market", S.loc("project", <span><i class="icon-globe"></i> 商标集市</span>)) / "market" / ** >> TopBarGroup,
     Menu("Wenda", S.loc("wenda", <span><i class="icon-question-sign"></i> 问答频道</span>)) / "wenda" / ** >> TopBarGroup,
     Menu("BrandSearch", S.loc("BrandSearch", <span><i class="icon-search"></i> 商标查询</span>)) / "brand-search" >> TopBarGroup,
-    Menu("用户后台") / "user" / ** >> IfUserLoggedIn >> UserMenuGroup,
+    Menu("Profile", S.loc("Profile", <span><i class="icon-edit"></i> 帐户信息</span>)) / "user" / "profile" >> IfUserLoggedIn >> UserMenuGroup,
+    Menu("AddBrand", S.loc("AddBrand", <span><i class="icon-plus"></i> 发布商标</span>)) / "user" / "brand" / "add" >> IfUserLoggedIn >> UserMenuGroup,
+    Menu("MyBrands", S.loc("MyBrands", <span><i class="icon-list"></i> 我的商标</span>)) / "user" / "brand" / "index" >> IfUserLoggedIn >> UserMenuGroup,
+    Menu.i("ajaxExample") / "ajax",
     Menu.i("Error") / "error" >> Hidden,
     Menu.i("404") / "404" >> Hidden,
     Menu.i("Throw") / "throw" >> Hidden >> EarlyResponse(() => throw new Exception("This is only a test.")))

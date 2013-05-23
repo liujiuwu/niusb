@@ -26,21 +26,24 @@
 					<div class="control-group">
 						<label class="control-label" for="mobile">手机号</label>
 						<div class="controls">
-							<input type="text" id="mobile" name="mobile" placeholder="登录的手机号">
+							<input type="text" id="mobile" name="mobile" placeholder="请输入11位手机号">
+							<span class="lift:Msg?id=age&errorClass=error">error</span>
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label" for="pwd">验证码或密码</label>
 						<div class="controls">
-							<input type="password" id="pwd" name="pwd" placeholder="使用验证码或密码登录">
+							<div class="input-append">
+								<input type="password" id="pwd" name="pwd" placeholder="请获取验证码或使用密码登录">
+								<button class="btn" type="button">获取验证码</button>
+							</div>
 						</div>
 					</div>
-					<div id="ajax_example2_list"></div>
 				</div>
 				<div class="modal-footer">
 					<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
 					<button type="submit" class="btn btn-primary">登录</button>
-					<input name="sub" />
+					<button name="sub" />
 				</div>
 			</div>
 		</form>
