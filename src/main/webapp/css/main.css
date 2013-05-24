@@ -90,6 +90,8 @@ a {
 	outline: 0;
 }
 
+.tabs-no-padding{padding:0;margin:0}
+
 body {
 	font-size: 13px;
 	line-height: 18px;
