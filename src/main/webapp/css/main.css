@@ -85,8 +85,14 @@ a,a:hover {
 	color: #333;
 }
 
+/* Remove dotted outline from all links */
+a {
+ outline: 0;
+}
+
+
 body {
-	background: #F7F7F7;
+	
 	font-size: 13px;
 	line-height: 18px;
 	padding-top:60px;
@@ -263,6 +269,11 @@ body {
 }
 
 
+.no-box-header {
+  	border: 1px solid #ddd;
+  	margin-top: 1px;
+}
+
 
 /* Forms
 =================================================================== */
@@ -287,4 +298,10 @@ body {
 
 .form-horizontal .form-actions{
 	padding-left:190px;
+}
+
+
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover { 
+outline: 0;
+
 }

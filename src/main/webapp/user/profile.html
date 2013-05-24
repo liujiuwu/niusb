@@ -1,56 +1,88 @@
 <div class="box" data-lift="surround?with=user;at=content">
-	<div data-original-title="" class="box-header">
-		<h2>
-			<i class="icon-edit"></i><span class="break"></span>修改帐户信息
-		</h2>
-	</div>
-	<div class="box-content">
-		<div class="alert alert-info">请放心填写，此信息只用于商标交易洽谈，不会泄露另作它用。</div>
-		<div id="opt_tip" class="alert hide"></div>
-		<form data-lift="form.ajax?class=form-horizontal">
-			<fieldset data-lift="user.UserOps.update">
-				<div id="group_name" class="control-group">
-					<label for="name" class="control-label">姓名</label>
-					<div class="controls">
-						<input type="text" id="name" name="name" placeholder="输入您的姓名以方便联系"> <span id="error_name" class="help-inline"></span>
-					</div>
-				</div>
-				<div id="group_gender" class="control-group">
-					<label for="qq" class="control-label">性别</label>
-					<div class="controls">
-						<input type="text" id="gender" name="gender" placeholder="填写您的QQ号码方便线上交谈"> <span id="error_gender" class="help-inline"></span>
-					</div>
-				</div>
-				<div id="group_email" class="control-group">
-					<label for="email" class="control-label">邮箱地址</label>
-					<div class="controls">
-						<input type="text" id="email" name="email" placeholder="填写您的常用邮箱地址"> <span id="error_email" class="help-inline"></span>
-					</div>
-				</div>
-				<div id="group_qq" class="control-group">
-					<label for="qq" class="control-label">QQ号码</label>
-					<div class="controls">
-						<input type="text" id="qq" name="qq" placeholder="填写您的QQ号码方便线上交谈"> <span id="error_qq" class="help-inline"></span>
-					</div>
-				</div>
-				<div id="group_phone" class="control-group">
-					<label for="phone" class="control-label">联系电话(座机)</label>
-					<div class="controls">
-						<input type="text" id="phone" name="phone" placeholder="区号-电话号码"> <span id="error_phone" class="help-inline"></span>
-					</div>
-				</div>
-				<div id="group_address" class="control-group">
-					<label for="address" class="control-label">联系地址</label>
-					<div class="controls">
-						<input type="text" id="address" name="address" placeholder="请准确填写联系地址方便我们快递资料" class="span6"> <span id="error_address" class="help-inline"></span>
-					</div>
-				</div>
-				<div class="form-actions">
-					<button class="btn btn-primary" type="submit">保存个人信息</button>
-					<button name="sub"/>
-				</div>
-			</fieldset>
-		</form>
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#profile" data-toggle="tab"><i class="icon-edit"></i> 修改帐户信息</a></li>
+		<li><a href="#pwd" data-toggle="tab">修改密码</a></li>
+	</ul>
+	<div class="tab-content">
+		<div class="tab-pane active" id="profile">
+			<div class="box-content no-box-header">
+				<div class="alert alert-info">请放心填写，此信息只用于商标交易洽谈，不会泄露另作它用。</div>
+				<div id="opt_profile_tip" class="alert hide"></div>
+				<form data-lift="form.ajax?class=form-horizontal">
+					<fieldset data-lift="user.UserOps.update">
+						<div id="group_name" class="control-group">
+							<label for="name" class="control-label">姓名</label>
+							<div class="controls">
+								<input type="text" id="name" name="name" placeholder="输入您的姓名以方便联系"> <span id="error_name" class="help-inline"></span>
+							</div>
+						</div>
+						<div id="group_gender" class="control-group">
+							<label for="qq" class="control-label">性别</label>
+							<div class="controls">
+								<input type="text" id="gender" name="gender" placeholder="填写您的QQ号码方便线上交谈"> <span id="error_gender" class="help-inline"></span>
+							</div>
+						</div>
+						<div id="group_email" class="control-group">
+							<label for="email" class="control-label">邮箱地址</label>
+							<div class="controls">
+								<input type="text" id="email" name="email" placeholder="填写您的常用邮箱地址"> <span id="error_email" class="help-inline"></span>
+							</div>
+						</div>
+						<div id="group_qq" class="control-group">
+							<label for="qq" class="control-label">QQ号码</label>
+							<div class="controls">
+								<input type="text" id="qq" name="qq" placeholder="填写您的QQ号码方便线上交谈"> <span id="error_qq" class="help-inline"></span>
+							</div>
+						</div>
+						<div id="group_phone" class="control-group">
+							<label for="phone" class="control-label">联系电话(座机)</label>
+							<div class="controls">
+								<input type="text" id="phone" name="phone" placeholder="区号-电话号码"> <span id="error_phone" class="help-inline"></span>
+							</div>
+						</div>
+						<div id="group_address" class="control-group">
+							<label for="address" class="control-label">联系地址</label>
+							<div class="controls">
+								<input type="text" id="address" name="address" placeholder="请准确填写联系地址方便我们快递资料" class="span6"> <span id="error_address" class="help-inline"></span>
+							</div>
+						</div>
+						<div class="form-actions">
+							<button class="btn btn-primary" type="submit">保存修改</button>
+							<input type="hidden" name="sub">
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		<div class="tab-pane" id="pwd">
+			<div class="box-content no-box-header">
+				<div id="opt_pwd_tip" class="alert hide"></div>
+				<form data-lift="form.ajax?class=form-horizontal">
+					<fieldset data-lift="user.UserOps.updatePwd">
+						<div id="group_pwd" class="control-group">
+							<label for="pwd" class="control-label">新密码</label>
+							<div class="controls">
+								<input type="text" id="pwd" name="pwd" placeholder="输入您的新密码"> <span id="error_pwd" class="help-inline"></span>
+							</div>
+						</div>
+						<div id="group_code" class="control-group">
+							<label class="control-label" for="code">验证码</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="code" name="code" style="width: 150px">
+									<button class="btn" type="button">获取验证码</button>
+								</div>
+								<span id="error_code" class="help-inline"></span>
+							</div>
+						</div>
+						<div class="form-actions">
+							<button class="btn btn-primary" type="submit">保存修改</button>
+							<input type="hidden" name="sub">
+						</div>
+					</fieldset>
+				</form>
 
+			</div>
+		</div>
 	</div>
 </div>
