@@ -1,6 +1,9 @@
 package code.model
 
 import net.liftweb.mapper._
+import scala.xml.Text
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -36,6 +39,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object regDate extends MappedDate(this) {
     override def dbColumnName = "reg_date"
+    override def asHtml = Text(new SimpleDateFormat("yyyy-MM-dd").format(is))
   }
 
   object applicant extends MappedString(this, 15) {

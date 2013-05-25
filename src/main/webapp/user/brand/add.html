@@ -1,4 +1,7 @@
 <div class="box" data-lift="surround?with=user;at=content">
+	<head_merge>
+	<link rel="stylesheet" href="/css/datetimepicker.css" />
+	</head_merge>
 	<ul class="nav nav-tabs tabs-no-padding">
 		<li class="active"><a href="#add-brand" data-toggle="tab"><i class="icon-plus"></i> 发布商标</a></li>
 	</ul>
@@ -7,23 +10,24 @@
 			<div class="box-content">
 				<div id="opt_brand_tip" class="alert hide"></div>
 				<form data-lift="form.ajax?class=form-horizontal">
-					<fieldset data-lift="user.UserOps.update">
-						<div id="group_name" class="control-group">
+					<fieldset data-lift="user.BrandOps.add">
+						<div id="group_regNo" class="control-group">
 							<label for="regNo" class="control-label">商标注册号</label>
 							<div class="controls">
 								<div class="input-append">
-									<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required class="input-medium"><button class="btn" type="button">从标局获取数据</button> <span id="error_regNo" class="help-inline"></span>
-									
+									<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required class="input-medium">
+									<button class="btn" type="button" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
 								</div>
+								<span id="error_regNo" class="help-inline"></span>
 							</div>
 						</div>
 						<div id="group_basePrice" class="control-group">
 							<label for="basePrice" class="control-label">出售底价</label>
 							<div class="controls">
-								<div class="input-prepend input-append">
-									<span class="add-on">￥</span> <input type="text" id="basePrice" name="basePrice" class="input-small" required><span class="add-on">万元</span> <span id="error_basePrice" class="help-inline"></span>
+								<div class="input-prepend">
+									<span class="add-on">￥</span> <input type="text" id="basePrice" name="basePrice" class="input-small" required><span class="add-on">万元</span>
 								</div>
-
+								<span id="error_basePrice" class="help-inline"></span>
 							</div>
 						</div>
 						<div id="group_name" class="control-group">
@@ -35,7 +39,10 @@
 						<div id="group_regDate" class="control-group">
 							<label for="regDate" class="control-label">注册日期</label>
 							<div class="controls">
-								<input type="text" id="regDate" name="regDate"> <span id="error_regDate" class="help-inline"></span>
+								<div class="input-append date" id="date-regDate" data-date="2012-12-22" data-date-format="yyyy-mm-dd">
+									<input type="text" class="span2" id="regDate" name="regDate" readonly> <span class="add-on"><i class="icon-remove"></i></span> <span class="add-on"><i class="icon-th"></i></span>
+								</div>
+								<span id="error_regDate" class="help-inline"></span>
 							</div>
 						</div>
 						<div id="group_applicant" class="control-group">
@@ -79,4 +86,16 @@
 			</div>
 		</div>
 	</div>
+	<script type="text/javascript" src="/js/bootstrap-datetimepicker.min.js"></script>
+	<script type="text/javascript" src="/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script type="text/javascript">
+		$('#date-regDate').datetimepicker({
+			language:  'zh-CN',
+			weekStart : 1,
+			todayBtn : 1,
+			autoclose : 1,
+			minView:2,
+			todayHighlight : 1
+		});
+	</script>
 </div>
