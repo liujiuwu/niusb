@@ -1,23 +1,26 @@
 package code.snippet
 
-import scala.xml.NodeSeq
-import code.model.User
-import net.liftweb.common.Full
-import net.liftweb.util._
-import net.liftweb.util.Helpers._
-import net.liftweb.http.RequestVar
-import net.liftweb.http.SHtml
-import net.liftweb.http._
-import net.liftweb.http.SHtml._
-import net.liftweb.mapper.By
-import net.liftweb.http.S
-import net.liftweb.http.js.JsCmd
-import net.liftweb.http.js.JsCmds._
+import java.net.URL
+
 import scala.xml.Text
+
+import code.lib.SearchHelper
+import code.lib.WebHelper
+import code.model.User
 import net.liftweb.common.Box
 import net.liftweb.common.Empty
+import net.liftweb.common.Full
+import net.liftweb.http._
+import net.liftweb.http.RequestVar
+import net.liftweb.http.S
+import net.liftweb.http.SHtml
+import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JE.JsRaw
-import code.lib.WebHelper
+import net.liftweb.http.js.JsCmd
+import net.liftweb.http.js.JsCmds._
+import net.liftweb.mapper.By
+import net.liftweb.util._
+import net.liftweb.util.Helpers._
 
 object Nav {
   private object mobileVar extends RequestVar[Box[String]](Empty)
@@ -62,7 +65,6 @@ object Nav {
     def process(): JsCmd = {
       getRealMobile(mobileVar.get) match {
         case Full(mobile) =>
-          println(mobile+"-------------")
           User.find(By(User.mobile, mobile)) match {
             case Full(user) =>
               User.logUserIn(user)
@@ -91,6 +93,13 @@ object Nav {
     }) &
       "@pwd" #> password(pwdVar.get.openOr(""), pwd => pwdVar(Box.legacyNullTest(pwd))) &
       "@sub" #> hidden(process)
+  }
+
+  def brand = {
+    val (datas, picUrl) = SearchHelper.searchBrandByRegNo(S.param("regno") openOr (""))
+    println(datas)
+    
+    <img src={ picUrl }/>
   }
 
 }
