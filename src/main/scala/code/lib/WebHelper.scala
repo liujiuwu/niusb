@@ -6,6 +6,9 @@ import net.liftweb.http.js.JsCmd
 import net.liftweb.util.Helpers._
 import net.liftweb.http.js.jquery.JqJsCmds._
 import net.liftweb.http.js.jquery.JqJsCmds.JqSetHtml
+import net.liftweb.common.Full
+import net.liftweb.common.Box
+import net.liftweb.common.Empty
 
 object WebHelper {
 
@@ -31,6 +34,14 @@ object WebHelper {
 
   def errorMsg(where: String, msg: NodeSeq, cssClass: String = "alert-error", duration: TimeSpan = 0 second, fadeTime: TimeSpan = 3 second): JsCmd = {
     succMsg(where, msg, cssClass, duration, fadeTime)
+  }
+
+  def getRealMobile(mobile: Box[String]): Box[String] = {
+    val mobileRegx = """^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])(\d{8})$""".r
+    mobile.openOr(Empty) match {
+      case mobileRegx(mp, ms) => Full(mp + ms)
+      case _ => Empty
+    }
   }
 
 }

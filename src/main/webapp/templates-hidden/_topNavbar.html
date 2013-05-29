@@ -8,9 +8,7 @@
 				<a class="brand" href="./index.html">牛标网</a>
 				<div class="nav-collapse collapse">
 					<ul class="nav" data-lift="Menus.group?group=topbar"></ul>
-					<ul class="nav pull-right">
-						<span data-lift="Nav.userStatus" />
-					</ul>
+					<ul class="nav pull-right" data-lift="NavOps.userStatus"></ul>
 				</div>
 			</div>
 		</div>
@@ -44,7 +42,7 @@
 				<div class="modal-footer">
 					<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
 					<button type="submit" id="login_btn" class="btn btn-primary disabled">登录</button>
-					<button name="sub" />
+					<input type="hidden" name="sub">
 				</div>
 			</div>
 		</form>
