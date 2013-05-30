@@ -29,11 +29,11 @@ object BrandOps {
       case _ => S.redirectTo("/")
     }
 
-    val brand = brandVar.get.get
+    val brand = brandVar.is.get
     "@regNo" #> text(brand.regNo.get, brand.regNo(_)) &
-      "@basePrice" #> text(brand.basePrice.get.toString, basePrice => brand.basePrice((basePrice.toFloat * 10000).toInt)) &
+      "@basePrice" #> text(brand.basePrice.get.toString, basePrice => brand.basePrice(basePrice.toInt)) &
       "@name" #> text(brand.name.get, brand.name(_)) &
-      //"@regDate" #> text(if(brand.regDate==null)"" else brand.regDate.asHtml.toString, regDate => println(regDate)) &
+      "@regDate" #> text(brand.regDate.asHtml.toString, regDate => brand.regDate(new SimpleDateFormat("yyyy-MM-dd").parse(regDate))) &
       "@applicant" #> text(brand.applicant.get, brand.applicant(_)) &
       "@useDescn" #> textarea(brand.useDescn.get, brand.useDescn(_)) &
       "@descn" #> textarea(brand.descn.get, brand.descn(_)) &

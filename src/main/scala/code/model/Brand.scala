@@ -39,7 +39,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object regDate extends MappedDate(this) {
     override def dbColumnName = "reg_date"
-    override def asHtml = Text(new SimpleDateFormat("yyyy-MM-dd").format(is))
+    override def asHtml = Text(if (is != null) new SimpleDateFormat("yyyy-MM-dd").format(is) else "")
   }
 
   object applicant extends MappedString(this, 15) {

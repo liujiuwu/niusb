@@ -24,8 +24,8 @@
 						<div id="group_basePrice" class="control-group">
 							<label for="basePrice" class="control-label">出售底价</label>
 							<div class="controls">
-								<div class="input-prepend">
-									<span class="add-on">￥</span> <input type="text" id="basePrice" name="basePrice" class="input-small" required><span class="add-on">万元</span>
+								<div class="input-prepend input-append">
+									<span class="add-on">￥</span> <input type="text" id="basePrice" name="basePrice" class="input-small" required> <span class="add-on">元</span>
 								</div>
 								<span id="error_basePrice" class="help-inline"></span>
 							</div>
@@ -48,10 +48,10 @@
 						<div id="group_applicant" class="control-group">
 							<label for="applicant" class="control-label">申请人</label>
 							<div class="controls">
-								<input type="text" id="applicant" name="applicant" placeholder="填写商标申请人"> <span id="error_applicant" class="help-inline"></span>
+								<input type="text" id="applicant" name="applicant" placeholder="填写商标申请人" required> <span id="error_applicant" class="help-inline"></span>
 							</div>
 						</div>
-						<div id="group_pic" class="control-group">
+						<!-- <div id="group_pic" class="control-group">
 							<label for="pic" class="control-label">上传商标图</label>
 							<div class="controls">
 								<input type="file" id="pic" name="pic" required> <span id="error_pic" class="help-inline"></span>
@@ -62,18 +62,18 @@
 							<div class="controls">
 								<input type="file" id="adPic" name="adPic" required> <span id="error_adPic" class="help-inline"></span>
 							</div>
-						</div>
+						</div> -->
 						<div id="group_useDescn" class="control-group">
 							<label for="useDescn" class="control-label">使用范围</label>
 							<div class="controls">
-								<textarea rows="3" id="useDescn" name="useDescn" class="span5"></textarea>
+								<textarea rows="3" id="useDescn" name="useDescn" class="span6"></textarea>
 								<span id="error_useDescn" class="help-inline"></span>
 							</div>
 						</div>
 						<div id="group_descn" class="control-group">
 							<label for="descn" class="control-label">商标说明</label>
 							<div class="controls">
-								<textarea rows="3" id="descn" name="descn" class="span5"></textarea>
+								<textarea rows="3" id="descn" name="descn" class="span6"></textarea>
 								<span id="error_descn" class="help-inline"></span>
 							</div>
 						</div>
