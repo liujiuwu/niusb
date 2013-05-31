@@ -1,7 +1,6 @@
 package code.snippet.user
 
 import java.text.SimpleDateFormat
-
 import code.model.Brand
 import code.model.User
 import net.liftweb.common.Box
@@ -14,13 +13,23 @@ import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmd._
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.util.Helpers._
+import code.lib.WebHelper
+import net.liftweb.util.TimeHelpers
 
 object BrandOps {
-  object brandVar extends RequestVar[Box[Brand]](Full(Brand.create))
+  //object brandVar extends RequestVar[Box[Brand]](Full(Brand.create))
 
   def add = {
+    var basePrice = "0"
+    var regNo, name, regDateStr, applicant, useDescn, descn = ""
+
     def process(): JsCmd = {
-      println(dateFormatter.format(brandVar.get.get.regDate.get, "yyyy-MM-dd"))
+      val brand = Brand.create.regNo(regNo).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
+      brand.validate match {
+        case Nil => brand.save
+        case errors => println(errors)
+      }
+
       Noop
     }
 
@@ -29,14 +38,13 @@ object BrandOps {
       case _ => S.redirectTo("/")
     }
 
-    val brand = brandVar.is.get
-    "@regNo" #> text(brand.regNo.get, brand.regNo(_)) &
-      "@basePrice" #> text(brand.basePrice.get.toString, basePrice => brand.basePrice(basePrice.toInt)) &
-      "@name" #> text(brand.name.get, brand.name(_)) &
-      "@regDate" #> text(brand.regDate.asHtml.toString, regDate => brand.regDate(new SimpleDateFormat("yyyy-MM-dd").parse(regDate))) &
-      "@applicant" #> text(brand.applicant.get, brand.applicant(_)) &
-      "@useDescn" #> textarea(brand.useDescn.get, brand.useDescn(_)) &
-      "@descn" #> textarea(brand.descn.get, brand.descn(_)) &
+    "@regNo" #> text(regNo, regNo = _) &
+      "@basePrice" #> text(basePrice, basePrice = _) &
+      "@name" #> text(name, name = _) &
+      "@regDate" #> text(regDateStr, regDateStr = _) &
+      "@applicant" #> text(applicant, applicant = _) &
+      "@useDescn" #> textarea(useDescn, useDescn = _) &
+      "@descn" #> textarea(descn, descn = _) &
       "@sub" #> hidden(process)
   }
 

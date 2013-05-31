@@ -1,9 +1,22 @@
 package code.model
 
-import net.liftweb.mapper._
-import scala.xml.Text
-import java.text.DateFormat
 import java.text.SimpleDateFormat
+import code.lib.WebHelper
+import net.liftweb.common.Box
+import net.liftweb.common.Full
+import net.liftweb.mapper.CRUDify
+import net.liftweb.mapper.CreatedUpdated
+import net.liftweb.mapper.IdPK
+import net.liftweb.mapper.LongKeyedMapper
+import net.liftweb.mapper.LongKeyedMetaMapper
+import net.liftweb.util.FieldError
+import net.liftweb.mapper.MappedInt
+import net.liftweb.mapper.MappedDate
+import net.liftweb.mapper.MappedEnum
+import net.liftweb.mapper.MappedString
+import net.liftweb.mapper.MappedBoolean
+import net.liftweb.mapper.MappedLong
+import net.liftweb.http.S
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -35,11 +48,34 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   object regNo extends MappedString(this, 15) {
     override def dbIndexed_? = true
     override def dbColumnName = "reg_no"
+    override def validations = valUnique("该商标注册号已经存在，请确认商标号正确！") _ :: super.validations
   }
 
   object regDate extends MappedDate(this) {
     override def dbColumnName = "reg_date"
-    override def asHtml = Text(if (is != null) new SimpleDateFormat("yyyy-MM-dd").format(is) else "")
+
+    override def validations = {
+      def isDate(txt: java.util.Date) = {
+        if (txt == null)
+          List(FieldError(this, "Please input a validate date."))
+        else
+          List[FieldError]()
+      }
+
+      isDate _ :: Nil
+    }
+
+    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+
+    override def parse(s: String): Box[java.util.Date] = {
+      val df = new SimpleDateFormat("yyyy-MM-dd")
+      try {
+        val date = df.parse(s)
+        Full(date)
+      } catch {
+        case _: Exception => Full(this.set(null))
+      }
+    }
   }
 
   object applicant extends MappedString(this, 15) {
