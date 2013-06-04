@@ -27,6 +27,7 @@ import code.model.Brand
 import net.liftweb.http.RedirectResponse
 import net.liftweb.http.S
 import code.config.Site
+import code.lib.SearchHelper
 
 class Boot {
   def boot {
@@ -57,6 +58,11 @@ class Boot {
     LiftRules.statelessRewrite.append {
       case RewriteRequest(ParsePath("user" :: "sign_out" :: Nil, _, _, _), _, _) =>
         RewriteResponse("user_mgt" :: "logout" :: Nil)
+    }
+
+    LiftRules.dispatch.append {
+      case Req("brand" :: regNo :: Nil, _, _) =>
+        SearchHelper.searchBrandPicByRegNo(regNo)
     }
   }
 }

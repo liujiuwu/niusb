@@ -7,13 +7,18 @@ import scala.collection.JavaConversions._
 import sys.process._
 import java.net.URL
 import java.io.File
-
+import net.liftweb.http.InMemoryResponse
+import org.apache.commons.io.IOUtils
+import net.liftweb.common.Box
+import net.liftweb.http.LiftResponse
+import net.liftweb.common.Full
+import net.liftweb.common.Empty
 
 object SearchHelper {
 
-  def searchBrandByRegNo(regno: String): (Map[String, String],String) = {
+  def searchBrandByRegNo(regno: String): (Map[String, String], String) = {
     if (regno == null) {
-      return (Map.empty,"")
+      return (Map.empty, "")
     }
     val home = """http://sbcx.saic.gov.cn/trade/"""
     val regnoUrl = s"""http://sbcx.saic.gov.cn/trade/servlet?Search=FL_REG_List&RegNO=${regno}"""
@@ -22,9 +27,10 @@ object SearchHelper {
     driver.get(home)
     driver.get(regnoUrl)
 
-    val barndType = driver.findElements(By.tagName("tr"))(3).getText().split(" ")(2)
-    val detailUrl = s"""http://sbcx.saic.gov.cn/trade/servlet?Search=TI_REG&RegNO=${regno}&IntCls=${barndType}&iYeCode=0"""
-    val picUrl = s"""http://sbcx.saic.gov.cn/trade/pictureservlet?RegNO=${regno}&IntCls=${barndType}"""
+    val brandSimpleData = driver.findElements(By.tagName("tr"))(3).getText().split(" ")
+    val (brandType, brandName) = (brandSimpleData(2), brandSimpleData(3))
+    val detailUrl = s"""http://sbcx.saic.gov.cn/trade/servlet?Search=TI_REG&RegNO=${regno}&IntCls=${brandType}&iYeCode=0"""
+    val picUrl = s"""http://sbcx.saic.gov.cn/trade/pictureservlet?RegNO=${regno}&IntCls=${brandType}"""
     driver.get(detailUrl)
 
     var ds = List[String]()
@@ -46,6 +52,7 @@ object SearchHelper {
     })
 
     var resultMap = Map[String, String]()
+    resultMap += ("name" -> brandName)
     ds.zipWithIndex.foreach {
       case (data, rowIdx) =>
         val rowDatas = data.split("[\\s]+")
@@ -53,8 +60,8 @@ object SearchHelper {
           resultMap += ("zch" -> rowDatas(1))
           resultMap += ("flh" -> rowDatas(3))
         } else if (rowIdx == 1) {
-          resultMap += ("rql" -> rowDatas(1))
-          resultMap += ("rqldz" -> rowDatas(3))
+          resultMap += ("sqr" -> rowDatas(1))
+          resultMap += ("sqrdz" -> rowDatas(3))
           resultMap += ("fwlb" -> rowDatas(5))
         } else if (rowIdx == 2) {
           resultMap += ("lsq" -> rowDatas(0))
@@ -63,7 +70,32 @@ object SearchHelper {
         }
     }
     new URL(picUrl) #> new File("d:\\test.jpg") !!
+
+    (resultMap, picUrl)
+  }
+
+  def searchBrandPicByRegNo(regno: String): Box[LiftResponse] = {
+    if (regno == null) {
+      return Empty
+    }
+
+    val home = """http://sbcx.saic.gov.cn/trade/"""
+    val regnoUrl = s"""http://sbcx.saic.gov.cn/trade/servlet?Search=FL_REG_List&RegNO=${regno}"""
+
+    val driver: WebDriver = new HtmlUnitDriver()
+    driver.get(home)
+    driver.get(regnoUrl)
+
+    val brandSimpleData = driver.findElements(By.tagName("tr"))(3).getText().split(" ")
+    val (brandType, brandName) = (brandSimpleData(2), brandSimpleData(3))
+    val picUrl = s"""http://sbcx.saic.gov.cn/trade/pictureservlet?RegNO=${regno}&IntCls=${brandType}"""
+    driver.get(picUrl)
     
-    (resultMap,picUrl)
+    println(driver.getPageSource())
+    //val is = new URL(picUrl).openStream()
+
+    val imageBytes = driver.getPageSource().getBytes()
+
+    Full(InMemoryResponse(imageBytes, ("Content-Type" -> "image/jpeg") :: Nil, Nil, 200))
   }
 }
