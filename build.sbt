@@ -40,7 +40,7 @@ EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE16)
 EclipseKeys.withSource := true
 
 libraryDependencies ++= {
-  val liftVersion = "2.5-RC6"
+  val liftVersion = "2.5"
   Seq(
     "net.liftweb"       %% "lift-webkit"        % liftVersion        % "compile->default"  withSources(),
     "net.liftweb"       %% "lift-mapper"        % liftVersion        % "compile->default"  withSources(),
