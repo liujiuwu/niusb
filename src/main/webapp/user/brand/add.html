@@ -16,7 +16,7 @@
 							<div class="controls">
 								<div class="input-append">
 									<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required class="input-medium">
-									<button class="btn" type="button" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
+									<button class="btn" type="button" id="getRemoteData" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
 								</div>
 								<span id="error_regNo" class="help-inline"></span>
 							</div>
@@ -33,7 +33,7 @@
 						<div id="group_name" class="control-group">
 							<label for="name" class="control-label">商标名称</label>
 							<div class="controls">
-								<input type="text" id="name" name="name"  required> <span id="error_name" class="help-inline"></span>
+								<input type="text" id="name" name="name" required> <span id="error_name" class="help-inline"></span>
 							</div>
 						</div>
 						<div id="group_regDate" class="control-group">
@@ -89,13 +89,19 @@
 	<script type="text/javascript" src="/js/bootstrap-datetimepicker.min.js"></script>
 	<script type="text/javascript" src="/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script type="text/javascript">
-		$('#date-regDate').datetimepicker({
-			language:  'zh-CN',
-			weekStart : 1,
-			todayBtn : 1,
-			autoclose : 1,
-			minView:2,
-			todayHighlight : 1
+		$(function() {
+			$('#date-regDate').datetimepicker({
+				language : 'zh-CN',
+				weekStart : 1,
+				todayBtn : 1,
+				autoclose : 1,
+				minView : 2,
+				todayHighlight : 1
+			});
+
+			$('#getRemoteData').click(function() {
+				$('#getRemoteData').addClass("disabled");
+			});
 		});
 	</script>
 </div>

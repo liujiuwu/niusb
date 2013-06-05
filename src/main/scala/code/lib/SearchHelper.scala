@@ -16,10 +16,11 @@ import net.liftweb.common.Empty
 
 object SearchHelper {
 
-  def searchBrandByRegNo(regno: String): (Map[String, String], String) = {
+  def searchBrandByRegNo(regno: String): Map[String, String] = {
     if (regno == null) {
-      return (Map.empty, "")
+      return Map.empty
     }
+
     val home = """http://sbcx.saic.gov.cn/trade/"""
     val regnoUrl = s"""http://sbcx.saic.gov.cn/trade/servlet?Search=FL_REG_List&RegNO=${regno}"""
 
@@ -27,7 +28,15 @@ object SearchHelper {
     driver.get(home)
     driver.get(regnoUrl)
 
-    val brandSimpleData = driver.findElements(By.tagName("tr"))(3).getText().split(" ")
+    val brandTrs = driver.findElements(By.tagName("tr"))
+    if (brandTrs.length < 4) {
+      return Map.empty
+    }
+    val brandSimpleData = brandTrs(3).getText().split(" ")
+    if (brandSimpleData.length < 4) {
+      return Map.empty
+    }
+
     val (brandType, brandName) = (brandSimpleData(2), brandSimpleData(3))
     val detailUrl = s"""http://sbcx.saic.gov.cn/trade/servlet?Search=TI_REG&RegNO=${regno}&IntCls=${brandType}&iYeCode=0"""
     val picUrl = s"""http://sbcx.saic.gov.cn/trade/pictureservlet?RegNO=${regno}&IntCls=${brandType}"""
@@ -69,9 +78,9 @@ object SearchHelper {
           resultMap += ("zcggrq" -> rowDatas(7))
         }
     }
-    new URL(picUrl) #> new File("d:\\test.jpg") !!
+    //new URL(picUrl) #> new File("d:\\test.jpg") !!
 
-    (resultMap, picUrl)
+    resultMap
   }
 
   def searchBrandPicByRegNo(regno: String): Box[LiftResponse] = {
@@ -90,7 +99,7 @@ object SearchHelper {
     val (brandType, brandName) = (brandSimpleData(2), brandSimpleData(3))
     val picUrl = s"""http://sbcx.saic.gov.cn/trade/pictureservlet?RegNO=${regno}&IntCls=${brandType}"""
     driver.get(picUrl)
-    
+
     println(driver.getPageSource())
     //val is = new URL(picUrl).openStream()
 

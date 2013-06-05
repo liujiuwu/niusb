@@ -1,11 +1,9 @@
 package code.snippet.user
 
 import java.net.URL
-
 import org.apache.commons.io.IOUtils
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-
 import code.lib.SearchHelper
 import code.lib.WebHelper
 import code.model.Brand
@@ -20,6 +18,7 @@ import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmd._
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.util.Helpers._
+import scala.xml.Text
 
 object BrandOps {
   //object brandVar extends RequestVar[Box[Brand]](Full(Brand.create))
@@ -31,7 +30,12 @@ object BrandOps {
     def process(): JsCmd = {
       val brand = Brand.create.regNo(regNo).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
       brand.validate match {
-        case Nil => brand.save
+        case Nil =>
+          if (brand.save) {
+            JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息发布成功，请待审核！")))
+          } else {
+            JsRaw(WebHelper.errorMsg("opt_brand_tip", Text("商标信息发布失败，请稍候再试！")))
+          }
         case errors => println(errors)
       }
 
@@ -60,15 +64,19 @@ object BrandOps {
         //WebHelper.formError("regNo", "错误的商标注册号，请核实！")
         //TODO 从标局获取商标数据
         val data = SearchHelper.searchBrandByRegNo(regNo)
-        val brandData = data._1
-        println(brandData)
-        val name = brandData.getOrElse("name", "")
-        val flh = brandData.getOrElse("flh", "")
-        val applicant = brandData.getOrElse("sqr", "")
-        val zcggrq = brandData.getOrElse("zcggrq", "")
-        val fwlb = brandData.getOrElse("fwlb", "")
-        SetValById("name", name) & SetValById("applicant", applicant) &
-          SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb)
+        val brandData = data
+        if (brandData.isEmpty) {
+          JsRaw(WebHelper.errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
+        } else {
+          println(brandData)
+          val name = brandData.getOrElse("name", "")
+          val flh = brandData.getOrElse("flh", "")
+          val applicant = brandData.getOrElse("sqr", "")
+          val zcggrq = brandData.getOrElse("zcggrq", "")
+          val fwlb = brandData.getOrElse("fwlb", "")
+          SetValById("name", name) & SetValById("applicant", applicant) &
+            SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & JsRaw("""$('#getRemoteData').removeClass("disabled")""")
+        }
       })
   }
 

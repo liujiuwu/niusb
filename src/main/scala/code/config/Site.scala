@@ -11,6 +11,7 @@ import net.liftweb.http.RedirectResponse
 object MenuGroups {
   val TopBarGroup = LocGroup("topbar")
   val UserMenuGroup = LocGroup("userMenu")
+  val AdminMenuGroup = LocGroup("adminMenu")
 }
 
 object Site {
@@ -27,6 +28,7 @@ object Site {
     Menu("Profile", S.loc("Profile", <span><i class="icon-edit"></i> 帐户信息</span>)) / "user" / "profile" >> IfUserLoggedIn >> UserMenuGroup,
     Menu("AddBrand", S.loc("AddBrand", <span><i class="icon-plus"></i> 发布商标</span>)) / "user" / "brand" / "add" >> IfUserLoggedIn >> UserMenuGroup,
     Menu("MyBrands", S.loc("MyBrands", <span><i class="icon-list"></i> 我的商标</span>)) / "user" / "brand" / "index" >> IfUserLoggedIn >> UserMenuGroup,
+    Menu("AdminUser", S.loc("AdminUser", <span><i class="icon-list"></i> 用户管理</span>)) / "admin" / "user" / ** >> IfUserLoggedIn >> AdminMenuGroup,
     Menu.i("ajaxExample") / "ajax",
     Menu.i("Error") / "error" >> Hidden,
     Menu.i("404") / "404" >> Hidden,

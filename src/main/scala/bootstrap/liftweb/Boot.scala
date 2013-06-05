@@ -66,28 +66,3 @@ class Boot {
     }
   }
 }
-
-object MenuInfo {
-  import Loc._
-  import scala.xml._
-
-  val IfUserLoggedIn = If(() => User.loggedIn_?, () => RedirectResponse("/"))
-  val HiddenSign = Unless(() => User.loggedIn_?, () => RedirectResponse("/user/"))
-
-  val menus = List(
-    Menu("Home", S.loc("home", <span><i class="icon-home"></i> 首页</span>)) / "index" >> LocGroup("main"),
-    Menu("Project", S.loc("project", <span><i class="icon-file-alt"></i> 项目</span>)) / "project" / ** >> LocGroup("main"),
-    Menu("Wenda", S.loc("wenda", <span><i class="icon-question-sign"></i> 问答</span>)) / "wenda" / ** >> LocGroup("main"),
-    Menu("Story", S.loc("story", <span><i class="icon-book"></i> 日志</span>)) / "story" / ** >> LocGroup("main"),
-    Menu("Album", S.loc("album", <span><i class="icon-folder-open-alt"></i> 专辑</span>)) / "album" / ** >> LocGroup("main"),
-    Menu("Resource", S.loc("resource", <span><i class="icon-table"></i> 资源</span>)) / "resource" / ** >> LocGroup("main"),
-    Menu("用户后台") / "user" / ** >> IfUserLoggedIn >> LocGroup("user"))
-
-  /*Menu("首页") / "index" >> LocGroup("main"),
-    Menu("商标集市") / "market" / ** >> LocGroup("main"),
-    Menu("商标查询") / "brand-search" / ** >> LocGroup("main"),
-    Menu("问答频道") / "wenda" / ** >> LocGroup("main"),
-    Menu("用户后台") / "user" / ** >> IfUserLoggedIn >> LocGroup("user"))*/
-
-  def sitemap() = SiteMap(menus: _*)
-}
