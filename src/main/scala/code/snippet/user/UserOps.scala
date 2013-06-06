@@ -17,48 +17,36 @@ import net.liftweb.util.Helpers._
 import net.liftweb.mapper.By
 
 object UserOps {
-  object userVar extends RequestVar[User](User.currentUser.get)
+  object userVar extends RequestVar(User.currentUser.openOrThrowException("user no login"))
 
   def update = {
-    User.currentUser match {
-      case Full(user) => userVar(User.find(By(User.id, user.id.get)).openOrThrowException("用户不存在%s".format(user.id.get)))
-      case _ => S.redirectTo("/")
-    }
+    val user = userVar.is
 
-    val user = userVar.get
     def process(): JsCmd = {
-      if (user.save) {
-        val name = if (user.name.get == "") user.mobile.get else user.name.get
-        JsRaw(WebHelper.succMsg("opt_profile_tip", Text("个人信息保存成功！"))) & JsRaw("""$("#topBarUserName").text("%s")""".format(name))
-      } else {
-        JsRaw(WebHelper.errorMsg("opt_profile_tip", Text("个人信息保存失败！")))
-      }
+      user.save
+      val name = if (user.name.is == "") user.mobile.is else user.name.is
+      JsRaw(WebHelper.succMsg("opt_profile_tip", Text("个人信息保存成功！"))) & JsRaw("""$("#topBarUserName").text("%s")""".format(name))
     }
 
-    "@name" #> text(user.name.get, user.name(_)) &
-      "@gender" #> selectObj[Genders.Value](Genders.values.toList.map(v => (v, v.toString)), Full(user.gender.get), user.gender(_)) &
-      "@qq" #> text(user.qq.get, user.qq(_)) &
-      "@phone" #> text(user.phone.get, user.phone(_)) &
-      "@email" #> text(user.email.get, user.email(_)) &
-      "@address" #> text(user.address.get, user.address(_)) &
+    "@name" #> text(user.name.is, user.name(_)) &
+      "@gender" #> selectObj[Genders.Value](Genders.values.toList.map(v => (v, v.toString)), Full(user.gender.is), user.gender(_)) &
+      "@qq" #> text(user.qq.is, user.qq(_)) &
+      "@phone" #> text(user.phone.is, user.phone(_)) &
+      "@email" #> text(user.email.is, user.email(_)) &
+      "@address" #> text(user.address.is, user.address(_)) &
       "@sub" #> hidden(process)
   }
 
   def updatePwd = {
-    User.currentUser match {
-      case Full(user) => userVar(User.find(By(User.id, user.id.get)).openOrThrowException("用户不存在%s".format(user.id.get)))
-      case _ => S.redirectTo("/")
-    }
+    var (code, pwd) = ("", "")
+    val user = userVar.is
 
-    var code = ""
-    var pwd = ""
-    val user = userVar.get
     def process(): JsCmd = {
-      if (pwd == "" || pwd.length() < 6) {
+      if (pwd.isEmpty() || pwd.length() < 6) {
         return WebHelper.formError("pwd", "新密码不能为空，且不少于6位字符。")
       }
 
-      if (code == "") {
+      if (code.isEmpty()) {
         return WebHelper.removeFormError("pwd") & WebHelper.formError("code", "请填写正确的验证码!")
       }
 

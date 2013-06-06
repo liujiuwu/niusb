@@ -19,6 +19,10 @@ import net.liftweb.http.js.JsCmd._
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.util.Helpers._
 import scala.xml.Text
+import code.snippet.MyPaginatorSnippet
+import net.liftweb.mapper.By
+import net.liftweb.mapper.StartAt
+import net.liftweb.mapper.MaxRows
 
 object BrandOps {
   //object brandVar extends RequestVar[Box[Brand]](Full(Brand.create))
@@ -84,5 +88,13 @@ object BrandOps {
     val regNo = S.param("regNo") openOr ("")
     SearchHelper.searchBrandPicByRegNo(regNo)
   }
+
+}
+
+class BrandList extends MyPaginatorSnippet[Brand] {
+  val userId = User.currentUserId.map(_.toLong).openOr(0L)
+  override val itemsPerPage = 10
+  override def count = Brand.count(By(Brand.userId, userId))
+  override def page = Brand.findAll(By(Brand.userId, userId), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage))
 
 }

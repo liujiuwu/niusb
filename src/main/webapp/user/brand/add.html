@@ -1,57 +1,51 @@
-<div class="box" data-lift="surround?with=user;at=content">
+<div class="box-content" data-lift="surround?with=user;at=content">
 	<head_merge>
 	<link rel="stylesheet" href="/css/datetimepicker.css" />
 	</head_merge>
-	<ul class="nav nav-tabs tabs-no-padding">
-		<li class="active"><a href="#add-brand" data-toggle="tab"><i class="icon-plus"></i> 发布商标</a></li>
-	</ul>
-	<div class="tab-content">
-		<div class="tab-pane active" id="add-brand">
-			<div class="box-content">
-				<div id="opt_brand_tip" class="alert hide"></div>
-				<form data-lift="form.ajax?class=form-horizontal">
-					<fieldset data-lift="user.BrandOps.add">
-						<div id="group_regNo" class="control-group">
-							<label for="regNo" class="control-label">商标注册号</label>
-							<div class="controls">
-								<div class="input-append">
-									<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required class="input-medium">
-									<button class="btn" type="button" id="getRemoteData" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
-								</div>
-								<span id="error_regNo" class="help-inline"></span>
-							</div>
-						</div>
-						<div id="group_basePrice" class="control-group">
-							<label for="basePrice" class="control-label">出售底价</label>
-							<div class="controls">
-								<div class="input-prepend input-append">
-									<span class="add-on">￥</span> <input type="text" id="basePrice" name="basePrice" class="input-small" required> <span class="add-on">元</span>
-								</div>
-								<span id="error_basePrice" class="help-inline"></span>
-							</div>
-						</div>
-						<div id="group_name" class="control-group">
-							<label for="name" class="control-label">商标名称</label>
-							<div class="controls">
-								<input type="text" id="name" name="name" required> <span id="error_name" class="help-inline"></span>
-							</div>
-						</div>
-						<div id="group_regDate" class="control-group">
-							<label for="regDate" class="control-label">注册日期</label>
-							<div class="controls">
-								<div class="input-append date" id="date-regDate" data-date="2012-12-22" data-date-format="yyyy-mm-dd">
-									<input type="text" class="span2" id="regDate" name="regDate" readonly> <span class="add-on"><i class="icon-remove"></i></span> <span class="add-on"><i class="icon-th"></i></span>
-								</div>
-								<span id="error_regDate" class="help-inline"></span>
-							</div>
-						</div>
-						<div id="group_applicant" class="control-group">
-							<label for="applicant" class="control-label">申请人</label>
-							<div class="controls">
-								<input type="text" id="applicant" name="applicant" placeholder="填写商标申请人" required> <span id="error_applicant" class="help-inline"></span>
-							</div>
-						</div>
-						<!-- <div id="group_pic" class="control-group">
+	<div id="opt_brand_tip" class="alert hide"></div>
+	<form data-lift="form.ajax?class=form-horizontal">
+		<fieldset data-lift="user.BrandOps.add">
+			<div id="group_regNo" class="control-group">
+				<label for="regNo" class="control-label">商标注册号</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required class="input-medium">
+						<button class="btn" type="button" id="getRemoteData" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
+					</div>
+					<span id="error_regNo" class="help-inline"></span>
+				</div>
+			</div>
+			<div id="group_basePrice" class="control-group">
+				<label for="basePrice" class="control-label">出售底价</label>
+				<div class="controls">
+					<div class="input-prepend input-append">
+						<span class="add-on">￥</span> <input type="text" id="basePrice" name="basePrice" class="input-small" required> <span class="add-on">元</span>
+					</div>
+					<span id="error_basePrice" class="help-inline"></span>
+				</div>
+			</div>
+			<div id="group_name" class="control-group">
+				<label for="name" class="control-label">商标名称</label>
+				<div class="controls">
+					<input type="text" id="name" name="name" required> <span id="error_name" class="help-inline"></span>
+				</div>
+			</div>
+			<div id="group_regDate" class="control-group">
+				<label for="regDate" class="control-label">注册日期</label>
+				<div class="controls">
+					<div class="input-append date" id="date-regDate" data-date="2012-12-22" data-date-format="yyyy-mm-dd">
+						<input type="text" class="span2" id="regDate" name="regDate" readonly> <span class="add-on"><i class="icon-remove"></i></span> <span class="add-on"><i class="icon-th"></i></span>
+					</div>
+					<span id="error_regDate" class="help-inline"></span>
+				</div>
+			</div>
+			<div id="group_applicant" class="control-group">
+				<label for="applicant" class="control-label">申请人</label>
+				<div class="controls">
+					<input type="text" id="applicant" name="applicant" placeholder="填写商标申请人" required> <span id="error_applicant" class="help-inline"></span>
+				</div>
+			</div>
+			<!-- <div id="group_pic" class="control-group">
 							<label for="pic" class="control-label">上传商标图</label>
 							<div class="controls">
 								<input type="file" id="pic" name="pic" required> <span id="error_pic" class="help-inline"></span>
@@ -63,29 +57,26 @@
 								<input type="file" id="adPic" name="adPic" required> <span id="error_adPic" class="help-inline"></span>
 							</div>
 						</div> -->
-						<div id="group_useDescn" class="control-group">
-							<label for="useDescn" class="control-label">使用范围</label>
-							<div class="controls">
-								<textarea rows="3" id="useDescn" name="useDescn" class="span6"></textarea>
-								<span id="error_useDescn" class="help-inline"></span>
-							</div>
-						</div>
-						<div id="group_descn" class="control-group">
-							<label for="descn" class="control-label">商标说明</label>
-							<div class="controls">
-								<textarea rows="3" id="descn" name="descn" class="span6"></textarea>
-								<span id="error_descn" class="help-inline"></span>
-							</div>
-						</div>
-						<div class="form-actions">
-							<button class="btn btn-primary" type="submit">确认发布</button>
-							<input type="hidden" name="sub">
-						</div>
-					</fieldset>
-				</form>
+			<div id="group_useDescn" class="control-group">
+				<label for="useDescn" class="control-label">使用范围</label>
+				<div class="controls">
+					<textarea rows="3" id="useDescn" name="useDescn" class="span6"></textarea>
+					<span id="error_useDescn" class="help-inline"></span>
+				</div>
 			</div>
-		</div>
-	</div>
+			<div id="group_descn" class="control-group">
+				<label for="descn" class="control-label">商标说明</label>
+				<div class="controls">
+					<textarea rows="3" id="descn" name="descn" class="span6"></textarea>
+					<span id="error_descn" class="help-inline"></span>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button class="btn btn-primary" type="submit">确认发布</button>
+				<input type="hidden" name="sub">
+			</div>
+		</fieldset>
+	</form>
 	<script type="text/javascript" src="/js/bootstrap-datetimepicker.min.js"></script>
 	<script type="text/javascript" src="/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script type="text/javascript">
