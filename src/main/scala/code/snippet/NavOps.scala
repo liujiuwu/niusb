@@ -16,6 +16,10 @@ object NavOps {
             <lift:Menu.group group="userMenu">
               <li><menu:bind/></li>
             </lift:Menu.group>
+            {
+              if (User.superUser_?)
+                <li class="last"><a href="/admin/user/"><span><i class="icon-cogs"></i> 后台管理</span></a></li>
+            }
             <li class="divider"></li>
             <li class="last"><a href="/user/sign_out"><span><i class="icon-signout"></i> 退出</span></a></li>
           </ul>

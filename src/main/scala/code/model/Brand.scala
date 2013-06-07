@@ -24,7 +24,8 @@ object BrandStatus extends Enumeration {
   val JiaoYiGuanBi = Value(-2, "交易关闭")
   val ShenHeZhong = Value(0, "审核中")
   val ChuShoZhong = Value(1, "出售中")
-  val JiaoYiChengGong = Value(2, "交易成功")
+  val JiaoYiZhong = Value(2, "交易中")
+  val JiaoYiChengGong = Value(3, "交易成功")
 }
 
 class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {

@@ -30,6 +30,12 @@ import net.liftweb.util.Helpers.intToTimeSpanBuilder
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
 
 object WebHelper {
+  def oddOrEven(current: String) = {
+    current match {
+      case "odd" => "even"
+      case _ => "odd"
+    }
+  }
 
   def removeFormErrors(fieldNames: List[String]) = {
     for (fieldName <- fieldNames) removeFormError(fieldName)
