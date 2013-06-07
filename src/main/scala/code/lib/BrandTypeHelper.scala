@@ -1,9 +1,12 @@
 package code.lib
 
+import scala.collection.mutable.LinkedHashMap
+
+
 case class BrandType(id: Int, name: String, descn: String)
 
 object BrandTypeHelper {
-  val brandTypes = Map[Int, BrandType](
+  val brandTypes = LinkedHashMap[Int, BrandType](
     1 -> BrandType(1, "化学原料", ""),
     2 -> BrandType(2, "颜料油漆", ""),
     3 -> BrandType(3, "化妆品", ""),

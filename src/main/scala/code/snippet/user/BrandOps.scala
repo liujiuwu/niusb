@@ -1,6 +1,6 @@
 package code.snippet.user
 
-import scala.xml.Text
+import code.lib.BrandType
 import code.lib.SearchHelper
 import code.lib.WebHelper
 import code.model.Brand
@@ -18,7 +18,9 @@ import net.liftweb.mapper.By
 import net.liftweb.mapper.MaxRows
 import net.liftweb.mapper.StartAt
 import net.liftweb.util.Helpers._
-import code.model.BrandStatus
+import scala.xml.Text
+import code.lib.BrandTypeHelper
+import net.liftweb.common.Empty
 
 object BrandOps extends MyPaginatorSnippet[Brand] {
   //object brandVar extends RequestVar[Box[Brand]](Full(Brand.create))
@@ -30,9 +32,12 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
   def add = {
     var basePrice = "0"
     var regNo, name, regDateStr, applicant, useDescn, descn = ""
+    var brandType: BrandType = BrandTypeHelper.brandTypes.get(25).get
 
     def process(): JsCmd = {
       val brand = Brand.create.regNo(regNo).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
+      brand.userId(User.currentUserId.map(_.toInt).openOrThrowException("user id error"))
+      brand.brandTypeId(brandType.id)
       brand.validate match {
         case Nil =>
           if (brand.save) {
@@ -51,9 +56,11 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
       case _ => S.redirectTo("/")
     }
 
+    val brandTypes = BrandTypeHelper.brandTypes.values.toList
     "@regNo" #> text(regNo, regNo = _) &
       "@basePrice" #> text(basePrice, basePrice = _) &
       "@name" #> text(name, name = _) &
+      "@brand_type" #> selectObj[BrandType](brandTypes.map(v => (v, v.id + " -> " + v.name)), Empty, brandType = _) &
       "@regDate" #> text(regDateStr, regDateStr = _) &
       "@applicant" #> text(applicant, applicant = _) &
       "@useDescn" #> textarea(useDescn, useDescn = _) &
@@ -72,7 +79,6 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
         if (brandData.isEmpty) {
           JsRaw(WebHelper.errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
         } else {
-          println(brandData)
           val name = brandData.getOrElse("name", "")
           val flh = brandData.getOrElse("flh", "")
           val applicant = brandData.getOrElse("sqr", "")
@@ -93,11 +99,12 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
     var odd = "even"
     "tr" #> page.map {
       b =>
+        val brandType = BrandTypeHelper.brandTypes.get(b.brandTypeId.get).get
         odd = WebHelper.oddOrEven(odd)
         "tr [class]" #> odd &
           "#regNo" #> b.regNo &
           "#name" #> b.name &
-          "#brandType" #> b.brandTypeId &
+          "#brandType" #> { brandType.id + " -> " + brandType.name } &
           "#regDate" #> b.regDate.asHtml &
           "#status" #> b.status &
           "#basePrice" #> b.basePrice &

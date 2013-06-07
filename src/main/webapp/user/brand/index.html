@@ -5,11 +5,11 @@
 				<tr>
 					<th>注册号</th>
 					<th>名称</th>
-					<th>类别</th>
+					<th style="width: 100px">类别</th>
 					<th>注册日期</th>
 					<th>状态</th>
 					<th>出售底价</th>
-					<th style="width:120px">操作</th>
+					<th style="width: 120px">操作</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -24,15 +24,13 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="pagination">
-			<ul>
-				<li class="prev disabled"><a href="#">← Previous</a></li>
-				<li class="active"><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">4</a></li>
-				<li class="next"><a href="#">Next → </a></li>
-			</ul>
+
+		<div id="pagination" class="lift:user.BrandOps.paginate light-theme">
+			<nav:first></nav:first>
+			<nav:prev></nav:prev>
+			<nav:allpages></nav:allpages>
+			<nav:next></nav:next>
+			<nav:last></nav:last>
 		</div>
 	</div>
 </div>
