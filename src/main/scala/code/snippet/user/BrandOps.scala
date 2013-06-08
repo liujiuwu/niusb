@@ -21,13 +21,18 @@ import net.liftweb.util.Helpers._
 import scala.xml.Text
 import code.lib.BrandTypeHelper
 import net.liftweb.common.Empty
+import code.model.BrandStatus
+import scala.xml.NodeSeq
+import net.liftweb.mapper.OrderBy
+import net.liftweb.mapper.Ascending
+import net.liftweb.mapper.Descending
 
 object BrandOps extends MyPaginatorSnippet[Brand] {
   //object brandVar extends RequestVar[Box[Brand]](Full(Brand.create))
   val userId = User.currentUserId.map(_.toLong).openOr(0L)
-  override val itemsPerPage = 10
+  override def itemsPerPage = 10
   override def count = Brand.count(By(Brand.userId, userId))
-  override def page = Brand.findAll(By(Brand.userId, userId), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage))
+  override def page = Brand.findAll(By(Brand.userId, userId), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
 
   def add = {
     var basePrice = "0"
@@ -38,22 +43,15 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
       val brand = Brand.create.regNo(regNo).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
       brand.userId(User.currentUserId.map(_.toInt).openOrThrowException("user id error"))
       brand.brandTypeId(brandType.id)
+      brand.basePrice(tryo(basePrice.toInt).getOrElse(0))
+      brand.sellPrice(brand.basePrice + (brand.basePrice.get * 0.1).toInt)
       brand.validate match {
         case Nil =>
-          if (brand.save) {
-            JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息发布成功，请待审核！")))
-          } else {
-            JsRaw(WebHelper.errorMsg("opt_brand_tip", Text("商标信息发布失败，请稍候再试！")))
-          }
-        case errors => println(errors)
+          brand.save
+          //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息发布成功，请待审核！")))
+          S.redirectTo("/user/brand/")
+        case errors => println(errors); Noop
       }
-
-      Noop
-    }
-
-    User.currentUser match {
-      case Full(user) =>
-      case _ => S.redirectTo("/")
     }
 
     val brandTypes = BrandTypeHelper.brandTypes.values.toList
@@ -96,6 +94,16 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
   }
 
   def list = {
+    def statusLabel(status: BrandStatus.Value): NodeSeq = {
+      status match {
+        case BrandStatus.ShenHeShiBai => <span class="label label-important">审核失败</span>
+        case BrandStatus.ShenHeZhong => <span class="label">审核中</span>
+        case BrandStatus.ChuShoZhong => <span class="label label-info">出售中</span>
+        case BrandStatus.JiaoYiZhong => <span class="label label-info">交易中</span>
+        case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
+      }
+    }
+
     var odd = "even"
     "tr" #> page.map {
       b =>
@@ -106,7 +114,7 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
           "#name" #> b.name &
           "#brandType" #> { brandType.id + " -> " + brandType.name } &
           "#regDate" #> b.regDate.asHtml &
-          "#status" #> b.status &
+          "#status" #> statusLabel(b.status.get) &
           "#basePrice" #> b.basePrice &
           "#regNo" #> b.regNo
     }

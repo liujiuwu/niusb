@@ -6,6 +6,7 @@ object UserType extends Enumeration {
   type UserType = Value
   val Normal = Value(0, "普通会员")
   val Vip = Value(1, "Vip会员")
+  val Agent = Value(2, "代理会员")
 }
 
 class User extends MegaProtoUser[User] with CreatedUpdated {

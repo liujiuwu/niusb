@@ -15,6 +15,7 @@ import net.liftweb.http.js.JsCmds._
 import net.liftweb.mapper.Genders
 import net.liftweb.util.Helpers._
 import net.liftweb.mapper.By
+import code.model.UserType
 
 object UserOps {
   object userVar extends RequestVar(User.currentUser.openOrThrowException("user no login"))
@@ -30,6 +31,7 @@ object UserOps {
 
     "@name" #> text(user.name.is, user.name(_)) &
       "@gender" #> selectObj[Genders.Value](Genders.values.toList.map(v => (v, v.toString)), Full(user.gender.is), user.gender(_)) &
+      "@user_type" #> selectObj[UserType.Value](UserType.values.toList.map(v => (v, v.toString)), Full(user.userType.is), user.userType(_), "disabled" -> "disabled") &
       "@qq" #> text(user.qq.is, user.qq(_)) &
       "@phone" #> text(user.phone.is, user.phone(_)) &
       "@email" #> text(user.email.is, user.email(_)) &

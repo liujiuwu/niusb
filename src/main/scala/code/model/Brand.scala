@@ -21,7 +21,6 @@ import net.liftweb.http.S
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
   val ShenHeShiBai = Value(-1, "审核失败")
-  val JiaoYiGuanBi = Value(-2, "交易关闭")
   val ShenHeZhong = Value(0, "审核中")
   val ChuShoZhong = Value(1, "出售中")
   val JiaoYiZhong = Value(2, "交易中")
