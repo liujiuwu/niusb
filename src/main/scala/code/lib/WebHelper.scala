@@ -8,10 +8,8 @@ import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Random
-
 import scala.math.abs
 import scala.xml.NodeSeq
-
 import javax.imageio.ImageIO
 import net.liftweb.common.Box
 import net.liftweb.common.Empty
@@ -28,6 +26,29 @@ import net.liftweb.http.js.jquery.JqJsCmds.jsExpToJsCmd
 import net.liftweb.util.Helpers.TimeSpan
 import net.liftweb.util.Helpers.intToTimeSpanBuilder
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
+import net.liftweb.util.Helpers
+import net.liftweb.http.SessionVar
+
+case class CacheValue[T](compute: () => T, lifespanInMillis: Long) {
+  private var currentValue: Box[T] = Empty
+  private var lastCalc: Long = 0
+  def get: T = synchronized {
+    if (lastCalc + lifespanInMillis < Helpers.millis) {
+      currentValue = Empty
+    }
+    currentValue match {
+      case Full(v) => v
+      case _ => {
+        val ret = compute()
+        lastCalc = Helpers.millis
+        currentValue = Full(ret)
+        ret
+      }
+    }
+  }
+}
+
+object MyCachedThing extends SessionVar(CacheValue(() => "hello", 5000))
 
 object WebHelper {
   def oddOrEven(current: String) = {
