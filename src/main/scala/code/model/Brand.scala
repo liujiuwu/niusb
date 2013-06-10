@@ -17,6 +17,8 @@ import net.liftweb.mapper.MappedString
 import net.liftweb.mapper.MappedBoolean
 import net.liftweb.mapper.MappedLong
 import net.liftweb.http.S
+import net.liftweb.mapper.MappedLongForeignKey
+import net.liftweb.mapper.By
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -29,9 +31,10 @@ object BrandStatus extends Enumeration {
 
 class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   def getSingleton = Brand
-  object userId extends MappedLong(this) {
-    override def dbIndexed_? = true
-    override def dbColumnName = "user_id"
+  object owner extends MappedLongForeignKey(this, User) {
+    def getOwner = {
+      User.find(By(User.id, owner.get)).openOrThrowException("not found user")
+    }
   }
 
   object name extends MappedString(this, 20)
@@ -127,6 +130,6 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 object Brand extends Brand with CRUDify[Long, Brand] with LongKeyedMetaMapper[Brand] {
   override def dbTableName = "brands"
 
-  override def fieldOrder = List(id, userId, name, brandTypeId, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, brandOrder, createdAt, updatedAt)
+  override def fieldOrder = List(id, owner, name, brandTypeId, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, brandOrder, createdAt, updatedAt)
 
 }

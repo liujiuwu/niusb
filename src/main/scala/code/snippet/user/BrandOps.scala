@@ -29,10 +29,10 @@ import net.liftweb.mapper.Descending
 
 object BrandOps extends MyPaginatorSnippet[Brand] {
   //object brandVar extends RequestVar[Box[Brand]](Full(Brand.create))
-  val userId = User.currentUserId.map(_.toLong).openOr(0L)
+  def user = User.currentUser.openOrThrowException("not found user")
   override def itemsPerPage = 10
-  override def count = Brand.count(By(Brand.userId, userId))
-  override def page = Brand.findAll(By(Brand.userId, userId), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
+  override def count = Brand.count(By(Brand.owner, user))
+  override def page = Brand.findAll(By(Brand.owner, user), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
 
   def add = {
     var basePrice = "0"
@@ -41,7 +41,7 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
 
     def process(): JsCmd = {
       val brand = Brand.create.regNo(regNo).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
-      brand.userId(User.currentUserId.map(_.toInt).openOrThrowException("user id error"))
+      brand.owner(user)
       brand.brandTypeId(brandType.id)
       brand.basePrice(tryo(basePrice.toInt).getOrElse(0))
       brand.sellPrice(brand.basePrice + (brand.basePrice.get * 0.1).toInt)
@@ -82,7 +82,7 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
           val applicant = brandData.getOrElse("sqr", "")
           val zcggrq = brandData.getOrElse("zcggrq", "")
           val fwlb = brandData.getOrElse("fwlb", "")
-          SetValById("name", name) & SetValById("applicant", applicant) &
+          SetValById("name", name) & SetValById("applicant", applicant) & SetValById("brand_type", flh) &
             SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & JsRaw("""$('#getRemoteData').removeClass("disabled")""")
         }
       })

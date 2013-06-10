@@ -48,8 +48,6 @@ class User extends MegaProtoUser[User] with CreatedUpdated {
   object lastLoginTime extends MappedDateTime(this)
 
   object loginTime extends MappedDateTime(this)
-
-  def brands = Brand.findAll(By(Brand.userId, id.is))
 }
 
 object User extends User with MetaMegaProtoUser[User] {
