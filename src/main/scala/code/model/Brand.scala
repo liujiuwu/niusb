@@ -125,11 +125,17 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def dbColumnName = "brand_order"
   }
 
+  object isSelf extends MappedBoolean(this) {
+    override def dbColumnName = "is_self"
+  }
+
+  object remark extends MappedString(this, 300)
+
 }
 
 object Brand extends Brand with CRUDify[Long, Brand] with LongKeyedMetaMapper[Brand] {
   override def dbTableName = "brands"
 
-  override def fieldOrder = List(id, owner, name, brandTypeId, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, brandOrder, createdAt, updatedAt)
+  override def fieldOrder = List(id, owner, name, brandTypeId, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
 
 }

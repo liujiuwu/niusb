@@ -79,7 +79,7 @@ object SearchHelper {
         }
     }
     //new URL(picUrl) #> new File("d:\\test.jpg") !!
-
+    driver.close()
     resultMap
   }
 

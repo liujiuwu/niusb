@@ -1,13 +1,17 @@
 package code.snippet.user
 
+import scala.xml.NodeSeq
+import scala.xml.Text
 import code.lib.BrandType
+import code.lib.BrandTypeHelper
 import code.lib.SearchHelper
 import code.lib.WebHelper
 import code.model.Brand
+import code.model.BrandStatus
 import code.model.User
 import code.snippet.MyPaginatorSnippet
 import net.liftweb.common.Box
-import net.liftweb.common.Full
+import net.liftweb.common.Empty
 import net.liftweb.http.S
 import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JE._
@@ -15,20 +19,16 @@ import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmd._
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.mapper.By
+import net.liftweb.mapper.Descending
 import net.liftweb.mapper.MaxRows
+import net.liftweb.mapper.OrderBy
 import net.liftweb.mapper.StartAt
 import net.liftweb.util.Helpers._
-import scala.xml.Text
-import code.lib.BrandTypeHelper
-import net.liftweb.common.Empty
-import code.model.BrandStatus
-import scala.xml.NodeSeq
-import net.liftweb.mapper.OrderBy
-import net.liftweb.mapper.Ascending
-import net.liftweb.mapper.Descending
+import net.liftweb.http.RequestVar
 
 object BrandOps extends MyPaginatorSnippet[Brand] {
   //object brandVar extends RequestVar[Box[Brand]](Full(Brand.create))
+  object brandRV extends RequestVar[Brand](Brand.create)
   def user = User.currentUser.openOrThrowException("not found user")
   override def itemsPerPage = 10
   override def count = Brand.count(By(Brand.owner, user))
@@ -58,7 +58,8 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
     "@regNo" #> text(regNo, regNo = _) &
       "@basePrice" #> text(basePrice, basePrice = _) &
       "@name" #> text(name, name = _) &
-      "@brand_type" #> selectObj[BrandType](brandTypes.map(v => (v, v.id + " -> " + v.name)), Empty, brandType = _) &
+      //"@brand_type" #> selectObj[BrandType](brandTypes.map(v => (v, v.id + " -> " + v.name)), Empty, brandType = _) &
+      "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Empty, v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
       "@regDate" #> text(regDateStr, regDateStr = _) &
       "@applicant" #> text(applicant, applicant = _) &
       "@useDescn" #> textarea(useDescn, useDescn = _) &
@@ -82,7 +83,7 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
           val applicant = brandData.getOrElse("sqr", "")
           val zcggrq = brandData.getOrElse("zcggrq", "")
           val fwlb = brandData.getOrElse("fwlb", "")
-          SetValById("name", name) & SetValById("applicant", applicant) & SetValById("brand_type", flh) &
+          SetValById("name", name) & SetValById("applicant", applicant) & SetValById("brand_type", flh) & SetValById("stest", "2") &
             SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & JsRaw("""$('#getRemoteData').removeClass("disabled")""")
         }
       })
@@ -104,20 +105,31 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
       }
     }
 
-    var odd = "even"
-    "tr" #> page.map {
-      b =>
-        val brandType = BrandTypeHelper.brandTypes.get(b.brandTypeId.get).get
-        odd = WebHelper.oddOrEven(odd)
-        "tr [class]" #> odd &
-          "#regNo" #> b.regNo &
-          "#name" #> b.name &
-          "#brandType" #> { brandType.id + " -> " + brandType.name } &
-          "#regDate" #> b.regDate.asHtml &
-          "#status" #> statusLabel(b.status.get) &
-          "#basePrice" #> b.basePrice &
-          "#regNo" #> b.regNo
+    def statusBtn(brand: Brand): NodeSeq = {
+      brand.status.get match {
+        case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>
+          link("/user/brand/view",
+            () => brandRV(brand), <i class="icon-zoom-in"></i>, "class" -> "btn btn-small btn-success") ++ Text(" ") ++
+            link("/user/brand/edit",
+              () => brandRV(brand), <i class="icon-edit"></i>, "class" -> "btn btn-small btn-info") ++ Text(" ") ++
+              <a href="#" class="btn btn-small btn-danger"> <i class="icon-trash"></i></a>
+        case _ => Text("")
+      }
     }
+
+    var odd = "even"
+    "tr" #> page.map(b => {
+      val brandType = BrandTypeHelper.brandTypes.get(b.brandTypeId.get).get
+      odd = WebHelper.oddOrEven(odd)
+      "tr [class]" #> odd &
+        "#regNo" #> b.regNo &
+        "#name" #> b.name &
+        "#brandType" #> { brandType.id + " -> " + brandType.name } &
+        "#regDate" #> b.regDate.asHtml &
+        "#status" #> statusLabel(b.status.get) &
+        "#basePrice" #> b.basePrice &
+        "#opt-btns" #> statusBtn(b)
+    })
   }
 
 }

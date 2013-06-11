@@ -31,6 +31,9 @@ object Site {
     Menu("Pwd", menuLoc("Pwd", "key", "修改密码")) / "user" / "pwd" >> RequireLoggedIn >> UserMenuGroup,
     Menu("AddBrand", menuLoc("AddBrand", "plus", "发布商标")) / "user" / "brand" / "add" >> RequireLoggedIn >> UserMenuGroup,
     Menu("MyBrands", menuLoc("MyBrands", "list", "我的商标")) / "user" / "brand" / "index" >> RequireLoggedIn >> UserMenuGroup,
+    Menu("MyViewBrand", menuLoc("MyViewBrand", "", "查看商标")) / "user" / "brand" / "view" >> RequireLoggedIn >> Hidden,
+    Menu("MyEditBrand", menuLoc("MyEditBrand", "", "修改商标")) / "user" / "brand" / "edit" >> RequireLoggedIn >> Hidden,
+    Menu("MyDelBrand", menuLoc("MyDelBrand", "", "删除商标")) / "user" / "brand" / "delete" >> RequireLoggedIn >> Hidden,
     Menu("AdminUserList", menuLoc("AdminUserList", "user-md", "用户管理")) / "admin" / "user" / ** >> RequireAdminLoggedIn >> AdminMenuGroup,
     Menu("AdminBrandList", menuLoc("AdminBrandList", "list", "商标管理")) / "admin" / "brand" / ** >> RequireAdminLoggedIn >> AdminMenuGroup,
     Menu.i("ajaxExample") / "ajax",
@@ -39,7 +42,13 @@ object Site {
     Menu.i("Throw") / "throw" >> Hidden >> EarlyResponse(() => throw new Exception("This is only a test.")))
 
   def menuLoc(name: String, icon: String, linkText: String) = {
-    S.loc(name, <span><i class={ "icon-" + icon }></i> { linkText }</span>)
+    S.loc(name, <span>
+                  {
+                    if (!icon.isEmpty)
+                      <i class={ "icon-" + icon }></i>
+                  }{ linkText }
+                </span>)
   }
+
   def siteMap: SiteMap = User.sitemapMutator(SiteMap(menus: _*))
 }
