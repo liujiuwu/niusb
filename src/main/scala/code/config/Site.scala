@@ -8,6 +8,7 @@ import net.liftweb.http.S
 import code.model.User
 import net.liftweb.http.RedirectResponse
 import net.liftweb.http.Factory
+import scala.xml.Text
 
 object MenuGroups {
   val TopBarGroup = LocGroup("topbar")
@@ -45,7 +46,7 @@ object Site {
     S.loc(name, <span>
                   {
                     if (!icon.isEmpty)
-                      <i class={ "icon-" + icon }></i>
+                      <i class={ "icon-" + icon }></i> ++ Text(" ")
                   }{ linkText }
                 </span>)
   }
