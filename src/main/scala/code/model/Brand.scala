@@ -130,6 +130,38 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   object remark extends MappedString(this, 300)
+  
+   override lazy val createdAt = new MyUpdatedAt(this) {
+    override def dbColumnName = "created_at"
+
+    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+
+    override def parse(s: String): Box[java.util.Date] = {
+      val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+      try {
+        val date = df.parse(s)
+        Full(date)
+      } catch {
+        case _: Exception => Full(this.set(null))
+      }
+    }
+  }
+
+  override lazy val updatedAt = new MyUpdatedAt(this) {
+    override def dbColumnName = "updated_at"
+
+    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+
+    override def parse(s: String): Box[java.util.Date] = {
+      val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+      try {
+        val date = df.parse(s)
+        Full(date)
+      } catch {
+        case _: Exception => Full(this.set(null))
+      }
+    }
+  }
 
 }
 

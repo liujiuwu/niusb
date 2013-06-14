@@ -1,6 +1,10 @@
 package code.model
 
 import net.liftweb.mapper._
+import net.liftweb.common.Full
+import java.text.SimpleDateFormat
+import code.lib.WebHelper
+import net.liftweb.common.Box
 
 object UserType extends Enumeration {
   type UserType = Value
@@ -48,6 +52,38 @@ class User extends MegaProtoUser[User] with CreatedUpdated {
   object lastLoginTime extends MappedDateTime(this)
 
   object loginTime extends MappedDateTime(this)
+
+  override lazy val createdAt = new MyUpdatedAt(this) {
+    override def dbColumnName = "created_at"
+
+    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+
+    override def parse(s: String): Box[java.util.Date] = {
+      val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+      try {
+        val date = df.parse(s)
+        Full(date)
+      } catch {
+        case _: Exception => Full(this.set(null))
+      }
+    }
+  }
+
+  override lazy val updatedAt = new MyUpdatedAt(this) {
+    override def dbColumnName = "updated_at"
+
+    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+
+    override def parse(s: String): Box[java.util.Date] = {
+      val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+      try {
+        val date = df.parse(s)
+        Full(date)
+      } catch {
+        case _: Exception => Full(this.set(null))
+      }
+    }
+  }
 }
 
 object User extends User with MetaMegaProtoUser[User] {

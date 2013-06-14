@@ -2,7 +2,6 @@ package code.snippet.user
 
 import scala.xml.NodeSeq
 import scala.xml.Text
-
 import code.lib.BrandType
 import code.lib.BrandTypeHelper
 import code.lib.SearchHelper
@@ -27,31 +26,14 @@ import net.liftweb.mapper.MaxRows
 import net.liftweb.mapper.OrderBy
 import net.liftweb.mapper.StartAt
 import net.liftweb.util.Helpers._
+import code.snippet.TabMenu
 
-object BrandOps extends MyPaginatorSnippet[Brand] {
-  //object brandVar extends RequestVar[Box[Brand]](Full(Brand.create))
-  object tabMenuRV extends RequestVar[Box[(String, String)]](Empty)
-  object brandRV extends RequestVar[Brand](Brand.create)
+object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
+  object brandRV extends RequestVar[Box[Brand]](Empty)
   def user = User.currentUser.openOrThrowException("not found user")
   override def itemsPerPage = 10
   override def count = Brand.count(By(Brand.owner, user))
   override def page = Brand.findAll(By(Brand.owner, user), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
-
-  def tabMenu = {
-    val menu: NodeSeq = tabMenuRV.get match {
-      case Full(t) =>
-        <li class="active"><a>
-                             {
-                               if (!t._1.isEmpty())
-                                 <i class={ "icon-" + t._1 }></i>
-                             }
-                             { t._2 }
-                           </a></li>
-      case _ => Text("")
-    }
-
-    "span" #> menu
-  }
 
   def add = {
     var basePrice = "0"
@@ -113,54 +95,42 @@ object BrandOps extends MyPaginatorSnippet[Brand] {
     SearchHelper.searchBrandPicByRegNo(regNo)
   }
 
-  private def statusLabel(status: BrandStatus.Value): NodeSeq = {
-    status match {
-      case BrandStatus.ShenHeShiBai => <span class="label label-important">审核失败</span>
-      case BrandStatus.ShenHeZhong => <span class="label">审核中</span>
-      case BrandStatus.ChuShoZhong => <span class="label label-info">出售中</span>
-      case BrandStatus.JiaoYiZhong => <span class="label label-warning">交易中</span>
-      case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
-    }
-  }
-
   def list = {
-    def statusBtn(brand: Brand): NodeSeq = {
+    def actions(brand: Brand): NodeSeq = {
+      val viewLink = link("/user/brand/view",
+        () => brandRV(Full(brand)), <i class="icon-zoom-in"></i>, "class" -> "btn btn-small btn-success")
       brand.status.get match {
         case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>
-          link("/user/brand/view",
-            () => brandRV(brand), <i class="icon-zoom-in"></i>, "class" -> "btn btn-small btn-success") ++ Text(" ") ++
+          viewLink ++ Text(" ") ++
             link("/user/brand/edit",
-              () => brandRV(brand), <i class="icon-edit"></i>, "class" -> "btn btn-small btn-info") ++ Text(" ") ++
+              () => brandRV(Full(brand)), <i class="icon-edit"></i>, "class" -> "btn btn-small btn-info") ++ Text(" ") ++
               link("/user/brand/", () => { brand.delete_! }, <i class="icon-trash"></i>, "class" -> "btn btn-small btn-danger")
-        case _ => link("/user/brand/view",
-          () => brandRV(brand), <i class="icon-zoom-in"></i>, "class" -> "btn btn-small btn-success") ++ Text(" ")
+        case _ => viewLink
       }
     }
 
-    var odd = "even"
     "tr" #> page.map(brand => {
       val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
-      odd = WebHelper.oddOrEven(odd)
-      "tr [class]" #> odd &
-        "#regNo" #> brand.regNo &
+      "#regNo" #> brand.regNo &
         "#name" #> brand.name &
         "#brandType" #> { brandType.id + " -> " + brandType.name } &
+        "#applicant" #> brand.applicant &
         "#regDate" #> brand.regDate.asHtml &
-        "#status" #> statusLabel(brand.status.get) &
+        "#status" #> WebHelper.statusLabel(brand.status.get) &
         "#basePrice" #> <span class="badge badge-success">￥{ brand.basePrice }</span> &
-        "#opt-btns" #> statusBtn(brand)
+        "#actions" #> actions(brand)
     })
   }
 
-  def viewBrand = {
+  def view = {
     tabMenuRV(Full("zoom-in", "查看商标"))
-    val brand = brandRV.get
+    val brand = brandRV.is.get
     val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
     "#regNo" #> brand.regNo &
       "#name" #> brand.name &
       "#brand-type" #> { brandType.id + " -> " + brandType.name } &
-      "#status" #> statusLabel(brand.status.get) &
+      "#status" #> WebHelper.statusLabel(brand.status.get) &
       "#basePrice" #> <span class="badge badge-success">￥{ brand.basePrice }</span> &
       "#regdate" #> brand.regDate.asHtml &
       "#applicant" #> brand.applicant &

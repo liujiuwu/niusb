@@ -30,13 +30,20 @@ object Site {
     Menu("BrandSearch", menuLoc("BrandSearch", "search", "商标查询")) / "brand-search" >> TopBarGroup,
     Menu("Profile", menuLoc("Profile", "edit", "帐户信息")) / "user" / "profile" >> RequireLoggedIn >> UserMenuGroup,
     Menu("Pwd", menuLoc("Pwd", "key", "修改密码")) / "user" / "pwd" >> RequireLoggedIn >> UserMenuGroup,
-    Menu("AddBrand", menuLoc("AddBrand", "plus", "发布商标")) / "user" / "brand" / "add" >> RequireLoggedIn >> UserMenuGroup,
-    Menu("MyBrands", menuLoc("MyBrands", "list", "我的商标")) / "user" / "brand" / "index" >> RequireLoggedIn >> UserMenuGroup,
-    Menu("MyViewBrand", menuLoc("MyViewBrand", "", "查看商标")) / "user" / "brand" / "view" >> RequireLoggedIn >> Hidden,
-    Menu("MyEditBrand", menuLoc("MyEditBrand", "", "修改商标")) / "user" / "brand" / "edit" >> RequireLoggedIn >> Hidden,
-    Menu("MyDelBrand", menuLoc("MyDelBrand", "", "删除商标")) / "user" / "brand" / "delete" >> RequireLoggedIn >> Hidden,
-    Menu("AdminUserList", menuLoc("AdminUserList", "user-md", "用户管理")) / "admin" / "user" / ** >> RequireAdminLoggedIn >> AdminMenuGroup,
-    Menu("AdminBrandList", menuLoc("AdminBrandList", "list", "商标管理")) / "admin" / "brand" / ** >> RequireAdminLoggedIn >> AdminMenuGroup,
+    
+    Menu("UserAddBrand", menuLoc("UserAddBrand", "plus", "发布商标")) / "user" / "brand" / "add" >> RequireLoggedIn >> UserMenuGroup,
+    Menu("UserListBrand", menuLoc("UserListBrand", "list", "我的商标")) / "user" / "brand" / "index" >> RequireLoggedIn >> UserMenuGroup,
+    Menu("UserViewBrand", menuLoc("UserViewBrand", "", "查看商标")) / "user" / "brand" / "view" >> RequireLoggedIn >> Hidden,
+    Menu("UserEditBrand", menuLoc("UserEditBrand", "", "修改商标")) / "user" / "brand" / "edit" >> RequireLoggedIn >> Hidden,
+    
+    Menu("AdminListUser", menuLoc("AdminListUser", "user-md", "用户管理")) / "admin" / "user" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
+    Menu("AdminViewUser", menuLoc("AdminViewUser", "", "查看用户")) / "admin" / "user" / "view" >> RequireAdminLoggedIn >> Hidden,
+    Menu("AdminEditUser", menuLoc("AdminEditUser", "", "修改用户")) / "admin" / "user" / "edit" >> RequireAdminLoggedIn >> Hidden,
+    
+    Menu("AdminListBrand", menuLoc("AdminListBrand", "list", "商标管理")) / "admin" / "brand" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
+    Menu("AdminViewBrand", menuLoc("AdminViewBrand", "", "查看商标")) / "admin" / "brand" / "view" >> RequireAdminLoggedIn >> Hidden,
+    Menu("AdminEditBrand", menuLoc("AdminEditBrand", "", "修改商标")) / "admin" / "brand" / "edit" >> RequireAdminLoggedIn >> Hidden,
+    
     Menu.i("ajaxExample") / "ajax",
     Menu.i("Error") / "error" >> Hidden,
     Menu.i("404") / "404" >> Hidden,
