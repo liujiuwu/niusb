@@ -11,7 +11,7 @@ object NavOps {
     val menus: NodeSeq = User.currentUser match {
       case Full(user) =>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> <span id="topBarUserName">{ if (user.name.get.isEmpty()) user.mobile.get else user.name.get } </span><b class='caret'></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> <span id="displayName">{ user.displayName } </span><b class='caret'></b></a>
           <ul class="dropdown-menu">
             <lift:Menu.group group="userMenu">
               <li><menu:bind/></li>

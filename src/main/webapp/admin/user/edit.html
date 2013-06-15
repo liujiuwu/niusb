@@ -1,12 +1,17 @@
-<div class="box-content" data-lift="surround?with=user;at=content">
-	<div class="alert alert-info">请放心填写，此信息只用于商标交易洽谈，不会泄露另作它用。</div>
+<div class="box-content" data-lift="surround?with=admin;at=content">
 	<div id="opt_profile_tip" class="alert hide"></div>
 	<form data-lift="form.ajax?class=form-horizontal">
-		<fieldset data-lift="user.UserOps.edit">
+		<fieldset data-lift="admin.UserOps.edit">
 			<div id="group_user_type" class="control-group">
 				<label for="user_type" class="control-label">会员级别</label>
 				<div class="controls">
 					<input type="text" id="user_type" name="user_type">
+				</div>
+			</div>
+			<div id="group_enabled" class="control-group">
+				<label for="enabled" class="control-label">会员状态</label>
+				<div class="controls">
+					<input type="text" id="enabled" name="enabled">
 				</div>
 			</div>
 			<div id="group_name" class="control-group">

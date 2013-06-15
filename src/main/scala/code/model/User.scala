@@ -9,8 +9,14 @@ import net.liftweb.common.Box
 object UserType extends Enumeration {
   type UserType = Value
   val Normal = Value(0, "普通会员")
-  val Vip = Value(1, "Vip会员")
+  val Vip = Value(1, "VIP会员")
   val Agent = Value(2, "代理会员")
+}
+
+object UserStatus extends Enumeration {
+  type UserStatus = Value
+  val Normal = Value(0, "正常")
+  val Disabled = Value(1, "禁止")
 }
 
 class User extends MegaProtoUser[User] with CreatedUpdated {
@@ -41,8 +47,8 @@ class User extends MegaProtoUser[User] with CreatedUpdated {
     override def dbColumnName = "user_type"
   }
 
-  object enabled extends MappedBoolean(this) {
-    override def defaultValue = true
+  object enabled extends MappedEnum(this, UserStatus) {
+    override def defaultValue = UserStatus.Normal
   }
 
   object address extends MappedString(this, 250) {
@@ -84,6 +90,10 @@ class User extends MegaProtoUser[User] with CreatedUpdated {
       }
     }
   }
+
+  def displayName = if (name.get.isEmpty()) mobile.get else name.get
+
+  def brandCount = Brand.count(By(Brand.owner, this))
 }
 
 object User extends User with MetaMegaProtoUser[User] {

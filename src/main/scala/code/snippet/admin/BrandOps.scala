@@ -2,50 +2,50 @@ package code.snippet.admin
 
 import scala.xml.NodeSeq
 import scala.xml.Text
-import code.lib.BrandType
+
 import code.lib.BrandTypeHelper
-import code.lib.SearchHelper
 import code.lib.WebHelper
 import code.model.Brand
 import code.model.BrandStatus
 import code.model.User
 import code.snippet.MyPaginatorSnippet
+import code.snippet.TabMenu
 import net.liftweb.common.Box
 import net.liftweb.common.Box.box2Option
 import net.liftweb.common.Empty
 import net.liftweb.common.Full
 import net.liftweb.http.RequestVar
-import net.liftweb.http.S
 import net.liftweb.http.SHtml.ElemAttr.pairToBasic
-import net.liftweb.http.SHtml.ajaxCall
-import net.liftweb.http.SHtml.hidden
 import net.liftweb.http.SHtml.link
-import net.liftweb.http.SHtml.select
-import net.liftweb.http.SHtml.text
-import net.liftweb.http.SHtml.textarea
-import net.liftweb.http.js.JE.JsRaw
-import net.liftweb.http.js.JE.ValById
-import net.liftweb.http.js.JsCmd
-import net.liftweb.http.js.JsCmds.Noop
-import net.liftweb.http.js.JsCmds.SetValById
-import net.liftweb.http.js.JsCmds.cmdToString
-import net.liftweb.http.js.JsCmds.jsExpToJsCmd
-import net.liftweb.http.js.JsExp.strToJsExp
 import net.liftweb.mapper.By
 import net.liftweb.mapper.Descending
 import net.liftweb.mapper.MaxRows
+import net.liftweb.mapper.NotBy
 import net.liftweb.mapper.OrderBy
 import net.liftweb.mapper.StartAt
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
-import net.liftweb.util.Helpers.tryo
-import code.snippet.TabMenu
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
   object brandRV extends RequestVar[Brand](Brand.create)
+  object userRV extends RequestVar[Box[User]](Empty)
+
   override def itemsPerPage = 10
-  override def count = Brand.count()
-  override def page = Brand.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
+  override def count = {
+    userRV.is match {
+      case Full(user) => Brand.count(By(Brand.owner, user))
+      case _ => Brand.count()
+    }
+  }
+  override def page = {
+    println(userRV.is + "=================")
+    userRV.is match {
+      case Full(user) =>
+        Brand.findAll(By(Brand.owner, user), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
+      case _ => Brand.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
+    }
+
+  }
 
   def list = {
     def actions(brand: Brand): NodeSeq = {

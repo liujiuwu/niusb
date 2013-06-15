@@ -20,13 +20,12 @@ import code.model.UserType
 object UserOps {
   object userVar extends RequestVar(User.currentUser.openOrThrowException("user no login"))
 
-  def update = {
+  def edit = {
     val user = userVar.is
 
     def process(): JsCmd = {
       user.save
-      val name = if (user.name.is == "") user.mobile.is else user.name.is
-      JsRaw(WebHelper.succMsg("opt_profile_tip", Text("个人信息保存成功！"))) & JsRaw("""$("#topBarUserName").text("%s")""".format(name))
+      JsRaw(WebHelper.succMsg("opt_profile_tip", Text("个人信息保存成功！"))) & JsRaw("""$("#displayName").text("%s")""".format(user.displayName))
     }
 
     "@name" #> text(user.name.is, user.name(_)) &
