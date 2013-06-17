@@ -23,8 +23,8 @@ import net.liftweb.http.js.JsCmd
 import code.model.UserType
 import code.model.UserStatus
 
+object userRV extends RequestVar[Box[User]](Empty)
 object UserOps extends TabMenu with MyPaginatorSnippet[User] {
-  object userRV extends RequestVar[Box[User]](Empty)
 
   override def itemsPerPage = 10
   override def count = User.count()

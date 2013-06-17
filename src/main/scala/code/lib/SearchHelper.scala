@@ -13,6 +13,11 @@ import net.liftweb.common.Box
 import net.liftweb.http.LiftResponse
 import net.liftweb.common.Full
 import net.liftweb.common.Empty
+import com.gargoylesoftware.htmlunit.WebRequest
+import com.gargoylesoftware.htmlunit.WebClient
+import javax.imageio.ImageIO
+import java.io.ByteArrayOutputStream
+import java.io.FileOutputStream
 
 object SearchHelper {
 
@@ -91,7 +96,7 @@ object SearchHelper {
     val home = """http://sbcx.saic.gov.cn/trade/"""
     val regnoUrl = s"""http://sbcx.saic.gov.cn/trade/servlet?Search=FL_REG_List&RegNO=${regno}"""
 
-    val driver: WebDriver = new HtmlUnitDriver()
+    val driver: WebDriver = new HtmlUnitDriver
     driver.get(home)
     driver.get(regnoUrl)
 
@@ -99,12 +104,18 @@ object SearchHelper {
     val (brandType, brandName) = (brandSimpleData(2), brandSimpleData(3))
     val picUrl = s"""http://sbcx.saic.gov.cn/trade/pictureservlet?RegNO=${regno}&IntCls=${brandType}"""
     driver.get(picUrl)
+    driver.get(picUrl)
 
-    println(driver.getPageSource())
     //val is = new URL(picUrl).openStream()
 
-    val imageBytes = driver.getPageSource().getBytes()
+    //IOUtils.toByteArray(is)
 
+    val imageBytes = driver.getPageSource().getBytes()
+    val out = new FileOutputStream("d:\\test.jpeg");
+    out.write(imageBytes)
+    out.close()
+
+    //WebHelper.captcha
     Full(InMemoryResponse(imageBytes, ("Content-Type" -> "image/jpeg") :: Nil, Nil, 200))
   }
 }

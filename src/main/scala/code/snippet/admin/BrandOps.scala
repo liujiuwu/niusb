@@ -28,7 +28,7 @@ import net.liftweb.util.Helpers.strToSuperArrowAssoc
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
   object brandRV extends RequestVar[Brand](Brand.create)
-  object userRV extends RequestVar[Box[User]](Empty)
+  //object userRV extends RequestVar[Box[User]](Empty)
 
   override def itemsPerPage = 10
   override def count = {
