@@ -890,3 +890,8 @@ th .lbl:only-child, td .lbl:only-child {
 .dropdown-menu .divider {
     margin: 2px 1px;
 }
+
+
+.search-form{
+	margin-bottom:10px;
+}
