@@ -18,7 +18,7 @@ trait MyPaginatorSnippet[T] extends PaginatorSnippet[T] {
   override def firstXml: NodeSeq = Text("首页")
   override def lastXml: NodeSeq = Text("尾页")
 
-  override def pageXml(newFirst: Long, ns: NodeSeq): NodeSeq =
+  /*override def pageXml(newFirst: Long, ns: NodeSeq): NodeSeq =
     if (first == newFirst || newFirst < 0 || newFirst >= count)
       <span class="current">{ ns }</span>
     else
@@ -33,5 +33,5 @@ trait MyPaginatorSnippet[T] extends PaginatorSnippet[T] {
         case (a, b) => a ++ sep ++ b
       }
       case Nil => Nil
-    }
+    }*/
 }

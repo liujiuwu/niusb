@@ -28,11 +28,23 @@ import net.liftweb.http.RedirectResponse
 import net.liftweb.http.S
 import code.config.Site
 import code.lib.SearchHelper
+import net.liftweb.common.Loggable
+import net.liftweb.db.DBLogEntry
 
-class Boot {
+class Boot extends Loggable{
   def boot {
     LiftRules.addToPackages("code")
     DB.defineConnectionManager(DefaultConnectionIdentifier, MyDBVendor)
+    /*DB.addLogFunc {
+      case (log, duration) => {
+        logger.debug("Total query time : %d ms".format(duration))
+        log.allEntries.foreach {
+          case DBLogEntry(stmt, duration) =>
+            logger.debug("  %s in %d ms".format(stmt, duration))
+        }
+      }
+    }*/
+     DB.addLogFunc((query, len) => logger.info("The query: "+query+" took"+len+" milliseconds")) 
     Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
 
     FoBo.InitParam.JQuery = FoBo.JQuery191

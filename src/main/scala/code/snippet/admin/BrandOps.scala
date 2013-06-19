@@ -81,7 +81,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
         Brand.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
       }
     } else {*/
-      Brand.findAll(queryParam,StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
+      Brand.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
    // }
     /*userRV.is match {
       case Full(user) =>
