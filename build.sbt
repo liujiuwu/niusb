@@ -51,6 +51,7 @@ libraryDependencies ++= {
     "org.eclipse.jetty" % "jetty-webapp"        % "8.0.4.v20111024"  % "container,test",
     "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "provided->default",
     "ch.qos.logback"    % "logback-classic"     % "1.0.6",
+    "net.coobird" % "thumbnailator" % "0.4.5",
     "junit"             % "junit" % "4.10" % "test->default"
   )
 }

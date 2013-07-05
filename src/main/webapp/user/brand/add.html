@@ -1,5 +1,10 @@
 <div class="box-content" data-lift="surround?with=user;at=content">
 	<head_merge>
+	  <script type="text/javascript" src="/js/jquery.ui.widget.min.js"></script>
+      <script type="text/javascript" src="/js/jquery.iframe-transport.js"></script>
+      <script type="text/javascript" src="/js/jquery.fileupload.js"></script>
+	  <script type="text/javascript" src="/js/jquery.Jcrop.js"></script>
+	  <link rel="stylesheet" href="/css/jquery.Jcrop.css" type="text/css" />
 	<link rel="stylesheet" href="/css/datetimepicker.css" />
 	</head_merge>
 	<div id="opt_brand_tip" class="alert hide"></div>
@@ -13,6 +18,7 @@
 						<button class="btn" type="button" id="getRemoteData" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
 					</div>
 					<span id="error_regNo" class="help-inline"></span>
+					<button class="btn btn-success" type="button" data-toggle="modal" data-target="#uploadDialog">商标图片上传</button>
 				</div>
 			</div>
 			<div id="group_brand_type" class="control-group">
@@ -51,18 +57,6 @@
 					<input type="text" id="applicant" name="applicant" placeholder="填写商标申请人" required> <span id="error_applicant" class="help-inline"></span>
 				</div>
 			</div>
-			<!-- <div id="group_pic" class="control-group">
-							<label for="pic" class="control-label">上传商标图</label>
-							<div class="controls">
-								<input type="file" id="pic" name="pic" required> <span id="error_pic" class="help-inline"></span>
-							</div>
-						</div>
-						<div id="group_adPic" class="control-group">
-							<label for="adPic" class="control-label">上传广告图</label>
-							<div class="controls">
-								<input type="file" id="adPic" name="adPic" required> <span id="error_adPic" class="help-inline"></span>
-							</div>
-						</div> -->
 			<div id="group_useDescn" class="control-group">
 				<label for="useDescn" class="control-label">使用范围</label>
 				<div class="controls">
@@ -83,6 +77,39 @@
 			</div>
 		</fieldset>
 	</form>
+
+	<div id="uploadDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="uuploadModalLabel" aria-hidden="true" style="width: 765px">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="loginModalLabel">商标图片上传</h3>
+		</div>
+		<div class="modal-body">
+			<div>
+				<form id="file-upload" action="/uploading" method="POST" enctype="multipart/form-data">
+					<input type="file" name="file[]" />
+				</form>
+			</div>
+			<div class="pull-left">
+			<div id="image" style="width: 400px; height: 300px; background: gray">
+				<span>Drop image here</span>
+			</div>
+			</div>
+			<div class="pull-right">
+				<div style="width: 320px; height: 205px; background: red">
+					<span>Drop image here</span>
+				</div>
+				<div style="margin-top:20px;width: 120px; height: 74px; background: red">
+					<span>Drop image here</span>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+			<button type="submit" id="upload_btn" class="btn btn-primary disabled">确定</button>
+			<input type="hidden" name="sub">
+		</div>
+	</div>
+
 	<script type="text/javascript" src="/js/bootstrap-datetimepicker.min.js"></script>
 	<script type="text/javascript" src="/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script type="text/javascript">
@@ -99,6 +126,11 @@
 			$('#getRemoteData').click(function() {
 				$('#getRemoteData').addClass("disabled");
 			});
+			
+			
+			$("#file-upload").fileupload({dataType:'json', url:'/uploading', dropZone:$('#image'),
+		        done:function(e, data){$("#image").html("<img src='/upload/" + data.result.name + "' />");}
+		        });
 		});
 	</script>
 </div>
