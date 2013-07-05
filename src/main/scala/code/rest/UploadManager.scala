@@ -42,26 +42,15 @@ object UploadManager extends RestHelper with Loggable {
 
   serve {
     case "uploading" :: Nil Post req => {
-      def saveImage(fph: FileParamHolder) = fph match {
-        case fp: OnDiskFileParamHolder =>
-          saveImaget(fp)
-        case _ =>
-          logger.info("File not found")
-          ("name" -> "") ~ ("" -> "")
-      }
-
-      def saveImaget(fp: OnDiskFileParamHolder) = {
-        println("File: " + fp.localFile.getAbsolutePath)
-        val in = fp.fileStream
+      def saveImage(fph: FileParamHolder) =  {
         val newFileName = StringHelpers.randomString(16)+".jpg"
         val uploadDir = getBaseApplicationPath.get + File.separator + "upload" + File.separator + newFileName
-        Thumbnails.of(fp.localFile)
+        Thumbnails.of(fph.fileStream)
           .size(400, 300)
           .outputQuality(1f)
           .toFile(new File(uploadDir));
 
-        val wasDeleted_? = fp.localFile.delete()
-        ("name" -> newFileName) ~ ("type" -> fp.mimeType) ~ ("size" -> fp.length)
+        ("name" -> newFileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
       }
 
       val ojv: Box[JValue] = req.uploadedFiles.map(fph => saveImage(fph)).headOption
