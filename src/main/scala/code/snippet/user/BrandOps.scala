@@ -27,6 +27,10 @@ import net.liftweb.mapper.OrderBy
 import net.liftweb.mapper.StartAt
 import net.liftweb.util.Helpers._
 import code.snippet.TabMenu
+import net.liftweb.json.JsonDSL._
+import code.rest.UploadManager
+import java.io.File
+import net.coobird.thumbnailator.Thumbnails
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
   object brandRV extends RequestVar[Box[Brand]](Empty)
@@ -136,6 +140,30 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
       "#applicant" #> brand.applicant &
       "#useDescn" #> brand.useDescn &
       "#descn" #> brand.descn
+  }
+
+  def uploadBrandPic = {
+    var picName, x, y, w, h = ""
+    def process(): JsCmd = {
+      println(picName+"|"+x+"|"+y)
+      val uploadPic = UploadManager.getUploadDirTmp + File.separator + picName
+      val saveUploadPic = UploadManager.getUploadDir + File.separator + picName + "x320.jpg"
+      Thumbnails.of(uploadPic)
+        .sourceRegion(x.toInt, y.toInt, w.toInt, h.toInt)
+        .size(w.toInt, h.toInt)
+        .outputQuality(1f)
+        .toFile(new File(saveUploadPic));
+
+      SetHtml("result", Text(x))
+
+    }
+
+    "@picName" #> hidden(picName = _, picName) &
+      "@x" #> hidden(x = _, x) &
+      "@y" #> hidden(y = _, y) &
+      "@w" #> hidden(w = _, w) &
+      "@h" #> hidden(h = _, h) &
+      "type=submit" #> ajaxSubmit("保存商标图", process)
   }
 
 }

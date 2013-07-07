@@ -40,15 +40,31 @@ object UploadManager extends RestHelper with Loggable {
       }
     }
 
+  def getUploadDirTmp: File = {
+    val dir = new File(getUploadDir + File.separator + "tmp")
+    if (!dir.exists()) {
+      dir.mkdirs()
+    }
+    dir
+  }
+  
+  def getUploadDir: File = {
+    val dir = new File(getBaseApplicationPath.get + File.separator + "upload")
+    if (!dir.exists()) {
+      dir.mkdirs()
+    }
+    dir
+  }
+
   serve {
     case "uploading" :: Nil Post req => {
-      def saveImage(fph: FileParamHolder) =  {
-        val newFileName = StringHelpers.randomString(16)+".jpg"
-        val uploadDir = getBaseApplicationPath.get + File.separator + "upload" + File.separator + newFileName
+      def saveImage(fph: FileParamHolder) = {
+        val newFileName = StringHelpers.randomString(16) + ".jpg"
+        val uploadFileName = getUploadDirTmp + File.separator + newFileName
         Thumbnails.of(fph.fileStream)
           .size(400, 300)
           .outputQuality(1f)
-          .toFile(new File(uploadDir));
+          .toFile(new File(uploadFileName));
 
         ("name" -> newFileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
       }
