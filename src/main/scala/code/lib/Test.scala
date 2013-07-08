@@ -33,7 +33,7 @@ object Test extends App {
   val mobileRegx = """类似群(.+)初审公告期号""".r
   mobileRegx.findFirstMatchIn(mobile).groupBy(g => println(g.group(1)))*/
 
-  val regno = "10697213"
+  /*val regno = "10697213"
   val home = "http://sbcx.saic.gov.cn/trade"
   val regnoUrl = s"""http://sbcx.saic.gov.cn/trade/servlet?Search=FL_REG_List&RegNO=${regno}"""
 
@@ -46,7 +46,14 @@ object Test extends App {
   
   val response = httpclient.execute(get)
   
-  println(EntityUtils.toString(response.getEntity()))
-  
+  println(EntityUtils.toString(response.getEntity()))*/
+
+  val t1 = "1EBPJZTEAIDIXEXW.jpg"
+  val t2 = "31EBPJZTEAIDIXEXW.jpg"
+  val r = """([\w]+).(jpg|jpeg|png)""".r
+  t1 match {
+    case r(f, e) => println(f + "x320|" + e)
+    case _ => println("no")
+  }
 
 }

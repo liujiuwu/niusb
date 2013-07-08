@@ -41,11 +41,11 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
 
   def add = {
     var basePrice = "0"
-    var regNo, name, regDateStr, applicant, useDescn, descn = ""
+    var regNo, pic, name, regDateStr, applicant, useDescn, descn = ""
     var brandType: BrandType = BrandTypeHelper.brandTypes.get(25).get
 
     def process(): JsCmd = {
-      val brand = Brand.create.regNo(regNo).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
+      val brand = Brand.create.regNo(regNo).name(name).pic(pic).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
       brand.owner(user)
       brand.brandTypeId(brandType.id)
       brand.basePrice(tryo(basePrice.toInt).getOrElse(0))
@@ -63,6 +63,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
     "@regNo" #> text(regNo, regNo = _) &
       "@basePrice" #> text(basePrice, basePrice = _) &
       "@name" #> text(name, name = _) &
+      "@pic" #> hidden(pic = _, pic) &
       //"@brand_type" #> selectObj[BrandType](brandTypes.map(v => (v, v.id + " -> " + v.name)), Empty, brandType = _) &
       "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Empty, v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
       "@regDate" #> text(regDateStr, regDateStr = _) &
@@ -125,14 +126,27 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
         "#actions" #> actions(brand)
     })
   }
+  
+  def st(picName:String):String = {
+     val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
+    var newPicName = picName
+      picName match {
+        case scalePicNameReg(f, e) => newPicName = (f + "x320." + e)
+        case _ => newPicName = picName
+      }
+    newPicName
+  }
 
   def view = {
     tabMenuRV(Full("zoom-in", "查看商标"))
     val brand = brandRV.is.get
     val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
+    
+    
     "#regNo" #> brand.regNo &
       "#name" #> brand.name &
+      "#pic" #> <img src={ "/upload/" + st(brand.pic.get) }/> &
       "#brand-type" #> { brandType.id + " -> " + brandType.name } &
       "#status" #> WebHelper.statusLabel(brand.status.get) &
       "#basePrice" #> <span class="badge badge-success">￥{ brand.basePrice }</span> &
@@ -145,9 +159,16 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
   def uploadBrandPic = {
     var picName, x, y, w, h = ""
     def process(): JsCmd = {
-      println(picName+"|"+x+"|"+y)
+      println(picName + "|" + x + "|" + y)
       val uploadPic = UploadManager.getUploadDirTmp + File.separator + picName
-      val saveUploadPic = UploadManager.getUploadDir + File.separator + picName + "x320.jpg"
+      val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
+      var newPicName = picName
+      picName match {
+        case scalePicNameReg(f, e) => newPicName = (f + "x320." + e)
+        case _ => newPicName = picName
+      }
+
+      val saveUploadPic = UploadManager.getUploadDir + File.separator + newPicName
       Thumbnails.of(uploadPic)
         .sourceRegion(x.toInt, y.toInt, w.toInt, h.toInt)
         .size(w.toInt, h.toInt)
