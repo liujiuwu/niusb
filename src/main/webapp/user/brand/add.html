@@ -4,6 +4,9 @@
 	<link rel="stylesheet" href="/css/bootstrap-modal.css" type="text/css" />
 	<link rel="stylesheet" href="/css/datetimepicker.css" />
 	<link rel="stylesheet" href="/css/jquery.Jcrop.css" type="text/css" />
+	<style>
+	.jcrop img {max-width: none}
+	</style>
 	</head_merge>
 
 	<script type="text/javascript" src="/js/jquery.Jcrop.js"></script>
@@ -92,10 +95,10 @@
 				<div style="margin-top: 10px">
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
-							<td><img id="original-img" src="/upload/tmp/ECS2T0HTASYNGNC2.jpg" /></td>
+							<td class="jcrop"><img id="original-img"/></td>
 							<td>
-								<div id="preview-image-box" style="width: 320px; height: 200px; overflow: hidden; margin-left: 5px;">
-									<img id="preview-img" width="400" height="267" style="border:1px solid red"/>
+								<div id="preview-image-box" style="width: 320px; height: 200px; overflow: hidden; margin-left: 5px;" class="jcrop">
+									<img id="preview-img"/>
 								</div>
 							</td>
 						</tr>
@@ -147,7 +150,7 @@
 						onChange : showPreview,
 						onSelect : showPreview,
 						aspectRatio : 320 / 200,
-						minSize:[160,100],
+						minSize:[320,200],
 						setSelect : [ 0, 0, 320, 200 ]
 					});
 					

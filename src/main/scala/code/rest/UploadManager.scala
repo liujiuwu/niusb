@@ -22,23 +22,23 @@ import net.liftweb.json.JsonDSL.pair2jvalue
 import net.liftweb.json.JsonDSL.string2jvalue
 import net.coobird.thumbnailator.Thumbnails
 import net.liftweb.util.StringHelpers
+import javax.imageio.ImageIO
+import com.sksamuel.scrimage.Image
 
 object UploadManager extends RestHelper with Loggable {
-  def getBaseApplicationPath: Box[String] =
-    {
-      LiftRules.context match {
-        case context: HTTPServletContext =>
-          {
-            var baseApp: String = context.ctx.getRealPath("/")
-
-            if (!baseApp.endsWith(File.separator))
-              baseApp = baseApp + File.separator
-
-            Full(baseApp)
+  def getBaseApplicationPath: Box[String] = {
+    LiftRules.context match {
+      case context: HTTPServletContext =>
+        {
+          var baseApp: String = context.ctx.getRealPath("/")
+          if (!baseApp.endsWith(File.separator)) {
+            baseApp = baseApp + File.separator
           }
-        case _ => Empty
-      }
+          Full(baseApp)
+        }
+      case _ => Empty
     }
+  }
 
   def getUploadDirTmp: File = {
     val dir = new File(getUploadDir + File.separator + "tmp")
@@ -47,7 +47,7 @@ object UploadManager extends RestHelper with Loggable {
     }
     dir
   }
-  
+
   def getUploadDir: File = {
     val dir = new File(getBaseApplicationPath.get + File.separator + "upload")
     if (!dir.exists()) {
@@ -56,15 +56,30 @@ object UploadManager extends RestHelper with Loggable {
     dir
   }
 
+  def scaleWh(width: Int, height: Int, maxWidth: Int = 400, maxHeight: Int = 300): (Int, Int) = {
+    if (width <= maxWidth && height <= maxHeight) {
+      return (width, height)
+    }
+    if (width > height) (maxWidth, height * maxWidth / width) else (width * maxHeight / height, maxHeight)
+  }
+
   serve {
     case "uploading" :: Nil Post req => {
       def saveImage(fph: FileParamHolder) = {
-        val newFileName = StringHelpers.randomString(16) + ".jpg"
+        val newFileName = StringHelpers.randomString(16) + ".png"
         val uploadFileName = getUploadDirTmp + File.separator + newFileName
-        Thumbnails.of(fph.fileStream)
-          .size(400, 300)
+
+        val originalImg = Image(fph.fileStream)
+        val width = originalImg.width
+        val height = originalImg.height
+        val wh = scaleWh(width, height)
+
+        originalImg.fit(wh._1,wh._2).write(uploadFileName)
+        
+        /*Thumbnails.of(fph.fileStream)
+          .size(wh._1,wh._2)
           .outputQuality(1f)
-          .toFile(new File(uploadFileName));
+          .toFile(new File(uploadFileName));*/
 
         ("name" -> newFileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
       }

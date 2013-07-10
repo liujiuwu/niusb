@@ -52,6 +52,8 @@ libraryDependencies ++= {
     "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "provided->default",
     "ch.qos.logback"    % "logback-classic"     % "1.0.6",
     "net.coobird" % "thumbnailator" % "0.4.5",
+    "com.sksamuel.scrimage" % "scrimage-core" % "1.3.1",
+    "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.1",
     "junit"             % "junit" % "4.10" % "test->default"
   )
 }
