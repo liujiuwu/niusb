@@ -1,38 +1,12 @@
 <div class="box-content" data-lift="surround?with=user;at=content">
-	<head_merge> <script type="text/javascript" src="/js/jquery.ui.widget.min.js"></script> <script type="text/javascript" src="/js/jquery.iframe-transport.js"></script> <script type="text/javascript" src="/js/jquery.fileupload.js"></script> <script type="text/javascript" src="/js/jquery.Jcrop.js"></script>
-	<link rel="stylesheet" href="/css/jquery.Jcrop.css" type="text/css" />
+	<head_merge> <script type="text/javascript" src="/js/jquery.ui.widget.min.js"></script> <script type="text/javascript" src="/js/jquery.iframe-transport.js"></script> <script type="text/javascript" src="/js/jquery.fileupload.js"></script>
 	<link rel="stylesheet" href="/css/jquery.fileupload-ui.css" type="text/css" />
 	<link rel="stylesheet" href="/css/bootstrap-modal.css" type="text/css" />
 	<link rel="stylesheet" href="/css/datetimepicker.css" />
+	<link rel="stylesheet" href="/css/jquery.Jcrop.css" type="text/css" />
 	</head_merge>
 
-	<style>
-.jcrop-holder #preview-pane-m {
-	display: block;
-	position: absolute;
-	z-index: 2000;
-	top: 10px;
-	right: -280px;
-	padding: 6px;
-	border: 1px rgba(0, 0, 0, .4) solid;
-	background-color: white;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	-webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
-	box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
-}
-
-/* The Javascript code will set the aspect ratio of the crop
-   area based on the size of the thumbnail preview,
-   specified here */
-#preview-pane-m .preview-container {
-	width: 320px;
-	height: 200px;
-	overflow: hidden;
-}
-</style>
+	<script type="text/javascript" src="/js/jquery.Jcrop.js"></script>
 	<div id="opt_brand_tip" class="alert hide"></div>
 	<form data-lift="form.ajax?class=form-horizontal">
 		<fieldset data-lift="user.BrandOps.add">
@@ -43,8 +17,7 @@
 						<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required class="input-medium">
 						<button class="btn" type="button" id="getRemoteData" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
 					</div>
-					<span id="error_regNo" class="help-inline"></span>
-					<input type="hidden" id="pic" name="pic"/>
+					<span id="error_regNo" class="help-inline"></span> <input type="hidden" id="pic" name="pic" />
 					<button class="btn btn-success" type="button" data-toggle="modal" data-target="#uploadDialog">商标图片上传</button>
 				</div>
 			</div>
@@ -117,30 +90,23 @@
 					</span>
 				</form>
 				<div style="margin-top: 10px">
-					<div class="pull-left">
-						<div id="original-image" class="thumbnail imagePreview original">
-							<img data-src="holder.js/400x300" alt="原图">
-						</div>
-					</div>
-					<div class="pull-right">
-						<div id="preview-pane-m">
-							<div class="preview-container"></div>
-						</div>
-						<!-- <div id="preview-pane-s" class="thumbnail imagePreview x120">
-							<img data-src="holder.js/120x75" alt="小图">
-						</div> -->
-					</div>
+					<table cellpadding="0" cellspacing="0" border="0">
+						<tr>
+							<td><img id="original-img" src="/upload/tmp/ECS2T0HTASYNGNC2.jpg" /></td>
+							<td>
+								<div id="preview-image-box" style="width: 320px; height: 200px; overflow: hidden; margin-left: 5px;">
+									<img id="preview-img" width="400" height="267" style="border:1px solid red"/>
+								</div>
+							</td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>
 		<div class="modal-footer">
 			<form data-lift="form.ajax">
 				<div data-lift="user.BrandOps.uploadBrandPic">
-					<input type="hidden" id="picName" name="picName" />
-					<input type="hidden" id="x" name="x" />
-					<input type="hidden" id="y" name="y" />
-					<input type="hidden" id="w" name="w" />
-					<input type="hidden" id="h" name="h" />
+					<input type="hidden" id="picName" name="picName" /> <input type="hidden" id="x" name="x" /> <input type="hidden" id="y" name="y" /> <input type="hidden" id="w" name="w" /> <input type="hidden" id="h" name="h" />
 					<button type="submit" id="submit-avatar" class="btn btn-primary">保存商标图</button>
 				</div>
 			</form>
@@ -152,7 +118,6 @@
 	<script type="text/javascript" src="/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script type="text/javascript" src="/js/bootstrap-modalmanager.js"></script>
 	<script type="text/javascript" src="/js/bootstrap-modal.js"></script>
-	<script type="text/javascript" src="/js/holder.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			$('#date-regDate').datetimepicker({
@@ -168,55 +133,49 @@
 				$('#getRemoteData').addClass("disabled");
 			});
 
-			$("#file-upload")
-					.fileupload(
-							{
-								dataType : 'json',
-								url : '/uploading',
-								dropZone : $('#original-image'),
-								done : function(e, data) {
-									$("#original-image")
-											.html(
-													"<img src='/upload/tmp/" + data.result.name + "' />");
-									$("#preview-pane-m .preview-container")
-											.html(
-													"<img src='/upload/tmp/" + data.result.name + "' />");
-									$("#picName").val(data.result.name);
-									$("#pic").val(data.result.name);
-								}
-							});
-
-			$("#original-image").Jcrop({
-				onChange : updatePreview,
-				onSelect : updatePreview,
-				allowSelect : false,
-				allowResize : false,
-				//minSelect:[320,200],
-				setSelect : [ 0, 0, 320, 200 ]
-			}, function() {
-				$('#preview-pane-m').appendTo(this.ui.holder);
-			});
-
-			function updatePreview(c) {
-				if (parseInt(c.w) > 0) {
-					var sw = $("#original-image img").width();
-					var sh = $("#original-image img").height();
-					var $pcnt = $('#preview-pane-m .preview-container');
-					var xsize = $pcnt.width(), ysize = $pcnt.height();
-					var rx = xsize / c.w;
-					var ry = ysize / c.h;
-					$('#preview-pane-m .preview-container img').css({
-						width : Math.round(rx * sw) + 'px',
-						height : Math.round(ry * sh) + 'px',
-						marginLeft : '-' + Math.round(rx * c.x) + 'px',
-						marginTop : '-' + Math.round(ry * c.y) + 'px'
+			$("#file-upload").fileupload({
+				dataType : 'json',
+				url : '/uploading',
+				dropZone : $('#original-img'),
+				done : function(e, data) {
+					$("#original-img").attr("src","/upload/tmp/" + data.result.name);
+					$("#preview-img").attr("src","/upload/tmp/" + data.result.name);
+					$("#picName").val(data.result.name);
+					$("#pic").val(data.result.name);
+					
+					$("#original-img").Jcrop({
+						onChange : showPreview,
+						onSelect : showPreview,
+						aspectRatio : 320 / 200,
+						minSize:[160,100],
+						setSelect : [ 0, 0, 320, 200 ]
 					});
-					$('#x').val(c.x);
-					$('#y').val(c.y);
-					$('#w').val(c.w);
-					$('#h').val(c.h);
+					
+					function showPreview(c) {
+						if (parseInt(c.w) > 0) {
+							var rx = 320 / c.w;
+							var ry = 200 / c.h;
+							
+							var w = $("#original-img").width();
+							var h = $("#original-img").height();
+
+							$("#preview-img").css({
+								width : Math.round(rx * w) + 'px',
+								height : Math.round(ry * h) + 'px',
+								marginLeft : '-' + Math.round(rx * c.x) + 'px',
+								marginTop : '-' + Math.round(ry * c.y) + 'px'
+							});
+							$('#x').val(c.x);
+							$('#y').val(c.y);
+							$('#w').val(c.w);
+							$('#h').val(c.h);
+						}
+					}
 				}
-			}
+			});
+			
 		});
+
+		
 	</script>
 </div>
