@@ -22,10 +22,41 @@ import net.liftweb.json.JsonDSL.pair2jvalue
 import net.liftweb.json.JsonDSL.string2jvalue
 import net.coobird.thumbnailator.Thumbnails
 import net.liftweb.util.StringHelpers
-import javax.imageio.ImageIO
 import com.sksamuel.scrimage.Image
+import java.awt.Graphics2D
 
 object UploadManager extends RestHelper with Loggable {
+  def myFit(img: Image, t: (Int, Int), source: (Int, Int)): Image = {
+    val targetWidth = t._1
+    val targetHeight = t._2
+    val fittedDimensions = dimensionsToFit((targetWidth, targetHeight), (source._1, source._2))
+    val scaled = img.scaleTo(fittedDimensions._1, fittedDimensions._2)
+    val target = Image.filled(targetWidth, targetHeight, java.awt.Color.WHITE)
+    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
+    val x = ((targetWidth - fittedDimensions._1) / 2.0).toInt
+    val y = ((targetHeight - fittedDimensions._2) / 2.0).toInt
+    g2.drawImage(scaled.awt, x, y, null)
+    g2.dispose()
+    target
+  }
+
+  def dimensionsToFit(target: (Int, Int), source: (Int, Int)): (Int, Int) = {
+    val maxWidth = if (target._1 == 0) source._1 else target._1
+    val maxHeight = if (target._2 == 0) source._2 else target._2
+
+    val wscale = maxWidth / source._1.toDouble
+    val hscale = maxHeight / source._2.toDouble
+
+    if (source._1 < target._1 && source._2 < target._2) {
+      return source
+    }
+
+    if (wscale < hscale)
+      ((source._1 * wscale).toInt, (source._2 * wscale).toInt)
+    else
+      ((source._1 * hscale).toInt, (source._2 * hscale).toInt)
+  }
+
   def getBaseApplicationPath: Box[String] = {
     LiftRules.context match {
       case context: HTTPServletContext =>
@@ -56,26 +87,17 @@ object UploadManager extends RestHelper with Loggable {
     dir
   }
 
-  def scaleWh(width: Int, height: Int, maxWidth: Int = 400, maxHeight: Int = 300): (Int, Int) = {
-    if (width <= maxWidth && height <= maxHeight) {
-      return (width, height)
-    }
-    if (width > height) (maxWidth, height * maxWidth / width) else (width * maxHeight / height, maxHeight)
-  }
-
   serve {
     case "uploading" :: Nil Post req => {
       def saveImage(fph: FileParamHolder) = {
         val newFileName = StringHelpers.randomString(16) + ".png"
         val uploadFileName = getUploadDirTmp + File.separator + newFileName
 
-        val originalImg = Image(fph.fileStream)
-        val width = originalImg.width
-        val height = originalImg.height
-        val wh = scaleWh(width, height)
+        val oImg = Image(fph.fileStream)
+        val swh = (oImg.width, oImg.height)
+        myFit(oImg, (400, 300), swh).write(uploadFileName)
+        //oImg.fit(wh._1, wh._2).write(uploadFileName)
 
-        originalImg.fit(wh._1,wh._2).write(uploadFileName)
-        
         /*Thumbnails.of(fph.fileStream)
           .size(wh._1,wh._2)
           .outputQuality(1f)

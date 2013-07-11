@@ -159,7 +159,6 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
   def uploadBrandPic = {
     var picName, x, y, w, h = ""
     def process(): JsCmd = {
-      println(picName + "|" + x + "|" + y)
       val uploadPic = UploadManager.getUploadDirTmp + File.separator + picName
       val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
       var newPicName = picName
