@@ -5,11 +5,24 @@
 	<link rel="stylesheet" href="/css/datetimepicker.css" />
 	<link rel="stylesheet" href="/css/jquery.Jcrop.css" type="text/css" />
 	<style>
-	.jcrop img {max-width: none}
-	</style>
+#original-img-box {
+	width: 400px;
+	height: 300px;
+	border: 1px solid #ddd;
+	background-color: #fafafa;
+}
+
+#preview-img-box {
+	border: 1px solid #ddd;
+	background-color: #fafafa;
+	width: 320px;
+	height: 200px;
+	overflow: hidden;
+}
+</style>
 	</head_merge>
 
-	<script type="text/javascript" src="/js/jquery.Jcrop.js"></script>
+
 	<div id="opt_brand_tip" class="alert hide"></div>
 	<form data-lift="form.ajax?class=form-horizontal">
 		<fieldset data-lift="user.BrandOps.add">
@@ -20,14 +33,13 @@
 						<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required class="input-medium">
 						<button class="btn" type="button" id="getRemoteData" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
 					</div>
-					<span id="error_regNo" class="help-inline"></span> 
+					<span id="error_regNo" class="help-inline"></span>
 				</div>
 			</div>
 			<div id="group_brand_type" class="control-group">
 				<label for="brand_type" class="control-label">商标类别</label>
 				<div class="controls">
-					<input type="hidden" id="brand_type" name="brand_type" required> <span id="error_brand_type" class="help-inline"></span>
-					<input type="hidden" id="pic" name="pic" />
+					<input type="hidden" id="brand_type" name="brand_type" required> <span id="error_brand_type" class="help-inline"></span> <input type="hidden" id="pic" name="pic" />
 					<button class="btn btn-success" type="button" data-toggle="modal" data-target="#uploadDialog">商标图上传</button>
 				</div>
 			</div>
@@ -82,7 +94,7 @@
 		</fieldset>
 	</form>
 
-	<div id="uploadDialog" class="modal hide fade" tabindex="-1" data-width="780">
+	<div id="uploadDialog" class="modal hide fade" tabindex="-1" data-width="760">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3 id="loginModalLabel">商标图片上传</h3>
@@ -94,16 +106,12 @@
 					</span>
 				</form>
 				<div style="margin-top: 10px">
-					<table cellpadding="0" cellspacing="0" border="0">
-						<tr>
-							<td class="jcrop"><img id="original-img"/></td>
-							<td>
-								<div id="preview-image-box" style="width: 320px; height: 200px; overflow: hidden; margin-left: 5px;" class="jcrop">
-									<img id="preview-img"/>
-								</div>
-							</td>
-						</tr>
-					</table>
+					<div id="original-img-box" class="jcrop pull-left">
+						<img id="original-img" />
+					</div>
+					<div id="preview-img-box" class="jcrop pull-right">
+						<img id="preview-img" />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -111,7 +119,7 @@
 			<form data-lift="form.ajax">
 				<div data-lift="user.BrandOps.uploadBrandPic">
 					<input type="hidden" id="picName" name="picName" /> <input type="hidden" id="x" name="x" /> <input type="hidden" id="y" name="y" /> <input type="hidden" id="w" name="w" /> <input type="hidden" id="h" name="h" />
-					<button type="submit" id="submit-avatar" class="btn btn-primary" data-dismiss="modal">保存商标图</button>
+					<button type="submit" id="submit-avatar" class="btn btn-primary">保存商标图</button>
 				</div>
 			</form>
 
@@ -122,10 +130,48 @@
 	<script type="text/javascript" src="/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script type="text/javascript" src="/js/bootstrap-modalmanager.js"></script>
 	<script type="text/javascript" src="/js/bootstrap-modal.js"></script>
+	<script type="text/javascript" src="/js/jquery.Jcrop.js"></script>
 	<script type="text/javascript">
+		var mw = 400, mh = 300, iw = 320, ih = 200;
+		var jcrop_api;
+		function initJcrop() {
+			$("#original-img").Jcrop({
+				onChange : showPreview,
+				onSelect : showPreview,
+				aspectRatio : iw / ih,
+				minSize : [ iw, ih ],
+				setSelect : [ (mw - iw) / 2, (mh - ih) / 2, iw, ih ]
+			}, function() {
+				jcrop_api = this;
+			});
+		}
+
+		function showPreview(c) {
+			if (parseInt(c.w) > 0) {
+				var rx = iw / c.w;
+				var ry = ih / c.h;
+				var w = $("#original-img").width();
+				var h = $("#original-img").height();
+				$("#preview-img").css({
+					width : Math.round(rx * w) + 'px',
+					height : Math.round(ry * h) + 'px',
+					marginLeft : '-' + Math.round(rx * c.x) + 'px',
+					marginTop : '-' + Math.round(ry * c.y) + 'px'
+				});
+				$('#x').val(c.x);
+				$('#y').val(c.y);
+				$('#w').val(iw);
+				$('#h').val(ih);
+			}
+		}
+		
 		$(function() {
-			$('#uploadDialog').modal({show:false,keyboard:false,backdrop:false})
-			
+			$('#uploadDialog').modal({
+				show : false,
+				keyboard : false,
+				backdrop : false
+			})
+
 			$('#date-regDate').datetimepicker({
 				language : 'zh-CN',
 				weekStart : 1,
@@ -139,48 +185,22 @@
 				$('#getRemoteData').addClass("disabled");
 			});
 
-			var iw=320,ih=200;
 			$("#file-upload").fileupload({
 				dataType : 'json',
 				url : '/uploading',
 				dropZone : $('#original-img'),
 				done : function(e, data) {
-					$("#original-img").attr("src","/upload/tmp/" + data.result.name);
-					$("#preview-img").attr("src","/upload/tmp/" + data.result.name);
+					var uploadFile = "/upload/tmp/" + data.result.name
+					$("#original-img").attr("src", uploadFile);
+					$("#preview-img").attr("src", uploadFile);
 					$("#picName").val(data.result.name);
 					$("#pic").val(data.result.name);
-					
-					$("#original-img").Jcrop({
-						onChange : showPreview,
-						onSelect : showPreview,
-						aspectRatio : iw/ih,
-						minSize:[iw,ih],
-						setSelect : [ 0, 0, iw, ih ]
-					});
-					
-					function showPreview(c) {
-						if (parseInt(c.w) > 0) {
-							var rx = iw / c.w;
-							var ry = ih / c.h;
-							var w = $("#original-img").width();
-							var h = $("#original-img").height();
-							$("#preview-img").css({
-								width : Math.round(rx * w) + 'px',
-								height : Math.round(ry * h) + 'px',
-								marginLeft : '-' + Math.round(rx * c.x) + 'px',
-								marginTop : '-' + Math.round(ry * c.y) + 'px'
-							});
-							$('#x').val(c.x);
-							$('#y').val(c.y);
-							$('#w').val(iw);
-							$('#h').val(ih);
-						}
-					}
+					initJcrop();
+					jcrop_api.setImage(uploadFile);
+					initJcrop();
 				}
 			});
-			
-		});
 
-		
+		});
 	</script>
 </div>

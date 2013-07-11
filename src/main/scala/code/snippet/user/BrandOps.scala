@@ -126,14 +126,14 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
         "#actions" #> actions(brand)
     })
   }
-  
-  def st(picName:String):String = {
-     val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
+
+  def st(picName: String): String = {
+    val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
     var newPicName = picName
-      picName match {
-        case scalePicNameReg(f, e) => newPicName = (f + "x320." + e)
-        case _ => newPicName = picName
-      }
+    picName match {
+      case scalePicNameReg(f, e) => newPicName = (f + "x320." + e)
+      case _ => newPicName = picName
+    }
     newPicName
   }
 
@@ -142,8 +142,6 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
     val brand = brandRV.is.get
     val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
-    
-    
     "#regNo" #> brand.regNo &
       "#name" #> brand.name &
       "#pic" #> <img src={ "/upload/" + st(brand.pic.get) }/> &
@@ -173,9 +171,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
         .size(w.toInt, h.toInt)
         .outputQuality(1f)
         .toFile(new File(saveUploadPic));
-
-      SetHtml("result", Text(x))
-
+      JsRaw("$('#uploadDialog').modal('hide');")
     }
 
     "@picName" #> hidden(picName = _, picName) &
