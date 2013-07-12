@@ -46,13 +46,13 @@ class Boot extends Loggable{
         }
       }
     }*/
-     DB.addLogFunc((query, len) => logger.info("The query: "+query+" took"+len+" milliseconds")) 
+    DB.addLogFunc((query, len) => logger.info("The query: "+query+" took"+len+" milliseconds")) 
     Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
 
-    FoBo.InitParam.JQuery = FoBo.JQuery191
+    /*FoBo.InitParam.JQuery = FoBo.JQuery191
     FoBo.InitParam.ToolKit = FoBo.Bootstrap231
     FoBo.InitParam.ToolKit = FoBo.FontAwesome300
-    FoBo.init()
+    FoBo.init()*/
 
     LiftRules.setSiteMap(Site.siteMap)
 
