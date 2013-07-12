@@ -1,5 +1,5 @@
 <div class="box-content" data-lift="surround?with=user;at=content">
-	<head_merge> <script type="text/javascript" src="/js/jquery.ui.widget.min.js"></script> <script type="text/javascript" src="/js/jquery.iframe-transport.js"></script> <script type="text/javascript" src="/js/jquery.fileupload.js"></script>
+	<head_merge>
 	<link rel="stylesheet" href="/css/jquery.fileupload-ui.css" type="text/css" />
 	<link rel="stylesheet" href="/css/bootstrap-modal.css" type="text/css" />
 	<link rel="stylesheet" href="/css/datetimepicker.css" />
@@ -35,9 +35,9 @@
 						<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required class="input-medium">
 						<button class="btn" type="button" id="getRemoteData" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
 					</div>
-					<span id="error_regNo" class="help-inline"></span>
-					 <input type="hidden" id="pic" name="pic" />
+					<span id="error_regNo" class="help-inline"></span> <input type="hidden" id="pic" name="pic" />
 					<button class="btn btn-success" type="button" data-toggle="modal" data-target="#uploadDialog">商标图上传</button>
+						<img src="https://git.oschina.net/uploads/64/7664_liujiuwu.jpg?1373527797" style="width:320px;height:200px"/>
 				</div>
 			</div>
 			<div id="group_brand_type" class="control-group">
@@ -97,7 +97,7 @@
 		</fieldset>
 	</form>
 
-	<div id="uploadDialog" class="modal hide fade" tabindex="-1" data-width="780">
+	<div id="uploadDialog" class="modal hide fade" tabindex="-1" data-width="765">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3 id="loginModalLabel">商标图片上传</h3>
@@ -105,7 +105,7 @@
 		<div class="modal-body">
 			<div class="row-fluid">
 				<form id="file-upload" action="/uploading" method="POST" enctype="multipart/form-data">
-					<span class="btn btn-success fileinput-button"> <i class="icon-plus icon-white"></i> <span>商标图片上传...</span> <input id="fileupload" type="file" name="files[]" multiple>
+					<span class="btn btn-success fileinput-button"> <i class="icon-plus icon-white"></i> <span>商标图片上传...</span> <input id="fileupload"  type="file" name="files[]">
 					</span>
 				</form>
 				<div style="margin-top: 10px">
@@ -129,6 +129,9 @@
 		</div>
 	</div>
 
+	<script type="text/javascript" src="/js/jquery.ui.widget.min.js"></script>
+	<script type="text/javascript" src="/js/jquery.iframe-transport.js"></script>
+	<script type="text/javascript" src="/js/jquery.fileupload.js"></script>
 	<script type="text/javascript" src="/js/bootstrap-datetimepicker.min.js"></script>
 	<script type="text/javascript" src="/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script type="text/javascript" src="/js/bootstrap-modalmanager.js"></script>
@@ -167,7 +170,7 @@
 				$('#h').val(ih);
 			}
 		}
-		
+
 		$(function() {
 			$('#uploadDialog').modal({
 				show : false,
