@@ -24,8 +24,14 @@ import net.coobird.thumbnailator.Thumbnails
 import net.liftweb.util.StringHelpers
 import com.sksamuel.scrimage.Image
 import java.awt.Graphics2D
+import java.text.SimpleDateFormat
+import java.util.Date
+import net.liftweb.http.ResponseWithReason
+import net.liftweb.http.BadResponse
+import net.liftweb.http.OkResponse
 
 object UploadManager extends RestHelper with Loggable {
+  val fmt = new SimpleDateFormat("yyyyMMddHHmmss")
   def myFit(img: Image, t: (Int, Int), source: (Int, Int)): Image = {
     val targetWidth = t._1
     val targetHeight = t._2
@@ -89,20 +95,18 @@ object UploadManager extends RestHelper with Loggable {
 
   serve {
     case "uploading" :: Nil Post req => {
+      if (req.uploadedFiles.exists(_.mimeType != "image/png"))
+        ResponseWithReason(BadResponse(), "Only PNGs")
+      else
+        OkResponse()
+
       def saveImage(fph: FileParamHolder) = {
-        val newFileName = StringHelpers.randomString(16) + ".png"
+        val newFileName = fmt.format(new Date) + "_" + StringHelpers.randomString(16) + ".png"
         val uploadFileName = getUploadDirTmp + File.separator + newFileName
 
         val oImg = Image(fph.fileStream)
         val swh = (oImg.width, oImg.height)
         myFit(oImg, (400, 300), swh).write(uploadFileName)
-        //oImg.fit(wh._1, wh._2).write(uploadFileName)
-
-        /*Thumbnails.of(fph.fileStream)
-          .size(wh._1,wh._2)
-          .outputQuality(1f)
-          .toFile(new File(uploadFileName));*/
-
         ("name" -> newFileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
       }
 

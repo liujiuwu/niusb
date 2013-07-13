@@ -107,9 +107,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
       brand.status.get match {
         case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>
           viewLink ++ Text(" ") ++
-            link("/user/brand/edit",
-              () => brandRV(Full(brand)), <i class="icon-edit"></i>, "class" -> "btn btn-small btn-info") ++ Text(" ") ++
-              link("/user/brand/", () => { brand.delete_! }, <i class="icon-trash"></i>, "class" -> "btn btn-small btn-danger")
+            link("/user/brand/", () => { brand.delete_! }, <i class="icon-trash"></i>, "class" -> "btn btn-small btn-danger")
         case _ => viewLink
       }
     }

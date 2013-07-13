@@ -46,7 +46,7 @@ class Boot extends Loggable{
         }
       }
     }*/
-    DB.addLogFunc((query, len) => logger.info("The query: "+query+" took"+len+" milliseconds")) 
+    DB.addLogFunc((query, len) => logger.info("The query: "+query+" took "+len+" milliseconds")) 
     Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
 
     /*FoBo.InitParam.JQuery = FoBo.JQuery191

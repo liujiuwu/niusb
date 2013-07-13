@@ -1,30 +1,4 @@
 <div class="box-content" data-lift="surround?with=user;at=content">
-	<head_merge>
-	<link rel="stylesheet" href="/css/jquery.fileupload-ui.css" type="text/css" />
-	<link rel="stylesheet" href="/css/bootstrap-modal.css" type="text/css" />
-	<link rel="stylesheet" href="/css/datetimepicker.css" />
-	<link rel="stylesheet" href="/css/jquery.Jcrop.css" type="text/css" />
-	<style>
-#original-img-box {
-	width: 400px;
-	height: 300px;
-	border: 1px solid #ddd;
-	background-color: #fafafa;
-	display: block;
-}
-
-#preview-img-box {
-	border: 1px solid #ddd;
-	background-color: #fafafa;
-	width: 320px;
-	height: 200px;
-	overflow: hidden;
-	display: block;
-}
-</style>
-	</head_merge>
-
-
 	<div id="opt_brand_tip" class="alert hide"></div>
 	<form data-lift="form.ajax?class=form-horizontal">
 		<fieldset data-lift="user.BrandOps.add">
@@ -37,7 +11,6 @@
 					</div>
 					<span id="error_regNo" class="help-inline"></span> <input type="hidden" id="pic" name="pic" />
 					<button class="btn btn-success" type="button" data-toggle="modal" data-target="#uploadDialog">商标图上传</button>
-						<img src="https://git.oschina.net/uploads/64/7664_liujiuwu.jpg?1373527797" style="width:320px;height:200px"/>
 				</div>
 			</div>
 			<div id="group_brand_type" class="control-group">
@@ -64,10 +37,9 @@
 			<div id="group_regDate" class="control-group">
 				<label for="regDate" class="control-label">注册日期</label>
 				<div class="controls">
-					<div class="input-append date" id="date-regDate" data-date="2012-12-22" data-date-format="yyyy-mm-dd">
-						<input type="text" class="span2" id="regDate" name="regDate" readonly> <span class="add-on"><i class="icon-remove"></i></span> <span class="add-on"><i class="icon-th"></i></span>
+					<div class="input-prepend">
+						<span class="add-on"><i class="icon-calendar"></i></span><input type="text" class="span3" id="regDate" name="regDate" placeholder="日期格式:xxxx年xx月xx日"> <span id="error_regDate" class="help-inline"></span>
 					</div>
-					<span id="error_regDate" class="help-inline"></span>
 				</div>
 			</div>
 			<div id="group_applicant" class="control-group">
@@ -96,117 +68,12 @@
 			</div>
 		</fieldset>
 	</form>
-
-	<div id="uploadDialog" class="modal hide fade" tabindex="-1" data-width="765">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3 id="loginModalLabel">商标图片上传</h3>
-		</div>
-		<div class="modal-body">
-			<div class="row-fluid">
-				<form id="file-upload" action="/uploading" method="POST" enctype="multipart/form-data">
-					<span class="btn btn-success fileinput-button"> <i class="icon-plus icon-white"></i> <span>商标图片上传...</span> <input id="fileupload"  type="file" name="files[]">
-					</span>
-				</form>
-				<div style="margin-top: 10px">
-					<div id="original-img-box" class="jcrop pull-left">
-						<img id="original-img" />
-					</div>
-					<div id="preview-img-box" class="jcrop pull-right">
-						<img id="preview-img" />
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal-footer">
-			<form data-lift="form.ajax">
-				<div data-lift="user.BrandOps.uploadBrandPic">
-					<input type="hidden" id="picName" name="picName" /> <input type="hidden" id="x" name="x" /> <input type="hidden" id="y" name="y" /> <input type="hidden" id="w" name="w" /> <input type="hidden" id="h" name="h" />
-					<button type="submit" id="submit-avatar" class="btn btn-primary">保存商标图</button>
-				</div>
-			</form>
-
-		</div>
-	</div>
-
-	<script type="text/javascript" src="/js/jquery.ui.widget.min.js"></script>
-	<script type="text/javascript" src="/js/jquery.iframe-transport.js"></script>
-	<script type="text/javascript" src="/js/jquery.fileupload.js"></script>
-	<script type="text/javascript" src="/js/bootstrap-datetimepicker.min.js"></script>
-	<script type="text/javascript" src="/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
-	<script type="text/javascript" src="/js/bootstrap-modalmanager.js"></script>
-	<script type="text/javascript" src="/js/bootstrap-modal.js"></script>
-	<script type="text/javascript" src="/js/jquery.Jcrop.js"></script>
+	<div class='lift:embed?what=_uploadBrand'>上传组件</div>
 	<script type="text/javascript">
-		var mw = 400, mh = 300, iw = 320, ih = 200;
-		var jcrop_api;
-		function initJcrop() {
-			$("#original-img").Jcrop({
-				onChange : showPreview,
-				onSelect : showPreview,
-				aspectRatio : iw / ih,
-				minSize : [ iw, ih ],
-				setSelect : [ (mw - iw) / 2, (mh - ih) / 2, iw, ih ]
-			}, function() {
-				jcrop_api = this;
-			});
-		}
-
-		function showPreview(c) {
-			if (parseInt(c.w) > 0) {
-				var rx = iw / c.w;
-				var ry = ih / c.h;
-				var w = $("#original-img").width();
-				var h = $("#original-img").height();
-				$("#preview-img").css({
-					width : Math.round(rx * w) + 'px',
-					height : Math.round(ry * h) + 'px',
-					marginLeft : '-' + Math.round(rx * c.x) + 'px',
-					marginTop : '-' + Math.round(ry * c.y) + 'px'
-				});
-				$('#x').val(c.x);
-				$('#y').val(c.y);
-				$('#w').val(iw);
-				$('#h').val(ih);
-			}
-		}
-
 		$(function() {
-			$('#uploadDialog').modal({
-				show : false,
-				keyboard : false,
-				backdrop : false
-			})
-
-			$('#date-regDate').datetimepicker({
-				language : 'zh-CN',
-				weekStart : 1,
-				todayBtn : 1,
-				autoclose : 1,
-				minView : 2,
-				todayHighlight : 1
-			});
-
 			$('#getRemoteData').click(function() {
 				$('#getRemoteData').addClass("disabled");
 			});
-
-			$("#file-upload").fileupload({
-				dataType : 'json',
-				url : '/uploading',
-				dropZone : $('#original-img'),
-				done : function(e, data) {
-					var uploadFile = "/upload/tmp/" + data.result.name
-					$("#original-img").attr("src", uploadFile);
-					$("#preview-img").attr("src", uploadFile);
-					$("#picName").val(data.result.name);
-					$("#pic").val(data.result.name);
-					initJcrop();
-					jcrop_api.setImage(uploadFile);
-					initJcrop();
-				}
-			});
-
 		});
 	</script>
 </div>
