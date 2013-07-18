@@ -18,7 +18,7 @@ port in container.Configuration := 9001
 
 unmanagedResourceDirectories in Test <+= (baseDirectory) { _ / "src/main/webapp" }
 
-scalacOptions ++= Seq("-encoding", "UTF-8","-deprecation","-unchecked")
+scalacOptions ++= Seq("-encoding", "UTF-8","-deprecation","-unchecked","-feature")
 
 javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.6", "-target", "1.6")
 

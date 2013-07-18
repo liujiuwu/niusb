@@ -10,10 +10,12 @@ import java.text.SimpleDateFormat
 import java.util.Random
 import scala.math.abs
 import scala.xml.NodeSeq
+import scala.language.postfixOps
 import javax.imageio.ImageIO
 import net.liftweb.common.Box
 import net.liftweb.common.Empty
 import net.liftweb.common.Full
+
 import net.liftweb.http.InMemoryResponse
 import net.liftweb.http.LiftResponse
 import net.liftweb.http.S
@@ -179,6 +181,16 @@ object WebHelper {
       case BrandStatus.JiaoYiZhong => <span class="label label-warning">交易中</span>
       case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
     }
+  }
+
+  def pic(picName: String, size: String = "320"): String = {
+    val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
+    var newPicName = picName
+    picName match {
+      case scalePicNameReg(f, e) => newPicName = (f + "x%s.".format(size) + e)
+      case _ => newPicName = picName
+    }
+    newPicName
   }
 
 }

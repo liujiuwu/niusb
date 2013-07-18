@@ -92,6 +92,7 @@ class User extends MegaProtoUser[User] with CreatedUpdated {
   }
 
   def displayName = if (name.get.isEmpty()) mobile.get else name.get
+  def displayInfo = if (name.get.isEmpty()) <span>{ mobile.get }-{ id.get }</span> else <span>{ name.get }-{ mobile.get }-{ id.get }</span>
 
   def brandCount = Brand.count(By(Brand.owner, this))
 }

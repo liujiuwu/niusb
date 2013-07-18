@@ -2,7 +2,6 @@ package code.snippet.admin
 
 import scala.xml.NodeSeq
 import scala.xml.Text
-
 import code.lib.BrandTypeHelper
 import code.lib.WebHelper
 import code.model.Brand
@@ -23,10 +22,18 @@ import net.liftweb.mapper.Descending
 import net.liftweb.mapper.IHaveValidatedThisSQL
 import net.liftweb.mapper.MaxRows
 import net.liftweb.mapper.OrderBy
+
 import net.liftweb.mapper.QueryParam
 import net.liftweb.mapper.StartAt
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
+import net.liftweb.http.S
+import code.lib.BrandType
+import net.liftweb.http.js.JsCmd
+import net.liftweb.common.Empty
+import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.http.js.JsCmd._
+import net.liftweb.http.js.JsCmds._
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   private object typeRV extends RequestVar[Box[String]](Full("0"))
@@ -45,8 +52,8 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       } else if (searchType == "1") {
         BySql("owner=" + keyword, IHaveValidatedThisSQL("charliechen", "2011-07-21"))
       }
-    }else{
-      
+    } else {
+
     }
   }
 
@@ -81,8 +88,8 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
         Brand.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
       }
     } else {*/
-      Brand.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
-   // }
+    Brand.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
+    // }
     /*userRV.is match {
       case Full(user) =>
         Brand.findAll(By(Brand.owner, user), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
@@ -123,6 +130,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
     val brand = brandRV.is
     val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
+    "#edit-btn" #> link("/admin/brand/edit", () => brandRV(brand), <span><i class="icon-edit"></i> 修改商标</span>, "class" -> "btn btn-primary") &
     "#regNo" #> brand.regNo &
       "#name" #> brand.name &
       "#brand-type" #> { brandType.id + " -> " + brandType.name } &
@@ -134,13 +142,49 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       "#applicant" #> brand.applicant &
       "#useDescn" #> brand.useDescn &
       "#descn" #> brand.descn &
-      "#owner" #> brand.owner.getOwner.name
+      "#pic" #> <img src={ "/upload/" + WebHelper.pic(brand.pic.get) }/> &
+      "#owner" #> brand.owner.getOwner.displayInfo
   }
 
   def search = {
     val types = List("0" -> "注册号", "1" -> "用户ID")
     "@type" #> select(types, typeRV.is, x => typeRV(Full(x))) &
       "@keyword" #> textElem(keywordRV)
+  }
+
+  def edit = {
+    tabMenuRV(Full("zoom-in", "修改商标"))
+    val brand = brandRV.is
+
+    var basePrice = "0"
+    var ownerId, regNo, pic, name, regDateStr, applicant, useDescn, descn = ""
+    var brandType: BrandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
+
+    def process(): JsCmd = {
+      val user = User.findByKey(ownerId.toLong).openOrThrowException("会员不存在")
+      brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
+      brand.brandTypeId(brandType.id).owner(user)
+      brand.validate match {
+        case Nil =>
+          brand.save
+          //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息已成功修改！")))
+          S.redirectTo("/admin/brand/")
+        case errors => println(errors); Noop
+      }
+    }
+
+    val brandTypes = BrandTypeHelper.brandTypes.values.toList
+    "@owner" #> text(brand.owner.get.toString, ownerId = _) &
+      "@regNo" #> text(brand.regNo.get, regNo = _) &
+      "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
+      "@name" #> text(brand.name.get, name = _) &
+      "@pic" #> hidden(pic = _, brand.pic.get) &
+      "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Full(brandType.id.toString), v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
+      "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
+      "@applicant" #> text(brand.applicant.get, applicant = _) &
+      "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &
+      "@descn" #> textarea(brand.descn.get, descn = _) &
+      "@sub" #> hidden(process)
   }
 
 }

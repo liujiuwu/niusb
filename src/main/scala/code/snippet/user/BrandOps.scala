@@ -125,16 +125,6 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
     })
   }
 
-  def st(picName: String): String = {
-    val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
-    var newPicName = picName
-    picName match {
-      case scalePicNameReg(f, e) => newPicName = (f + "x320." + e)
-      case _ => newPicName = picName
-    }
-    newPicName
-  }
-
   def view = {
     tabMenuRV(Full("zoom-in", "查看商标"))
     val brand = brandRV.is.get
@@ -142,7 +132,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
 
     "#regNo" #> brand.regNo &
       "#name" #> brand.name &
-      "#pic" #> <img src={ "/upload/" + st(brand.pic.get) }/> &
+      "#pic" #> <img src={ "/upload/" + WebHelper.pic(brand.pic.get) }/> &
       "#brand-type" #> { brandType.id + " -> " + brandType.name } &
       "#status" #> WebHelper.statusLabel(brand.status.get) &
       "#basePrice" #> <span class="badge badge-success">￥{ brand.basePrice }</span> &
