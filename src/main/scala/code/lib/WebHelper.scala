@@ -15,7 +15,6 @@ import javax.imageio.ImageIO
 import net.liftweb.common.Box
 import net.liftweb.common.Empty
 import net.liftweb.common.Full
-
 import net.liftweb.http.InMemoryResponse
 import net.liftweb.http.LiftResponse
 import net.liftweb.http.S
@@ -31,6 +30,9 @@ import net.liftweb.util.Helpers.strToSuperArrowAssoc
 import net.liftweb.util.Helpers
 import net.liftweb.http.SessionVar
 import code.model.BrandStatus
+import net.liftweb.common.Failure
+import java.sql.SQLException
+import net.liftweb.util.CssSel
 
 case class CacheValue[T](compute: () => T, lifespanInMillis: Long) {
   private var currentValue: Box[T] = Empty
@@ -171,5 +173,31 @@ object WebHelper {
     baos.close
 
     captchaData
+  }
+
+  def alertMsg(alertMsg: NodeSeq, alertTitle: String = "出错啦！", alertType: String = "error") = {
+    <div class={ "alert alert-" + alertType }>
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <h4>{ alertTitle }</h4>
+      { alertMsg }
+    </div>
+  }
+
+  def handleResult(result: Box[CssSel], nodeSeq: NodeSeq) = {
+    result match {
+      case Full(cssSel) => cssSel(nodeSeq)
+      case Failure(msg, except, _) =>
+        var resultMsg = msg
+        except.foreach {
+          case e: NoSuchElementException =>
+            resultMsg = "数据不存在，请检查！"
+          case e: NumberFormatException =>
+            resultMsg = "数字格式错误，请检查！"
+          case e: Exception =>
+            resultMsg = "操作发生异常，请稍候重试或联系我们！"
+        }
+        WebHelper.alertMsg(<p>{ resultMsg }</p>)
+      case _ =>
+    }
   }
 }

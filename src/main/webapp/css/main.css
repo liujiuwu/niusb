@@ -831,3 +831,10 @@ th .lbl:only-child,td .lbl:only-child {
 .no-margin {
 	margin: 0
 }
+
+
+
+.tool-well .well{
+  margin:0 0 10px 0;
+  padding:10px 5px;
+}

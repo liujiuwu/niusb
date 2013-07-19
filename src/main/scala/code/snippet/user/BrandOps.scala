@@ -1,7 +1,10 @@
 package code.snippet.user
 
+import java.io.File
+
 import scala.xml.NodeSeq
 import scala.xml.Text
+
 import code.lib.BrandType
 import code.lib.BrandTypeHelper
 import code.lib.SearchHelper
@@ -9,30 +12,39 @@ import code.lib.WebHelper
 import code.model.Brand
 import code.model.BrandStatus
 import code.model.User
+import code.rest.UploadManager
 import code.snippet.MyPaginatorSnippet
-import net.liftweb.common.Box
-import net.liftweb.common.Full
+import code.snippet.TabMenu
+import net.coobird.thumbnailator.Thumbnails
+import net.liftweb.common.Box.box2Option
 import net.liftweb.common.Empty
-import net.liftweb.http.RequestVar
+import net.liftweb.common.Full
+import net.liftweb.common.Loggable
 import net.liftweb.http.S
-import net.liftweb.http.SHtml._
-import net.liftweb.http.js.JE._
+import net.liftweb.http.SHtml.ElemAttr.pairToBasic
+import net.liftweb.http.SHtml.ajaxCall
+import net.liftweb.http.SHtml.ajaxSubmit
+import net.liftweb.http.SHtml.hidden
+import net.liftweb.http.SHtml.link
+import net.liftweb.http.SHtml.select
+import net.liftweb.http.SHtml.text
+import net.liftweb.http.SHtml.textarea
+import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.http.js.JE.ValById
 import net.liftweb.http.js.JsCmd
-import net.liftweb.http.js.JsCmd._
-import net.liftweb.http.js.JsCmds._
+import net.liftweb.http.js.JsCmds.Noop
+import net.liftweb.http.js.JsCmds.SetValById
+import net.liftweb.http.js.JsCmds.cmdToString
+import net.liftweb.http.js.JsCmds.jsExpToJsCmd
+import net.liftweb.http.js.JsExp.strToJsExp
 import net.liftweb.mapper.By
 import net.liftweb.mapper.Descending
 import net.liftweb.mapper.MaxRows
 import net.liftweb.mapper.OrderBy
 import net.liftweb.mapper.StartAt
 import net.liftweb.util.Helpers._
-import code.snippet.TabMenu
-import net.liftweb.json.JsonDSL._
-import code.rest.UploadManager
-import java.io.File
-import net.coobird.thumbnailator.Thumbnails
 
-object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
+object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
   override def itemsPerPage = 10
   override def count = Brand.count(By(Brand.owner, user))
@@ -122,21 +134,24 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
     })
   }
 
-  def view = {
+  def view(nodeSeq: NodeSeq) = {
     tabMenuRV(Full("zoom-in", "查看商标"))
-    val brandId = S.param("id").openOrThrowException("商标id错误").toLong
-    val brand = Brand.find(By(Brand.owner, user), By(Brand.id, brandId)).head
-
-    "#regNo" #> brand.regNo &
-      "#name" #> brand.name &
-      "#pic" #> brand.displayPic() &
-      "#brand-type" #> brand.displayType &
-      "#status" #> brand.displayStatus &
-      "#basePrice" #> brand.displayBasePrice &
-      "#regdate" #> brand.regDate.asHtml &
-      "#applicant" #> brand.applicant &
-      "#useDescn" #> brand.useDescn &
-      "#descn" #> brand.descn
+    val result = for (
+      brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效";
+      brand <- Brand.find(By(Brand.owner, user), By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
+    ) yield {
+      "#regNo" #> brand.regNo &
+        "#name" #> brand.name &
+        "#pic" #> brand.displayPic() &
+        "#brand-type" #> brand.displayType &
+        "#status" #> brand.displayStatus &
+        "#basePrice" #> brand.displayBasePrice &
+        "#regdate" #> brand.regDate.asHtml &
+        "#applicant" #> brand.applicant &
+        "#useDescn" #> brand.useDescn &
+        "#descn" #> brand.descn
+    }
+    WebHelper.handleResult(result, nodeSeq)
   }
 
   def uploadBrandPic = {

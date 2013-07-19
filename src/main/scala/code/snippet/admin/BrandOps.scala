@@ -34,6 +34,7 @@ import net.liftweb.common.Empty
 import net.liftweb.http.js.JE.JsRaw
 import net.liftweb.http.js.JsCmd._
 import net.liftweb.http.js.JsCmds._
+import net.liftweb.util.Helpers._
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   private object typeRV extends RequestVar[Box[String]](Full("0"))
@@ -122,26 +123,30 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
     })
   }
 
-  def view = {
+  def view(nodeSeq: NodeSeq) = {
     tabMenuRV(Full("zoom-in", "查看商标"))
-    val brandId = S.param("id").openOrThrowException("商标id错误").toLong
-    val brand = Brand.find(By(Brand.id, brandId)).head
 
-    "#regNo" #> brand.regNo &
-      "#name" #> brand.name &
-      "#brand-type" #> brand.displayType &
-      "#status" #> brand.displayStatus &
-      "#basePrice" #> brand.displayBasePrice &
-      "#sellPrice" #> brand.displayBasePrice &
-      "#strikePrice" #> brand.displayStrikePrice &
-      "#regdate" #> brand.regDate.asHtml &
-      "#applicant" #> brand.applicant &
-      "#useDescn" #> brand.useDescn &
-      "#descn" #> brand.descn &
-      "#pic" #> brand.displayPic() &
-      "#owner" #> brand.owner.getOwner.displayInfo &
-      "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
-      "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a>
+    val result = for (
+      brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效";
+      brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
+    ) yield {
+      "#regNo" #> brand.regNo &
+        "#name" #> brand.name &
+        "#brand-type" #> brand.displayType &
+        "#status" #> brand.displayStatus &
+        "#basePrice" #> brand.displayBasePrice &
+        "#sellPrice" #> brand.displaySellPrice &
+        "#strikePrice" #> brand.displayStrikePrice &
+        "#regdate" #> brand.regDate.asHtml &
+        "#applicant" #> brand.applicant &
+        "#useDescn" #> brand.useDescn &
+        "#descn" #> brand.descn &
+        "#pic" #> brand.displayPic() &
+        "#owner" #> brand.owner.getOwner.displayInfo &
+        "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
+        "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a>
+    }
+    WebHelper.handleResult(result, nodeSeq)
   }
 
   def search = {
@@ -150,40 +155,42 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       "@keyword" #> textElem(keywordRV)
   }
 
-  def edit = {
+  def edit(nodeSeq: NodeSeq) = {
     tabMenuRV(Full("zoom-in", "修改商标"))
-    val brandId = S.param("id").openOrThrowException("商标id错误").toLong
-    val brand = Brand.find(By(Brand.id, brandId)).head
 
-    var basePrice = "0"
-    var ownerId, regNo, pic, name, regDateStr, applicant, useDescn, descn = ""
-    var brandType: BrandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
+    val result = for (
+      brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效";
+      brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
+    ) yield {
+      var basePrice = "0"
+      var regNo, pic, name, regDateStr, applicant, useDescn, descn = ""
+      var brandType: BrandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
-    def process(): JsCmd = {
-      val user = User.findByKey(ownerId.toLong).openOrThrowException("会员不存在")
-      brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
-      brand.brandTypeId(brandType.id).owner(user)
-      brand.validate match {
-        case Nil =>
-          brand.save
-          //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息已成功修改！")))
-          S.redirectTo("/admin/brand/")
-        case errors => println(errors); Noop
+      def process(): JsCmd = {
+        brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
+        brand.brandTypeId(brandType.id)
+        brand.validate match {
+          case Nil =>
+            brand.save
+            //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息已成功修改！")))
+            S.redirectTo("/admin/brand/")
+          case errors => println(errors); Noop
+        }
       }
-    }
 
-    val brandTypes = BrandTypeHelper.brandTypes.values.toList
-    "@owner" #> text(brand.owner.get.toString, ownerId = _) &
+      val brandTypes = BrandTypeHelper.brandTypes.values.toList
       "@regNo" #> text(brand.regNo.get, regNo = _) &
-      "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
-      "@name" #> text(brand.name.get, name = _) &
-      "@pic" #> hidden(pic = _, brand.pic.get) &
-      "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Full(brandType.id.toString), v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
-      "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
-      "@applicant" #> text(brand.applicant.get, applicant = _) &
-      "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &
-      "@descn" #> textarea(brand.descn.get, descn = _) &
-      "@sub" #> hidden(process)
+        "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
+        "@name" #> text(brand.name.get, name = _) &
+        "@pic" #> hidden(pic = _, brand.pic.get) &
+        "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Full(brandType.id.toString), v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
+        "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
+        "@applicant" #> text(brand.applicant.get, applicant = _) &
+        "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &
+        "@descn" #> textarea(brand.descn.get, descn = _) &
+        "@sub" #> hidden(process)
+    }
+    WebHelper.handleResult(result, nodeSeq)
   }
 
 }
