@@ -172,25 +172,4 @@ object WebHelper {
 
     captchaData
   }
-
-  def statusLabel(status: BrandStatus.Value): NodeSeq = {
-    status match {
-      case BrandStatus.ShenHeShiBai => <span class="label label-important">审核失败</span>
-      case BrandStatus.ShenHeZhong => <span class="label">审核中</span>
-      case BrandStatus.ChuShoZhong => <span class="label label-info">出售中</span>
-      case BrandStatus.JiaoYiZhong => <span class="label label-warning">交易中</span>
-      case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
-    }
-  }
-
-  def pic(picName: String, size: String = "320"): String = {
-    val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
-    var newPicName = picName
-    picName match {
-      case scalePicNameReg(f, e) => newPicName = (f + "x%s.".format(size) + e)
-      case _ => newPicName = picName
-    }
-    newPicName
-  }
-
 }

@@ -32,8 +32,12 @@ import net.liftweb.common.Loggable
 import net.liftweb.db.DBLogEntry
 import net.liftweb.http.OnDiskFileParamHolder
 import code.rest.UploadManager
+import net.liftweb.util.NamedPF
+import net.liftweb.http.NotFoundAsTemplate
+import net.liftweb.http.InternalServerErrorResponse
+import net.liftweb.http.XmlResponse
 
-class Boot extends Loggable{
+class Boot extends Loggable {
   def boot {
     LiftRules.addToPackages("code")
     DB.defineConnectionManager(DefaultConnectionIdentifier, MyDBVendor)
@@ -46,7 +50,7 @@ class Boot extends Loggable{
         }
       }
     }*/
-    DB.addLogFunc((query, len) => logger.info("The query: "+query+" took "+len+" milliseconds")) 
+    DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
     Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
 
     /*FoBo.InitParam.JQuery = FoBo.JQuery191
@@ -59,7 +63,7 @@ class Boot extends Loggable{
     LiftRules.maxMimeFileSize = 40000000L
     LiftRules.maxMimeSize = 40000000L
     LiftRules.dispatch.append(UploadManager)
-    
+
     LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
     LiftRules.early.append(_.setCharacterEncoding("utf-8"))
@@ -82,6 +86,18 @@ class Boot extends Loggable{
     LiftRules.dispatch.append {
       case Req("brand" :: regNo :: Nil, _, _) =>
         SearchHelper.searchBrandPicByRegNo(regNo)
+    }
+
+    LiftRules.uriNotFound.prepend(NamedPF("404handler") {
+      case (req, failure) =>
+        NotFoundAsTemplate(ParsePath(List("404"), "html", true, false))
+    })
+
+    LiftRules.exceptionHandler.prepend {
+      case (runMode, req, exception) =>
+        logger.error("Failed at: " + req.uri, exception)
+        val content = S.render(<lift:embed what="500"/>, req.request)
+        XmlResponse(content.head, 500, "text/html", req.cookies)
     }
   }
 }

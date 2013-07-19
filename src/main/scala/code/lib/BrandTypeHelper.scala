@@ -52,5 +52,6 @@ object BrandTypeHelper {
     43 -> BrandType(43, "餐饮酒店", ""),
     44 -> BrandType(44, "医疗园艺", ""),
     45 -> BrandType(45, "社会法律", ""))
-
 }
+
+

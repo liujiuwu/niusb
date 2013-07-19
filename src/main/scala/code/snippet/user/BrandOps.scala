@@ -33,7 +33,6 @@ import java.io.File
 import net.coobird.thumbnailator.Thumbnails
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
-  object brandRV extends RequestVar[Box[Brand]](Empty)
   def user = User.currentUser.openOrThrowException("not found user")
   override def itemsPerPage = 10
   override def count = Brand.count(By(Brand.owner, user))
@@ -102,7 +101,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
 
   def list = {
     def actions(brand: Brand): NodeSeq = {
-      val viewLink = <a href={"/user/brand/view?id="+brand.id.get} class="btn btn-small btn-success"><i class="icon-zoom-in"></i></a>
+      val viewLink = <a href={ "/user/brand/view?id=" + brand.id.get } class="btn btn-small btn-success"><i class="icon-zoom-in"></i></a>
       brand.status.get match {
         case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>
           viewLink ++ Text(" ") ++
@@ -112,29 +111,28 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
     }
 
     "tr" #> page.map(brand => {
-      val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
       "#regNo" #> brand.regNo &
         "#name" #> brand.name &
-        "#brandType" #> { brandType.id + " -> " + brandType.name } &
+        "#brandType" #> brand.displayType &
         "#applicant" #> brand.applicant &
         "#regDate" #> brand.regDate.asHtml &
-        "#status" #> WebHelper.statusLabel(brand.status.get) &
-        "#basePrice" #> <span class="badge badge-success">￥{ brand.basePrice }</span> &
+        "#status" #> brand.displayStatus &
+        "#basePrice" #> brand.displayBasePrice &
         "#actions" #> actions(brand)
     })
   }
 
   def view = {
     tabMenuRV(Full("zoom-in", "查看商标"))
-    val brand = Brand.findByKey(S.param("id").map(_.toLong).get).get
-    val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
+    val brandId = S.param("id").openOrThrowException("商标id错误").toLong
+    val brand = Brand.find(By(Brand.owner, user), By(Brand.id, brandId)).head
 
     "#regNo" #> brand.regNo &
       "#name" #> brand.name &
-      "#pic" #> <img src={ "/upload/" + WebHelper.pic(brand.pic.get) }/> &
-      "#brand-type" #> { brandType.id + " -> " + brandType.name } &
-      "#status" #> WebHelper.statusLabel(brand.status.get) &
-      "#basePrice" #> <span class="badge badge-success">￥{ brand.basePrice }</span> &
+      "#pic" #> brand.displayPic() &
+      "#brand-type" #> brand.displayType &
+      "#status" #> brand.displayStatus &
+      "#basePrice" #> brand.displayBasePrice &
       "#regdate" #> brand.regDate.asHtml &
       "#applicant" #> brand.applicant &
       "#useDescn" #> brand.useDescn &

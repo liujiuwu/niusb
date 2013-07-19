@@ -38,7 +38,7 @@ import net.liftweb.http.js.JsCmds._
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   private object typeRV extends RequestVar[Box[String]](Full("0"))
   private object keywordRV extends RequestVar[String]("")
-  object brandRV extends RequestVar[Brand](Brand.create)
+  //object brandRV extends RequestVar[Brand](Brand.create)
 
   override def itemsPerPage = 10
 
@@ -102,24 +102,21 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
     def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case _ =>
-          link("/admin/brand/view",
-            () => brandRV(brand), <i class="icon-zoom-in"></i>, "class" -> "btn btn-small btn-success") ++ Text(" ") ++
-            link("/admin/brand/edit",
-              () => brandRV(brand), <i class="icon-edit"></i>, "class" -> "btn btn-small btn-info") ++ Text(" ") ++
-              link("/admin/brand/", () => { brand.delete_! }, <i class="icon-trash"></i>, "class" -> "btn btn-small btn-danger")
+          <a href={ "/admin/brand/view?id=" + brand.id.get } class="btn btn-small btn-success"><i class="icon-zoom-in"></i></a> ++ Text(" ") ++
+            <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-small btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
+            link("/admin/brand/", () => { brand.delete_! }, <i class="icon-trash"></i>, "class" -> "btn btn-small btn-danger")
       }
     }
 
     "tr" #> page.map(brand => {
-      val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
       "#regNo" #> brand.regNo.get &
         "#name" #> brand.name.get &
-        "#brandType" #> { brandType.id + " -> " + brandType.name } &
+        "#brandType" #> brand.displayType &
         "#applicant" #> brand.applicant.get &
         "#regDate" #> brand.regDate.asHtml &
-        "#status" #> WebHelper.statusLabel(brand.status.get) &
-        "#basePrice" #> <span class="badge badge-success">￥{ brand.basePrice }</span> &
-        "#sellPrice" #> <span class="badge badge-warning">￥{ brand.sellPrice }</span> &
+        "#status" #> brand.displayStatus &
+        "#basePrice" #> brand.displayBasePrice &
+        "#sellPrice" #> brand.displaySellPrice &
         "#owner" #> brand.owner.getOwner.name &
         "#actions" #> actions(brand)
     })
@@ -127,24 +124,24 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
 
   def view = {
     tabMenuRV(Full("zoom-in", "查看商标"))
-    val brand = brandRV.is
-    val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
+    val brandId = S.param("id").openOrThrowException("商标id错误").toLong
+    val brand = Brand.find(By(Brand.id, brandId)).head
 
     "#regNo" #> brand.regNo &
       "#name" #> brand.name &
-      "#brand-type" #> { brandType.id + " -> " + brandType.name } &
-      "#status" #> WebHelper.statusLabel(brand.status.get) &
-      "#basePrice" #> <span class="badge badge-success">￥{ brand.basePrice }</span> &
-      "#sellPrice" #> <span class="badge badge-warning">￥{ brand.sellPrice }</span> &
-      "#strikePrice" #> <span class="badge badge-important">￥{ brand.strikePrice }</span> &
+      "#brand-type" #> brand.displayType &
+      "#status" #> brand.displayStatus &
+      "#basePrice" #> brand.displayBasePrice &
+      "#sellPrice" #> brand.displayBasePrice &
+      "#strikePrice" #> brand.displayStrikePrice &
       "#regdate" #> brand.regDate.asHtml &
       "#applicant" #> brand.applicant &
       "#useDescn" #> brand.useDescn &
       "#descn" #> brand.descn &
-      "#pic" #> <img src={ "/upload/" + WebHelper.pic(brand.pic.get) }/> &
+      "#pic" #> brand.displayPic() &
       "#owner" #> brand.owner.getOwner.displayInfo &
-      "#edit-btn" #> link("/admin/brand/edit", () => brandRV(brand), <span><i class="icon-edit"></i> 修改商标</span>, "class" -> "btn btn-primary") &
-      "#list-btn" #> link("/admin/brand/", () => brandRV(brand), <span><i class="icon-list"></i> 商标列表</span>, "class" -> "btn btn-primary")
+      "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
+      "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a>
   }
 
   def search = {
@@ -155,7 +152,8 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
 
   def edit = {
     tabMenuRV(Full("zoom-in", "修改商标"))
-    val brand = brandRV.is
+    val brandId = S.param("id").openOrThrowException("商标id错误").toLong
+    val brand = Brand.find(By(Brand.id, brandId)).head
 
     var basePrice = "0"
     var ownerId, regNo, pic, name, regDateStr, applicant, useDescn, descn = ""

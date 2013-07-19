@@ -19,6 +19,8 @@ import net.liftweb.mapper.MappedLong
 import net.liftweb.http.S
 import net.liftweb.mapper.MappedLongForeignKey
 import net.liftweb.mapper.By
+import scala.xml.NodeSeq
+import code.lib.BrandTypeHelper
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -130,8 +132,8 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   object remark extends MappedString(this, 300)
-  
-   override lazy val createdAt = new MyUpdatedAt(this) {
+
+  override lazy val createdAt = new MyUpdatedAt(this) {
     override def dbColumnName = "created_at"
 
     override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
@@ -162,6 +164,37 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
       }
     }
   }
+
+  def displayStatus: NodeSeq = {
+    status.get match {
+      case BrandStatus.ShenHeShiBai => <span class="label label-important">审核失败</span>
+      case BrandStatus.ShenHeZhong => <span class="label">审核中</span>
+      case BrandStatus.ChuShoZhong => <span class="label label-info">出售中</span>
+      case BrandStatus.JiaoYiZhong => <span class="label label-warning">交易中</span>
+      case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
+    }
+  }
+
+  def displayPic(size: String = "320"): NodeSeq = {
+    val picName = pic.get
+    val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
+    var newPicName = picName
+    picName match {
+      case scalePicNameReg(f, e) => newPicName = (f + "x%s.".format(size) + e)
+      case _ => newPicName = picName
+    }
+    <img src={ "/upload/" + newPicName }/>
+  }
+
+  def displayType: NodeSeq = {
+    val brandType = BrandTypeHelper.brandTypes.get(brandTypeId.get).get
+    <span>{ brandType.id + " -> " + brandType.name }</span>
+  }
+
+  def displayBasePrice: NodeSeq = badge("success", basePrice.get)
+  def displaySellPrice: NodeSeq = badge("warning", sellPrice.get)
+  def displayStrikePrice: NodeSeq = badge("important", strikePrice.get)
+  private def badge(state: String, data: AnyVal) = <span class={ "badge badge-" + state }>￥{ data }</span>
 
 }
 
