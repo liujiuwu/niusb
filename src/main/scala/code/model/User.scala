@@ -19,6 +19,12 @@ object UserStatus extends Enumeration {
   val Disabled = Value(1, "禁止")
 }
 
+object UserSupper extends Enumeration {
+  type UserSupper = Value
+  val Normal = Value(0, "否")
+  val Supper = Value(1, "是")
+}
+
 class User extends MegaProtoUser[User] with CreatedUpdated {
   def getSingleton = User
 
@@ -93,6 +99,7 @@ class User extends MegaProtoUser[User] with CreatedUpdated {
 
   def displayName = if (name.get.isEmpty()) mobile.get else name.get
   def displayInfo = if (name.get.isEmpty()) <span>{ mobile.get }-{ id.get }</span> else <span>{ name.get }-{ mobile.get }-{ id.get }</span>
+  def displaySuper = if (superUser.get) <span class="badge badge-success">是</span> else <span class="badge badge-important">否</span>
 
   def brandCount = Brand.count(By(Brand.owner, this))
 }

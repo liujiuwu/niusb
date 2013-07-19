@@ -130,7 +130,6 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
     val brand = brandRV.is
     val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
-    "#edit-btn" #> link("/admin/brand/edit", () => brandRV(brand), <span><i class="icon-edit"></i> 修改商标</span>, "class" -> "btn btn-primary") &
     "#regNo" #> brand.regNo &
       "#name" #> brand.name &
       "#brand-type" #> { brandType.id + " -> " + brandType.name } &
@@ -143,7 +142,9 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       "#useDescn" #> brand.useDescn &
       "#descn" #> brand.descn &
       "#pic" #> <img src={ "/upload/" + WebHelper.pic(brand.pic.get) }/> &
-      "#owner" #> brand.owner.getOwner.displayInfo
+      "#owner" #> brand.owner.getOwner.displayInfo &
+      "#edit-btn" #> link("/admin/brand/edit", () => brandRV(brand), <span><i class="icon-edit"></i> 修改商标</span>, "class" -> "btn btn-primary") &
+      "#list-btn" #> link("/admin/brand/", () => brandRV(brand), <span><i class="icon-list"></i> 商标列表</span>, "class" -> "btn btn-primary")
   }
 
   def search = {

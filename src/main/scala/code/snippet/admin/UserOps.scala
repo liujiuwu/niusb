@@ -22,19 +22,16 @@ import code.lib.WebHelper
 import net.liftweb.http.js.JsCmd
 import code.model.UserType
 import code.model.UserStatus
+import code.model.UserSupper
 
 object userRV extends RequestVar[Box[User]](Empty)
 object UserOps extends TabMenu with MyPaginatorSnippet[User] {
 
   override def itemsPerPage = 10
   override def count = {
-    println("==============================************")
-    User.count()}
-  override def page = User.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(User.createdAt, Descending))
-
-  private def isSuperUserLabel(user: User) = {
-    if (user.superUser.get) <span class="badge badge-success">是</span> else <span class="badge badge-important">否</span>
+    User.count()
   }
+  override def page = User.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(User.createdAt, Descending))
 
   def list = {
     def actionsBtn(user: User): NodeSeq = {
@@ -53,7 +50,7 @@ object UserOps extends TabMenu with MyPaginatorSnippet[User] {
         "#type" #> user.userType &
         "#email" #> user.email.get &
         "#enabled" #> user.enabled &
-        "#isAdmin" #> isSuperUserLabel(user) &
+        "#isAdmin" #> user.displaySuper &
         "#brandCount" #> link("/admin/brand/", () => userRV(Full(user)), Text(user.brandCount.toString), "class" -> "badge badge-success") &
         "#actions" #> actionsBtn(user)
     })
@@ -70,8 +67,10 @@ object UserOps extends TabMenu with MyPaginatorSnippet[User] {
       "#type" #> user.userType &
       "#email" #> user.email.get &
       "#enabled" #> user.enabled &
-      "#isAdmin" #> isSuperUserLabel(user) &
-      "#createdAt" #> user.createdAt.asHtml
+      "#isAdmin" #> user.displaySuper &
+      "#createdAt" #> user.createdAt.asHtml &
+      "#edit-btn" #> link("/admin/user/edit", () => userRV(Full(user)), <span><i class="icon-edit"></i> 修改用户信息</span>, "class" -> "btn btn-primary") &
+      "#list-btn" #> link("/admin/user/", () => userRV(Full(user)), <span><i class="icon-list"></i> 用户列表</span>, "class" -> "btn btn-primary")
   }
 
   def edit = {
@@ -83,10 +82,19 @@ object UserOps extends TabMenu with MyPaginatorSnippet[User] {
       JsRaw(WebHelper.succMsg("opt_profile_tip", Text("信息保存成功！")))
     }
 
+    val isSupper = if (user.superUser.get) UserSupper.Supper else UserSupper.Normal
+    def setSupper(user: User, v: UserSupper.Value) {
+      v match {
+        case UserSupper.Normal => user.superUser(false)
+        case UserSupper.Supper => user.superUser(true)
+      }
+    }
+
     "@name" #> text(user.name.is, user.name(_)) &
       "@gender" #> selectObj[Genders.Value](Genders.values.toList.map(v => (v, v.toString)), Full(user.gender.is), user.gender(_)) &
       "@user_type" #> selectObj[UserType.Value](UserType.values.toList.map(v => (v, v.toString)), Full(user.userType.is), user.userType(_)) &
       "@enabled" #> selectObj[UserStatus.Value](UserStatus.values.toList.map(v => (v, v.toString)), Full(user.enabled.is), user.enabled(_)) &
+      "@super" #> selectObj[UserSupper.Value](UserSupper.values.toList.map(v => (v, v.toString)), Full(isSupper), setSupper(user, _)) &
       "@qq" #> text(user.qq.is, user.qq(_)) &
       "@phone" #> text(user.phone.is, user.phone(_)) &
       "@email" #> text(user.email.is, user.email(_)) &
