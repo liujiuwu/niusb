@@ -31,7 +31,7 @@ object Site {
     Menu("Profile", menuLoc("Profile", "edit", "帐户信息")) / "user" / "profile" >> RequireLoggedIn >> UserMenuGroup,
     Menu("Pwd", menuLoc("Pwd", "key", "修改密码")) / "user" / "pwd" >> RequireLoggedIn >> UserMenuGroup,
     
-    Menu("UserAddBrand", menuLoc("UserAddBrand", "plus", "发布商标")) / "user" / "brand" / "add" >> RequireLoggedIn >> UserMenuGroup,
+    Menu("UserCreateBrand", menuLoc("UserCreateBrand", "plus", "发布商标")) / "user" / "brand" / "create" >> RequireLoggedIn >> UserMenuGroup,
     Menu("UserListBrand", menuLoc("UserListBrand", "list", "我的商标")) / "user" / "brand" / "index" >> RequireLoggedIn >> UserMenuGroup,
     Menu("UserViewBrand", menuLoc("UserViewBrand", "", "查看商标")) / "user" / "brand" / "view" >> RequireLoggedIn >> Hidden,
     Menu("UserEditBrand", menuLoc("UserEditBrand", "", "修改商标")) / "user" / "brand" / "edit" >> RequireLoggedIn >> Hidden,

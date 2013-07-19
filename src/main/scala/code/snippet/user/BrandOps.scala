@@ -39,7 +39,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
   override def count = Brand.count(By(Brand.owner, user))
   override def page = Brand.findAll(By(Brand.owner, user), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
 
-  def add = {
+  def create = {
     var basePrice = "0"
     var regNo, pic, name, regDateStr, applicant, useDescn, descn = ""
     var brandType: BrandType = BrandTypeHelper.brandTypes.get(25).get
@@ -102,8 +102,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
 
   def list = {
     def actions(brand: Brand): NodeSeq = {
-      val viewLink = link("/user/brand/view",
-        () => brandRV(Full(brand)), <i class="icon-zoom-in"></i>, "class" -> "btn btn-small btn-success")
+      val viewLink = <a href={"/user/brand/view?id="+brand.id.get} class="btn btn-small btn-success"><i class="icon-zoom-in"></i></a>
       brand.status.get match {
         case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>
           viewLink ++ Text(" ") ++
@@ -127,7 +126,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] {
 
   def view = {
     tabMenuRV(Full("zoom-in", "查看商标"))
-    val brand = brandRV.is.get
+    val brand = Brand.findByKey(S.param("id").map(_.toLong).get).get
     val brandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
     "#regNo" #> brand.regNo &
