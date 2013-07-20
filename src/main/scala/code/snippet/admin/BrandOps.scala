@@ -22,7 +22,6 @@ import net.liftweb.mapper.Descending
 import net.liftweb.mapper.IHaveValidatedThisSQL
 import net.liftweb.mapper.MaxRows
 import net.liftweb.mapper.OrderBy
-
 import net.liftweb.mapper.QueryParam
 import net.liftweb.mapper.StartAt
 import net.liftweb.util.Helpers.strToCssBindPromoter
@@ -35,6 +34,7 @@ import net.liftweb.http.js.JE.JsRaw
 import net.liftweb.http.js.JsCmd._
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.util.Helpers._
+import code.model.BrandStatus
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   private object typeRV extends RequestVar[Box[String]](Full("0"))
@@ -113,11 +113,11 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       "#regNo" #> brand.regNo.get &
         "#name" #> brand.name.get &
         "#brandType" #> brand.displayType &
-        "#applicant" #> brand.applicant.get &
         "#regDate" #> brand.regDate.asHtml &
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
         "#sellPrice" #> brand.displaySellPrice &
+        "#strikePrice" #> brand.displayStrikePrice &
         "#owner" #> brand.owner.getOwner.name &
         "#actions" #> actions(brand)
     })
@@ -183,6 +183,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
         "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
         "@name" #> text(brand.name.get, name = _) &
         "@pic" #> hidden(pic = _, brand.pic.get) &
+        "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
         "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Full(brandType.id.toString), v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
         "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
         "@applicant" #> text(brand.applicant.get, applicant = _) &

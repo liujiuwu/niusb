@@ -75,7 +75,6 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       "@basePrice" #> text(basePrice, basePrice = _) &
       "@name" #> text(name, name = _) &
       "@pic" #> hidden(pic = _, pic) &
-      //"@brand_type" #> selectObj[BrandType](brandTypes.map(v => (v, v.id + " -> " + v.name)), Empty, brandType = _) &
       "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Empty, v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
       "@regDate" #> text(regDateStr, regDateStr = _) &
       "@applicant" #> text(applicant, applicant = _) &
@@ -147,7 +146,6 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
         "#regdate" #> brand.regDate.asHtml &
-        "#applicant" #> brand.applicant &
         "#useDescn" #> brand.useDescn &
         "#descn" #> brand.descn
     }
