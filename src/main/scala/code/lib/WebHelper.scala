@@ -183,7 +183,7 @@ object WebHelper {
     </div>
   }
 
-  def handleResult(result: Box[CssSel], nodeSeq: NodeSeq) = {
+  def handleResult(result: Box[CssSel], nodeSeq: NodeSeq): NodeSeq = {
     result match {
       case Full(cssSel) => cssSel(nodeSeq)
       case Failure(msg, except, _) =>
@@ -197,7 +197,7 @@ object WebHelper {
             resultMsg = "操作发生异常，请稍候重试或联系我们！"
         }
         WebHelper.alertMsg(<p>{ resultMsg }</p>)
-      case _ =>
+      case _ => S.redirectTo("/")
     }
   }
 }

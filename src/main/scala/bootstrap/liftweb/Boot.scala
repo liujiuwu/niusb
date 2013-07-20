@@ -36,6 +36,7 @@ import net.liftweb.util.NamedPF
 import net.liftweb.http.NotFoundAsTemplate
 import net.liftweb.http.InternalServerErrorResponse
 import net.liftweb.http.XmlResponse
+import code.model.WebSet
 
 class Boot extends Loggable {
   def boot {
@@ -51,7 +52,7 @@ class Boot extends Loggable {
       }
     }*/
     DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
-    Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
+    Schemifier.schemify(true, Schemifier.infoF _, User, WebSet,Brand)
 
     /*FoBo.InitParam.JQuery = FoBo.JQuery191
     FoBo.InitParam.ToolKit = FoBo.Bootstrap231

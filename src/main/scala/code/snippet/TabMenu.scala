@@ -15,7 +15,7 @@ trait TabMenu {
 
   def tabMenu = {
     val menu: NodeSeq = tabMenuRV.get match {
-      case Full(t) => <li class="active"><a>{ if (!t._1.isEmpty()) <i class={ "icon-" + t._1 }></i> }{ t._2 }</a></li>
+      case Full(t) => <li class="active"><a>{ if (!t._1.isEmpty()) <i class={ "icon-" + t._1 }></i> }{ Text(" ") }{ t._2 }</a></li>
       case _ => Text("")
     }
     "span" #> menu

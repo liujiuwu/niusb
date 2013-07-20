@@ -29,9 +29,11 @@ import java.util.Date
 import net.liftweb.http.ResponseWithReason
 import net.liftweb.http.BadResponse
 import net.liftweb.http.OkResponse
+import org.apache.commons.io.FileUtils
 
 object UploadManager extends RestHelper with Loggable {
   val fmt = new SimpleDateFormat("yyyyMMddHHmmss")
+
   def myFit(img: Image, t: (Int, Int), source: (Int, Int)): Image = {
     val targetWidth = t._1
     val targetHeight = t._2
@@ -63,7 +65,7 @@ object UploadManager extends RestHelper with Loggable {
       ((source._1 * hscale).toInt, (source._2 * hscale).toInt)
   }
 
-  def getBaseApplicationPath: Box[String] = {
+  def appPath: Box[String] = {
     LiftRules.context match {
       case context: HTTPServletContext =>
         {
@@ -77,36 +79,59 @@ object UploadManager extends RestHelper with Loggable {
     }
   }
 
-  def getUploadDirTmp: File = {
-    val dir = new File(getUploadDir + File.separator + "tmp")
+  def uploadTmpDir: File = uploadFileDir()
+  def uploadBrandDir: File = uploadFileDir("brand")
+
+  def uploadFileDir(sub: String = "tmp"): File = {
+    val dir = new File(uploadDir + File.separator + sub)
     if (!dir.exists()) {
       dir.mkdirs()
     }
     dir
   }
 
-  def getUploadDir: File = {
-    val dir = new File(getBaseApplicationPath.get + File.separator + "upload")
+  def uploadDir: File = {
+    val dir = new File(appPath.get + File.separator + "upload")
     if (!dir.exists()) {
       dir.mkdirs()
     }
     dir
+  }
+
+  def srcPath(fileName: String, module: String = "brand") = s"/upload/${module}/${fileName}"
+
+  def srcTmpPath(fileName: String) = s"/upload/tmp/${fileName}"
+
+  def sizePicName(picName: String, size: String = "320") = {
+    val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
+    var newPicName = picName
+    picName match {
+      case scalePicNameReg(f, e) => newPicName = (f + s"x${size}." + e)
+      case _ => newPicName = picName
+    }
+    newPicName
+  }
+
+  def genNewFileName(extension: String = "png") = fmt.format(new Date) + "_" + StringHelpers.randomString(16) + "." + extension
+
+  def handleBrandImg(pic: String) = {
+    val (npic, snpic) = (UploadManager.sizePicName(pic), UploadManager.sizePicName(pic, "128"))
+    val srcPic = new File(UploadManager.uploadTmpDir + File.separator + npic)
+    val destPic = new File(UploadManager.uploadBrandDir + File.separator + npic)
+    if (srcPic.exists()) {
+      FileUtils.moveFile(srcPic, destPic)
+      Image(destPic).scale(0.4).write(new File(UploadManager.uploadBrandDir + File.separator + snpic))
+    }
   }
 
   serve {
     case "uploading" :: Nil Post req => {
-      if (req.uploadedFiles.exists(_.mimeType != "image/png"))
-        ResponseWithReason(BadResponse(), "Only PNGs")
-      else
-        OkResponse()
-
       def saveImage(fph: FileParamHolder) = {
-        val newFileName = fmt.format(new Date) + "_" + StringHelpers.randomString(16) + ".png"
-        val uploadFileName = getUploadDirTmp + File.separator + newFileName
+        val newFileName = genNewFileName()
+        val uploadFileName = uploadTmpDir + File.separator + newFileName
 
         val oImg = Image(fph.fileStream)
-        val swh = (oImg.width, oImg.height)
-        myFit(oImg, (400, 300), swh).write(uploadFileName)
+        myFit(oImg, (400, 300), (oImg.width, oImg.height)).write(uploadFileName)
         ("name" -> newFileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
       }
 

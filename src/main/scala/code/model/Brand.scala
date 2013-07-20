@@ -21,6 +21,7 @@ import net.liftweb.mapper.MappedLongForeignKey
 import net.liftweb.mapper.By
 import scala.xml.NodeSeq
 import code.lib.BrandTypeHelper
+import code.rest.UploadManager
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -175,16 +176,13 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     }
   }
 
-  def displayPic(size: String = "320"): NodeSeq = {
-    val picName = pic.get
-    val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
-    var newPicName = picName
-    picName match {
-      case scalePicNameReg(f, e) => newPicName = (f + "x%s.".format(size) + e)
-      case _ => newPicName = picName
-    }
-    <img src={ "/upload/" + newPicName }/>
+  def displaySpic: NodeSeq = displayPic("brand-simg-box", "128")
+
+  def displayPic(css: String = "brand-bimg-box", size: String = "320"): NodeSeq = {
+    <div class={ css }><img src={ displayPicSrc(size) } alt={ name.get }/></div>
   }
+
+  def displayPicSrc(size: String = "320") = UploadManager.srcPath(UploadManager.sizePicName(pic.get, size))
 
   def displayType: NodeSeq = {
     val brandType = BrandTypeHelper.brandTypes.get(brandTypeId.get).get
@@ -203,4 +201,5 @@ object Brand extends Brand with CRUDify[Long, Brand] with LongKeyedMetaMapper[Br
 
   override def fieldOrder = List(id, owner, name, brandTypeId, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
 
+  def picName(pic: String, prefix: String = "s") = prefix + pic
 }

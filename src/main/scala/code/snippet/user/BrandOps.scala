@@ -5,6 +5,8 @@ import java.io.File
 import scala.xml.NodeSeq
 import scala.xml.Text
 
+import org.apache.commons.io.FileUtils
+
 import code.lib.BrandType
 import code.lib.BrandTypeHelper
 import code.lib.SearchHelper
@@ -64,7 +66,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       brand.validate match {
         case Nil =>
           brand.save
-          //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息发布成功，请待审核！")))
+          UploadManager.handleBrandImg(pic)
           S.redirectTo("/user/brand/")
         case errors => println(errors); Noop
       }
@@ -112,18 +114,16 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
 
   def list = {
     def actions(brand: Brand): NodeSeq = {
-      val viewLink = <a href={ "/user/brand/view?id=" + brand.id.get } class="btn btn-small btn-success"><i class="icon-zoom-in"></i></a>
       brand.status.get match {
         case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>
-          viewLink ++ Text(" ") ++
-            link("/user/brand/", () => { brand.delete_! }, <i class="icon-trash"></i>, "class" -> "btn btn-small btn-danger")
-        case _ => viewLink
+          link("/user/brand/", () => { brand.delete_! }, <span><i class="icon-trash"></i> 删除</span>, "class" -> "btn btn-small btn-danger")
+        case _ => Text("")
       }
     }
 
     "tr" #> page.map(brand => {
       "#regNo" #> brand.regNo &
-        "#name" #> brand.name &
+        "#name" #> <a href={ "/user/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
         "#brandType" #> brand.displayType &
         "#applicant" #> brand.applicant &
         "#regDate" #> brand.regDate.asHtml &
@@ -142,6 +142,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       "#regNo" #> brand.regNo &
         "#name" #> brand.name &
         "#pic" #> brand.displayPic() &
+        "#spic" #> brand.displaySpic &
         "#brand-type" #> brand.displayType &
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
@@ -155,21 +156,17 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   def uploadBrandPic = {
     var picName, x, y, w, h = ""
     def process(): JsCmd = {
-      val uploadPic = UploadManager.getUploadDirTmp + File.separator + picName
-      val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
-      var newPicName = picName
-      picName match {
-        case scalePicNameReg(f, e) => newPicName = (f + "x320." + e)
-        case _ => newPicName = picName
-      }
-
-      val saveUploadPic = UploadManager.getUploadDir + File.separator + newPicName
+      val uploadPic = new File(UploadManager.uploadTmpDir + File.separator + picName)
+      val newPicName = UploadManager.sizePicName(picName)
       Thumbnails.of(uploadPic)
         .sourceRegion(x.toInt, y.toInt, w.toInt, h.toInt)
         .size(w.toInt, h.toInt)
         .outputQuality(1f)
-        .toFile(new File(saveUploadPic));
-      JsRaw("$('#uploadDialog').modal('hide');")
+        .toFile(new File(UploadManager.uploadTmpDir + File.separator + newPicName))
+
+      FileUtils.deleteQuietly(uploadPic)
+      val imgSrc = UploadManager.srcTmpPath(newPicName)
+      JsRaw("$('#uploadDialog').modal('hide');$('#brand_pic').attr('src','" + imgSrc + "')")
     }
 
     "@picName" #> hidden(picName = _, picName) &

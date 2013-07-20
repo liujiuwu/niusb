@@ -35,6 +35,11 @@ import net.liftweb.http.js.JsCmd._
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.util.Helpers._
 import code.model.BrandStatus
+import net.coobird.thumbnailator.Thumbnails
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.IOUtils
+import code.rest.UploadManager
+import java.io.File
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   private object typeRV extends RequestVar[Box[String]](Full("0"))
@@ -103,7 +108,6 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
     def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case _ =>
-          <a href={ "/admin/brand/view?id=" + brand.id.get } class="btn btn-small btn-success"><i class="icon-zoom-in"></i></a> ++ Text(" ") ++
             <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-small btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
             link("/admin/brand/", () => { brand.delete_! }, <i class="icon-trash"></i>, "class" -> "btn btn-small btn-danger")
       }
@@ -111,7 +115,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
 
     "tr" #> page.map(brand => {
       "#regNo" #> brand.regNo.get &
-        "#name" #> brand.name.get &
+        "#name" #> <a href={ "/admin/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
         "#brandType" #> brand.displayType &
         "#regDate" #> brand.regDate.asHtml &
         "#status" #> brand.displayStatus &
@@ -142,6 +146,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
         "#useDescn" #> brand.useDescn &
         "#descn" #> brand.descn &
         "#pic" #> brand.displayPic() &
+        "#spic" #> brand.displaySpic &
         "#owner" #> brand.owner.getOwner.displayInfo &
         "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
         "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a>
@@ -156,7 +161,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   }
 
   def edit(nodeSeq: NodeSeq) = {
-    tabMenuRV(Full("zoom-in", "修改商标"))
+    tabMenuRV(Full("edit", "修改商标"))
 
     val result = for (
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效";
@@ -167,11 +172,23 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       var brandType: BrandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
       def process(): JsCmd = {
+        val oldPic = brand.pic.get
         brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
         brand.brandTypeId(brandType.id)
         brand.validate match {
           case Nil =>
             brand.save
+            UploadManager.handleBrandImg(pic)
+            if (oldPic != pic) {
+              val oldPicFilex320 = new File(UploadManager.uploadBrandDir + File.separator + UploadManager.sizePicName(oldPic))
+              if (oldPicFilex320.exists()) {
+                FileUtils.deleteQuietly(oldPicFilex320)
+              }
+              val oldPicFilex128 = new File(UploadManager.uploadBrandDir + File.separator + UploadManager.sizePicName(oldPic, "128"))
+              if (oldPicFilex128.exists()) {
+                FileUtils.deleteQuietly(oldPicFilex128)
+              }
+            }
             //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息已成功修改！")))
             S.redirectTo("/admin/brand/")
           case errors => println(errors); Noop
@@ -183,6 +200,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
         "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
         "@name" #> text(brand.name.get, name = _) &
         "@pic" #> hidden(pic = _, brand.pic.get) &
+        "#brand_pic [src]" #> brand.displayPicSrc() &
         "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
         "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Full(brandType.id.toString), v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
         "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &

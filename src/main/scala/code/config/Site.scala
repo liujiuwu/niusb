@@ -36,7 +36,7 @@ object Site {
     Menu("UserViewBrand", menuLoc("UserViewBrand", "", "查看商标")) / "user" / "brand" / "view" >> RequireLoggedIn >> Hidden,
     Menu("UserEditBrand", menuLoc("UserEditBrand", "", "修改商标")) / "user" / "brand" / "edit" >> RequireLoggedIn >> Hidden,
     
-    Menu("AdminSetting", menuLoc("AdminSetting", "", "网站设置")) / "admin" / "web" / "set" >> RequireAdminLoggedIn >> AdminMenuGroup,
+    Menu("AdminSetting", menuLoc("AdminSetting", "cogs", "网站设置")) / "admin" / "web" / "set" >> RequireAdminLoggedIn >> AdminMenuGroup,
     Menu("AdminListUser", menuLoc("AdminListUser", "user-md", "用户管理")) / "admin" / "user" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
     Menu("AdminViewUser", menuLoc("AdminViewUser", "", "查看用户")) / "admin" / "user" / "view" >> RequireAdminLoggedIn >> Hidden,
     Menu("AdminEditUser", menuLoc("AdminEditUser", "", "修改用户")) / "admin" / "user" / "edit" >> RequireAdminLoggedIn >> Hidden,
