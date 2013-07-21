@@ -20,9 +20,7 @@
 					<td><span id="regDate"></span></td>
 					<td><span id="status"></span></td>
 					<td><span id="basePrice"></span></td>
-					<td>
-						<!-- <span id="actions"></span> --> <a class="del_brand">删除</a>
-					</td>
+					<td><span id="actions"></span></td>
 				</tr>
 			</tbody>
 		</table>
@@ -36,7 +34,7 @@
 	</div>
 	<script>
 		function delBrand(id, name) {
-			var r =false
+			var r = false
 			bootbox.confirm("确定删除【" + name + "】这个商标吗?", function(result) {
 				r = result;
 			});

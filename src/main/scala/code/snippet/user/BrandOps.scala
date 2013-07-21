@@ -39,6 +39,8 @@ import net.liftweb.util.Helpers._
 import net.liftweb.http.js.JsCmds.Alert
 import net.liftweb.http.js.JsCmds
 import scala.language.postfixOps
+import code.lib.BoxConfirm
+import code.lib.BoxAlert
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
@@ -112,14 +114,25 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       Alert("Got " + s)
     }
 
-    /*def actions(brand: Brand): NodeSeq = {
+    def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>
-          //link("/user/brand/", () => { brand.delete_! }, <span><i class="icon-trash"></i> 删除</span>, "class" -> "btn btn-small btn-danger")
-          ".del_brand [onclick]" #> ajaxCall(JsRaw("alrt('ok')"),handleClick _)
+          a(() => {
+            BoxConfirm("确定删除【" + brand.name.get + "】商标？此操作不可恢复，请谨慎！", {
+              ajaxInvoke(() => {
+                brand.status.get match {
+                  case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>
+                    brand.delete_!
+                    JsCmds.Reload
+                  //JsCmds.After(3 seconds, JsCmds.Reload) //or whatever javascript response you want, e.g. JsCmds.Noop
+                  case _ => BoxAlert("已审核通过商标无法进行删除操作！")
+                }
+              })._2
+            })
+          }, Text("删除"), "class" -> "btn btn-danger")
         case _ => Text("")
       }
-    }*/
+    }
 
     "tr" #> page.map(brand => {
       "#regNo" #> brand.regNo &
@@ -129,18 +142,7 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
         "#regDate" #> brand.regDate.asHtml &
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
-        //"#actions" #> actions(brand)
-        //".del_brand [onclick]" #> ajaxCall(JsRaw(s"delBrand(${brand.id.get},'${brand.name.get}')"),handleClick _)
-        ".del_brand " #> a(() => {
-          BoxConfirm("Are you sure you want to delete?", {
-            ajaxInvoke(() => {
-              //Logic here to delete
-              brand.delete_!
-              S.notice("Operation complete")
-              JsCmds.After(3 seconds, JsCmds.Reload) //or whatever javascript response you want, e.g. JsCmds.Noop 
-            })._2
-          })
-        }, Text("delete"))
+        "#actions " #> actions(brand)
     })
   }
 
@@ -187,9 +189,4 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       "@h" #> hidden(h = _, h) &
       "type=submit" #> ajaxSubmit("保存商标图", process)
   }
-
-  case class BoxConfirm(text: String, yes: JsCmd) extends JsCmd {
-    def toJsCmd = "bootbox.confirm(" + text.encJs + ",function(result){if(result){"+yes.toJsCmd+"}})"
-  }
-
 }
