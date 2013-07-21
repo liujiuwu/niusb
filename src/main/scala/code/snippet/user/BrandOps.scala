@@ -1,12 +1,9 @@
 package code.snippet.user
 
 import java.io.File
-
 import scala.xml.NodeSeq
 import scala.xml.Text
-
 import org.apache.commons.io.FileUtils
-
 import code.lib.BrandType
 import code.lib.BrandTypeHelper
 import code.lib.SearchHelper
@@ -24,13 +21,7 @@ import net.liftweb.common.Full
 import net.liftweb.common.Loggable
 import net.liftweb.http.S
 import net.liftweb.http.SHtml.ElemAttr.pairToBasic
-import net.liftweb.http.SHtml.ajaxCall
-import net.liftweb.http.SHtml.ajaxSubmit
-import net.liftweb.http.SHtml.hidden
-import net.liftweb.http.SHtml.link
-import net.liftweb.http.SHtml.select
-import net.liftweb.http.SHtml.text
-import net.liftweb.http.SHtml.textarea
+import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JE.JsRaw
 import net.liftweb.http.js.JE.ValById
 import net.liftweb.http.js.JsCmd
@@ -45,6 +36,9 @@ import net.liftweb.mapper.MaxRows
 import net.liftweb.mapper.OrderBy
 import net.liftweb.mapper.StartAt
 import net.liftweb.util.Helpers._
+import net.liftweb.http.js.JsCmds.Alert
+import net.liftweb.http.js.JsCmds
+import scala.language.postfixOps
 
 object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
@@ -113,13 +107,19 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   }
 
   def list = {
-    def actions(brand: Brand): NodeSeq = {
+    def handleClick(s: String): JsCmd = {
+      logger.info("Recevied: " + s)
+      Alert("Got " + s)
+    }
+
+    /*def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>
-          link("/user/brand/", () => { brand.delete_! }, <span><i class="icon-trash"></i> 删除</span>, "class" -> "btn btn-small btn-danger")
+          //link("/user/brand/", () => { brand.delete_! }, <span><i class="icon-trash"></i> 删除</span>, "class" -> "btn btn-small btn-danger")
+          ".del_brand [onclick]" #> ajaxCall(JsRaw("alrt('ok')"),handleClick _)
         case _ => Text("")
       }
-    }
+    }*/
 
     "tr" #> page.map(brand => {
       "#regNo" #> brand.regNo &
@@ -129,7 +129,18 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
         "#regDate" #> brand.regDate.asHtml &
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
-        "#actions" #> actions(brand)
+        //"#actions" #> actions(brand)
+        //".del_brand [onclick]" #> ajaxCall(JsRaw(s"delBrand(${brand.id.get},'${brand.name.get}')"),handleClick _)
+        ".del_brand " #> a(() => {
+          BoxConfirm("Are you sure you want to delete?", {
+            ajaxInvoke(() => {
+              //Logic here to delete
+              brand.delete_!
+              S.notice("Operation complete")
+              JsCmds.After(3 seconds, JsCmds.Reload) //or whatever javascript response you want, e.g. JsCmds.Noop 
+            })._2
+          })
+        }, Text("delete"))
     })
   }
 
@@ -175,6 +186,10 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
       "@w" #> hidden(w = _, w) &
       "@h" #> hidden(h = _, h) &
       "type=submit" #> ajaxSubmit("保存商标图", process)
+  }
+
+  case class BoxConfirm(text: String, yes: JsCmd) extends JsCmd {
+    def toJsCmd = "bootbox.confirm(" + text.encJs + ",function(result){if(result){"+yes.toJsCmd+"}})"
   }
 
 }
