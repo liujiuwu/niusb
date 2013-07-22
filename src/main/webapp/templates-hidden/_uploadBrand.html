@@ -4,25 +4,25 @@
 	<link rel="stylesheet" href="/css/bootstrap-modal.css" type="text/css" />
 	<link rel="stylesheet" href="/css/jquery.Jcrop.css" type="text/css" />
 	<style>
-	#original-img-box {
-		width: 400px;
-		height: 300px;
-		border: 1px solid #ddd;
-		background-color: #fafafa;
-		display: block;
-	}
-	
-	#preview-img-box {
-		border: 1px solid #ddd;
-		background-color: #fafafa;
-		width: 320px;
-		height: 200px;
-		overflow: hidden;
-		display: block;
-	}
-	</style>
+#original-img-box {
+	width: 400px;
+	height: 300px;
+	border: 1px solid #ddd;
+	background-color: #fafafa;
+	display: block;
+}
+
+#preview-img-box {
+	border: 1px solid #ddd;
+	background-color: #fafafa;
+	width: 320px;
+	height: 200px;
+	overflow: hidden;
+	display: block;
+}
+</style>
 	</head_merge>
-	<div id="uploadDialog" class="modal hide fade" tabindex="-1" data-width="765">
+	<div id="uploadDialog" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="765">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3 id="loginModalLabel">商标图片上传</h3>
@@ -35,7 +35,7 @@
 						</span>
 					</form>
 				</div>
-				<div id="progress" class="progress progress-striped active" style="margin-top: 5px;margin-bottom:0">
+				<div id="progress" class="progress progress-striped active" style="margin-top: 5px; margin-bottom: 0">
 					<div id="progress-bar" class="bar" style="width: 40%;"></div>
 				</div>
 			</div>
@@ -54,6 +54,7 @@
 			<form data-lift="form.ajax">
 				<div data-lift="user.BrandOps.uploadBrandPic">
 					<input type="hidden" id="picName" name="picName" /> <input type="hidden" id="x" name="x" /> <input type="hidden" id="y" name="y" /> <input type="hidden" id="w" name="w" /> <input type="hidden" id="h" name="h" />
+					<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
 					<button type="submit" id="submit-avatar" class="btn btn-primary">保存商标图</button>
 				</div>
 			</form>
@@ -61,86 +62,80 @@
 		</div>
 	</div>
 
-
-	<script type="text/javascript" src="/js/jquery.ui.widget.min.js"></script>
-	<script type="text/javascript" src="/js/jquery.iframe-transport.js"></script>
-	<script type="text/javascript" src="/js/jquery.fileupload.js"></script>
-	<script type="text/javascript" src="/js/bootstrap-modalmanager.js"></script>
-	<script type="text/javascript" src="/js/bootstrap-modal.js"></script>
-	<script type="text/javascript" src="/js/jquery.Jcrop.js"></script>
-	<script type="text/javascript">
-		var mw = 400, mh = 300, iw = 320, ih = 200;
-		var jcrop_api;
-		function initJcrop() {
-			$("#original-img").Jcrop({
-				onChange : showPreview,
-				onSelect : showPreview,
-				aspectRatio : iw / ih,
-				minSize : [ iw, ih ],
-				setSelect : [ (mw - iw) / 2, (mh - ih) / 2, iw, ih ]
-			}, function() {
-				jcrop_api = this;
-			});
-		}
-
-		function showPreview(c) {
-			if (parseInt(c.w) > 0) {
-				var rx = iw / c.w;
-				var ry = ih / c.h;
-				var w = $("#original-img").width();
-				var h = $("#original-img").height();
-				$("#preview-img").css({
-					width : Math.round(rx * w) + 'px',
-					height : Math.round(ry * h) + 'px',
-					marginLeft : '-' + Math.round(rx * c.x) + 'px',
-					marginTop : '-' + Math.round(ry * c.y) + 'px'
+	<lift:tail>
+		<script type="text/javascript" src="/js/jquery.ui.widget.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.iframe-transport.js"></script>
+		<script type="text/javascript" src="/js/jquery.fileupload.js"></script>
+		<script type="text/javascript" src="/js/jquery.Jcrop.js"></script>
+		<script type="text/javascript">
+			var mw = 400, mh = 300, iw = 320, ih = 200;
+			var jcrop_api;
+			function initJcrop() {
+				$("#original-img").Jcrop({
+					onChange : showPreview,
+					onSelect : showPreview,
+					aspectRatio : iw / ih,
+					minSize : [ iw, ih ],
+					setSelect : [ (mw - iw) / 2, (mh - ih) / 2, iw, ih ]
+				}, function() {
+					jcrop_api = this;
 				});
-				$('#x').val(c.x);
-				$('#y').val(c.y);
-				$('#w').val(iw);
-				$('#h').val(ih);
 			}
-		}
 
-		$(function() {
-			$('#uploadDialog').modal({
-				show : false,
-				keyboard : false,
-				backdrop : false
-			})
-
-			$('#progress').hide();
-			$("#file-upload").fileupload(
-					{
-						dataType : 'json',
-						url : '/uploading',
-						dropZone : $('#original-img'),
-						add : function(e, data) {
-							$('#progress-bar').css('width', '0%');
-							$('#progress').show();
-							data.submit();
-						},
-						progressall : function(e, data) {
-							var progress = parseInt(data.loaded / data.total
-									* 100, 10)
-									+ '%';
-							$('#progress-bar').css('width', progress);
-						},
-
-						done : function(e, data) {
-							var uploadFile = "/upload/tmp/" + data.result.name
-							$("#original-img").attr("src", uploadFile);
-							$("#preview-img").attr("src", uploadFile);
-							$("#picName").val(data.result.name);
-							$("#pic").val(data.result.name);
-							$('#progress-bar').css('width', '100%');
-							$('#progress').fadeOut();
-							initJcrop();
-							jcrop_api.setImage(uploadFile);
-							initJcrop();
-						}
+			function showPreview(c) {
+				if (parseInt(c.w) > 0) {
+					var rx = iw / c.w;
+					var ry = ih / c.h;
+					var w = $("#original-img").width();
+					var h = $("#original-img").height();
+					$("#preview-img").css({
+						width : Math.round(rx * w) + 'px',
+						height : Math.round(ry * h) + 'px',
+						marginLeft : '-' + Math.round(rx * c.x) + 'px',
+						marginTop : '-' + Math.round(ry * c.y) + 'px'
 					});
+					$('#x').val(c.x);
+					$('#y').val(c.y);
+					$('#w').val(iw);
+					$('#h').val(ih);
+				}
+			}
 
-		});
-	</script>
+			$(function() {
+				$('#progress').hide();
+				$("#file-upload").fileupload(
+						{
+							dataType : 'json',
+							url : '/uploading',
+							dropZone : $('#original-img'),
+							add : function(e, data) {
+								$('#progress-bar').css('width', '0%');
+								$('#progress').show();
+								data.submit();
+							},
+							progressall : function(e, data) {
+								var progress = parseInt(data.loaded
+										/ data.total * 100, 10)
+										+ '%';
+								$('#progress-bar').css('width', progress);
+							},
+
+							done : function(e, data) {
+								var uploadFile = "/upload/tmp/"
+										+ data.result.name
+								$("#original-img").attr("src", uploadFile);
+								$("#preview-img").attr("src", uploadFile);
+								$("#picName").val(data.result.name);
+								$("#pic").val(data.result.name);
+								$('#progress-bar').css('width', '100%');
+								$('#progress').fadeOut();
+								initJcrop();
+								jcrop_api.setImage(uploadFile);
+								initJcrop();
+							}
+						});
+
+			});
+		</script>
+	</lift:tail>
 </lift:children>
