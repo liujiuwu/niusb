@@ -8,9 +8,9 @@ import net.liftweb.common.Box
 
 object UserType extends Enumeration {
   type UserType = Value
-  val Normal = Value(0, "普通会员")
-  val Vip = Value(1, "VIP会员")
-  val Agent = Value(2, "代理会员")
+  val Normal = Value(0, "普通用户")
+  val Vip = Value(1, "VIP用户")
+  val Agent = Value(2, "代理用户")
 }
 
 object UserStatus extends Enumeration {
