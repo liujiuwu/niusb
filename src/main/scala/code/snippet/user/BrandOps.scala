@@ -109,11 +109,6 @@ object BrandOps extends TabMenu with MyPaginatorSnippet[Brand] with Loggable {
   }
 
   def list = {
-    def handleClick(s: String): JsCmd = {
-      logger.info("Recevied: " + s)
-      Alert("Got " + s)
-    }
-
     def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case BrandStatus.ShenHeShiBai | BrandStatus.ShenHeZhong =>

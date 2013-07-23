@@ -16,13 +16,11 @@ import net.liftweb.mapper.Genders
 import net.liftweb.util.Helpers._
 import net.liftweb.mapper.By
 import code.model.UserType
+import scala.xml.NodeSeq
 
 object UserOps {
-  object userVar extends RequestVar(User.currentUser.openOrThrowException("user no login"))
-
   def edit = {
-    val user = userVar.is
-
+    val user = User.currentUser.get
     def process(): JsCmd = {
       user.save
       JsRaw(WebHelper.succMsg("opt_profile_tip", Text("个人信息保存成功！"))) & JsRaw("""$("#displayName").text("%s")""".format(user.displayName))
@@ -39,9 +37,8 @@ object UserOps {
   }
 
   def updatePwd = {
+    val user = User.currentUser.get
     var (code, pwd) = ("", "")
-    val user = userVar.is
-
     def process(): JsCmd = {
       if (pwd.isEmpty() || pwd.length() < 6) {
         return WebHelper.formError("pwd", "新密码不能为空，且不少于6位字符。")

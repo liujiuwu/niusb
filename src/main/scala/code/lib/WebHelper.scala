@@ -183,8 +183,8 @@ object WebHelper {
     </div>
   }
 
-  def handleResult(result: Box[CssSel], nodeSeq: NodeSeq): NodeSeq = {
-    result match {
+  def handleResult(in: Box[CssSel], nodeSeq: NodeSeq): NodeSeq = {
+    in match {
       case Full(cssSel) => cssSel(nodeSeq)
       case Failure(msg, except, _) =>
         var resultMsg = msg
