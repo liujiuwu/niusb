@@ -5,6 +5,7 @@ db*.properties
 .checkstyle
 .cache
 src/main/webapp/images/item
+node_modules/*
 
 # use glob syntax.
 syntax: glob
