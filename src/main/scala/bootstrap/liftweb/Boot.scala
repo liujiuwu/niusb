@@ -2,7 +2,6 @@ package bootstrap.liftweb
 
 import code.model.MyDBVendor
 import code.model.User
-import net.liftmodules.FoBo
 import net.liftweb.common.Full
 import net.liftweb.db.DB
 import net.liftweb.db.DB1.db1ToDb
@@ -37,6 +36,7 @@ import net.liftweb.http.NotFoundAsTemplate
 import net.liftweb.http.InternalServerErrorResponse
 import net.liftweb.http.XmlResponse
 import code.model.WebSet
+import net.liftmodules.extras.LiftExtras
 
 class Boot extends Loggable {
   def boot {
@@ -53,6 +53,11 @@ class Boot extends Loggable {
     }*/
     DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
     Schemifier.schemify(true, Schemifier.infoF _, User, WebSet,Brand)
+    
+     // Init Extras
+    LiftExtras.init()
+    LiftRules.addToPackages("net.liftmodules.extras")
+    LiftExtras.artifactName.default.set("niusb-0.1.0")
 
     /*FoBo.InitParam.JQuery = FoBo.JQuery191
     FoBo.InitParam.ToolKit = FoBo.Bootstrap231

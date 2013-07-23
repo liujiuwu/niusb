@@ -45,7 +45,7 @@ libraryDependencies ++= {
     "net.liftweb"       %% "lift-webkit"        % liftVersion        % "compile->default"  withSources(),
     "net.liftweb"       %% "lift-mapper"        % liftVersion        % "compile->default"  withSources(),
     //"net.liftmodules"   % "fobo_2.5_2.10"       % "1.0",
-    "net.liftmodules"   %% "extras_2.5" % "0.1" % "compile",
+    "net.liftmodules"   %% "extras_2.5" % "0.2-SNAPSHOT" % "compile",
     "org.seleniumhq.selenium" % "selenium-java" % "2.33.0",
     "mysql" 	        %  "mysql-connector-java"   % "5.1.21" % "runtime->default",
     "org.eclipse.jetty" % "jetty-webapp"        % "8.0.4.v20111024"  % "container,test",
