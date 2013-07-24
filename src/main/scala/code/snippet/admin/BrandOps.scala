@@ -76,7 +76,7 @@ object BrandOps extends SnippetHelper with Loggable {
   def list = {
     val page: Long = S.param("page").map(toLong) openOr 1
     val q = S.param("type").map(toInt) openOr 1
-    val d = Brand.page(page, itemsPerPage, By(Brand.brandTypeId, q), StartAt(page * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
+    val paginator = Brand.paginator(page, itemsPerPage, By(Brand.brandTypeId, q), OrderBy(Brand.createdAt, Descending))
     def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case _ =>
@@ -85,7 +85,7 @@ object BrandOps extends SnippetHelper with Loggable {
       }
     }
 
-    "tr" #> d.datas.map(brand => {
+    "tr" #> paginator.datas.map(brand => {
       "#regNo" #> brand.regNo.get &
         "#name" #> <a href={ "/admin/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
         "#brandType" #> brand.displayType &
