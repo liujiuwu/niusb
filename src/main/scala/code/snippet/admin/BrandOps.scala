@@ -42,12 +42,12 @@ import net.liftweb.util.CssSel
 import code.snippet.PaginatorHelper
 import code.snippet.SnippetHelper
 
-object BrandOps extends PaginatorHelper[Brand] with SnippetHelper with Loggable {
+object BrandOps extends SnippetHelper with Loggable {
   private object typeRV extends RequestVar[Box[String]](Full("0"))
   private object keywordRV extends RequestVar[String]("")
   //object brandRV extends RequestVar[Brand](Brand.create)
 
-  override def itemsPerPage = 1
+  val itemsPerPage = 1
 
   private def queryParam = {
     val keyword = keywordRV.is
@@ -64,15 +64,19 @@ object BrandOps extends PaginatorHelper[Brand] with SnippetHelper with Loggable 
     }
   }
 
-  override def count = {
+  /*override def count = {
     Brand.count()
-  }
 
-  override def page = {
+  }*/
+
+  /* override def page = {
     Brand.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
-  }
+  }*/
 
   def list = {
+    val page: Long = S.param("page").map(toLong) openOr 1
+    val q = S.param("type").map(toInt) openOr 1
+    val d = Brand.page(page, itemsPerPage, By(Brand.brandTypeId, q), StartAt(page * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
     def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case _ =>
@@ -81,7 +85,7 @@ object BrandOps extends PaginatorHelper[Brand] with SnippetHelper with Loggable 
       }
     }
 
-    "tr" #> page.map(brand => {
+    "tr" #> d.datas.map(brand => {
       "#regNo" #> brand.regNo.get &
         "#name" #> <a href={ "/admin/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
         "#brandType" #> brand.displayType &

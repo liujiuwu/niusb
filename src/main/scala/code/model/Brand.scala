@@ -1,27 +1,31 @@
 package code.model
 
 import java.text.SimpleDateFormat
+
+import scala.xml.NodeSeq
+
+import code.lib.BrandTypeHelper
 import code.lib.WebHelper
+import code.rest.UploadManager
 import net.liftweb.common.Box
 import net.liftweb.common.Full
+import net.liftweb.mapper.By
 import net.liftweb.mapper.CRUDify
 import net.liftweb.mapper.CreatedUpdated
 import net.liftweb.mapper.IdPK
 import net.liftweb.mapper.LongKeyedMapper
 import net.liftweb.mapper.LongKeyedMetaMapper
-import net.liftweb.util.FieldError
-import net.liftweb.mapper.MappedInt
+import net.liftweb.mapper.MappedBoolean
 import net.liftweb.mapper.MappedDate
 import net.liftweb.mapper.MappedEnum
-import net.liftweb.mapper.MappedString
-import net.liftweb.mapper.MappedBoolean
+import net.liftweb.mapper.MappedInt
 import net.liftweb.mapper.MappedLong
-import net.liftweb.http.S
 import net.liftweb.mapper.MappedLongForeignKey
-import net.liftweb.mapper.By
-import scala.xml.NodeSeq
-import code.lib.BrandTypeHelper
-import code.rest.UploadManager
+import net.liftweb.mapper.MappedString
+import net.liftweb.mapper.QueryParam
+import net.liftweb.mapper.StartAt
+import net.liftweb.mapper.MaxRows
+import net.liftweb.util.FieldError
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -202,4 +206,14 @@ object Brand extends Brand with CRUDify[Long, Brand] with LongKeyedMetaMapper[Br
   override def fieldOrder = List(id, owner, name, brandTypeId, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
 
   def picName(pic: String, prefix: String = "s") = prefix + pic
+
+  def page(page: Long, itemsPerPage: Long, by: QueryParam[Brand]*) = {
+    //StartAt(page * itemsPerPage), MaxRows(itemsPerPage)
+    val cby  = by.filterNot(q => q match {
+      case StartAt(t) => true
+      case MaxRows(t) => true
+      case _ => false
+    })
+    Paginator(count(cby: _*), findAll(by: _*))
+  }
 }
