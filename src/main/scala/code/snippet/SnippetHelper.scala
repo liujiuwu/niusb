@@ -24,9 +24,6 @@ trait SnippetHelper {
     "span" #> menu
   }
 
-  def noticeHtml(msg: NodeSeq, title: String = "消息提示！"): NodeSeq = alertHtml(msg, title, "info")
-  def warningHtml(msg: NodeSeq, title: String = "警告！"): NodeSeq = alertHtml(msg, title, "warning")
-  def errorHtml(msg: NodeSeq, title: String = "出错啦！"): NodeSeq = alertHtml(msg, title, "error")
   def alertHtml(msg: NodeSeq, title: String = "出错啦！", alertType: String = "error"): NodeSeq = {
     <div class={ "alert alert-" + alertType }>
       <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -34,6 +31,10 @@ trait SnippetHelper {
       { msg }
     </div>
   }
+
+  def noticeHtml(msg: NodeSeq, title: String = "消息提示！"): NodeSeq = alertHtml(msg, title, "info")
+  def warningHtml(msg: NodeSeq, title: String = "警告！"): NodeSeq = alertHtml(msg, title, "warning")
+  def errorHtml(msg: NodeSeq, title: String = "出错啦！"): NodeSeq = alertHtml(msg, title, "error")
 
   implicit protected def boxCssSelToCssSel(in: Box[CssSel]): CssSel = in match {
     case Full(cssSel) => cssSel
