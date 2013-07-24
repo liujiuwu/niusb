@@ -1,0 +1,53 @@
+package code.snippet
+
+import scala.xml.NodeSeq
+import net.liftweb.common.Box
+import net.liftweb.common.Failure
+import net.liftweb.common.Full
+import net.liftweb.http.S
+import net.liftweb.util.CssSel
+import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.http.RequestVar
+import net.liftweb.common.Empty
+import scala.xml.Text
+
+object SnippetHelper extends SnippetHelper
+
+trait SnippetHelper {
+  object tabMenuRV extends RequestVar[Box[(String, String)]](Empty)
+
+  protected def tabMenu = {
+    val menu: NodeSeq = tabMenuRV.get match {
+      case Full((code, text)) if (!code.isEmpty() && !text.isEmpty()) => <li class="active"><a><i class={ "icon-" + code }></i>{ Text(" ") ++ text }</a></li>
+      case _ => Text("")
+    }
+    "span" #> menu
+  }
+
+  def noticeHtml(msg: NodeSeq, title: String = "消息提示！"): NodeSeq = alertHtml(msg, title, "info")
+  def warningHtml(msg: NodeSeq, title: String = "警告！"): NodeSeq = alertHtml(msg, title, "warning")
+  def errorHtml(msg: NodeSeq, title: String = "出错啦！"): NodeSeq = alertHtml(msg, title, "error")
+  def alertHtml(msg: NodeSeq, title: String = "出错啦！", alertType: String = "error"): NodeSeq = {
+    <div class={ "alert alert-" + alertType }>
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <h4>{ title }</h4>
+      { msg }
+    </div>
+  }
+
+  implicit protected def boxCssSelToCssSel(in: Box[CssSel]): CssSel = in match {
+    case Full(cssSel) => cssSel
+    case Failure(msg, except, _) =>
+      var resultMsg = msg
+      except.foreach {
+        case e: NoSuchElementException =>
+          resultMsg = "数据不存在，请检查！"
+        case e: NumberFormatException =>
+          resultMsg = "数字格式错误，请检查！"
+        case e: Exception =>
+          resultMsg = "操作发生异常，请稍候重试或联系我们！"
+      }
+      "*" #> errorHtml(<p>{ resultMsg }</p>)
+    case _ => S.redirectTo("/")
+  }
+}

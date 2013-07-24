@@ -1,0 +1,42 @@
+<div class="box-content" data-lift="surround?with=admin;at=content">
+	<div>
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th style="width: 60px">ID</th>
+					<th style="width: 80px">手机号</th>
+					<th>姓名</th>
+					<th style="width: 60px">性别</th>
+					<th style="width: 60px">类型</th>
+					<th>Email</th>
+					<th style="width: 50px">状态</th>
+					<th style="width: 50px">管理员</th>
+					<th style="width: 80px">商标</th>
+					<th style="width: 120px">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-lift="admin.UserOps.list">
+					<td><span id="id"></span></td>
+					<td><span id="mobile"></span></td>
+					<td><span id="name"></span></td>
+					<td><span id="gender"></span></td>
+					<td><span id="type"></span></td>
+					<td><span id="email"></span></td>
+					<td><span id="enabled"></span></td>
+					<td><span id="isAdmin"></span></td>
+					<td><span id="brandCount"></span></td>
+					<td><span id="actions"></span></td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="pagination" class="lift:admin.UserOps.paginate light-theme">
+			<nav:first></nav:first>
+			<nav:prev></nav:prev>
+			<nav:allpages></nav:allpages>
+			<nav:next></nav:next>
+			<nav:last></nav:last>
+		</div>
+	</div>
+
+</div>
