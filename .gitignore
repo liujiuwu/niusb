@@ -6,6 +6,8 @@ db*.properties
 .cache
 src/main/webapp/images/item
 node_modules/*
+/**/node_modules
+/node_modules
 
 # use glob syntax.
 syntax: glob
