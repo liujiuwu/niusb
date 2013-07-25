@@ -184,14 +184,10 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
 }
 
-object Brand extends Brand with CRUDify[Long, Brand] with LongKeyedMetaMapper[Brand] with Paginator[Brand]  {
+object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
   override def dbTableName = "brands"
 
   override def fieldOrder = List(id, owner, name, brandTypeId, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
 
   def picName(pic: String, prefix: String = "s") = prefix + pic
-
-  def paginator(page: Long, itemsPerPage: Int, by: QueryParam[Brand]*):PaginatorData[Brand] = {
-    PaginatorData(count(by: _*), findAll(StartAt[Brand]((page - 1) * itemsPerPage) :: MaxRows[Brand](itemsPerPage) :: by.toList: _*))
-  }
 }

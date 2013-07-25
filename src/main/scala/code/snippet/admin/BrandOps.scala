@@ -47,7 +47,7 @@ object BrandOps extends SnippetHelper with Loggable {
   private object keywordRV extends RequestVar[String]("")
   //object brandRV extends RequestVar[Brand](Brand.create)
 
-  val itemsPerPage = 1
+  val itemsPerPage = 2
 
   private def queryParam = {
     val keyword = keywordRV.is
@@ -76,7 +76,7 @@ object BrandOps extends SnippetHelper with Loggable {
   def list = {
     val page: Long = S.param("page").map(toLong) openOr 1
     val q = S.param("type").map(toInt) openOr 1
-    val paginator = Brand.paginator(page, itemsPerPage, By(Brand.brandTypeId, q), OrderBy(Brand.createdAt, Descending))
+    val paginatorModel = Brand.paginator(page, itemsPerPage, By(Brand.brandTypeId, q), OrderBy(Brand.createdAt, Descending))
     def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case _ =>
@@ -85,7 +85,7 @@ object BrandOps extends SnippetHelper with Loggable {
       }
     }
 
-    "tr" #> paginator.datas.map(brand => {
+    val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
       "#regNo" #> brand.regNo.get &
         "#name" #> <a href={ "/admin/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
         "#brandType" #> brand.displayType &
@@ -97,6 +97,10 @@ object BrandOps extends SnippetHelper with Loggable {
         "#owner" #> brand.owner.getOwner.name &
         "#actions" #> actions(brand)
     })
+
+    val paginator = "#pagination" #> paginatorModel.paginate _
+
+    paginator & dataList
   }
 
   def view = {
