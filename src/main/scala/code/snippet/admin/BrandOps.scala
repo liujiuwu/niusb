@@ -41,42 +41,14 @@ import java.io.File
 import net.liftweb.util.CssSel
 import code.snippet.PaginatorHelper
 import code.snippet.SnippetHelper
+import net.liftweb.http.SHtml
 
 object BrandOps extends SnippetHelper with Loggable {
-  private object typeRV extends RequestVar[Box[String]](Full("0"))
-  private object keywordRV extends RequestVar[String]("")
-  //object brandRV extends RequestVar[Brand](Brand.create)
-
-  val itemsPerPage = 2
-
-  private def queryParam = {
-    val keyword = keywordRV.is
-    val searchType = typeRV.is.openOrThrowException("no select search type")
-    logger.info("keyword=" + keyword + ",searchType=" + searchType)
-    if (keyword != "") {
-      if (searchType == "0") {
-        By(Brand.regNo, keyword)
-      } else if (searchType == "1") {
-        BySql("owner=" + keyword, IHaveValidatedThisSQL("charliechen", "2011-07-21"))
-      }
-    } else {
-
-    }
-  }
-
-  /*override def count = {
-    Brand.count()
-
-  }*/
-
-  /* override def page = {
-    Brand.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
-  }*/
 
   def list = {
     val page: Long = S.param("page").map(toLong) openOr 1
     val q = S.param("type").map(toInt) openOr 1
-    val paginatorModel = Brand.paginator(page, itemsPerPage, By(Brand.brandTypeId, q), OrderBy(Brand.createdAt, Descending))
+    val paginatorModel = Brand.paginator()(1)(OrderBy(Brand.createdAt, Descending))
     def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case _ =>
@@ -84,6 +56,8 @@ object BrandOps extends SnippetHelper with Loggable {
             link("/admin/brand/", () => { brand.delete_! }, <i class="icon-trash"></i>, "class" -> "btn btn-small btn-danger")
       }
     }
+
+    val searchForm = "@keyword" #> SHtml.text("test", println(_))
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
       "#regNo" #> brand.regNo.get &
@@ -100,7 +74,7 @@ object BrandOps extends SnippetHelper with Loggable {
 
     val paginator = "#pagination" #> paginatorModel.paginate _
 
-    paginator & dataList
+    searchForm & dataList & paginator
   }
 
   def view = {
@@ -127,12 +101,6 @@ object BrandOps extends SnippetHelper with Loggable {
         "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
         "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a>
     }): CssSel
-  }
-
-  def search = {
-    val types = List("0" -> "注册号", "1" -> "用户ID")
-    "@type" #> select(types, typeRV.is, x => typeRV(Full(x))) &
-      "@keyword" #> textElem(keywordRV)
   }
 
   def edit = {

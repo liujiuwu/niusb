@@ -4,16 +4,46 @@ import scala.xml._
 import net.liftweb.mapper._
 import net.liftweb.util.Helpers._
 import net.liftweb.util.IterableConst._
-import net.liftweb.util.NodeSeqIterableConst
+import net.liftweb.http.S
+
+trait Paginator[T <: LongKeyedMapper[T]] extends LongKeyedMetaMapper[T] {
+  self: T with LongKeyedMapper[T] =>
+
+  def paginator(currentPage: Long = S.param("page").map(toLong) openOr 1)(itemsOnPage: Int = 20)(by: QueryParam[T]*): PaginatorModel[T] = {
+    val bys = by.filterNot(b => b match {
+      case StartAt(start) => false
+      case MaxRows(maxRows) => false
+      case _ => true
+    })
+
+    val bysForCount = by.filterNot(b => b match {
+      case StartAt(start) => false
+      case MaxRows(maxRows) => false
+      case OrderBy(field, order, nullOrder) => false
+      case _ => true
+    })
+
+    val start = ((currentPage - 1) max 0) * itemsOnPage
+    val datas = findAll(StartAt[T](start) :: MaxRows[T](itemsOnPage) :: bys.toList: _*)
+    val total = count(bysForCount: _*)
+    PaginatorModel(total, datas, currentPage, itemsOnPage)
+  }
+
+}
 
 case class PaginatorModel[T](total: Long, datas: Seq[T], currentPageNo: Long, itemsPerPage: Int = 20) {
   def totalPage = (total / itemsPerPage).toInt + (if (total % itemsPerPage > 0) 1 else 0)
+
+  def pageUrl(currentPageNo: Long): String = {
+    def originalUri = S.originalRequest.map(_.uri).openOr(sys.error("No request"))
+    appendParams(originalUri, List("page" -> currentPageNo.toString))
+  }
 
   def pageXml(pageNo: Long, ns: NodeSeq): NodeSeq = {
     if (currentPageNo == pageNo || pageNo < 0 || pageNo > totalPage) {
       <span class="current">{ ns }</span>
     } else {
-      <a href={ "/admin/brand/?page=" + pageNo + "&type=25" } class="page-link">{ ns }</a>
+      <a href={ pageUrl(pageNo) } class="page-link">{ ns }</a>
     }
   }
 
@@ -86,66 +116,3 @@ case class PaginatorModel[T](total: Long, datas: Seq[T], currentPageNo: Long, it
   }
 }
 
-trait Paginator[T <: LongKeyedMapper[T]] extends LongKeyedMetaMapper[T] {
-  self: T with LongKeyedMapper[T] =>
-
-  def paginator(page: Long, itemsPerPage: Int, by: QueryParam[T]*): PaginatorModel[T] = {
-    PaginatorModel(count(by: _*), findAll(StartAt[T](((page - 1) max 0) * itemsPerPage) :: MaxRows[T](itemsPerPage) :: by.toList: _*), page, itemsPerPage)
-  }
-
-}
-
-object PageTest extends App {
-
-  def interval(totalPage: Int, currentPage: Int, displayedPages: Int = 5): (Int, Int) = {
-    val realCurrentPage = currentPage - 1
-    val halfDisplayed = displayedPages / 2.0f
-    val start = if (realCurrentPage > halfDisplayed) (realCurrentPage - halfDisplayed) min (totalPage - displayedPages) max 0 else 0
-    val end = if (realCurrentPage > halfDisplayed) (realCurrentPage + halfDisplayed) min totalPage else displayedPages min totalPage
-    (Math.ceil(start).toInt, Math.ceil(end).toInt)
-  }
-
-  def gt {
-    val edges = 2
-    val totalPage = 100
-    val (start, end) = interval(totalPage, 10)
-    println(start + "," + end)
-
-    if (start > 0 && edges > 0) {
-      var ends = edges min start
-      for (i <- 0 until ends) {
-        print(i + " ")
-      }
-
-      if (edges < start && (start - edges != 1)) {
-        print("... ")
-      } else if (start - edges == 1) {
-        print(edges + 1 + " ")
-      }
-    }
-
-    print("|")
-
-    for (i <- start until end) {
-      print(i + " ")
-    }
-
-    print("|")
-
-    if (end < totalPage && edges > 0) {
-      if (totalPage - edges > end && (totalPage - edges - end != 1)) {
-        print("... ")
-      } else if (totalPage - edges - end == 1) {
-        print(end + 1 + " ")
-      }
-      var begins = (totalPage - edges) max end
-      for (i <- begins until totalPage) {
-        print(i + " ")
-      }
-    }
-
-  }
-
-  gt
-
-}
