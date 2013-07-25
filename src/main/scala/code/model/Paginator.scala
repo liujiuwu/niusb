@@ -1,29 +1,21 @@
 package code.model
 
 import scala.xml._
-
 import net.liftweb.mapper._
 import net.liftweb.util.Helpers._
+import net.liftweb.util.IterableConst._
+import net.liftweb.util.NodeSeqIterableConst
 
 case class PaginatorModel[T](total: Long, datas: Seq[T], currentPageNo: Long, itemsPerPage: Int = 20) {
-  def totalPage = (total / itemsPerPage).toInt+ (if (total % itemsPerPage > 0) 1 else 0)
+  def totalPage = (total / itemsPerPage).toInt + (if (total % itemsPerPage > 0) 1 else 0)
 
-  def pageXml(pageNo: Long, ns: NodeSeq): NodeSeq =
-    if (currentPageNo == pageNo || pageNo < 0 || pageNo > totalPage)
+  def pageXml(pageNo: Long, ns: NodeSeq): NodeSeq = {
+    if (currentPageNo == pageNo || pageNo < 0 || pageNo > totalPage) {
       <span class="current">{ ns }</span>
-    else
+    } else {
       <a href={ "/admin/brand/?page=" + pageNo + "&type=25" } class="page-link">{ ns }</a>
-
-  def pagesXml(pages: Seq[Int], sep: NodeSeq): NodeSeq =
-    pages.toList map { n =>
-      pageXml(n, Text(n.toString))
-    } match {
-      case one :: Nil => one
-      case first :: rest => rest.foldLeft(first) {
-        case (a, b) => a ++ sep ++ b
-      }
-      case Nil => Nil
     }
+  }
 
   def prevXml: NodeSeq = Text("上一页")
   def nextXml: NodeSeq = Text("下一页")
@@ -53,7 +45,7 @@ case class PaginatorModel[T](total: Long, datas: Seq[T], currentPageNo: Long, it
       "first" -> pageXml(1, firstXml),
       "prev" -> pageXml(currentPageNo - 1 max 1, prevXml),
       //"allpages" -> { (n: NodeSeq) => pagesXml(1 to totalPage, n) },
-      "allpages" -> gt(totalPage,currentPageNo),
+      "allpages" -> gt(totalPage, currentPageNo),
       "next" -> pageXml(currentPageNo + 1 min totalPage, nextXml),
       "last" -> pageXml(totalPage, lastXml))
   }
@@ -87,16 +79,10 @@ case class PaginatorModel[T](total: Long, datas: Seq[T], currentPageNo: Long, it
       } else Text(""))
       val sBegin = (totalPage - edges) max end
       pt ++= (for (i <- sBegin until totalPage) yield {
-        pageXml(i+1, Text((i+1).toString))
+        pageXml(i + 1, Text((i + 1).toString))
       })
     }
-
-    var sts: NodeSeq = Text("")
-    pt.map { p =>
-      sts = sts ++ p
-      p
-    }
-    sts
+    pt.flatten
   }
 }
 
