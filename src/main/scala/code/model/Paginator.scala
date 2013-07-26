@@ -6,27 +6,32 @@ import net.liftweb.util.Helpers._
 import net.liftweb.util.IterableConst._
 import net.liftweb.http.S
 
+object testP extends App {
+
+}
+
 trait Paginator[T <: LongKeyedMapper[T]] extends LongKeyedMetaMapper[T] {
   self: T with LongKeyedMapper[T] =>
 
-  def paginator(currentPage: Long = S.param("page").map(toLong) openOr 1)(itemsOnPage: Int = 20)(by: QueryParam[T]*): PaginatorModel[T] = {
-    val bys = by.filterNot(b => b match {
+  private def filterBys(by: Seq[QueryParam[T]]): (Seq[QueryParam[T]], Seq[QueryParam[T]]) = {
+    val bys = by.filter(_ match {
       case StartAt(start) => false
       case MaxRows(maxRows) => false
       case _ => true
     })
 
-    val bysForCount = by.filterNot(b => b match {
-      case StartAt(start) => false
-      case MaxRows(maxRows) => false
+    val bysForCount = bys.filter(_ match {
       case OrderBy(field, order, nullOrder) => false
       case _ => true
     })
+    (bys, bysForCount)
+  }
 
+  def paginator(currentPage: Long = S.param("page").map(toLong).openOr(1))(itemsOnPage: Int = 20)(by: QueryParam[T]*): PaginatorModel[T] = {
     val start = ((currentPage - 1) max 0) * itemsOnPage
-    val datas = findAll(StartAt[T](start) :: MaxRows[T](itemsOnPage) :: bys.toList: _*)
-    val total = count(bysForCount: _*)
-    PaginatorModel(total, datas, currentPage, itemsOnPage)
+    val (byf, byc) = filterBys(by)
+    val datas = findAll(StartAt[T](start) :: MaxRows[T](itemsOnPage) :: byf.toList: _*)
+    PaginatorModel(count(byc: _*), datas, currentPage, itemsOnPage)
   }
 
 }

@@ -1,54 +1,38 @@
 package code.snippet.admin
 
+import java.io.File
 import scala.xml.NodeSeq
 import scala.xml.Text
-import code.lib.BrandTypeHelper
-import code.lib.WebHelper
-import code.model.Brand
-import code.model.User
-import net.liftweb.common.Box
-import net.liftweb.common.Box.box2Option
-import net.liftweb.common.Full
-import net.liftweb.common.Loggable
-import net.liftweb.http.RequestVar
-import net.liftweb.http.SHtml._
-import net.liftweb.http.SHtml.ElemAttr.pairToBasic
-import net.liftweb.mapper.By
-import net.liftweb.mapper.BySql
-import net.liftweb.mapper.Cmp
-import net.liftweb.mapper.Descending
-import net.liftweb.mapper.IHaveValidatedThisSQL
-import net.liftweb.mapper.MaxRows
-import net.liftweb.mapper.OrderBy
-import net.liftweb.mapper.QueryParam
-import net.liftweb.mapper.StartAt
-import net.liftweb.util.Helpers.strToCssBindPromoter
-import net.liftweb.util.Helpers.strToSuperArrowAssoc
-import net.liftweb.http.S
-import code.lib.BrandType
-import net.liftweb.http.js.JsCmd
-import net.liftweb.common.Empty
-import net.liftweb.http.js.JE.JsRaw
-import net.liftweb.http.js.JsCmd._
-import net.liftweb.http.js.JsCmds._
-import net.liftweb.util.Helpers._
-import code.model.BrandStatus
-import net.coobird.thumbnailator.Thumbnails
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.IOUtils
+import code.lib.BrandType
+import code.lib.BrandTypeHelper
+import code.model.Brand
+import code.model.BrandStatus
 import code.rest.UploadManager
-import java.io.File
-import net.liftweb.util.CssSel
-import code.snippet.PaginatorHelper
 import code.snippet.SnippetHelper
+import net.liftweb.common._
+import net.liftweb.http.S
 import net.liftweb.http.SHtml
+import net.liftweb.http.SHtml._
+import net.liftweb.http.js.JsCmd
+import net.liftweb.http.js.JsCmds.Noop
+import net.liftweb.mapper._
+import net.liftweb.util._
+import net.liftweb.util.Helpers._
+import code.lib.WebHelper
 
-object BrandOps extends SnippetHelper with Loggable {
+object BrandOps extends  SnippetHelper with Loggable {
 
   def list = {
-    val page: Long = S.param("page").map(toLong) openOr 1
-    val q = S.param("type").map(toInt) openOr 1
-    val paginatorModel = Brand.paginator()(1)(OrderBy(Brand.createdAt, Descending))
+    for {
+      searchType <- S.param("type")
+      keyword <- S.param("keyword")
+    } {
+      println(searchType + "|" + keyword + "======================")
+      S.redirectTo("/admin/brand/")
+    }
+
+    val paginatorModel = Brand.paginator()(1) { OrderBy(Brand.createdAt, Descending) }
     def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case _ =>
@@ -74,7 +58,7 @@ object BrandOps extends SnippetHelper with Loggable {
 
     val paginator = "#pagination" #> paginatorModel.paginate _
 
-    searchForm & dataList & paginator
+    dataList & paginator
   }
 
   def view = {
