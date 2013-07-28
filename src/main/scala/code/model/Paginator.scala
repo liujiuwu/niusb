@@ -27,21 +27,20 @@ trait Paginator[T <: LongKeyedMapper[T]] extends LongKeyedMetaMapper[T] {
     (bys, bysForCount)
   }
 
-  def paginator(currentPage: Long = S.param("page").map(toLong).openOr(1))(itemsOnPage: Int = 20)(by: QueryParam[T]*): PaginatorModel[T] = {
+  def paginator(url: String, by: QueryParam[T]*)(currentPage: Long = S.param("page").map(toLong).openOr(1), itemsOnPage: Int = 20): PaginatorModel[T] = {
     val start = ((currentPage - 1) max 0) * itemsOnPage
     val (byf, byc) = filterBys(by)
     val datas = findAll(StartAt[T](start) :: MaxRows[T](itemsOnPage) :: byf.toList: _*)
-    PaginatorModel(count(byc: _*), datas, currentPage, itemsOnPage)
+    PaginatorModel(url, count(byc: _*), datas, currentPage, itemsOnPage)
   }
-
 }
 
-case class PaginatorModel[T](total: Long, datas: Seq[T], currentPageNo: Long, itemsPerPage: Int = 20) {
+case class PaginatorModel[T](url: String, total: Long, datas: Seq[T], currentPageNo: Long, itemsPerPage: Int = 20) {
   def totalPage = (total / itemsPerPage).toInt + (if (total % itemsPerPage > 0) 1 else 0)
 
   def pageUrl(currentPageNo: Long): String = {
-    def originalUri = S.originalRequest.map(_.uri).openOr(sys.error("No request"))
-    appendParams(originalUri, List("page" -> currentPageNo.toString))
+    //def originalUri = S.originalRequest.map(_.uri).openOr(sys.error("No request"))
+    appendParams(url, List("page" -> currentPageNo.toString))
   }
 
   def pageXml(pageNo: Long, ns: NodeSeq): NodeSeq = {

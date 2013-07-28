@@ -122,7 +122,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object remark extends MappedString(this, 300)
 
-  override lazy val createdAt = new MyUpdatedAt(this) {
+  override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
 
     override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
@@ -190,4 +190,10 @@ object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
   override def fieldOrder = List(id, owner, name, brandTypeId, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
 
   def picName(pic: String, prefix: String = "s") = prefix + pic
+
+  def validStatusSelectValues = {
+    val status = BrandStatus.values.toList.map(v => (v.id.toString, v.toString))
+    val list = ("all", "所有状态") :: status
+    Full(list)
+  }
 }

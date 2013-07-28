@@ -21,18 +21,9 @@ import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import code.lib.WebHelper
 
-object BrandOps extends  SnippetHelper with Loggable {
+object BrandOps extends SnippetHelper with Loggable {
 
   def list = {
-    for {
-      searchType <- S.param("type")
-      keyword <- S.param("keyword")
-    } {
-      println(searchType + "|" + keyword + "======================")
-      S.redirectTo("/admin/brand/")
-    }
-
-    val paginatorModel = Brand.paginator()(1) { OrderBy(Brand.createdAt, Descending) }
     def actions(brand: Brand): NodeSeq = {
       brand.status.get match {
         case _ =>
@@ -41,7 +32,52 @@ object BrandOps extends  SnippetHelper with Loggable {
       }
     }
 
-    val searchForm = "@keyword" #> SHtml.text("test", println(_))
+    val (searchType, keyword) = (S.param("type"), S.param("keyword"))
+    val by = keyword match {
+      case Full(k) if (!k.trim().isEmpty()) =>
+        val kv = k.trim()
+        if (searchType == "0") {
+          Full(By(Brand.regNo, kv))
+        } else if (searchType == "1") {
+          Full(By(Brand.owner, kv.toLong))
+        } else {
+          Empty
+        }
+      case _ => Empty
+    }
+
+    var searchTypeVal, keywordVal = ""
+    var url = "/admin/brand/"
+    searchType match {
+      case Full(t) =>
+        searchTypeVal = t
+        url = appendParams(url, List("type" -> t))
+      case _ => ""
+    }
+    keyword match {
+      case Full(k) if (!k.trim().isEmpty()) =>
+        keywordVal = k
+        url = appendParams(url, List("keyword" -> k))
+      case _ => ""
+    }
+
+    val paginatorModel = by match {
+      case Full(realBy) => Brand.paginator(url, realBy, OrderBy(Brand.id, Descending))(itemsOnPage = 1)
+      case _ => Brand.paginator(url, OrderBy(Brand.id, Descending))(itemsOnPage = 20)
+    }
+
+    val searchForm = "#searchForm" #>
+      <form class="form-inline" action="/admin/brand/" method="get">
+        <select id="searchType" name="type">
+          <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>注册号</option>
+          <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>用户ID</option>
+        </select>
+        <input type="text" id="keyword" name="keyword" value={ keywordVal }/>
+        <select id="status">
+        	
+        </select>
+        <button type="submit" class="btn">搜索</button>
+      </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
       "#regNo" #> brand.regNo.get &
@@ -58,7 +94,7 @@ object BrandOps extends  SnippetHelper with Loggable {
 
     val paginator = "#pagination" #> paginatorModel.paginate _
 
-    dataList & paginator
+    searchForm & dataList & paginator
   }
 
   def view = {
