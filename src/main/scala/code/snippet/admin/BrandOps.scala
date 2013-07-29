@@ -20,6 +20,7 @@ import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import code.lib.WebHelper
+import scala.collection.mutable.ArrayBuffer
 
 object BrandOps extends SnippetHelper with Loggable {
 
@@ -33,17 +34,23 @@ object BrandOps extends SnippetHelper with Loggable {
     }
 
     val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
-    val by = keyword match {
+
+    var bys = new ArrayBuffer[QueryParam[Brand]]
+    keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         val kv = k.trim()
-        if (searchType == "0") {
-          Full(By(Brand.regNo, kv))
-        } else if (searchType == "1") {
-          Full(By(Brand.owner, kv.toLong))
-        } else {
-          Empty
+        searchType match {
+          case Full("0") => bys += By(Brand.regNo, kv)
+          case Full("1") => bys += By(Brand.owner, kv.toLong)
+          case _ =>
         }
-      case _ => Empty
+      case _ =>
+    }
+
+    status match {
+      case Full(s) =>
+        bys += By(Brand.status, BrandStatus(s.toInt))
+      case _ =>
     }
 
     var searchTypeVal, keywordVal, statusVal = ""
@@ -67,10 +74,8 @@ object BrandOps extends SnippetHelper with Loggable {
       case _ => ""
     }
 
-    val paginatorModel = by match {
-      case Full(realBy) => Brand.paginator(url, realBy, OrderBy(Brand.id, Descending))(itemsOnPage = 1)
-      case _ => Brand.paginator(url, OrderBy(Brand.id, Descending))(itemsOnPage = 20)
-    }
+    val paginatorModel = if (bys.isEmpty) Brand.paginator(url, OrderBy(Brand.id, Descending))(itemsOnPage = 20) else
+      Brand.paginator(url, (bys += OrderBy(Brand.id, Descending)).toList: _*)(itemsOnPage = 1)
 
     val searchForm = "#searchForm" #>
       <form class="form-inline" action="/admin/brand/" method="get">
