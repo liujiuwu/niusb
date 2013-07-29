@@ -193,7 +193,6 @@ object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
 
   def validStatusSelectValues = {
     val status = BrandStatus.values.toList.map(v => (v.id.toString, v.toString))
-    val list = ("all", "所有状态") :: status
-    Full(list)
+    ("all", "所有状态") :: status
   }
 }

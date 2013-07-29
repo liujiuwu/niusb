@@ -32,7 +32,7 @@ object BrandOps extends SnippetHelper with Loggable {
       }
     }
 
-    val (searchType, keyword) = (S.param("type"), S.param("keyword"))
+    val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
     val by = keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         val kv = k.trim()
@@ -46,7 +46,7 @@ object BrandOps extends SnippetHelper with Loggable {
       case _ => Empty
     }
 
-    var searchTypeVal, keywordVal = ""
+    var searchTypeVal, keywordVal, statusVal = ""
     var url = "/admin/brand/"
     searchType match {
       case Full(t) =>
@@ -58,6 +58,12 @@ object BrandOps extends SnippetHelper with Loggable {
       case Full(k) if (!k.trim().isEmpty()) =>
         keywordVal = k
         url = appendParams(url, List("keyword" -> k))
+      case _ => ""
+    }
+    status match {
+      case Full(s) =>
+        statusVal = s
+        url = appendParams(url, List("status" -> s))
       case _ => ""
     }
 
@@ -73,8 +79,8 @@ object BrandOps extends SnippetHelper with Loggable {
           <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>用户ID</option>
         </select>
         <input type="text" id="keyword" name="keyword" value={ keywordVal }/>
-        <select id="status">
-        	
+        <select id="status" name="status">
+          { for ((k, v) <- Brand.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
         </select>
         <button type="submit" class="btn">搜索</button>
       </form>

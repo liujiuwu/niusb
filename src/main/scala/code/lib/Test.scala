@@ -4,12 +4,12 @@ import org.apache.http.HttpResponse
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.util.EntityUtils
-
 import code.model.MyDBVendor
 import code.model.User
 import net.liftweb.db.DB
 import net.liftweb.db.DefaultConnectionIdentifier
 import net.liftweb.mapper.Schemifier
+import code.model.Brand
 
 object Test extends App {
 
@@ -48,12 +48,13 @@ object Test extends App {
   
   println(EntityUtils.toString(response.getEntity()))*/
 
-  val t1 = "1EBPJZTEAIDIXEXW.jpg"
+  /*val t1 = "1EBPJZTEAIDIXEXW.jpg"
   val t2 = "31EBPJZTEAIDIXEXW.jpg"
   val r = """([\w]+).(jpg|jpeg|png)""".r
   t1 match {
     case r(f, e) => println(f + "x320|" + e)
     case _ => println("no")
-  }
+  }*/
+  
 
 }
