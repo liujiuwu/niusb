@@ -48,7 +48,7 @@ object BrandOps extends SnippetHelper with Loggable {
     }
 
     status match {
-      case Full(s) =>
+      case Full(s) if (s != "all") =>
         bys += By(Brand.status, BrandStatus(s.toInt))
       case _ =>
     }
