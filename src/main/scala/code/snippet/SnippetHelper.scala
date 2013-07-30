@@ -16,14 +16,6 @@ object SnippetHelper extends SnippetHelper
 trait SnippetHelper {
   object tabMenuRV extends RequestVar[Box[(String, String)]](Empty)
 
-  protected def tabMenu = {
-    val menu: NodeSeq = tabMenuRV.get match {
-      case Full((code, text)) if (!code.isEmpty() && !text.isEmpty()) => <li class="active"><a><i class={ "icon-" + code }></i>{ Text(" ") ++ text }</a></li>
-      case _ => Text("")
-    }
-    "span" #> menu
-  }
-
   def alertHtml(msg: NodeSeq, title: String = "出错啦！", alertType: String = "error"): NodeSeq = {
     <div class={ "alert alert-" + alertType }>
       <button type="button" class="close" data-dismiss="alert">&times;</button>

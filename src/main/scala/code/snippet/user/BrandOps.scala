@@ -51,12 +51,19 @@ import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
 import net.liftweb.util.Helpers.tryo
 import code.snippet.PaginatorHelper
+import net.liftweb.http.DispatchSnippet
+import net.liftweb.mapper.QueryParam
 
-object BrandOps extends PaginatorHelper[Brand] with SnippetHelper with Loggable {
+class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
-  override def itemsPerPage = 10
-  override def count = Brand.count(By(Brand.owner, user))
-  override def page = Brand.findAll(By(Brand.owner, user), StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(Brand.createdAt, Descending))
+
+  def dispatch = {
+    case "create" => create
+    case "list" => list
+    case "view" => view
+    case "uploadBrandPic" => uploadBrandPic
+    case "getRemoteData" => getRemoteData
+  }
 
   def create = {
     var basePrice = "0"
@@ -113,9 +120,8 @@ object BrandOps extends PaginatorHelper[Brand] with SnippetHelper with Loggable 
       })
   }
 
-  def getBrandPic = {
-    val regNo = S.param("regNo") openOr ("")
-    SearchHelper.searchBrandPicByRegNo(regNo)
+  private def bies: List[QueryParam[Brand]] = {
+    List[QueryParam[Brand]](OrderBy(Brand.id, Descending), By(Brand.owner, user))
   }
 
   def list = {
@@ -134,12 +140,15 @@ object BrandOps extends PaginatorHelper[Brand] with SnippetHelper with Loggable 
                 }
               })._2
             })
-          }, Text("删除"), "class" -> "btn btn-danger")
+          }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
         case _ => Text("")
       }
     }
 
-    "tr" #> page.map(brand => {
+    var url = "/user/brand/"
+    val paginatorModel = Brand.paginator(url, bies: _*)()
+
+    val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
       "#regNo" #> brand.regNo &
         "#name" #> <a href={ "/user/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
         "#brandType" #> brand.displayType &
@@ -149,6 +158,8 @@ object BrandOps extends PaginatorHelper[Brand] with SnippetHelper with Loggable 
         "#basePrice" #> brand.displayBasePrice &
         "#actions " #> actions(brand)
     })
+
+    dataList & "#pagination" #> paginatorModel.paginate _
   }
 
   def view = {

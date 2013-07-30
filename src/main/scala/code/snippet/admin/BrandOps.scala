@@ -1,8 +1,7 @@
 package code.snippet.admin
 
 import java.io.File
-import scala.xml.NodeSeq
-import scala.xml.Text
+import scala.xml._
 import org.apache.commons.io.FileUtils
 import code.lib.BrandType
 import code.lib.BrandTypeHelper
@@ -20,28 +19,28 @@ import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import code.lib.WebHelper
-import scala.collection.mutable.ArrayBuffer
+import net.liftweb.http.DispatchSnippet
+import code.lib.BoxConfirm
+import net.liftweb.http.js.JsCmds
+import net.liftweb.http.js.JsCmds._
+import code.lib.BoxAlert
 
-object BrandOps extends SnippetHelper with Loggable {
+class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
+  def dispatch = {
+    case "list" => list
+    case "view" => view
+    case "edit" => edit
+  }
 
-  def list = {
-    def actions(brand: Brand): NodeSeq = {
-      brand.status.get match {
-        case _ =>
-          <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-small btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
-            link("/admin/brand/", () => { brand.delete_! }, <i class="icon-trash"></i>, "class" -> "btn btn-small btn-danger")
-      }
-    }
-
+  private def bies: List[QueryParam[Brand]] = {
     val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
-
-    var bys = new ArrayBuffer[QueryParam[Brand]]
+    var byList = List[QueryParam[Brand]](OrderBy(Brand.id, Descending))
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         val kv = k.trim()
         searchType match {
-          case Full("0") => bys += By(Brand.regNo, kv)
-          case Full("1") => bys += By(Brand.owner, kv.toLong)
+          case Full("0") => byList = By(Brand.regNo, kv) :: byList
+          case Full("1") => byList = By(Brand.owner, kv.toLong) :: byList
           case _ =>
         }
       case _ =>
@@ -49,9 +48,23 @@ object BrandOps extends SnippetHelper with Loggable {
 
     status match {
       case Full(s) if (s != "all") =>
-        bys += By(Brand.status, BrandStatus(s.toInt))
+        byList = By(Brand.status, BrandStatus(s.toInt)) :: byList
       case _ =>
     }
+    byList
+  }
+
+  def list = {
+    def actions(brand: Brand): NodeSeq = {
+      <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-small btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
+        a(() => {
+          BoxConfirm("确定删除【" + brand.name.get + "】商标？此操作不可恢复，请谨慎！", {
+            ajaxInvoke(() => { brand.delete_!; JsCmds.Reload })._2
+          })
+        }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
+    }
+
+    val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
 
     var searchTypeVal, keywordVal, statusVal = ""
     var url = "/admin/brand/"
@@ -59,23 +72,22 @@ object BrandOps extends SnippetHelper with Loggable {
       case Full(t) =>
         searchTypeVal = t
         url = appendParams(url, List("type" -> t))
-      case _ => ""
+      case _ =>
     }
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         keywordVal = k
         url = appendParams(url, List("keyword" -> k))
-      case _ => ""
+      case _ =>
     }
     status match {
       case Full(s) =>
         statusVal = s
         url = appendParams(url, List("status" -> s))
-      case _ => ""
+      case _ =>
     }
 
-    val paginatorModel = if (bys.isEmpty) Brand.paginator(url, OrderBy(Brand.id, Descending))(itemsOnPage = 20) else
-      Brand.paginator(url, (bys += OrderBy(Brand.id, Descending)).toList: _*)(itemsOnPage = 1)
+    val paginatorModel = Brand.paginator(url, bies: _*)()
 
     val searchForm = "#searchForm" #>
       <form class="form-inline" action="/admin/brand/" method="get">
@@ -102,10 +114,7 @@ object BrandOps extends SnippetHelper with Loggable {
         "#owner" #> brand.owner.getOwner.name &
         "#actions" #> actions(brand)
     })
-
-    val paginator = "#pagination" #> paginatorModel.paginate _
-
-    searchForm & dataList & paginator
+    searchForm & dataList & "#pagination" #> paginatorModel.paginate _
   }
 
   def view = {
