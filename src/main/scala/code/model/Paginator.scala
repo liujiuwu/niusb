@@ -27,7 +27,7 @@ trait Paginator[T <: LongKeyedMapper[T]] extends LongKeyedMetaMapper[T] {
     (bys, bysForCount)
   }
 
-  def paginator(url: String, by: QueryParam[T]*)(currentPage: Long = S.param("page").map(toLong).openOr(1), itemsOnPage: Int = 20): PaginatorModel[T] = {
+  def paginator(url: String, by: QueryParam[T]*)(currentPage: Long = S.param("page").map(toLong).openOr(1), itemsOnPage: Int = 10): PaginatorModel[T] = {
     val start = ((currentPage - 1) max 0) * itemsOnPage
     val (byf, byc) = filterBys(by)
     val datas = findAll(StartAt[T](start) :: MaxRows[T](itemsOnPage) :: byf.toList: _*)

@@ -51,8 +51,8 @@ class Boot extends Loggable {
       }
     }*/
     DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
-    Schemifier.schemify(true, Schemifier.infoF _, User, WebSet,Brand)
-    
+    Schemifier.schemify(true, Schemifier.infoF _, User, WebSet, Brand)
+
     LiftRules.setSiteMap(Site.siteMap)
 
     LiftRules.maxMimeFileSize = 40000000L
@@ -88,6 +88,11 @@ class Boot extends Loggable {
       case (req, failure) =>
         NotFoundAsTemplate(ParsePath(List("404"), "html", true, false))
     })
+
+    /*LiftRules.snippetDispatch.append{
+      case "AdminBrandOps" => code.snippet.admin.BrandOps
+      case "UserBrandOps" => code.snippet.user.BrandOps
+    }*/
 
     /*LiftRules.exceptionHandler.prepend {
       case (runMode, req, exception) =>

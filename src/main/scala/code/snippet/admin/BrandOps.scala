@@ -25,7 +25,7 @@ import net.liftweb.http.js.JsCmds
 import net.liftweb.http.js.JsCmds._
 import code.lib.BoxAlert
 
-class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
+object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "list" => list
     case "view" => view

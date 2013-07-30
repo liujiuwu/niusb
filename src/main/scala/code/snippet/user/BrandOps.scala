@@ -54,7 +54,7 @@ import code.snippet.PaginatorHelper
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.mapper.QueryParam
 
-class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
+object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
 
   def dispatch = {
