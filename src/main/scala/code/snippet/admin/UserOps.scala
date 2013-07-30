@@ -1,50 +1,49 @@
 package code.snippet.admin
 
-import scala.xml.NodeSeq
-import scala.xml.Text
+import scala.xml._
 import code.lib.BoxConfirm
 import code.lib.WebHelper
 import code.model.User
 import code.model.UserStatus
 import code.model.UserSupper
 import code.model.UserType
-import net.liftweb.common.Box
-import net.liftweb.common.Empty
-import net.liftweb.common.Full
-import net.liftweb.http.RequestVar
+import net.liftweb.common._
 import net.liftweb.http.S
-import net.liftweb.http.SHtml.ElemAttr.pairToBasic
-import net.liftweb.http.SHtml.a
-import net.liftweb.http.SHtml.ajaxInvoke
-import net.liftweb.http.SHtml.hidden
-import net.liftweb.http.SHtml.selectObj
-import net.liftweb.http.SHtml.text
+import net.liftweb.http._
+import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JE.JsRaw
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds
-import net.liftweb.http.js.JsCmds.cmdToString
-import net.liftweb.http.js.JsCmds.jsExpToJsCmd
-import net.liftweb.mapper.By
-import net.liftweb.mapper.Descending
-import net.liftweb.mapper.Genders
-import net.liftweb.mapper.MaxRows
-import net.liftweb.mapper.OrderBy
-import net.liftweb.mapper.StartAt
-import net.liftweb.util.CssSel
-import net.liftweb.util.Helpers.asLong
-import net.liftweb.util.Helpers.strToCssBindPromoter
-import net.liftweb.util.Helpers.strToSuperArrowAssoc
+import net.liftweb.http.js.JsCmds._
+import net.liftweb.mapper._
+import net.liftweb.util._
+import net.liftweb.util.Helpers._
 import code.snippet.SnippetHelper
 import code.snippet.PaginatorHelper
 
-object userRV extends RequestVar[Box[User]](Empty)
-object UserOps extends PaginatorHelper[User] with SnippetHelper {
+object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
 
-  override def itemsPerPage = 10
-  override def count = {
-    User.count()
+  def dispatch = {
+    case "list" => list
+    case "view" => view
+    case "edit" => edit
   }
-  override def page = User.findAll(StartAt(curPage * itemsPerPage), MaxRows(itemsPerPage), OrderBy(User.createdAt, Descending))
+
+  private def bies: List[QueryParam[User]] = {
+    val (searchType, keyword) = (S.param("type"), S.param("keyword"))
+    var byList = List[QueryParam[User]](OrderBy(User.createdAt, Descending))
+    keyword match {
+      case Full(k) if (!k.trim().isEmpty()) =>
+        val kv = k.trim()
+        searchType match {
+          case Full("0") => byList = By(User.id, kv.toLong) :: byList
+          case Full("1") => byList = By(User.mobile, kv) :: byList
+          case _ =>
+        }
+      case _ =>
+    }
+    byList
+  }
 
   def list = {
     def actions(user: User): NodeSeq = {
@@ -56,10 +55,37 @@ object UserOps extends PaginatorHelper[User] with SnippetHelper {
               JsCmds.Reload
             })._2
           })
-        }, Text("删除"), "class" -> "btn btn-danger")
+        }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
     }
 
-    "tr" #> page.map(user => {
+    val (searchType, keyword) = (S.param("type"), S.param("keyword"))
+    var searchTypeVal, keywordVal = ""
+    var url = "/admin/user/"
+    searchType match {
+      case Full(t) =>
+        searchTypeVal = t
+        url = appendParams(url, List("type" -> t))
+      case _ =>
+    }
+    keyword match {
+      case Full(k) if (!k.trim().isEmpty()) =>
+        keywordVal = k
+        url = appendParams(url, List("keyword" -> k))
+      case _ =>
+    }
+    val paginatorModel = User.paginator(url, bies: _*)()
+
+    val searchForm = "#searchForm" #>
+      <form class="form-inline" action={url} method="get">
+        <select id="searchType" name="type">
+          <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>用户ID</option>
+          <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>手机号</option>
+        </select>
+        <input type="text" id="keyword" name="keyword" value={ keywordVal }/>
+        <button type="submit" class="btn">搜索</button>
+      </form>
+
+    val dataList = "#dataList tr" #> paginatorModel.datas.map(user => {
       "#id" #> user.id &
         "#mobile" #> <a href={ "/admin/user/view?id=" + user.id.get }>{ user.mobile.get }</a> &
         "#name" #> user.name.get &
@@ -68,9 +94,10 @@ object UserOps extends PaginatorHelper[User] with SnippetHelper {
         "#email" #> user.email.get &
         "#enabled" #> user.enabled &
         "#isAdmin" #> user.displaySuper &
-        //"#brandCount" #> link("/admin/brand/", () => userRV(Full(user)), Text(user.brandCount.toString), "class" -> "badge badge-success") &
         "#actions" #> actions(user)
     })
+
+    searchForm & dataList & "#pagination" #> paginatorModel.paginate _
   }
 
   def view = {

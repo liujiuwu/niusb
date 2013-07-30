@@ -6,10 +6,6 @@ import net.liftweb.util.Helpers._
 import net.liftweb.util.IterableConst._
 import net.liftweb.http.S
 
-object testP extends App {
-
-}
-
 trait Paginator[T <: LongKeyedMapper[T]] extends LongKeyedMetaMapper[T] {
   self: T with LongKeyedMapper[T] =>
 

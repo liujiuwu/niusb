@@ -25,7 +25,7 @@ object UserSupper extends Enumeration {
   val Supper = Value(1, "是")
 }
 
-class User extends MegaProtoUser[User] with CreatedUpdated {
+class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUpdated {
   def getSingleton = User
 
   object name extends MappedString(this, 20) {
@@ -65,7 +65,7 @@ class User extends MegaProtoUser[User] with CreatedUpdated {
 
   object loginTime extends MappedDateTime(this)
 
-  override lazy val createdAt = new MyUpdatedAt(this) {
+  override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
 
     override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
@@ -104,7 +104,7 @@ class User extends MegaProtoUser[User] with CreatedUpdated {
   def brandCount = Brand.count(By(Brand.owner, this))
 }
 
-object User extends User with MetaMegaProtoUser[User] {
+object User extends User with MetaMegaProtoUser[User] with Paginator[User] {
   override def dbTableName = "users"
 
   override def fieldOrder = List(id, email, name, gender, mobile, phone, qq, userType, enabled, address, locale, timezone, password, lastLoginTime, loginTime)

@@ -1,5 +1,5 @@
 <div class="box-content" data-lift="surround?with=admin;at=content">
-	<div data-lift="admin.BrandOps.list">
+	<div data-lift="admin.BrandOps.list?eager_eval=true">
 		<div class="tool-well">
 			<div class="well search-form">
 				<span id="searchForm"></span>
@@ -35,13 +35,6 @@
 				</tr>
 			</tbody>
 		</table>
-		<div id="pagination" class="light-theme">
-			<nav:first></nav:first>
-			<nav:prev></nav:prev>
-			<nav:allpages></nav:allpages>
-			<nav:records></nav:records>
-			<nav:next></nav:next>
-			<nav:last></nav:last>
-		</div>
+		<span data-lift="embed?what=_paginator"></span>
 	</div>
 </div>

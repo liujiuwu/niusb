@@ -90,7 +90,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     val paginatorModel = Brand.paginator(url, bies: _*)()
 
     val searchForm = "#searchForm" #>
-      <form class="form-inline" action="/admin/brand/" method="get">
+      <form class="form-inline" action={url} method="get">
         <select id="searchType" name="type">
           <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>注册号</option>
           <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>用户ID</option>
