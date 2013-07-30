@@ -98,17 +98,17 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object descn extends MappedString(this, 300)
 
-  object pic extends MappedString(this, 200)
+  object pic extends MappedString(this, 100)
 
-  object adPic extends MappedString(this, 200) {
+  object adPic extends MappedString(this, 100) {
     override def dbColumnName = "ad_pic"
   }
 
-  object concernCount extends MappedInt(this) {
+  object concernCount extends MappedInt(this) { //关注数
     override def dbColumnName = "concern_count"
   }
 
-  object recommend extends MappedBoolean(this) {
+  object recommend extends MappedBoolean(this) { //是否推荐
     override def defaultValue = false
   }
 
@@ -172,13 +172,20 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   def displayPicSrc(size: String = "320") = UploadManager.srcPath(UploadManager.sizePicName(pic.get, size))
 
+  def displaySelf = if (isSelf.get) "是" else "否"
+  def displayRecommend = if (recommend.get) "是" else "否"
+
   def displayType: NodeSeq = {
     val brandType = BrandTypeHelper.brandTypes.get(brandTypeId.get).get
     <span>{ brandType.id + " -> " + brandType.name }</span>
   }
 
   def displayBasePrice: NodeSeq = badge("success", basePrice.get)
-  def displaySellPrice: NodeSeq = badge("warning", sellPrice.get)
+  def displaySellPrice(forUser: Boolean = true): NodeSeq = {
+    val isFloatSellPrice = if (sellPrice.get >= basePrice.get) false else true
+    val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * 0.5
+    badge("warning", if (forUser || !isFloatSellPrice) realSellPrice else realSellPrice + " - 浮")
+  }
   def displayStrikePrice: NodeSeq = badge("important", strikePrice.get)
   private def badge(state: String, data: AnyVal) = <span class={ "badge badge-" + state }>￥{ data }</span>
 

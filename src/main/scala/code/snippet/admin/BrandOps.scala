@@ -109,7 +109,9 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#regDate" #> brand.regDate.asHtml &
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
-        "#sellPrice" #> brand.displaySellPrice &
+        "#sellPrice" #> brand.displaySellPrice(false) &
+        "#self" #> brand.displaySelf &
+        "#recommend" #> brand.displayRecommend &
         "#strikePrice" #> brand.displayStrikePrice &
         "#owner" #> brand.owner.getOwner.name &
         "#actions" #> actions(brand)
@@ -129,12 +131,16 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#brand-type" #> brand.displayType &
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
-        "#sellPrice" #> brand.displaySellPrice &
+        "#sellPrice" #> brand.displaySellPrice(false) &
         "#strikePrice" #> brand.displayStrikePrice &
         "#regdate" #> brand.regDate.asHtml &
         "#applicant" #> brand.applicant &
         "#useDescn" #> brand.useDescn &
         "#descn" #> brand.descn &
+        "#self" #> brand.displaySelf &
+        "#recommend" #> brand.displayRecommend &
+        "#concernCount" #> brand.concernCount.get &
+        "#remark" #> brand.remark.get &
         "#pic" #> brand.displayPic() &
         "#spic" #> brand.displaySpic &
         "#owner" #> brand.owner.getOwner.displayInfo &
@@ -150,14 +156,14 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
-      var basePrice = "0"
+      var basePrice,sellPrice,strikePrice = "0"
       var regNo, pic, name, regDateStr, applicant, useDescn, descn = ""
       var brandType: BrandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
       def process(): JsCmd = {
         val oldPic = brand.pic.get
         brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
-        brand.brandTypeId(brandType.id)
+        brand.brandTypeId(brandType.id).sellPrice(sellPrice.toInt).strikePrice(strikePrice.toInt)
         brand.validate match {
           case Nil =>
             brand.save
@@ -181,6 +187,8 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       val brandTypes = BrandTypeHelper.brandTypes.values.toList
       "@regNo" #> text(brand.regNo.get, regNo = _) &
         "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
+        "@sellPrice" #> text(brand.sellPrice.get.toString, sellPrice = _) &
+        "@strikePrice" #> text(brand.strikePrice.get.toString, strikePrice = _) &
         "@name" #> text(brand.name.get, name = _) &
         "@pic" #> hidden(pic = _, brand.pic.get) &
         "#brand_pic [src]" #> brand.displayPicSrc() &
