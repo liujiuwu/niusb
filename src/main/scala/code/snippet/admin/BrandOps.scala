@@ -117,7 +117,6 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#self" #> brand.displaySelf &
         "#recommend" #> brand.displayRecommend &
         "#strikePrice" #> brand.displayStrikePrice &
-        "#owner" #> brand.owner.getOwner.name &
         "#actions" #> actions(brand)
     })
     searchForm & dataList & "#pagination" #> paginatorModel.paginate _
@@ -149,6 +148,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#spic" #> brand.displaySpic &
         "#owner" #> brand.owner.getOwner.displayInfo &
         "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
+        "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-info"><i class="icon-bolt"></i> 商标设置</a> &
         "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a>
     }): CssSel
   }
@@ -200,6 +200,9 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@applicant" #> text(brand.applicant.get, applicant = _) &
         "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &
         "@descn" #> textarea(brand.descn.get, descn = _) &
+        "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-bolt"></i> 商标设置</a> &
+        "#view-btn" #> <a href={ "/admin/brand/view?id=" + brand.id.get } class="btn btn-info"><i class="icon-info"></i> 查看商标</a> &
+        "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a> &
         "@sub" #> hidden(process)
     }): CssSel
   }
@@ -235,6 +238,9 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#realSellPrice" #> brand.displaySellPrice(false) &
         "@strikePrice" #> text(brand.strikePrice.get.toString, strikePrice = _) &
         "@remark" #> textarea(brand.remark.get, remark = _) &
+        "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
+        "#view-btn" #> <a href={ "/admin/brand/view?id=" + brand.id.get } class="btn btn-info"><i class="icon-info"></i> 查看商标</a> &
+        "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a> &
         "@sub" #> hidden(process)
     }): CssSel
   }
