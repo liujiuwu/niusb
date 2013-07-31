@@ -44,6 +44,7 @@ object Site {
     Menu("AdminListBrand", menuLoc("AdminListBrand", "list", "商标管理")) / "admin" / "brand" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
     Menu("AdminViewBrand", menuLoc("AdminViewBrand", "", "查看商标")) / "admin" / "brand" / "view" >> RequireAdminLoggedIn >> Hidden,
     Menu("AdminEditBrand", menuLoc("AdminEditBrand", "", "修改商标")) / "admin" / "brand" / "edit" >> RequireAdminLoggedIn >> Hidden,
+    Menu("AdminSeditBrand", menuLoc("AdminSeditBrand", "", "商标设置")) / "admin" / "brand" / "sedit" >> RequireAdminLoggedIn >> Hidden,
 
     
     Menu.i("ajaxExample") / "ajax",

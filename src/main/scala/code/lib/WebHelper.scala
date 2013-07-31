@@ -50,7 +50,23 @@ case class CacheValue[T](compute: () => T, lifespanInMillis: Long) {
   }
 }
 
+object TrueOrFalse extends Function1[String, Boolean] {
+  lazy val selectTrueOrFalse = Seq("0" -> "否", "1" -> "是")
+  def apply(v: String) = v match {
+    case "0" => false
+    case "1" => true
+  }
+}
+
+object TrueOrFalse2Str extends Function1[Boolean,Box[String]] {
+  def apply(v: Boolean) = v match {
+    case false => Full("0")
+    case true => Full("1")
+  }
+}
+
 object WebHelper {
+
   def oddOrEven(current: String) = {
     current match {
       case "odd" => "even"
@@ -169,4 +185,5 @@ object WebHelper {
 
     captchaData
   }
+
 }

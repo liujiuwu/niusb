@@ -24,12 +24,15 @@ import code.lib.BoxConfirm
 import net.liftweb.http.js.JsCmds
 import net.liftweb.http.js.JsCmds._
 import code.lib.BoxAlert
+import code.lib.TrueOrFalse
+import code.lib.TrueOrFalse2Str
 
-object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
+class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "list" => list
     case "view" => view
     case "edit" => edit
+    case "sedit" => sedit
   }
 
   private def bies: List[QueryParam[Brand]] = {
@@ -56,7 +59,8 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def list = {
     def actions(brand: Brand): NodeSeq = {
-      <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-small btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
+      <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-bolt"></i></a> ++ Text(" ") ++
+        <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
         a(() => {
           BoxConfirm("确定删除【" + brand.name.get + "】商标？此操作不可恢复，请谨慎！", {
             ajaxInvoke(() => { brand.delete_!; JsCmds.Reload })._2
@@ -90,7 +94,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     val paginatorModel = Brand.paginator(url, bies: _*)()
 
     val searchForm = "#searchForm" #>
-      <form class="form-inline" action={url} method="get">
+      <form class="form-inline" action={ url } method="get">
         <select id="searchType" name="type">
           <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>注册号</option>
           <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>用户ID</option>
@@ -156,14 +160,14 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
-      var basePrice,sellPrice,strikePrice = "0"
+      var basePrice = "0"
       var regNo, pic, name, regDateStr, applicant, useDescn, descn = ""
       var brandType: BrandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
       def process(): JsCmd = {
         val oldPic = brand.pic.get
         brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
-        brand.brandTypeId(brandType.id).sellPrice(sellPrice.toInt).strikePrice(strikePrice.toInt)
+        brand.brandTypeId(brandType.id)
         brand.validate match {
           case Nil =>
             brand.save
@@ -187,8 +191,6 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       val brandTypes = BrandTypeHelper.brandTypes.values.toList
       "@regNo" #> text(brand.regNo.get, regNo = _) &
         "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
-        "@sellPrice" #> text(brand.sellPrice.get.toString, sellPrice = _) &
-        "@strikePrice" #> text(brand.strikePrice.get.toString, strikePrice = _) &
         "@name" #> text(brand.name.get, name = _) &
         "@pic" #> hidden(pic = _, brand.pic.get) &
         "#brand_pic [src]" #> brand.displayPicSrc() &
@@ -198,6 +200,41 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@applicant" #> text(brand.applicant.get, applicant = _) &
         "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &
         "@descn" #> textarea(brand.descn.get, descn = _) &
+        "@sub" #> hidden(process)
+    }): CssSel
+  }
+
+  def sedit = {
+    tabMenuRV(Full("bolt" -> "商标设置"))
+
+    (for {
+      brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
+      brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
+    } yield {
+      var basePrice, sellPrice, strikePrice = "0"
+      var recommend, self = "0"
+      var remark = ""
+
+      def process(): JsCmd = {
+        brand.validate match {
+          case Nil =>
+            brand.basePrice(basePrice.toInt).sellPrice(sellPrice.toInt).strikePrice(strikePrice.toInt)
+            brand.recommend(TrueOrFalse(recommend)).isSelf(TrueOrFalse(self))
+            brand.remark(remark)
+            brand.save
+            S.redirectTo("/admin/brand/")
+          case errors => println(errors); Noop
+        }
+      }
+
+      "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
+        "@recommend" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.recommend.get), recommend = _) &
+        "@self" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isSelf.get), self = _) &
+        "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
+        "@sellPrice" #> text(brand.sellPrice.get.toString, sellPrice = _) &
+        "#realSellPrice" #> brand.displaySellPrice(false) &
+        "@strikePrice" #> text(brand.strikePrice.get.toString, strikePrice = _) &
+        "@remark" #> textarea(brand.remark.get, remark = _) &
         "@sub" #> hidden(process)
     }): CssSel
   }

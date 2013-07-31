@@ -50,8 +50,8 @@ class Boot extends Loggable {
         }
       }
     }*/
-    DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
-    Schemifier.schemify(true, Schemifier.infoF _, User, WebSet, Brand)
+    //DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
+    //Schemifier.schemify(true, Schemifier.infoF _, User, WebSet, Brand)
 
     LiftRules.setSiteMap(Site.siteMap)
 
