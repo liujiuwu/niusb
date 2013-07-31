@@ -1,7 +1,7 @@
 .form-actions {
 	background-color: #F5F5F5;
 	border-top: 1px solid #E5E5E5;
-	margin: 20px -10px -30px;
+	margin: 0;
 	padding: 19px 20px 20px;
 }
 
@@ -23,8 +23,7 @@
 	color: #FFFFFF;
 }
 
-.btn-primary:hover,.btn-primary:active,.btn-primary.active,.btn-primary.disabled,.btn-primary[disabled]
-	{
+.btn-primary:hover,.btn-primary:active,.btn-primary.active,.btn-primary.disabled,.btn-primary[disabled] {
 	background-color: #2FABE9;
 }
 
@@ -40,8 +39,7 @@
 	color: #FFFFFF;
 }
 
-.btn-warning:hover,.btn-warning:active,.btn-warning.active,.btn-warning.disabled,.btn-warning[disabled]
-	{
+.btn-warning:hover,.btn-warning:active,.btn-warning.active,.btn-warning.disabled,.btn-warning[disabled] {
 	background-color: #F4A506;
 }
 
@@ -57,8 +55,7 @@
 	color: #FFFFFF;
 }
 
-.btn-danger:hover,.btn-danger:active,.btn-danger.active,.btn-danger.disabled,.btn-danger[disabled]
-	{
+.btn-danger:hover,.btn-danger:active,.btn-danger.active,.btn-danger.disabled,.btn-danger[disabled] {
 	background-color: #F1360A;
 }
 
@@ -74,8 +71,7 @@
 	color: #FFFFFF;
 }
 
-.btn-success:hover,.btn-success:active,.btn-success.active,.btn-success.disabled,.btn-success[disabled]
-	{
+.btn-success:hover,.btn-success:active,.btn-success.active,.btn-success.disabled,.btn-success[disabled] {
 	background-color: #5AAD34;
 }
 
@@ -91,8 +87,7 @@
 	color: #FFFFFF;
 }
 
-.btn-info:hover,.btn-info:active,.btn-info.active,.btn-info.disabled,.btn-info[disabled]
-	{
+.btn-info:hover,.btn-info:active,.btn-info.active,.btn-info.disabled,.btn-info[disabled] {
 	background-color: #2F96B4;
 }
 
@@ -108,8 +103,7 @@
 	color: #FFFFFF;
 }
 
-.btn-inverse:hover,.btn-inverse:active,.btn-inverse.active,.btn-inverse.disabled,.btn-inverse[disabled]
-	{
+.btn-inverse:hover,.btn-inverse:active,.btn-inverse.active,.btn-inverse.disabled,.btn-inverse[disabled] {
 	background-color: #222222;
 	color: #FFFFFF;
 }
@@ -150,4 +144,20 @@
 	background-color: #E9F8FF !important;
 	border: 1px solid #75C7D3 !important;
 	color: #5D9FA9 !important;
+}
+
+.g-right {
+	width: 350px;
+	position: relative;
+	float: right;
+	margin-left: -350px;
+}
+
+.g-left {
+	float: left;
+	width: 100%;
+}
+
+.g-left-c {
+	margin-right: 360px;
 }

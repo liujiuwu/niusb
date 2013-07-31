@@ -47,7 +47,7 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def list = {
     def actions(user: User): NodeSeq = {
-      <a href={ "/admin/user/edit?id=" + user.id.get } class="btn btn-small btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
+      <a href={ "/admin/user/edit?id=" + user.id.get } class="btn btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
         a(() => {
           BoxConfirm("确定删除【" + user.mobile.get + "】用户？此操作不可恢复，请谨慎！", {
             ajaxInvoke(() => {
@@ -76,7 +76,7 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
     val paginatorModel = User.paginator(url, bies: _*)()
 
     val searchForm = "#searchForm" #>
-      <form class="form-inline" action={url} method="get">
+      <form class="form-inline" action={ url } method="get">
         <select id="searchType" name="type">
           <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>用户ID</option>
           <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>手机号</option>
@@ -112,6 +112,9 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#gender" #> user.gender &
         "#type" #> user.userType &
         "#email" #> user.email.get &
+        "#phone" #> user.phone.get &
+        "#qq" #> user.qq.get &
+        "#address" #> user.address.get &
         "#enabled" #> user.enabled &
         "#isAdmin" #> user.displaySuper &
         "#createdAt" #> user.createdAt.asHtml &
@@ -128,7 +131,8 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
     } yield {
       def process(): JsCmd = {
         user.save
-        JsRaw(WebHelper.succMsg("opt_profile_tip", Text("信息保存成功！")))
+        //JsRaw(WebHelper.succMsg("opt_profile_tip", Text("信息保存成功！")))
+        S.redirectTo("/admin/user/view?id="+user.id.get)
       }
 
       val isSupper = if (user.superUser.get) UserSupper.Supper else UserSupper.Normal
@@ -148,6 +152,8 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@phone" #> text(user.phone.is, user.phone(_)) &
         "@email" #> text(user.email.is, user.email(_)) &
         "@address" #> text(user.address.is, user.address(_)) &
+        "#view-btn" #> <a href={ "/admin/user/view?id=" + user.id.get } class="btn btn-primary"><i class="icon-info"></i> 查看用户</a> &
+        "#list-btn" #> <a href="/admin/user/" class="btn btn-success"><i class="icon-list"></i> 用户列表</a> &
         "@sub" #> hidden(process)
     }): CssSel
   }
