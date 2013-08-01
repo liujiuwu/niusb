@@ -1,6 +1,7 @@
 log/*
 /*.log.*
 *.log
+build
 db*.properties
 .checkstyle
 .cache
