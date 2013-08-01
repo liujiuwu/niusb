@@ -183,7 +183,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
               }
             }
             //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息已成功修改！")))
-            S.redirectTo("/admin/brand/")
+             S.redirectTo("/admin/brand/view?id="+brand.id.get)
           case errors => println(errors); Noop
         }
       }
@@ -225,7 +225,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
             brand.recommend(TrueOrFalse(recommend)).isSelf(TrueOrFalse(self))
             brand.remark(remark)
             brand.save
-            S.redirectTo("/admin/brand/")
+            S.redirectTo("/admin/brand/view?id="+brand.id.get)
           case errors => println(errors); Noop
         }
       }
