@@ -25,7 +25,7 @@ object NavOps {
           </ul>
         </li>
       case _ =>
-        <button class="btn btn-small btn-success" type="button" data-toggle="modal" data-target="#loginDialog">会员登录或注册</button>
+        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#loginDialog">登录或注册</button>
     }
 
     "* *" #> menus
