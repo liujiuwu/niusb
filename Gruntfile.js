@@ -56,27 +56,25 @@ module.exports = function(grunt) {
 				},
 				files : {
 					'<%=setting.distCss%>/bootstrap.min.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ],
-					'<%=setting.distCss%>/bootstrap-responsive.min.css' : [ '<%=setting.srcLess%>/bootstrap/responsive.less' ],
-					'<%=setting.distCss%>/font-awesome-ie7.min.css' : [ '<%=setting.srcLess%>/font-awesome/font-awesome-ie7.less' ],
-					'<%=setting.distCss%>/bootstrap-modal.min.css' : [ '<%=setting.srcLess%>/bootstrap-modal.css' ],
-					'<%=setting.distCss%>/jquery.fileupload-ui.min.css' : [ '<%=setting.srcLess%>/jquery.fileupload-ui.css' ],
-					'<%=setting.distCss%>/jquery.jcrop.min.css' : [ '<%=setting.srcLess%>/jquery.jcrop.css' ],
-				}
-			},
-			myLess : {
-				options : {
-					compress : true
-				},
-				files : {
 					'<%=setting.distCss%>/application.min.css' : [ '<%=setting.srcLess%>/application.less' ],
 					'<%=setting.distCss%>/admin.min.css' : [ '<%=setting.srcLess%>/admin.less' ]
+				},
+				third : {
+					files : {
+						'<%=setting.distCss%>/bootstrap.min.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ],
+						'<%=setting.distCss%>/bootstrap-responsive.min.css' : [ '<%=setting.srcLess%>/bootstrap/responsive.less' ],
+						'<%=setting.distCss%>/font-awesome-ie7.min.css' : [ '<%=setting.srcLess%>/font-awesome/font-awesome-ie7.less' ],
+						'<%=setting.distCss%>/bootstrap-modal.min.css' : [ '<%=setting.srcLess%>/bootstrap-modal.css' ],
+						'<%=setting.distCss%>/jquery.fileupload-ui.min.css' : [ '<%=setting.srcLess%>/jquery.fileupload-ui.css' ],
+						'<%=setting.distCss%>/jquery.jcrop.min.css' : [ '<%=setting.srcLess%>/jquery.jcrop.css' ]
+					}
 				}
 			}
 		},
 		watch : {
 			recess : {
-				files : [ '<%=setting.srcLess%>/application.less', '<%=setting.srcLess%>/admin.less' ],
-				tasks : [ 'recess:myLess' ]
+				files : [ '<%=setting.srcLess%>/**/*.less'],
+				tasks : [ 'recess:min']
 			}
 		},
 	});
