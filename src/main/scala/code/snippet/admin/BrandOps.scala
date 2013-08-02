@@ -26,6 +26,7 @@ import net.liftweb.http.js.JsCmds._
 import code.lib.BoxAlert
 import code.lib.TrueOrFalse
 import code.lib.TrueOrFalse2Str
+import scala.collection.mutable.ArrayBuffer
 
 class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -37,13 +38,13 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   private def bies: List[QueryParam[Brand]] = {
     val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
-    var byList = List[QueryParam[Brand]](OrderBy(Brand.id, Descending))
+    val byBuffer = ArrayBuffer[QueryParam[Brand]](OrderBy(Brand.id, Descending))
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         val kv = k.trim()
         searchType match {
-          case Full("0") => byList = By(Brand.regNo, kv) :: byList
-          case Full("1") => byList = By(Brand.owner, kv.toLong) :: byList
+          case Full("0") => byBuffer += By(Brand.regNo, kv)
+          case Full("1") => byBuffer += By(Brand.owner, kv.toLong)
           case _ =>
         }
       case _ =>
@@ -51,10 +52,10 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     status match {
       case Full(s) if (s != "all") =>
-        byList = By(Brand.status, BrandStatus(s.toInt)) :: byList
+        byBuffer += By(Brand.status, BrandStatus(s.toInt))
       case _ =>
     }
-    byList
+    byBuffer.toList
   }
 
   def list = {

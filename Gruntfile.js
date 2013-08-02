@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 			distCss : 'src/main/webapp/css',
 			distJs : 'src/main/webapp/js',
 		},
-		clean : {
+		clean: {
 			build : {
 				src : [ "build" ]
 			}
@@ -41,42 +41,50 @@ module.exports = function(grunt) {
 			options : {
 				compile : true
 			},
-			compile : {
+			mainCompile : {
+				files : {
+					'build/application.css' : [ '<%=setting.srcLess%>/application.less' ],
+					'build/admin.css' : [ '<%=setting.srcLess%>/admin.less' ]
+				}
+			},
+			thirdCompile : {
 				files : {
 					'build/bootstrap.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ],
 					'build/bootstrap-responsive.css' : [ '<%=setting.srcLess%>/bootstrap/responsive.less' ],
-					'build/font-awesome-ie7.css' : [ '<%=setting.srcLess%>/font-awesome/font-awesome-ie7.less' ],
-					'build/application.min.css' : [ '<%=setting.srcLess%>/application.less' ],
-					'build/admin.min.css' : [ '<%=setting.srcLess%>/admin.less' ]
+					'build/font-awesome-ie7.css' : [ '<%=setting.srcLess%>/font-awesome/font-awesome-ie7.less' ]
 				}
 			},
 			mainMin : {
 				options : {
 					compress : true
 				},
-					files : {
-						'<%=setting.distCss%>/application.min.css' : [ '<%=setting.srcLess%>/application.less' ],
-						'<%=setting.distCss%>/admin.min.css' : [ '<%=setting.srcLess%>/admin.less' ]
-					}
+				files : {
+					'<%=setting.distCss%>/application.min.css' : [ '<%=setting.srcLess%>/application.less' ],
+					'<%=setting.distCss%>/admin.min.css' : [ '<%=setting.srcLess%>/admin.less' ]
+				}
 			},
 			thirdMin : {
 				options : {
 					compress : true
 				},
-					files : {
-						'<%=setting.distCss%>/bootstrap.min.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ],
-						'<%=setting.distCss%>/bootstrap-responsive.min.css' : [ '<%=setting.srcLess%>/bootstrap/responsive.less' ],
-						'<%=setting.distCss%>/font-awesome-ie7.min.css' : [ '<%=setting.srcLess%>/font-awesome/font-awesome-ie7.less' ],
-						'<%=setting.distCss%>/bootstrap-modal.min.css' : [ '<%=setting.srcLess%>/bootstrap-modal.css' ],
-						'<%=setting.distCss%>/jquery.fileupload-ui.min.css' : [ '<%=setting.srcLess%>/jquery.fileupload-ui.css' ],
-						'<%=setting.distCss%>/jquery.jcrop.min.css' : [ '<%=setting.srcLess%>/jquery.jcrop.css' ]
-					}
+				files : {
+					'<%=setting.distCss%>/bootstrap.min.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ],
+					'<%=setting.distCss%>/bootstrap-responsive.min.css' : [ '<%=setting.srcLess%>/bootstrap/responsive.less' ],
+					'<%=setting.distCss%>/font-awesome-ie7.min.css' : [ '<%=setting.srcLess%>/font-awesome/font-awesome-ie7.less' ],
+					'<%=setting.distCss%>/bootstrap-modal.min.css' : [ '<%=setting.srcLess%>/bootstrap-modal.css' ],
+					'<%=setting.distCss%>/jquery.fileupload-ui.min.css' : [ '<%=setting.srcLess%>/jquery.fileupload-ui.css' ],
+					'<%=setting.distCss%>/jquery.jcrop.min.css' : [ '<%=setting.srcLess%>/jquery.jcrop.css' ]
 				}
+			}
 		},
 		watch : {
-			recess : {
-				files : [ '<%=setting.srcLess%>/application.less','<%=setting.srcLess%>/admin.less'],
-				tasks : [ 'dist-recess-main']
+			mainRecess : {
+				files : [ '<%=setting.srcLess%>/application.less', '<%=setting.srcLess%>/admin.less' ],
+				tasks : [ 'dist-compile-main','dist-recess-main' ]
+			},
+			thirdRecess : {
+				files : [ '<%=setting.srcLess%>/application.less', '<%=setting.srcLess%>/bootstrap/*.less' ],
+				tasks : [ 'dist-recess-third' ]
 			}
 		},
 	});
@@ -87,10 +95,12 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('dist-recess-main', [ 'recess:mainMin' ]);
-    grunt.registerTask('dist-recess-third', [ 'recess:thirdMin' ]);
+	grunt.registerTask('dist-compile-main', [ 'recess:mainCompile' ]);
+	grunt.registerTask('dist-compile-third', [ 'recess:thirdCompile' ]);
+	grunt.registerTask('dist-recess-main', [ 'recess:mainMin' ]);
+	grunt.registerTask('dist-recess-third', [ 'recess:thirdMin' ]);
 	grunt.registerTask('dist-js', [ 'concat', 'uglify' ]);
 	grunt.registerTask('dist-css', [ 'recess' ]);
-	grunt.registerTask('default', [ 'clean', 'dist-js', 'dist-css' ]);
+	grunt.registerTask('default', [ 'clean','dist-js', 'dist-css' ]);
 
 };
