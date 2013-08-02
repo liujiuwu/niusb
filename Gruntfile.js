@@ -50,16 +50,19 @@ module.exports = function(grunt) {
 					'build/admin.min.css' : [ '<%=setting.srcLess%>/admin.less' ]
 				}
 			},
-			min : {
+			mainMin : {
 				options : {
 					compress : true
 				},
-				files : {
-					'<%=setting.distCss%>/bootstrap.min.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ],
-					'<%=setting.distCss%>/application.min.css' : [ '<%=setting.srcLess%>/application.less' ],
-					'<%=setting.distCss%>/admin.min.css' : [ '<%=setting.srcLess%>/admin.less' ]
+					files : {
+						'<%=setting.distCss%>/application.min.css' : [ '<%=setting.srcLess%>/application.less' ],
+						'<%=setting.distCss%>/admin.min.css' : [ '<%=setting.srcLess%>/admin.less' ]
+					}
+			},
+			thirdMin : {
+				options : {
+					compress : true
 				},
-				third : {
 					files : {
 						'<%=setting.distCss%>/bootstrap.min.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ],
 						'<%=setting.distCss%>/bootstrap-responsive.min.css' : [ '<%=setting.srcLess%>/bootstrap/responsive.less' ],
@@ -69,12 +72,11 @@ module.exports = function(grunt) {
 						'<%=setting.distCss%>/jquery.jcrop.min.css' : [ '<%=setting.srcLess%>/jquery.jcrop.css' ]
 					}
 				}
-			}
 		},
 		watch : {
 			recess : {
-				files : [ '<%=setting.srcLess%>/**/*.less'],
-				tasks : [ 'recess:min']
+				files : [ '<%=setting.srcLess%>/application.less','<%=setting.srcLess%>/admin.less'],
+				tasks : [ 'dist-recess-main']
 			}
 		},
 	});
@@ -85,6 +87,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
+    grunt.registerTask('dist-recess-main', [ 'recess:mainMin' ]);
+    grunt.registerTask('dist-recess-third', [ 'recess:thirdMin' ]);
 	grunt.registerTask('dist-js', [ 'concat', 'uglify' ]);
 	grunt.registerTask('dist-css', [ 'recess' ]);
 	grunt.registerTask('default', [ 'clean', 'dist-js', 'dist-css' ]);
