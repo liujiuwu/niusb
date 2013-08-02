@@ -58,7 +58,7 @@ object TrueOrFalse extends Function1[String, Boolean] {
   }
 }
 
-object TrueOrFalse2Str extends Function1[Boolean,Box[String]] {
+object TrueOrFalse2Str extends Function1[Boolean, Box[String]] {
   def apply(v: Boolean) = v match {
     case false => Full("0")
     case true => Full("1")
@@ -98,10 +98,14 @@ object WebHelper {
     succMsg(where, msg, cssClass, duration, fadeTime)
   }
 
-  def getRealMobile(mobile: Box[String]): Box[String] = {
-    val mobileRegx = """^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])(\d{8})$""".r
-    mobile.openOr(Empty) match {
-      case mobileRegx(mp, ms) => Full(mp + ms)
+  def realMobile(mobile: Box[String]): Box[String] = {
+    mobile match {
+      case Full(m) if (!m.trim().isEmpty()) =>
+        val mobileRegx = """^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])(\d{8})$""".r
+        m match {
+          case mobileRegx(mp, ms) => Full(mp + ms)
+          case _ => Empty
+        }
       case _ => Empty
     }
   }

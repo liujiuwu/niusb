@@ -2,8 +2,7 @@ package code.snippet.user
 
 import java.io.File
 import scala.language.postfixOps
-import scala.xml.NodeSeq
-import scala.xml.Text
+import scala.xml._
 import org.apache.commons.io.FileUtils
 import code.lib.BoxAlert
 import code.lib.BoxConfirm
@@ -17,42 +16,21 @@ import code.model.User
 import code.rest.UploadManager
 import code.snippet.SnippetHelper
 import net.coobird.thumbnailator.Thumbnails
-import net.liftweb.common.Box.box2Option
-import net.liftweb.common.Empty
-import net.liftweb.common.Full
-import net.liftweb.common.Loggable
-import net.liftweb.http.S
-import net.liftweb.http.SHtml.ElemAttr.pairToBasic
-import net.liftweb.http.SHtml.a
-import net.liftweb.http.SHtml.ajaxCall
-import net.liftweb.http.SHtml.ajaxInvoke
-import net.liftweb.http.SHtml.ajaxSubmit
-import net.liftweb.http.SHtml.hidden
-import net.liftweb.http.SHtml.select
-import net.liftweb.http.SHtml.text
-import net.liftweb.http.SHtml.textarea
-import net.liftweb.http.js.JE.JsRaw
-import net.liftweb.http.js.JE.ValById
+import net.liftweb.common._
+import net.liftweb.http._
+import net.liftweb.http.SHtml._
+import net.liftweb.http.js.JE._
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds
-import net.liftweb.http.js.JsCmds.Noop
-import net.liftweb.http.js.JsCmds.SetValById
-import net.liftweb.http.js.JsCmds.cmdToString
-import net.liftweb.http.js.JsCmds.jsExpToJsCmd
-import net.liftweb.http.js.JsExp.strToJsExp
-import net.liftweb.mapper.By
-import net.liftweb.mapper.Descending
-import net.liftweb.mapper.MaxRows
-import net.liftweb.mapper.OrderBy
-import net.liftweb.mapper.StartAt
-import net.liftweb.util.CssSel
-import net.liftweb.util.Helpers.asLong
-import net.liftweb.util.Helpers.strToCssBindPromoter
-import net.liftweb.util.Helpers.strToSuperArrowAssoc
-import net.liftweb.util.Helpers.tryo
+import net.liftweb.http.js.JsCmds._
+import net.liftweb.http.js.JsExp._
+import net.liftweb.mapper._
+import net.liftweb.util._
+import net.liftweb.util.Helpers._
 import code.snippet.PaginatorHelper
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.mapper.QueryParam
+import scala.collection.mutable.ArrayBuffer
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
@@ -121,7 +99,19 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   private def bies: List[QueryParam[Brand]] = {
-    List[QueryParam[Brand]](OrderBy(Brand.id, Descending), By(Brand.owner, user))
+    val (searchType, keyword) = (S.param("type"), S.param("keyword"))
+    val byBuffer = ArrayBuffer[QueryParam[Brand]](OrderBy(Brand.id, Descending), By(Brand.owner, user))
+    keyword match {
+      case Full(k) if (!k.trim().isEmpty()) =>
+        val kv = k.trim()
+        searchType match {
+          case Full("0") => byBuffer += By(Brand.regNo, kv)
+          case Full("1") => byBuffer += By(Brand.owner, kv.toLong)
+          case _ =>
+        }
+      case _ =>
+    }
+    byBuffer.toList
   }
 
   def list = {
@@ -145,8 +135,33 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
     }
 
-    var url = "/user/brand/"
+    val (searchType, keyword) = (S.param("type"), S.param("keyword"))
+
+    var searchTypeVal, keywordVal = ""
+    var url = originalUri
+    searchType match {
+      case Full(t) =>
+        searchTypeVal = t
+        url = appendParams(url, List("type" -> t))
+      case _ =>
+    }
+    keyword match {
+      case Full(k) if (!k.trim().isEmpty()) =>
+        keywordVal = k
+        url = appendParams(url, List("keyword" -> k))
+      case _ =>
+    }
+
     val paginatorModel = Brand.paginator(url, bies: _*)()
+
+    val searchForm = "#searchForm" #>
+      <form class="form-inline" action={ url } method="get">
+        <select id="searchType" name="type">
+          <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>注册号</option>
+        </select>
+        <input type="text" id="keyword" name="keyword" value={ keywordVal }/>
+        <button type="submit" class="btn">搜索</button>
+      </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
       "#regNo" #> brand.regNo &
@@ -159,7 +174,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#actions " #> actions(brand)
     })
 
-    dataList & "#pagination" #> paginatorModel.paginate _
+    searchForm & dataList & "#pagination" #> paginatorModel.paginate _
   }
 
   def view = {

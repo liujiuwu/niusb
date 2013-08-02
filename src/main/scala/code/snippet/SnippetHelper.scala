@@ -16,6 +16,8 @@ object SnippetHelper extends SnippetHelper
 trait SnippetHelper {
   object tabMenuRV extends RequestVar[Box[(String, String)]](Empty)
 
+  def originalUri = S.originalRequest.map(_.uri).openOr(sys.error("No request"))
+
   def alertHtml(msg: NodeSeq, title: String = "出错啦！", alertType: String = "error"): NodeSeq = {
     <div class={ "alert alert-" + alertType }>
       <button type="button" class="close" data-dismiss="alert">&times;</button>

@@ -72,7 +72,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
 
     var searchTypeVal, keywordVal, statusVal = ""
-    var url = "/admin/brand/"
+    var url = originalUri
     searchType match {
       case Full(t) =>
         searchTypeVal = t

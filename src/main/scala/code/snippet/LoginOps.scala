@@ -1,6 +1,6 @@
 package code.snippet
 
-import code.lib.WebHelper
+import code.lib.WebHelper._
 import code.model.User
 import net.liftweb.common.Box
 import net.liftweb.common.Empty
@@ -15,42 +15,48 @@ import net.liftweb.http.js.JsCmds._
 import net.liftweb.mapper.By
 import net.liftweb.util.Helpers._
 import scala.xml.Text
+import net.liftweb.common.Loggable
+import net.liftweb.http.DispatchSnippet
 
-object LoginOps {
-  private object mobileVar extends RequestVar[Box[String]](Empty)
-  private object pwdVar extends RequestVar[Box[String]](Empty)
-  
+object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
+  def dispatch = {
+    case "login" => login
+  }
+
   def login = {
+    var mobileBox: Box[String] = Full("")
+    var pwdBox: Box[String] = Full("")
+
     def process(): JsCmd = {
-      WebHelper.getRealMobile(mobileVar.get) match {
+      realMobile(mobileBox) match {
         case Full(mobile) =>
           User.find(By(User.mobile, mobile)) match {
             case Full(user) =>
               User.logUserIn(user)
-              S.redirectTo("/")
+              if (user.superUser.get) S.redirectTo("/admin/brand/") else S.redirectTo("/")
             case _ =>
               val user = new User
               user.mobile(mobile)
-              if (user.save) {
+              if (user.saved_?) {
                 User.logUserIn(user)
                 S.redirectTo("/")
               } else {
-                JsRaw(WebHelper.errorMsg("opt_login_tip", Text("注册失败，请稍候重试！")))
+                JsRaw(errorMsg("opt_login_tip", Text("注册失败，请稍候重试！")))
               }
           }
-        case _ => WebHelper.formError("mobile", "错误的手机号！")
+        case _ => formError("mobile", "错误的手机号！")
       }
     }
 
-    "@mobile" #> ajaxText(mobileVar.get.openOr(""), mobile => {
-      WebHelper.getRealMobile(Box.legacyNullTest(mobile)) match {
+    "@mobile" #> ajaxText(mobileBox.get, mobile => {
+      realMobile(Full(mobile)) match {
         case Full(m) =>
-          mobileVar(Full(m))
-          WebHelper.removeFormError("mobile") & JsRaw("""$("#login_btn").removeClass("disabled")""") & JsRaw("""$("#getCode_btn").removeClass("disabled")""")
-        case _ => JsRaw("""$("#getCode_btn").addClass("disabled")""") & JsRaw("""$("#login_btn").addClass("disabled")""") & WebHelper.formError("mobile", "错误的手机号！")
+          mobileBox = Full(m)
+          removeFormError("mobile") & JsRaw("""$("#login_btn").removeClass("disabled")""") & JsRaw("""$("#getCode_btn").removeClass("disabled")""")
+        case _ => JsRaw("""$("#getCode_btn").addClass("disabled")""") & JsRaw("""$("#login_btn").addClass("disabled")""") & formError("mobile", "错误的手机号！")
       }
     }) &
-      "@pwd" #> password(pwdVar.get.openOr(""), pwd => pwdVar(Box.legacyNullTest(pwd))) &
+      "@pwd" #> password(pwdBox.get, pwd => pwdBox = Full(pwd)) &
       "@sub" #> hidden(process)
   }
 }
