@@ -33,6 +33,7 @@ object Site {
     
     Menu("UserCreateBrand", menuLoc("UserCreateBrand", "plus", "发布商标")) / "user" / "brand" / "create" >> RequireLoggedIn >> UserMenuGroup,
     Menu("UserListBrand", menuLoc("UserListBrand", "list", "我的商标")) / "user" / "brand" / "index" >> RequireLoggedIn >> UserMenuGroup,
+    Menu("UserSms", menuLoc("UserSms", "envelope", "我的消息")) / "user" / "sms" / "index" >> RequireLoggedIn >> UserMenuGroup,
     Menu("UserViewBrand", menuLoc("UserViewBrand", "", "查看商标")) / "user" / "brand" / "view" >> RequireLoggedIn >> Hidden,
     Menu("UserEditBrand", menuLoc("UserEditBrand", "", "修改商标")) / "user" / "brand" / "edit" >> RequireLoggedIn >> Hidden,
     
@@ -46,6 +47,7 @@ object Site {
     Menu("AdminViewBrand", menuLoc("AdminViewBrand", "", "查看商标")) / "admin" / "brand" / "view" >> RequireAdminLoggedIn >> Hidden,
     Menu("AdminEditBrand", menuLoc("AdminEditBrand", "", "修改商标")) / "admin" / "brand" / "edit" >> RequireAdminLoggedIn >> Hidden,
     Menu("AdminSeditBrand", menuLoc("AdminSeditBrand", "", "商标设置")) / "admin" / "brand" / "sedit" >> RequireAdminLoggedIn >> Hidden,
+    Menu("AdminSms", menuLoc("AdminSms", "envelope", "站内消息")) / "admin" / "sms" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
 
     
     Menu.i("ajaxExample") / "ajax",

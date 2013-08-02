@@ -17,6 +17,7 @@ import net.liftweb.util.Helpers._
 import scala.xml.Text
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
+import java.util.Date
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -51,6 +52,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
     "@mobile" #> ajaxText(mobileBox.get, mobile => {
       realMobile(Full(mobile)) match {
         case Full(m) =>
+
           mobileBox = Full(m)
           removeFormError("mobile") & JsRaw("""$("#login_btn").removeClass("disabled")""") & JsRaw("""$("#getCode_btn").removeClass("disabled")""")
         case _ => JsRaw("""$("#getCode_btn").addClass("disabled")""") & JsRaw("""$("#login_btn").addClass("disabled")""") & formError("mobile", "错误的手机号！")

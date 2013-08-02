@@ -20,6 +20,7 @@ import net.liftweb.common._
 import net.liftweb.http._
 import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JE._
+import net.liftweb.http.js._
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds
 import net.liftweb.http.js.JsCmds._
@@ -40,7 +41,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "list" => list
     case "view" => view
     case "uploadBrandPic" => uploadBrandPic
-    case "getRemoteData" => getRemoteData
+    case "queryRemoteData" => queryRemoteData
   }
 
   def create = {
@@ -76,14 +77,13 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@sub" #> hidden(process)
   }
 
-  def getRemoteData = {
-    "* [onclick]" #> ajaxCall(ValById("regNo"),
+  def queryRemoteData = {
+    "@queryRemoteData [onclick]" #> ajaxCall(ValById("regNo"),
       regNo => {
         //TODO 检查标号合法性
         //WebHelper.formError("regNo", "错误的商标注册号，请核实！")
         //TODO 从标局获取商标数据
-        val data = SearchHelper.searchBrandByRegNo(regNo)
-        val brandData = data
+        val brandData = SearchHelper.searchBrandByRegNo(regNo)
         if (brandData.isEmpty) {
           JsRaw(WebHelper.errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
         } else {
@@ -93,7 +93,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
           val zcggrq = brandData.getOrElse("zcggrq", "")
           val fwlb = brandData.getOrElse("fwlb", "")
           SetValById("name", name) & SetValById("applicant", applicant) & SetValById("brand_type", flh) & SetValById("stest", "2") &
-            SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & JsRaw("""$('#getRemoteData').removeClass("disabled")""")
+            SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
         }
       })
   }

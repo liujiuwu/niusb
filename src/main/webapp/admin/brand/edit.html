@@ -16,7 +16,7 @@
 						<div class="controls">
 							<div class="input-append">
 								<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required="required" class="input-medium" />
-								<button class="btn" type="button" id="getRemoteData" name="getRemoteData" data-lift="user.BrandOps.getRemoteData">从标局获取数据</button>
+								<button class="btn" type="button" id="queryRemoteData" name="queryRemoteData" data-lift="user.BrandOps.queryRemoteData">从标局获取数据</button>
 							</div>
 							<span id="error_regNo" class="help-inline"></span> <input type="hidden" id="pic" name="pic" />
 							<button class="btn btn-success" type="button" data-toggle="modal" data-target="#uploadDialog">商标图上传</button>
@@ -52,7 +52,7 @@
 					<div id="group_regDate" class="control-group">
 						<label for="regDate" class="control-label">注册日期</label>
 						<div class="controls">
-								<input type="text"  id="regDate" name="regDate" placeholder="格式:xxxx年xx月xx日" /> <span id="error_regDate" class="help-inline" />
+							<input type="text" id="regDate" name="regDate" placeholder="格式:xxxx年xx月xx日" /> <span id="error_regDate" class="help-inline"></span>
 						</div>
 					</div>
 					<div id="group_applicant" class="control-group">
@@ -89,8 +89,8 @@
 		<lift:tail>
 			<script type="text/javascript">
 				$(function() {
-					$('#getRemoteData').click(function() {
-						$('#getRemoteData').addClass("disabled");
+					$('#queryRemoteData').click(function() {
+						$('#queryRemoteData').addClass("disabled");
 					});
 				});
 			</script>

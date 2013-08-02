@@ -1,41 +1,31 @@
 package bootstrap.liftweb
 
+import java.util.Date
+import code.config.Site
+import code.lib.SearchHelper
 import code.model.MyDBVendor
 import code.model.User
+import code.rest.UploadManager
+import net.liftweb.common.Empty
 import net.liftweb.common.Full
+import net.liftweb.common.Loggable
 import net.liftweb.db.DB
 import net.liftweb.db.DB1.db1ToDb
 import net.liftweb.db.DefaultConnectionIdentifier
 import net.liftweb.http.Html5Properties
 import net.liftweb.http.LiftRules
 import net.liftweb.http.LiftRulesMocker.toLiftRules
+import net.liftweb.http.NotFoundAsTemplate
 import net.liftweb.http.ParsePath
 import net.liftweb.http.Req
 import net.liftweb.http.RewriteRequest
 import net.liftweb.http.RewriteResponse
-import net.liftweb.mapper.Schemifier
-import net.liftweb.sitemap.{ ** => ** }
-import net.liftweb.sitemap.Loc.Hidden
-import net.liftweb.sitemap.Loc.LocGroup
-import net.liftweb.sitemap.LocPath.stringToLocPath
-import net.liftweb.sitemap.Menu
-import net.liftweb.sitemap.SiteMap
-import net.liftweb.util.Vendor.valToVender
-import net.liftweb.sitemap.Loc
-import code.model.Brand
-import net.liftweb.http.RedirectResponse
 import net.liftweb.http.S
-import code.config.Site
-import code.lib.SearchHelper
-import net.liftweb.common.Loggable
-import net.liftweb.db.DBLogEntry
-import net.liftweb.http.OnDiskFileParamHolder
-import code.rest.UploadManager
+import net.liftweb.mapper.By
 import net.liftweb.util.NamedPF
-import net.liftweb.http.NotFoundAsTemplate
-import net.liftweb.http.InternalServerErrorResponse
-import net.liftweb.http.XmlResponse
-import code.model.WebSet
+import net.liftweb.util.Props
+import net.liftweb.util.Vendor.valToVender
+import net.liftweb.http.provider.HTTPCookie
 
 class Boot extends Loggable {
   def boot {
@@ -100,5 +90,20 @@ class Boot extends Loggable {
         val content = S.render(<lift:embed what="500"/>, req.request)
         XmlResponse(content.head, 500, "text/html", req.cookies)
     }*/
+
+    def testUserLogin() {
+      val testUser = User.find(By(User.mobile, "13826526941"))
+      testUser foreach {user =>
+        User.logUserIn(user)
+        /*val random = scala.util.Random.nextLong
+        val now = new Date().getTime
+        val cookieData = user.mobile.get + ":" + (now ^ random).toString
+        val cookie = HTTPCookie("RememberMe", cookieData).setMaxAge(((30000) / 1000L).toInt).setPath("/")
+        S.addCookie(cookie)
+        logger.info(S.cookieValue("RememberMe"))*/
+      }
+    }
+
+    User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
   }
 }
