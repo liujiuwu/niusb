@@ -1,10 +1,12 @@
 <div class="box-content" data-lift="surround?with=admin;at=content">
 	<div data-lift="admin.BrandOps.edit">
-		<div class="tool-well">
-			<div class="well text-right">
-				<button id="sedit-btn" class="btn btn-primary" type="button">商标设置</button>
-				<button id="view-btn" class="btn btn-info" type="button">查看商标</button>
-				<button id="list-btn" class="btn btn-success" type="button">商标列表</button>
+		<div class="span25">
+			<div class="tool-well">
+				<div class="well text-right">
+					<button id="sedit-btn" class="btn btn-primary" type="button">商标设置</button>
+					<button id="view-btn" class="btn btn-info" type="button">查看商标</button>
+					<button id="list-btn" class="btn btn-success" type="button">商标列表</button>
+				</div>
 			</div>
 		</div>
 		<div class="g-left">
@@ -64,13 +66,13 @@
 					<div id="group_useDescn" class="control-group">
 						<label for="useDescn" class="control-label">使用范围</label>
 						<div class="controls">
-							<textarea rows="5" id="useDescn" name="useDescn" class="span6"></textarea>
+							<textarea rows="3" id="useDescn" name="useDescn" class="span20"></textarea>
 						</div>
 					</div>
 					<div id="group_descn" class="control-group">
 						<label for="descn" class="control-label">商标说明</label>
 						<div class="controls">
-							<textarea rows="5" id="descn" name="descn" class="span6"></textarea>
+							<textarea rows="3" id="descn" name="descn" class="span20"></textarea>
 						</div>
 					</div>
 					<div class="form-actions">
@@ -80,20 +82,20 @@
 				</form>
 				<div class='lift:embed?what=_uploadBrand'>上传组件</div>
 			</div>
-			<div class="g-right">
-				<div class="brand-bimg-box pull-right">
-					<img id="brand_pic" src="/img/no-img.png" />
-				</div>
+		</div>
+		<div class="g-right">
+			<div class="brand-bimg-box pull-right">
+				<img id="brand_pic" src="/img/no-img.png" />
 			</div>
 		</div>
-		<lift:tail>
-			<script type="text/javascript">
-				$(function() {
-					$('#queryRemoteData').click(function() {
-						$('#queryRemoteData').addClass("disabled");
-					});
-				});
-			</script>
-		</lift:tail>
 	</div>
+	<lift:tail>
+		<script type="text/javascript">
+			$(function() {
+				$('#queryRemoteData').click(function() {
+					$('#queryRemoteData').addClass("disabled");
+				});
+			});
+		</script>
+	</lift:tail>
 </div>

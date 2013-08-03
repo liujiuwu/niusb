@@ -1,23 +1,60 @@
-<div id="main" class="container" data-lift="surround?with=default;at=content">
-	<head_merge><link rel="stylesheet" href="/css/admin.min.css" /></head_merge>
-	<div class="row">
-		<div class="span12">
-			<ul class="nav nav-tabs no-padding">
-				<span data-lift="Menus.myGroup?group=adminMenu"></span>
-				<span data-lift="TabMenuOps.tabMenu"></span>
-				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Dropdown <b class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="#">Action</a></li>
-						<li><a href="#">Another action</a></li>
-						<li><a href="#">Something else here</a></li>
-						<li class="divider"></li>
-						<li><a href="#">Separated link</a></li>
-					</ul></li>
-				<span id="ajax-loader-box"><img id="ajax-loader" src="/img/ajax-loader.gif" alt="处理中..." class="hide" /></span>
-			</ul>
-			<div class="box">
-				<div id="content">The main content will get bound here</div>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>牛标网</title>
+<link rel="stylesheet" href="/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/css/bootstrap-modal.min.css" />
+<link rel="stylesheet" href="/css/application.min.css" />
+<link rel="stylesheet" href="/css/admin.min.css" />
+<link rel="shortcut icon" href="/img/favicon.ico" />
+</head>
+<body>
+	<div class='lift:embed?what=_topNavbarForAdmin'>Embed the top toolbar here.</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span25">
+				<ul class="nav nav-tabs no-padding">
+					<span data-lift="Menus.myGroup?group=adminMenu"></span>
+					<span data-lift="TabMenuOps.tabMenu"></span>
+					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Dropdown <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">Action</a></li>
+							<li><a href="#">Another action</a></li>
+							<li><a href="#">Something else here</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Separated link</a></li>
+						</ul></li>
+					<span id="ajax-loader-box"><img id="ajax-loader" src="/img/ajax-loader.gif" alt="处理中..." class="hide" /></span>
+				</ul>
+				<div class="box">
+					<div id="content">The main content will get bound here</div>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+	<div class="admin-foot">
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span25">
+					<ul class="inline text-center">
+						<li><a href="javascript:;">© 牛标网(niusb.com)</a></li>
+						<li><a href="javascript:;">关于我们</a></li>
+						<li><a href="javascript:;">广告联系</a></li>
+						<li><a href="javascript:;">@新浪微博</a></li>
+						<li><a href="javascript:;">粤ICP备120094x3号-3</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap-modalmanager.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap-modal.min.js"></script>
+	<script type="text/javascript" src="/js/bootbox.min.js"></script>
+	<script type="text/javascript" src="/classpath/json.js"></script>
+	<script type="text/javascript" src="/js/application.min.js"></script>
+</body>
+</html>
