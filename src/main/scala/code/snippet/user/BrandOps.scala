@@ -160,7 +160,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
           <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>注册号</option>
         </select>
         <input type="text" id="keyword" name="keyword" value={ keywordVal }/>
-        <button type="submit" class="btn">搜索</button>
+        <button type="submit" class="btn"><i class="icon-search"></i> 搜索</button>
       </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {

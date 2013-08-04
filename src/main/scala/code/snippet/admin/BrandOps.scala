@@ -104,7 +104,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         <select id="status" name="status">
           { for ((k, v) <- Brand.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
         </select>
-        <button type="submit" class="btn">搜索</button>
+        <button type="submit" class="btn"><i class="icon-search"></i> 搜索</button>
       </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {

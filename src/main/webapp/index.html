@@ -1,201 +1,25 @@
 <div id="main" class="container" data-lift="surround?with=default;at=content">
 	<style>
-	ol, ul {
-    list-style: none outside none;
-}
-ol.dribbbles li div.dribbble {
-	position: relative;
-	clear: left;
-	background: #fff;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
-	-moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
-	width:128px;
+.m-brands {
+	
 }
 
-ul.tools li {
-	color: #AAAAAA;
+.m-brands li {
+	float: left;
+	background: none repeat scroll 0 0 #FFFFFF;
+	border-radius: 3px 3px 3px 3px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	padding: 8px;
+	margin: 8px;
+}
+
+.m-brands li div.m-brand-name {
+	padding-top: 5px;
+	float: right;
+	color: #999999;
 	display: inline;
 	float: right;
-	font-size: 11px;
-	line-height: 1;
-	margin: 0 0 0 12px;
-	width: auto;
-}
-
-ul.tools li.rebound {
-	float: left;
-}
-
-ul.tools li a {
-	color: #AAAAAA;
-	text-decoration: none;
-}
-
-ul.tools li.views {
-	background-image: url("/images/icon-views-sm.png");
-	background-position: 0 50%;
-	background-repeat: no-repeat;
-	border-left: medium none;
-	margin-left: 0;
-	padding-left: 18px;
-}
-
-ul.tools li.views {
-	background-image: url("/images/icon-views-sm-2x.png");
-	background-size: 15px 10px;
-}
-
-ol.dribbbles li div.dribbble div.dribbble-shot {
-	padding: 10px;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over {
-	opacity: 0;
-	/* revealed on hover with jQuery */
-	filter: alpha(opacity =   0);
-	/* IE hack */
-	position: absolute;
-	top: 0;
-	bottom: 30px;
-	left: 0;
-	width: 100%;
-	margin: 0;
-	padding: 20px;
 	font-size: 12px;
-	line-height: 2;
-	text-decoration: none;
-	color: #888;
-	background: #fff;
-	background: rgba(255, 255, 255, 0.96);
-	overflow: hidden;
-	z-index: 3;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over strong {
-	display: block;
-	margin: 0 0 4px 0;
-	font-weight: bold;
-	font-size: 14px;
-	line-height: 1.2;
-	color: #444444;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over strong span.sep {
-	margin: 0 2px;
-	color: #999999;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over em {
-	display: block;
-	position: absolute;
-	bottom: 10px;
-	left: 20px;
-	margin: 0 0 3px 0;
-	font-size: 11px;
-	font-weight: bold;
-	font-style: normal;
-	line-height: 1;
-	color: #999999;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over span.comment,ol.dribbbles li div.dribbble a.dribbble-over span.bio {
-	display: block;
-	margin: 0 0 10px 0;
-	font-size: 11px;
-	line-height: 1.4;
-	color: #777777;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over span.comment {
-	color: #777777;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over span.skills {
-	display: block;
-	font-size: 11px;
-	line-height: 1.3;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over span.skills span.skill {
-	font-weight: bold;
-	color: #444444;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over span.skills span.skill:after {
-	content: ", ";
-	margin-right: 1px;
-	font-weight: normal;
-	opacity: .7;
-}
-
-ol.dribbbles li div.dribbble a.dribbble-over span.skills span.skill:last-child:after {
-	content: "";
-}
-
-ol.dribbbles li div.dribbble span.liked-by {
-	opacity: 0;
-	position: absolute;
-	bottom: 40px;
-	left: 20px;
-	font-size: 11px;
-	color: #777777;
-	-webkit-transition: opacity 0.2s ease;
-	-moz-transition: opacity 0.2s ease;
-	-o-transition: opacity 0.2s ease;
-	transition: opacity 0.2s ease;
-	z-index: 3;
-}
-
-ol.dribbbles li div.dribbble-img:hover span.liked-by {
-	opacity: 1;
-}
-
-ol.dribbbles li div.dribbble span.liked-by a {
-	font-weight: bold;
-}
-
-ol.dribbbles li div.dribbble span.liked-by a img {
-	position: relative;
-	top: -2px;
-	width: 16px;
-	margin: 0 2px 0 0;
-	vertical-align: middle;
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-}
-
-ol.dribbbles li div.dribbble-img {
-	max-width: 100%;
-	height: 0;
-	padding-bottom: 75%;
-	overflow: hidden;
-}
-
-ol.dribbbles li div.dribbble-img img {
-	max-width: 100%;
-	max-height: 150px;
-}
-
-ol.dribbbles-tease li {
-	margin-bottom: 20px;
-}
-
-ol.dribbbles-tease li div.dribbble div.dribbble-shot {
-	background: #fff;
-}
-
-ol.dribbbles-tease li div.dribbble-img {
-	padding-bottom: 65%;
 }
 </style>
 	<div class="row">
@@ -216,105 +40,343 @@ ol.dribbbles-tease li div.dribbble-img {
 					</div>
 				</div>
 				<div id="tab1-c" class="m-tab-c">
-					<ol class="dribbbles">
+					<ul class="m-brands">
 						<li>
-							<div class="dribbble">
-								<div class="dribbble-shot">
-									<div class="dribbble-img">
-										<img alt="Radio Experiments" src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
-									</div>
-									<ul class="tools group" style="visibility: visible;">
-										<li class="fav"><a title="See fans of this screenshot" href="/shots/1180753-Radio-Experiments/fans">372</a></li>
-										<li class="cmnt"><a title="View comments on this screenshot" href="/shots/1180753-Radio-Experiments#comments">27</a></li>
-										<li class="views">5612</li>
-									</ul>
-
-								</div>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
 							</div>
+							<div class="m-brand-name">商标名称</div>
 						</li>
 						<li>
-							<div class="dribbble">
-								<div class="dribbble-shot">
-									<div class="dribbble-img">
-										<img alt="Radio Experiments" src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
-									</div>
-									<ul class="tools group" style="visibility: visible;">
-										<li class="fav"><a title="See fans of this screenshot" href="/shots/1180753-Radio-Experiments/fans">372</a></li>
-										<li class="cmnt"><a title="View comments on this screenshot" href="/shots/1180753-Radio-Experiments#comments">27</a></li>
-										<li class="views">5612</li>
-									</ul>
-
-								</div>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
 							</div>
+							<div class="m-brand-name">商标名称</div>
 						</li>
-					</ol>
-				</div>
-				<div id="tab2-c" class="m-tab-c hide">tab2 conent</div>
-				<div id="tab3-c" class="m-tab-c hide">tab3 conent</div>
-				<div id="tab4-c" class="m-tab-c hide">
-					<ul class="inline">
-						<li><img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" /></li>
-						<li><img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" /></li>
-						<li><img src="/upload/brand/20130801225909_UPS1PHMF3HYGM3KEx128.png" /></li>
-						<li><img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" /></li>
-						<li><img src="/upload/brand/20130801225909_UPS1PHMF3HYGM3KEx128.png" /></li>
-						<li><img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" /></li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
 					</ul>
-					<ul class="inline">
-						<li><img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" /></li>
-						<li><img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" /></li>
-						<li><img src="/upload/brand/20130801225909_UPS1PHMF3HYGM3KEx128.png" /></li>
-						<li><img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" /></li>
-						<li><img src="/upload/brand/20130801225909_UPS1PHMF3HYGM3KEx128.png" /></li>
-						<li><img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" /></li>
+				</div>
+				<div id="tab2-c" class="m-tab-c hide">
+					<ul class="m-brands">
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+					</ul>
+				</div>
+				<div id="tab3-c" class="m-tab-c hide">
+					<ul class="m-brands">
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+					</ul>
+				</div>
+				<div id="tab4-c" class="m-tab-c hide">
+					<ul class="m-brands">
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称</div>
+						</li>
+						<li>
+							<div class="m-brand-img">
+								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							</div>
+							<div class="m-brand-name">商标名称2</div>
+						</li>
 					</ul>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 	<lift:tail>
 		<script>
 			$(function() {
-				function resetTabs() {
+				function mvJsRline(leftPos) {
+					$("#part3 .js-rline").animate({
+						left : leftPos
+					});
 					$("#tab1,#tab2,#tab3,#tab4").removeClass("txt1-active");
 					$("#tab1-c,#tab2-c,#tab3-c,#tab4-c").hide();
 				}
+
 				$("#tab1").hover(function() {
-					$("#part3 .js-rline").animate({
-						left : "0"
-					});
-					resetTabs();
+					mvJsRline("0");
 					$(this).addClass("txt1-active");
-					$("#tab1-c").fadeIn();
-				}, function() {
+					$("#tab1-c").show();
 				});
 				$("#tab2").hover(function() {
-					$("#part3 .js-rline").animate({
-						left : "247px"
-					});
-					resetTabs();
+					mvJsRline("247px");
 					$(this).addClass("txt1-active");
-					$("#tab2-c").fadeIn();
-				}, function() {
+					$("#tab2-c").show();
 				});
 				$("#tab3").hover(function() {
-					$("#part3 .js-rline").animate({
-						left : "494px"
-					});
-					resetTabs();
+					mvJsRline("494px");
 					$(this).addClass("txt1-active");
-					$("#tab3-c").fadeIn();
-				}, function() {
+					$("#tab3-c").show();
 				});
 				$("#tab4").hover(function() {
-					$("#part3 .js-rline").animate({
-						left : "741px"
-					});
-					resetTabs();
+					mvJsRline("741px");
 					$(this).addClass("txt1-active");
-					$("#tab4-c").fadeIn();
-				}, function() {
+					$("#tab4-c").show();
 				});
 			});
 		</script>

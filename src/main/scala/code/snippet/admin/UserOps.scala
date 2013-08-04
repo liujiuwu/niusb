@@ -82,7 +82,7 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
           <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>手机号</option>
         </select>
         <input type="text" id="keyword" name="keyword" value={ keywordVal }/>
-        <button type="submit" class="btn">搜索</button>
+        <button type="submit" class="btn"><i class="icon-search"></i> 搜索</button>
       </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(user => {
