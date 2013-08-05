@@ -28,18 +28,18 @@
 				<div class="m-tab">
 					<div class="tblist">
 						<ul>
-							<li><a hidefocus="" href="javascript:;" id="tab1" class="txt1 js-tab txt1-active">推荐商标</a></li>
+							<li><a hidefocus="" href="javascript:;" class="txt1 js-tab txt1-active">推荐商标</a></li>
 							<li><span class="bdr"></span></li>
-							<li><a hidefocus="" href="javascript:;" id="tab2" class="txt1 js-tab">最新商标</a></li>
+							<li><a hidefocus="" href="javascript:;" class="txt1 js-tab">最新商标</a></li>
 							<li><span class="bdr"></span></li>
-							<li><a hidefocus="" href="javascript:;" id="tab3" class="txt1 js-tab">热门商标</a></li>
+							<li><a hidefocus="" href="javascript:;" class="txt1 js-tab">热门商标</a></li>
 							<li><span class="bdr"></span></li>
-							<li><a hidefocus="" href="javascript:;" id="tab4" class="txt1 js-tab">自有商标</a></li>
+							<li><a hidefocus="" href="javascript:;" class="txt1 js-tab">自有商标</a></li>
 						</ul>
 						<div class="rline js-rline"></div>
 					</div>
 				</div>
-				<div id="tab1-c" class="m-tab-c">
+				<div class="m-tab-c js-tab-c">
 					<ul class="m-brands">
 						<li>
 							<div class="m-brand-img">
@@ -115,7 +115,7 @@
 						</li>
 					</ul>
 				</div>
-				<div id="tab2-c" class="m-tab-c hide">
+				<div class="m-tab-c js-tab-c hide">
 					<ul class="m-brands">
 						<li>
 							<div class="m-brand-img">
@@ -191,7 +191,7 @@
 						</li>
 					</ul>
 				</div>
-				<div id="tab3-c" class="m-tab-c hide">
+				<div class="m-tab-c js-tab-c hide">
 					<ul class="m-brands">
 						<li>
 							<div class="m-brand-img">
@@ -267,7 +267,7 @@
 						</li>
 					</ul>
 				</div>
-				<div id="tab4-c" class="m-tab-c hide">
+				<div class="m-tab-c js-tab-c hide">
 					<ul class="m-brands">
 						<li>
 							<div class="m-brand-img">
@@ -350,23 +350,7 @@
 	<lift:tail>
 		<script>
 			$(function() {
-				function resetJsRline(leftPos) {
-					$("#part3 .js-rline").animate({
-						left : leftPos + "px"
-					}, {
-						queue : false
-					});
-					$("#tab1,#tab2,#tab3,#tab4").removeClass("txt1-active");
-					$("#tab1-c,#tab2-c,#tab3-c,#tab4-c").hide();
-				}
-
-				$("#tab1,#tab2,#tab3,#tab4").hover(function() {
-					var id = this.id;
-					var idIdx = parseInt(id.replace("tab", ""));
-					resetJsRline((idIdx - 1) * 247);
-					$(this).addClass("txt1-active");
-					$("#" + id + "-c").show();
-				});
+				mtab("#part3", 0, "txt1-active", 247);
 			});
 		</script>
 	</lift:tail>
