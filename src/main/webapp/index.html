@@ -350,33 +350,22 @@
 	<lift:tail>
 		<script>
 			$(function() {
-				function mvJsRline(leftPos) {
+				function resetJsRline(leftPos) {
 					$("#part3 .js-rline").animate({
-						left : leftPos
+						left : leftPos + "px"
+					}, {
+						queue : false
 					});
 					$("#tab1,#tab2,#tab3,#tab4").removeClass("txt1-active");
 					$("#tab1-c,#tab2-c,#tab3-c,#tab4-c").hide();
 				}
 
-				$("#tab1").hover(function() {
-					mvJsRline("0");
+				$("#tab1,#tab2,#tab3,#tab4").hover(function() {
+					var id = this.id;
+					var idIdx = parseInt(id.replace("tab", ""));
+					resetJsRline((idIdx - 1) * 247);
 					$(this).addClass("txt1-active");
-					$("#tab1-c").show();
-				});
-				$("#tab2").hover(function() {
-					mvJsRline("247px");
-					$(this).addClass("txt1-active");
-					$("#tab2-c").show();
-				});
-				$("#tab3").hover(function() {
-					mvJsRline("494px");
-					$(this).addClass("txt1-active");
-					$("#tab3-c").show();
-				});
-				$("#tab4").hover(function() {
-					mvJsRline("741px");
-					$(this).addClass("txt1-active");
-					$("#tab4-c").show();
+					$("#" + id + "-c").show();
 				});
 			});
 		</script>
