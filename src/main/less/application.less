@@ -870,15 +870,129 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
 
 
 /* main =====================================================================*/
-.m-box {
+
+.m-box10-1:after,.m-box12 .tp:after,.m-box12 .ct:after{
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+.m-box10 {
     background-color: #FFFFFF;
     border: 1px solid #DBDBDB;
     margin-bottom: 15px;
 }
-.m-box-3 {
+
+.m-box10-1 {
+    margin-top: 0;
+    padding: 10px 0 10px 10px;
+}
+
+.m-box10-3 {
     height: 335px;
     position: relative;
 }
+
+
+.m-banner {
+    float: left;
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+    width: 700px;
+}
+
+.m-box11 {
+    color: #666666;
+    float: right;
+    padding: 0 10px 0 0;
+    width: 255px;
+}
+
+.m-box11 .mn {
+    height: 225px;
+}
+
+.m-box11 .sd {
+    border-top: 1px solid #ECECEC;
+    width: 255px;
+}
+.m-box11 .sd .list {
+    margin-right: -13px;
+    width: 255px;
+}
+.m-box11 .sd .item {
+    float: left;
+    margin-right: 13px;
+    margin-top: 12px;
+}
+.m-box11 .sd .txt6 {
+    color: #999999;
+    float: left;
+}
+.m-box11 .sd .wxpop {
+    display: none;
+}
+.m-box11 .sd .u-ico14-weixin:hover {
+    border: 0 none;
+}
+.m-box11 .sd .u-ico14-weixin:hover .wxpop {
+    background-position: 0 -40px;
+    bottom: 30px;
+    display: block;
+    height: 261px;
+    left: -105px;
+    position: absolute;
+    width: 211px;
+    z-index: 3;
+}
+
+.m-box12 {
+    margin-bottom: 20px;
+}
+.m-box12 .tit {
+    float: left;
+    height: 24px;
+    padding-bottom: 5px;
+    //text-indent: -9999px;
+    width: 188px;
+}
+.m-box12-1 .tit {
+    background-position: 0 -470px;
+}
+.m-box12-2 .tit {
+    background-position: 0 -500px;
+}
+.m-box12-3 .tit {
+    background-position: 0 -530px;
+}
+.m-box12 .tp {
+    border-bottom: 2px solid #000000;
+}
+
+.m-box12 .tag ul {
+    float: right;
+}
+.m-box12 .tag li {
+    float: left;
+    margin-left: 18px;
+}
+    
+.m-box12 .ct {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: -moz-use-text-color #DBDBDB #DBDBDB;
+    border-image: none;
+    border-right: 1px solid #DBDBDB;
+    border-style: none solid solid;
+    border-width: 0 1px 1px;
+    padding:10px;
+}
+
 
 .m-tab {
     background: none repeat scroll 0 0 #F7F7F7;
