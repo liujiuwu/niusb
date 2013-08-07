@@ -37,6 +37,8 @@ libraryDependencies ++= {
     "mysql" % "mysql-connector-java" % "5.1.21" % "runtime->default",
     "org.seleniumhq.selenium" % "selenium-java" % "2.33.0",
     "mysql" % "mysql-connector-java" % "5.1.21" % "runtime->default",
+    //"com.typesafe.slick" % "slick_2.10" % "2.0.0-M2",
+    "com.typesafe.slick" % "slick_2.10" % "1.0.1",
     "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container,test",
     "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "provided->default",
     "ch.qos.logback" % "logback-classic" % "1.0.6",
