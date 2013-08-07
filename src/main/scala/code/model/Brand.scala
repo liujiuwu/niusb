@@ -24,12 +24,13 @@ object BrandStatus extends Enumeration {
 class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   def getSingleton = Brand
   object owner extends MappedLongForeignKey(this, User) {
+    override def dbColumnName = "user_id"
     def getOwner = {
       User.find(By(User.id, owner.get)).openOrThrowException("not found user")
     }
   }
 
-  object name extends MappedString(this, 20)
+  object name extends MappedString(this, 50)
 
   object brandTypeId extends MappedInt(this) {
     override def dbIndexed_? = true
@@ -93,17 +94,20 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def dbColumnName = "sold_date"
   }
 
-  object useDescn extends MappedString(this, 200) {
+  object useDescn extends MappedString(this, 800) {
     override def dbColumnName = "use_descn"
   }
 
   object descn extends MappedString(this, 300)
 
   object pic extends MappedString(this, 100)
+  
 
   object adPic extends MappedString(this, 100) {
     override def dbColumnName = "ad_pic"
   }
+
+  object lsqz extends MappedString(this, 300)
 
   object concernCount extends MappedInt(this) { //关注数
     override def dbColumnName = "concern_count"

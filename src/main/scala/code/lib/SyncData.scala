@@ -31,9 +31,24 @@ object SyncData extends App {
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
-      Q.queryNA[Trademark]("select id,name,pic,indate,price,range,category,number,regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id from trademark where del=0 and LENGTH(kehu_1id)>0") foreach { data =>
-        //println(data)
-        syncNum += 1
+      Q.queryNA[Trademark]("select id,name,pic,indate,price,range,category,number,regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id from trademark where del=0 and LENGTH(kehu_1id)>0") foreach { t =>
+        User.findByKey(t.kehu_1id) match {
+          case Full(user) =>
+            val brand = Brand.create
+            brand.name(t.name)
+            brand.pic(t.pic)
+            brand.basePrice((t.price*10000).toInt)
+            brand.useDescn(t.range)
+            brand.brandTypeId(t.category)
+            brand.regNo(t.number)
+            //brand.regDate(t.regdate)
+            brand.owner(user.id.get)
+            brand.lsqz(t.lsqz)
+            brand.save()
+            syncNum += 1
+            println(t.id);
+          case _ =>
+        }
       }
       println("sync kehu " + syncNum + "|" + (System.currentTimeMillis() - startTime) + "ms")
     }

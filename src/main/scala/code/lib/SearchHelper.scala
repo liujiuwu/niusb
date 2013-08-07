@@ -78,7 +78,7 @@ object SearchHelper {
           resultMap += ("sqrdz" -> rowDatas(3))
           resultMap += ("fwlb" -> rowDatas(5))
         } else if (rowIdx == 2) {
-          resultMap += ("lsq" -> rowDatas(0))
+          resultMap += ("lsqz" -> rowDatas(0))
         } else if (rowIdx == 3) {
           resultMap += ("zcggrq" -> rowDatas(7))
         }

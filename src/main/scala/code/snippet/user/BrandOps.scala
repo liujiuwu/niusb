@@ -46,7 +46,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def create = {
     var basePrice = "0"
-    var regNo, pic, name, regDateStr, applicant, useDescn, descn, lsq = ""
+    var regNo, pic, name, regDateStr, applicant, useDescn, descn, lsqz = ""
     var brandType: BrandType = BrandTypeHelper.brandTypes.get(25).get
 
     def process(): JsCmd = {
@@ -55,6 +55,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       brand.brandTypeId(brandType.id)
       brand.basePrice(tryo(basePrice.toInt).getOrElse(0))
       brand.sellPrice(brand.basePrice + (brand.basePrice.get * 0.1).toInt)
+      brand.lsqz(lsqz)
       brand.validate match {
         case Nil =>
           brand.save
@@ -74,7 +75,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@applicant" #> text(applicant, applicant = _) &
       "@useDescn" #> textarea(useDescn, useDescn = _) &
       "@descn" #> textarea(descn, descn = _) &
-      "@lsq" #> hidden(lsq = _, lsq) &
+      "@lsqz" #> hidden(lsqz = _, lsqz) &
       "@sub" #> hidden(process)
   }
 
@@ -93,9 +94,9 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
           val applicant = brandData.getOrElse("sqr", "")
           val zcggrq = brandData.getOrElse("zcggrq", "")
           val fwlb = brandData.getOrElse("fwlb", "")
-          val lsq = brandData.getOrElse("lsq", "")
+          val lsqz = brandData.getOrElse("lsqz", "")
           SetValById("name", name) & SetValById("applicant", applicant) & SetValById("brand_type", flh) & SetValById("stest", "2") &
-            SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & SetValById("lsq", lsq) & JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
+            SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & SetValById("lsqz", lsqz) & JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
         }
       })
   }

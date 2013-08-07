@@ -162,13 +162,14 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
       var basePrice = "0"
-      var regNo, pic, name, regDateStr, applicant, useDescn, descn = ""
+      var regNo, pic, name, regDateStr, applicant, useDescn, descn,lsqz = ""
       var brandType: BrandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
 
       def process(): JsCmd = {
         val oldPic = brand.pic.get
         brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
         brand.brandTypeId(brandType.id)
+        brand.lsqz(lsqz)
         brand.validate match {
           case Nil =>
             brand.save
@@ -201,6 +202,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@applicant" #> text(brand.applicant.get, applicant = _) &
         "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &
         "@descn" #> textarea(brand.descn.get, descn = _) &
+        "@lsqz" #> hidden(lsqz = _, lsqz) &
         "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-bolt"></i> 商标设置</a> &
         "#view-btn" #> <a href={ "/admin/brand/view?id=" + brand.id.get } class="btn btn-info"><i class="icon-info"></i> 查看商标</a> &
         "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a> &
