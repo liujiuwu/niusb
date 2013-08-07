@@ -38,7 +38,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             case _ =>
               val user = new User
               user.mobile(mobile)
-              if (user.saved_?) {
+              if (user.save()) {
                 User.logUserIn(user)
                 S.redirectTo("/")
               } else {

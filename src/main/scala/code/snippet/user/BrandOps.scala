@@ -46,7 +46,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def create = {
     var basePrice = "0"
-    var regNo, pic, name, regDateStr, applicant, useDescn, descn = ""
+    var regNo, pic, name, regDateStr, applicant, useDescn, descn, lsq = ""
     var brandType: BrandType = BrandTypeHelper.brandTypes.get(25).get
 
     def process(): JsCmd = {
@@ -74,6 +74,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@applicant" #> text(applicant, applicant = _) &
       "@useDescn" #> textarea(useDescn, useDescn = _) &
       "@descn" #> textarea(descn, descn = _) &
+      "@lsq" #> hidden(lsq = _, lsq) &
       "@sub" #> hidden(process)
   }
 
@@ -92,8 +93,9 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
           val applicant = brandData.getOrElse("sqr", "")
           val zcggrq = brandData.getOrElse("zcggrq", "")
           val fwlb = brandData.getOrElse("fwlb", "")
+          val lsq = brandData.getOrElse("lsq", "")
           SetValById("name", name) & SetValById("applicant", applicant) & SetValById("brand_type", flh) & SetValById("stest", "2") &
-            SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
+            SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & SetValById("lsq", lsq) & JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
         }
       })
   }

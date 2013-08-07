@@ -65,7 +65,8 @@ object TrueOrFalse2Str extends Function1[Boolean, Box[String]] {
   }
 }
 
-object WebHelper {
+object WebHelper extends App{
+  println(realMobile(Full("18858078001")))
 
   def oddOrEven(current: String) = {
     current match {
@@ -101,7 +102,7 @@ object WebHelper {
   def realMobile(mobile: Box[String]): Box[String] = {
     mobile match {
       case Full(m) if (!m.trim().isEmpty()) =>
-        val mobileRegx = """^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])(\d{8})$""".r
+        val mobileRegx = """^(13[0-9]|14[0-9]|15[0-9]|18[0-9])(\d{8}).*$""".r
         m match {
           case mobileRegx(mp, ms) => Full(mp + ms)
           case _ => Empty

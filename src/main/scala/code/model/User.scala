@@ -40,11 +40,11 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
     override def validations = valUnique("手机号已经存在，请确认") _ :: valMinLen(11, "手机号码不少于11位数字。") _ :: super.validations
   }
 
-  object phone extends MappedString(this, 15) {
+  object phone extends MappedString(this, 90) {
     override def dbColumnName = "phone"
   }
 
-  object qq extends MappedString(this, 15) {
+  object qq extends MappedString(this, 20) {
     override def dbColumnName = "qq"
   }
 
@@ -60,6 +60,10 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
   object address extends MappedString(this, 250) {
     override def dbColumnName = "address"
   }
+
+  object descn extends MappedText(this)
+
+  object remark extends MappedString(this, 300)
 
   object lastLoginTime extends MappedDateTime(this)
 
@@ -102,6 +106,9 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
   def displaySuper = if (superUser.get) <span class="badge badge-success">是</span> else <span class="badge badge-important">否</span>
 
   def brandCount = Brand.count(By(Brand.owner, this))
+  object srcId extends MappedLong(this) {
+    override def dbColumnName = "src_id"
+  }
 }
 
 object User extends User with MetaMegaProtoUser[User] with Paginator[User] {

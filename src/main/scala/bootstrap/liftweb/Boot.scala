@@ -26,6 +26,8 @@ import net.liftweb.util.NamedPF
 import net.liftweb.util.Props
 import net.liftweb.util.Vendor.valToVender
 import net.liftweb.http.provider.HTTPCookie
+import net.liftweb.mapper.Schemifier
+import code.model.Brand
 
 class Boot extends Loggable {
   def boot {
@@ -41,7 +43,7 @@ class Boot extends Loggable {
       }
     }*/
     //DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
-    //Schemifier.schemify(true, Schemifier.infoF _, User, WebSet, Brand)
+    Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
 
     LiftRules.setSiteMap(Site.siteMap)
 
@@ -104,6 +106,6 @@ class Boot extends Loggable {
       }
     }
 
-    User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
+    //User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
   }
 }

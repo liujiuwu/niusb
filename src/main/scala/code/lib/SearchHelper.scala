@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 
 object SearchHelper {
-
+  //println(searchBrandByRegNo("5536534"))
   def searchBrandByRegNo(regno: String): Map[String, String] = {
     if (regno == null) {
       return Map.empty

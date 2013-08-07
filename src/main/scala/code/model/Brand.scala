@@ -17,7 +17,8 @@ object BrandStatus extends Enumeration {
   val ShenHeZhong = Value(0, "审核中")
   val ChuShoZhong = Value(1, "出售中")
   val JiaoYiZhong = Value(2, "交易中")
-  val JiaoYiChengGong = Value(3, "交易成功")
+  val ZantiJiaoYi = Value(3, "暂停交易")
+  val JiaoYiChengGong = Value(4, "交易成功")
 }
 
 class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
@@ -121,6 +122,10 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   object remark extends MappedString(this, 300)
+
+  object sellIndate extends MappedDate(this) {
+    override def dbColumnName = "sell_indate"
+  }
 
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
