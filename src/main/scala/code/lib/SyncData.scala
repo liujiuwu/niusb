@@ -30,20 +30,23 @@ object SyncData extends App {
   Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
 
   val db = Database.forURL("jdbc:mysql://localhost:3306/haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
-  //syncKehu()
-  syncTrademark()
+  if (args.length < 3) {
+    println("use source dir , dist dir and data limit .")
+    System.exit(0)
+  }
 
+  val (sdir, ddir, limit) = (args(0), args(1), args(2).toInt)
+  syncKehu(limit)
   //handleImg("""10782083.jpg""", """d:\tmp""")
 
-  def syncTrademark(limit: Int = 1000) = {
-    val sql = s"""
+  def syncTrademark(sdir: String = """E:\1\haotm\""", ddir: String = """d:\haotm\""", limit: Int = 1000) = {
+    val sql = """
       |select 
       | id,name,pic,indate,price,range,category,number,
       |regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id 
       | from trademark 
       | where del=0 and LENGTH(kehu_1id)>0
-      | limit ${limit}
-      """
+      """ + (if (limit > 0) " limit " + limit)
 
     db.withSession {
       var syncNum = 0
@@ -51,7 +54,7 @@ object SyncData extends App {
       Q.queryNA[Trademark](sql.stripMargin) foreach { t =>
         User.findByKey(t.kehu_1id) match {
           case Full(user) =>
-            handleImg("""E:\1\haotm\""" + t.pic) match {
+            handleImg(sdir + t.pic, ddir) match {
               case Full(newPicName) =>
                 val brand = Brand.create
                 brand.name(t.name)
@@ -65,17 +68,17 @@ object SyncData extends App {
                 brand.lsqz(t.lsqz)
                 brand.save()
                 syncNum += 1
-                println(t.id);
-              case _ => println(t.id+"=没商标图")
+                //println(t.id);
+              case _ => println(t.id + "=没商标图")
             }
-          case _ => println(t.id+"=没联系人")
+          case _ => println(t.id + "=没联系人")
         }
       }
       println("sync kehu " + syncNum + "|" + (System.currentTimeMillis() - startTime) + "ms")
     }
   }
 
-  def handleImg(picPath: String, dir: String = """d:\haotm\"""): Box[String] = {
+  def handleImg(picPath: String, dir: String): Box[String] = {
     val imgFile = new File(picPath)
     if (imgFile.isFile() && imgFile.exists()) {
       val oImg = Image(imgFile)
@@ -94,7 +97,7 @@ object SyncData extends App {
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
-      Q.queryNA[Kehu]("select * from kehu_1 limit " + limit) foreach { u =>
+      Q.queryNA[Kehu]("select * from kehu_1 "+(if(limit>0) " limit " + limit)) foreach { u =>
         Option(u.tel) match {
           case Some(tel) =>
             val tels = tel.split(",")
@@ -121,6 +124,7 @@ object SyncData extends App {
         }
       }
       println("sync kehu " + syncNum + "|" + (System.currentTimeMillis() - startTime) + "ms")
+      syncTrademark(sdir, ddir, limit)
     }
   }
 }
