@@ -1,8 +1,6 @@
 package code.rest
 
-import java.awt.Graphics2D
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.Date
 import org.apache.commons.io.FileUtils
 import com.sksamuel.scrimage.Image

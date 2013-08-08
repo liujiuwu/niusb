@@ -9,6 +9,7 @@ import net.liftweb.http.S
 import net.liftweb.common._
 import code.model.Brand
 import net.liftweb.mapper._
+import code.lib.SyncData
 
 object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {

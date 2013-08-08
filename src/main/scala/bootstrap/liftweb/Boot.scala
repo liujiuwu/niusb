@@ -76,6 +76,8 @@ class Boot extends Loggable {
     LiftRules.dispatch.append {
       case Req("brand" :: regNo :: Nil, _, _) =>
         SearchHelper.searchBrandPicByRegNo(regNo)
+      case Req("initData" :: Nil, _, _) =>
+        SearchHelper.initData
     }
 
     LiftRules.uriNotFound.prepend(NamedPF("404handler") {
@@ -109,10 +111,5 @@ class Boot extends Loggable {
     }
 
     //User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
-   /* new Thread(new Runnable() {
-      def run() {
-        SyncData.init("/alidata/haotm", "/alidata/niusb_upload_file", 2000)
-      }
-    }).start();*/
   }
 }

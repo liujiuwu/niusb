@@ -118,4 +118,9 @@ object SearchHelper {
     //WebHelper.captcha
     Full(InMemoryResponse(imageBytes, ("Content-Type" -> "image/jpeg") :: Nil, Nil, 200))
   }
+
+  def initData: Box[LiftResponse] = {
+    SyncData.init()
+    Full(InMemoryResponse("".getBytes(), ("Content-Type" -> "text/plain") :: Nil, Nil, 200))
+  }
 }
