@@ -32,6 +32,7 @@ import code.snippet.PaginatorHelper
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.mapper.QueryParam
 import scala.collection.mutable.ArrayBuffer
+import code.lib.UploadFileHelper
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
@@ -59,7 +60,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       brand.validate match {
         case Nil =>
           brand.save
-          UploadManager.handleBrandImg(pic)
+          UploadFileHelper.handleBrandImg(pic)
           S.redirectTo("/user/brand/")
         case errors => println(errors); Noop
       }
@@ -202,7 +203,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def uploadBrandPic = {
     var picName, x, y, w, h = ""
     def process(): JsCmd = {
-      val uploadPic = new File(UploadManager.uploadTmpDir + File.separator + picName)
+      val uploadPic = new File(UploadFileHelper.uploadTmpDir + File.separator + picName)
       Thumbnails.of(uploadPic)
         .sourceRegion(x.toInt, y.toInt, w.toInt, h.toInt)
         .size(w.toInt, h.toInt)
@@ -210,7 +211,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         .toFile(uploadPic)
 
       //FileUtils.deleteQuietly(uploadPic)
-      val imgSrc = UploadManager.srcTmpPath(picName)
+      val imgSrc = UploadFileHelper.srcTmpPath(picName)
       JsRaw("$('#uploadDialog').modal('hide');$('#brandPic').attr('src','" + imgSrc + "')")
     }
 

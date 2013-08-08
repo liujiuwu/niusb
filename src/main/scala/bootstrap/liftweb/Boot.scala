@@ -109,10 +109,10 @@ class Boot extends Loggable {
     }
 
     //User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
-    new Thread(new Runnable() {
+   /* new Thread(new Runnable() {
       def run() {
         SyncData.init("/alidata/haotm", "/alidata/niusb_upload_file", 2000)
       }
-    }).start();
+    }).start();*/
   }
 }

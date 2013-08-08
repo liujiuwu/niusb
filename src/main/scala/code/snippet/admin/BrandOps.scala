@@ -27,6 +27,7 @@ import code.lib.BoxAlert
 import code.lib.TrueOrFalse
 import code.lib.TrueOrFalse2Str
 import scala.collection.mutable.ArrayBuffer
+import code.lib.UploadFileHelper
 
 class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -173,9 +174,9 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         brand.validate match {
           case Nil =>
             brand.save
-            UploadManager.handleBrandImg(pic)
+            UploadFileHelper.handleBrandImg(pic)
             if (oldPic != pic) {
-              val oldPicFile = new File(UploadManager.uploadBrandDir() + File.separator + oldPic)
+              val oldPicFile = new File(UploadFileHelper.uploadBrandDir() + File.separator + oldPic)
               if (oldPicFile.exists()) {
                 FileUtils.deleteQuietly(oldPicFile)
               }

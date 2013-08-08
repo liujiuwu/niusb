@@ -1,15 +1,14 @@
 package code.model
 
 import java.text.SimpleDateFormat
-
 import scala.xml.NodeSeq
-
 import code.lib.BrandTypeHelper
 import code.lib.WebHelper
 import code.rest.UploadManager
 import net.liftweb.common._
 import net.liftweb.mapper._
 import net.liftweb.util._
+import code.lib.UploadFileHelper
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -180,7 +179,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     <div class={ css }><img src={ displayPicSrc(size) } alt={ name.get }/></div>
   }
 
-  def displayPicSrc(size: String = "320") = UploadManager.srcPath(pic.get)
+  def displayPicSrc(size: String = "320") = UploadFileHelper.srcPath(pic.get)
 
   def displaySelf = if (isSelf.get) "是" else "否"
   def displayRecommend = if (recommend.get) "是" else "否"
