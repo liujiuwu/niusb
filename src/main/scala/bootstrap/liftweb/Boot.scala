@@ -113,6 +113,6 @@ class Boot extends Loggable {
       def run() {
         SyncData.init("/alidata/haotm", "/alidata/niusb_upload_file", 2000)
       }
-    });
+    }).start();
   }
 }
