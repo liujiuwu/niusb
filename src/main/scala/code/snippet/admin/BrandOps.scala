@@ -175,11 +175,11 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
             brand.save
             UploadManager.handleBrandImg(pic)
             if (oldPic != pic) {
-              val oldPicFilex320 = new File(UploadManager.uploadBrandDir + File.separator + UploadManager.sizePicName(oldPic))
+              val oldPicFilex320 = new File(UploadManager.uploadBrandDir() + File.separator + UploadManager.sizePicName(oldPic))
               if (oldPicFilex320.exists()) {
                 FileUtils.deleteQuietly(oldPicFilex320)
               }
-              val oldPicFilex128 = new File(UploadManager.uploadBrandDir + File.separator + UploadManager.sizePicName(oldPic, "128"))
+              val oldPicFilex128 = new File(UploadManager.uploadBrandDir() + File.separator + UploadManager.sizePicName(oldPic, "128"))
               if (oldPicFilex128.exists()) {
                 FileUtils.deleteQuietly(oldPicFilex128)
               }

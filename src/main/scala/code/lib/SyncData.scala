@@ -13,6 +13,9 @@ import net.liftweb.db.DefaultConnectionIdentifier
 import net.liftweb.mapper.DB
 import net.liftweb.mapper.Schemifier
 import net.liftweb.common.Full
+import java.io.File
+import code.rest.UploadManager
+import com.sksamuel.scrimage.Image
 
 case class Kehu(id: Int, name: String, tel: String, tel1: String, qq: String, bz: String, indate: Date, sqname: String)
 case class Trademark(id: Int, name: String, pic: String, indate: Date, price: Double, range: String, category: Int, number: String, regdate: String, sell: Boolean, address: String, tel: String, fax: String, coname: String, email: String, lsqz: String, kehu_1id: Int)
@@ -25,19 +28,30 @@ object SyncData extends App {
   Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
 
   val db = Database.forURL("jdbc:mysql://localhost:3306/haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
-
+  //syncKehu()
   syncTrademark()
-  def syncTrademark() = {
+
+  def syncTrademark(limit: Int = 1000) = {
+    val sql = s"""
+      |select 
+      | id,name,pic,indate,price,range,category,number,
+      |regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id 
+      | from trademark 
+      | where del=0 and LENGTH(kehu_1id)>0
+      | limit ${limit}
+      """
+
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
-      Q.queryNA[Trademark]("select id,name,pic,indate,price,range,category,number,regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id from trademark where del=0 and LENGTH(kehu_1id)>0") foreach { t =>
+      Q.queryNA[Trademark](sql.stripMargin) foreach { t =>
         User.findByKey(t.kehu_1id) match {
           case Full(user) =>
             val brand = Brand.create
             brand.name(t.name)
             brand.pic(t.pic)
-            brand.basePrice((t.price*10000).toInt)
+            handleImg(t.pic)
+            brand.basePrice((t.price * 10000).toInt)
             brand.useDescn(t.range)
             brand.brandTypeId(t.category)
             brand.regNo(t.number)
@@ -54,13 +68,25 @@ object SyncData extends App {
     }
   }
 
-  //syncKehu()
+  def handleImg(pic: String, dir: String = """E:\1\haotm\""") = {
+    val imgFile = new File(dir + File.separator + pic)
+    if (imgFile.isFile() && imgFile.exists()) {
+      val oImg = Image(imgFile)
+      val newFileName = UploadManager.genNewFileName()
+      val (npic, snpic) = (UploadManager.sizePicName(newFileName), UploadManager.sizePicName(newFileName, "128"))
+      val root = """d:\haotm\"""
+      val destPic = new File(UploadManager.uploadBrandDir(Full(root)) + File.separator + npic)
+      UploadManager.myFit(oImg, (360, 210), (oImg.width, oImg.height)).write(destPic)
+      //Image(destPic).scale(0.3).write(new File(UploadManager.uploadBrandDir(Full(root)) + File.separator + snpic))
+      Image(destPic).scaleTo(120, 70).write(new File(UploadManager.uploadBrandDir(Full(root)) + File.separator + snpic))
+    }
+  }
 
-  def syncKehu() = {
+  def syncKehu(limit: Int = 2000) = {
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
-      Q.queryNA[Kehu]("select * from kehu_1") foreach { u =>
+      Q.queryNA[Kehu]("select * from kehu_1 limit " + limit) foreach { u =>
         Option(u.tel) match {
           case Some(tel) =>
             val tels = tel.split(",")

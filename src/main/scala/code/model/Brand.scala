@@ -165,10 +165,11 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   def displayStatus: NodeSeq = {
     status.get match {
-      case BrandStatus.ShenHeShiBai => <span class="label label-important">审核失败</span>
+      case BrandStatus.ShenHeShiBai => <span class="label label-important">{BrandStatus.ShenHeShiBai}</span>
       case BrandStatus.ShenHeZhong => <span class="label">审核中</span>
       case BrandStatus.ChuShoZhong => <span class="label label-info">出售中</span>
       case BrandStatus.JiaoYiZhong => <span class="label label-warning">交易中</span>
+      case BrandStatus.ZantiJiaoYi => <span class="label label-warning">{BrandStatus.ZantiJiaoYi}</span>
       case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
     }
   }
