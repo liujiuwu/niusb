@@ -1,22 +1,23 @@
 package code.lib
 
+import java.io.File
 import java.sql.Date
 import scala.slick.driver.MySQLDriver.simple.Database
 import scala.slick.driver.MySQLDriver.simple.Database.threadLocalSession
 import scala.slick.jdbc.GetResult
 import scala.slick.jdbc.{ StaticQuery => Q }
-import code.model.Brand
-import code.model.MyDBVendor
-import code.model.User
-import net.liftweb.db.DB1.db1ToDb
-import net.liftweb.db.DefaultConnectionIdentifier
-import net.liftweb.mapper.DB
-import net.liftweb.mapper.Schemifier
-import net.liftweb.common.Full
-import java.io.File
-import code.rest.UploadManager
 import com.sksamuel.scrimage.Image
+import code.model.Brand
+import code.model.User
+import code.rest.UploadManager
+import net.liftweb.common.Full
 import com.sksamuel.scrimage.Format
+import net.liftweb.mapper.Schemifier
+import net.liftweb.db.DB
+import net.liftweb.db.DefaultConnectionIdentifier
+import code.model.MyDBVendor
+import net.liftweb.common.Box
+import net.liftweb.common.Empty
 
 case class Kehu(id: Int, name: String, tel: String, tel1: String, qq: String, bz: String, indate: Date, sqname: String)
 case class Trademark(id: Int, name: String, pic: String, indate: Date, price: Double, range: String, category: Int, number: String, regdate: String, sell: Boolean, address: String, tel: String, fax: String, coname: String, email: String, lsqz: String, kehu_1id: Int)
@@ -31,6 +32,8 @@ object SyncData extends App {
   val db = Database.forURL("jdbc:mysql://localhost:3306/haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
   //syncKehu()
   syncTrademark()
+
+  //handleImg("""10782083.jpg""", """d:\tmp""")
 
   def syncTrademark(limit: Int = 1000) = {
     val sql = s"""
@@ -48,35 +51,42 @@ object SyncData extends App {
       Q.queryNA[Trademark](sql.stripMargin) foreach { t =>
         User.findByKey(t.kehu_1id) match {
           case Full(user) =>
-            val brand = Brand.create
-            brand.name(t.name)
-            brand.pic(t.pic)
-            handleImg(t.pic)
-            brand.basePrice((t.price * 10000).toInt)
-            brand.useDescn(t.range)
-            brand.brandTypeId(t.category)
-            brand.regNo(t.number)
-            //brand.regDate(t.regdate)
-            brand.owner(user.id.get)
-            brand.lsqz(t.lsqz)
-            brand.save()
-            syncNum += 1
-            println(t.id);
-          case _ =>
+            handleImg("""E:\1\haotm\""" + t.pic) match {
+              case Full(newPicName) =>
+                val brand = Brand.create
+                brand.name(t.name)
+                brand.pic(newPicName)
+                brand.basePrice((t.price * 10000).toInt)
+                brand.useDescn(t.range)
+                brand.brandTypeId(t.category)
+                brand.regNo(t.number)
+                //brand.regDate(t.regdate)
+                brand.owner(user.id.get)
+                brand.lsqz(t.lsqz)
+                brand.save()
+                syncNum += 1
+                println(t.id);
+              case _ => println(t.id+"=没商标图")
+            }
+          case _ => println(t.id+"=没联系人")
         }
       }
       println("sync kehu " + syncNum + "|" + (System.currentTimeMillis() - startTime) + "ms")
     }
   }
 
-  def handleImg(pic: String, dir: String = """E:\1\haotm\""") = {
-    val imgFile = new File(dir + File.separator + pic)
+  def handleImg(picPath: String, dir: String = """d:\haotm\"""): Box[String] = {
+    val imgFile = new File(picPath)
     if (imgFile.isFile() && imgFile.exists()) {
       val oImg = Image(imgFile)
       val newFileName = UploadManager.genNewFileName()
-      val root = """d:\haotm\"""
-      val destPic = new File(UploadManager.uploadBrandDir(Full(root)) + File.separator + newFileName)
-      UploadManager.myFit(oImg, (320, 200), (oImg.width, oImg.height)).write(destPic,Format.JPEG)
+      val destPic = new File(UploadManager.uploadBrandDir(Full(dir)) + File.separator + newFileName)
+      //UploadManager.myFit(oImg, (320, 200), (oImg.width, oImg.height)).writer(Format.JPEG).withCompression(50).write(destPic)
+      //UploadManager.myFit(oImg, (320, 200), (oImg.width, oImg.height)).write(destPic)
+      oImg.scaleTo(320, 200).writer(Format.JPEG).withProgressive(true).withCompression(80).write(destPic)
+      Full(newFileName)
+    } else {
+      Empty
     }
   }
 

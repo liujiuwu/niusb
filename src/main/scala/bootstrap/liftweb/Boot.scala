@@ -106,6 +106,6 @@ class Boot extends Loggable {
       }
     }
 
-    User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
+    //User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
   }
 }

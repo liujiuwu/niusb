@@ -43,7 +43,7 @@ object UploadManager extends RestHelper with Loggable {
     val y = ((targetHeight - fittedDimensions._2) / 2.0).toInt
     g2.drawImage(scaled.awt, x, y, null)
     g2.dispose()
-    target
+    scaled
   }
 
   def dimensionsToFit(target: (Int, Int), source: (Int, Int)): (Int, Int) = {
@@ -114,16 +114,6 @@ object UploadManager extends RestHelper with Loggable {
 
   def srcTmpPath(fileName: String) = s"/upload/tmp/${fileName}"
 
-  /*def sizePicName(picName: String, size: String = "320") = {
-    val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
-    var newPicName = picName
-    picName match {
-      case scalePicNameReg(f, e) => newPicName = (f + s"x${size}." + e)
-      case _ => newPicName = picName
-    }
-    newPicName
-  }*/
-
   def genNewFileName(extension: String = "jpg") = fmt.format(new Date) + "_" + StringHelpers.randomString(16) + "." + extension
 
   def handleBrandImg(pic: String) = {
@@ -131,7 +121,6 @@ object UploadManager extends RestHelper with Loggable {
     val destPic = new File(UploadManager.uploadBrandDir() + File.separator + pic)
     if (srcPic.exists()) {
       FileUtils.moveFile(srcPic, destPic)
-      //Image(destPic).scale(0.4).write(new File(UploadManager.uploadBrandDir() + File.separator + snpic))
     }
   }
 

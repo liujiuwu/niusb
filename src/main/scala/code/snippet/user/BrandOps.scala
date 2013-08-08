@@ -207,11 +207,11 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         .sourceRegion(x.toInt, y.toInt, w.toInt, h.toInt)
         .size(w.toInt, h.toInt)
         .outputQuality(1f)
-        .toFile(new File(UploadManager.uploadTmpDir + File.separator + picName))
+        .toFile(uploadPic)
 
-      FileUtils.deleteQuietly(uploadPic)
-      //val imgSrc = UploadManager.srcTmpPath(newPicName)
-      JsRaw("$('#uploadDialog').modal('hide');$('#brand_pic').attr('src','" + imgSrc + "')")
+      //FileUtils.deleteQuietly(uploadPic)
+      val imgSrc = UploadManager.srcTmpPath(picName)
+      JsRaw("$('#uploadDialog').modal('hide');$('#brandPic').attr('src','" + imgSrc + "')")
     }
 
     "@picName" #> hidden(picName = _, picName) &
