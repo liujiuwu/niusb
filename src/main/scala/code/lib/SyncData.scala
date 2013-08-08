@@ -40,7 +40,7 @@ object SyncData {
   def syncTrademark(sdir: String, ddir: String, limit: Int) = {
     val sql = """
       |select 
-      | id,name,pic,indate,price,range,category,number,
+      | id,name,pic,indate,price,`range`,`category`,`number`,
       |regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id 
       | from trademark 
       | where del=0 and LENGTH(kehu_1id)>0
