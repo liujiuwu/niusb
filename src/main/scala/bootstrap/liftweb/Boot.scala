@@ -28,6 +28,8 @@ import net.liftweb.util.Vendor.valToVender
 import net.liftweb.http.provider.HTTPCookie
 import net.liftweb.mapper.Schemifier
 import code.model.Brand
+import scala.collection.Parallel
+import code.lib.SyncData
 
 class Boot extends Loggable {
   def boot {
@@ -95,7 +97,7 @@ class Boot extends Loggable {
 
     def testUserLogin() {
       val testUser = User.find(By(User.mobile, "13826526941"))
-      testUser foreach {user =>
+      testUser foreach { user =>
         User.logUserIn(user)
         /*val random = scala.util.Random.nextLong
         val now = new Date().getTime
@@ -107,5 +109,10 @@ class Boot extends Loggable {
     }
 
     //User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
+    new Thread(new Runnable() {
+      def run() {
+        SyncData.init("/alidata/haotm", "/alidata/niusb_upload_file", 2000)
+      }
+    });
   }
 }
