@@ -180,7 +180,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     <div class={ css }><img src={ displayPicSrc(size) } alt={ name.get }/></div>
   }
 
-  def displayPicSrc(size: String = "320") = UploadManager.srcPath(UploadManager.sizePicName(pic.get, size))
+  def displayPicSrc(size: String = "320") = UploadManager.srcPath(pic.get)
 
   def displaySelf = if (isSelf.get) "是" else "否"
   def displayRecommend = if (recommend.get) "是" else "否"

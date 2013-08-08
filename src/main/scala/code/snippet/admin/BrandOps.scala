@@ -175,13 +175,9 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
             brand.save
             UploadManager.handleBrandImg(pic)
             if (oldPic != pic) {
-              val oldPicFilex320 = new File(UploadManager.uploadBrandDir() + File.separator + UploadManager.sizePicName(oldPic))
-              if (oldPicFilex320.exists()) {
-                FileUtils.deleteQuietly(oldPicFilex320)
-              }
-              val oldPicFilex128 = new File(UploadManager.uploadBrandDir() + File.separator + UploadManager.sizePicName(oldPic, "128"))
-              if (oldPicFilex128.exists()) {
-                FileUtils.deleteQuietly(oldPicFilex128)
+              val oldPicFile = new File(UploadManager.uploadBrandDir() + File.separator + oldPic)
+              if (oldPicFile.exists()) {
+                FileUtils.deleteQuietly(oldPicFile)
               }
             }
             //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息已成功修改！")))

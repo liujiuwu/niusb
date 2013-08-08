@@ -1,6 +1,11 @@
 package code.rest
 
+import java.awt.Graphics2D
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import org.apache.commons.io.FileUtils
+import com.sksamuel.scrimage.Image
 import net.liftweb.common.Box
 import net.liftweb.common.Box.option2Box
 import net.liftweb.common.Empty
@@ -8,10 +13,8 @@ import net.liftweb.common.Full
 import net.liftweb.common.Loggable
 import net.liftweb.http.FileParamHolder
 import net.liftweb.http.InMemoryResponse
-import net.liftweb.http.JsonResponse
 import net.liftweb.http.LiftRules
 import net.liftweb.http.LiftRulesMocker.toLiftRules
-import net.liftweb.http.OnDiskFileParamHolder
 import net.liftweb.http.provider.servlet.HTTPServletContext
 import net.liftweb.http.rest.RestHelper
 import net.liftweb.json.JsonAST.JValue
@@ -20,16 +23,9 @@ import net.liftweb.json.JsonDSL.long2jvalue
 import net.liftweb.json.JsonDSL.pair2Assoc
 import net.liftweb.json.JsonDSL.pair2jvalue
 import net.liftweb.json.JsonDSL.string2jvalue
-import net.coobird.thumbnailator.Thumbnails
 import net.liftweb.util.StringHelpers
-import com.sksamuel.scrimage.Image
-import java.awt.Graphics2D
-import java.text.SimpleDateFormat
-import java.util.Date
-import net.liftweb.http.ResponseWithReason
-import net.liftweb.http.BadResponse
-import net.liftweb.http.OkResponse
-import org.apache.commons.io.FileUtils
+import com.sksamuel.scrimage.Format
+import net.liftweb.http.JsonResponse
 
 object UploadManager extends RestHelper with Loggable {
   val fmt = new SimpleDateFormat("yyyyMMddHHmmss")
@@ -83,15 +79,19 @@ object UploadManager extends RestHelper with Loggable {
 
   def uploadTmpDir: File = uploadFileDir()
   def uploadBrandDir(rootPath: Box[String] = Empty): File = {
-    rootPath match {
-      case Full(r) =>
-        uploadFileDir("brand" + File.separator + ymdFmt.format(new Date), rootPath)
-      case _ => uploadFileDir("brand" + File.separator + ymdFmt.format(new Date))
-    }
-
+    val path = "brand" + File.separator + ymdFmt.format(new Date)
+    uploadModuleDir(path, rootPath)
   }
 
-  def uploadFileDir(sub: String = "tmp", rootPath: Box[String] = appPath()): File = {
+  private def uploadModuleDir(path: String, rootPath: Box[String] = Empty): File = {
+    rootPath match {
+      case Full(r) =>
+        uploadFileDir(path, rootPath)
+      case _ => uploadFileDir(path)
+    }
+  }
+
+  private def uploadFileDir(sub: String = "tmp", rootPath: Box[String] = appPath()): File = {
     val dir = new File(uploadDir(rootPath) + File.separator + sub)
     if (!dir.exists()) {
       dir.mkdirs()
@@ -99,7 +99,7 @@ object UploadManager extends RestHelper with Loggable {
     dir
   }
 
-  def uploadDir(rootPath: Box[String]): File = {
+  private def uploadDir(rootPath: Box[String]): File = {
     val dir = new File(rootPath.get + File.separator + "upload")
     if (!dir.exists()) {
       dir.mkdirs()
@@ -114,7 +114,7 @@ object UploadManager extends RestHelper with Loggable {
 
   def srcTmpPath(fileName: String) = s"/upload/tmp/${fileName}"
 
-  def sizePicName(picName: String, size: String = "320") = {
+  /*def sizePicName(picName: String, size: String = "320") = {
     val scalePicNameReg = """([\w]+).(jpg|jpeg|png)""".r
     var newPicName = picName
     picName match {
@@ -122,17 +122,16 @@ object UploadManager extends RestHelper with Loggable {
       case _ => newPicName = picName
     }
     newPicName
-  }
+  }*/
 
   def genNewFileName(extension: String = "jpg") = fmt.format(new Date) + "_" + StringHelpers.randomString(16) + "." + extension
 
   def handleBrandImg(pic: String) = {
-    val (npic, snpic) = (UploadManager.sizePicName(pic), UploadManager.sizePicName(pic, "128"))
-    val srcPic = new File(UploadManager.uploadTmpDir + File.separator + npic)
-    val destPic = new File(UploadManager.uploadBrandDir() + File.separator + npic)
+    val srcPic = new File(UploadManager.uploadTmpDir + File.separator + pic)
+    val destPic = new File(UploadManager.uploadBrandDir() + File.separator + pic)
     if (srcPic.exists()) {
       FileUtils.moveFile(srcPic, destPic)
-      Image(destPic).scale(0.4).write(new File(UploadManager.uploadBrandDir() + File.separator + snpic))
+      //Image(destPic).scale(0.4).write(new File(UploadManager.uploadBrandDir() + File.separator + snpic))
     }
   }
 
@@ -143,7 +142,7 @@ object UploadManager extends RestHelper with Loggable {
         val uploadFileName = uploadTmpDir + File.separator + newFileName
 
         val oImg = Image(fph.fileStream)
-        myFit(oImg, (400, 300), (oImg.width, oImg.height)).write(uploadFileName)
+        myFit(oImg, (400, 300), (oImg.width, oImg.height)).writer(Format.JPEG).withProgressive(true).withCompression(100).write(uploadFileName)
         ("name" -> newFileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
       }
 

@@ -16,6 +16,7 @@ import net.liftweb.common.Full
 import java.io.File
 import code.rest.UploadManager
 import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.Format
 
 case class Kehu(id: Int, name: String, tel: String, tel1: String, qq: String, bz: String, indate: Date, sqname: String)
 case class Trademark(id: Int, name: String, pic: String, indate: Date, price: Double, range: String, category: Int, number: String, regdate: String, sell: Boolean, address: String, tel: String, fax: String, coname: String, email: String, lsqz: String, kehu_1id: Int)
@@ -73,12 +74,9 @@ object SyncData extends App {
     if (imgFile.isFile() && imgFile.exists()) {
       val oImg = Image(imgFile)
       val newFileName = UploadManager.genNewFileName()
-      val (npic, snpic) = (UploadManager.sizePicName(newFileName), UploadManager.sizePicName(newFileName, "128"))
       val root = """d:\haotm\"""
-      val destPic = new File(UploadManager.uploadBrandDir(Full(root)) + File.separator + npic)
-      UploadManager.myFit(oImg, (360, 210), (oImg.width, oImg.height)).write(destPic)
-      //Image(destPic).scale(0.3).write(new File(UploadManager.uploadBrandDir(Full(root)) + File.separator + snpic))
-      Image(destPic).scaleTo(120, 70).write(new File(UploadManager.uploadBrandDir(Full(root)) + File.separator + snpic))
+      val destPic = new File(UploadManager.uploadBrandDir(Full(root)) + File.separator + newFileName)
+      UploadManager.myFit(oImg, (320, 200), (oImg.width, oImg.height)).write(destPic,Format.JPEG)
     }
   }
 
