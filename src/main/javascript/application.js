@@ -17,6 +17,27 @@ function mtab(selId, activeIdx, activeCls, tabWidth) {
 	activeTab(selId, activeIdx, activeCls, tabWidth);
 }
 
+$(document).ready(function () {
+    $(window).scroll(function () {
+        var scrolltop = $(document).scrollTop();
+        /*if (scrolltop > 150) {
+            $('.menu').addClass('fixed');
+        } else {
+            $('.menu').removeClass('fixed');
+        }*/
+        if (scrolltop > 20) {
+            $('#toTop').fadeIn();
+        } else {
+            $('#toTop').fadeOut();
+        }
+    });
+    $('#toTop').click(function () {
+        $('body,html').animate({ scrollTop: 0 }, 600);
+    });
+});
+
+
 $(function() {
 
 })
+
