@@ -1,11 +1,12 @@
 <div id="main" class="container" data-lift="surround?with=default;at=content">
 	<style>
-.m-brands li {
+.brands li {
 	float: left;
 	margin: 5px 10px;
+	position: relative;
 }
 
-.m-brands li .m-brand-name {
+.brands li .brand-name {
 	color: #999999;
 	font-size: 12px;
 	height: 22px;
@@ -15,12 +16,23 @@
 	width: 128px;
 }
 
-.m-brands li .m-brand-img {
+.brands li .brand-img {
 	width: 128px;
-	height: 80px;
+	height: 90px;
 	border: 1px solid #DBDBDB;
 	padding: 5px;
 }
+
+.brands li .price {
+	position: absolute;
+	bottom: 22px;
+	right: 0px;
+	background-color: #EE472C;
+	font-size: 12px;
+	color: #FFF;
+	padding: 1px 5px;
+}
+
 </style>
 	<div class="row">
 		<div class="span25">
@@ -67,42 +79,43 @@
 					</div>
 				</div>
 				<div class="m-tab-c js-tab-c">
-					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=0" class="m-brands">
+					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=0" class="brands">
 						<li>
-							<div class="m-brand-img">
-								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							<div class="brand-img">
+								<img src="" alt="商标图"/>
 							</div>
-							<div class="m-brand-name">商标名称</div>
+							<div class="price">￥20万</div>
+							<div class="brand-name">商标名称</div>
 						</li>
 					</ul>
 				</div>
 				<div class="m-tab-c js-tab-c hide">
-					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=1" class="m-brands">
+					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=1" class="brands">
 						<li>
-							<div class="m-brand-img">
-								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							<div class="brand-img">
+								<img src="" alt="商标图"/>
 							</div>
-							<div class="m-brand-name">商标名称</div>
+							<div class="brand-name">商标名称</div>
 						</li>
 					</ul>
 				</div>
 				<div class="m-tab-c js-tab-c hide">
-					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=2" class="m-brands">
+					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=2" class="brands">
 						<li>
-							<div class="m-brand-img">
-								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							<div class="brand-img">
+								<img src="" alt="商标图"/>
 							</div>
-							<div class="m-brand-name">商标名称</div>
+							<div class="brand-name">商标名称</div>
 						</li>
 					</ul>
 				</div>
 				<div class="m-tab-c js-tab-c hide">
-					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=3" class="m-brands">
+					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=3" class="brands">
 						<li>
-							<div class="m-brand-img">
-								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							<div class="brand-img">
+								<a href=""><img src="" alt="商标图"/></a>
 							</div>
-							<div class="m-brand-name">商标名称</div>
+							<div class="brand-name">商标名称</div>
 						</li>
 					</ul>
 				</div>
@@ -125,12 +138,12 @@
 					</div>
 				</div>
 				<div class="ct">
-					<ul class="m-brands">
+					<ul class="brands">
 						<li>
-							<div class="m-brand-img">
-								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							<div class="brand-img">
+								<img src="" alt="商标图"/>
 							</div>
-							<div class="m-brand-name">商标名称</div>
+							<div class="brand-name">商标名称</div>
 						</li>
 					</ul>
 				</div>
@@ -146,20 +159,21 @@
 						<span id="title">化妆品</span>
 					</p>
 					<div class="tag">
-						<ul>
-							<li><a href="/find.do#cate=500021" tjparam="{&quot;tid&quot;:500020,&quot;stid&quot;:500021}" target="_blank" class="txt1">女鞋</a></li>
-							<li><a href="/find.do#cate=500022" tjparam="{&quot;tid&quot;:500020,&quot;stid&quot;:500022}" target="_blank" class="txt1">包包</a></li>
-							<li><a href="/find.do#cate=500020" target="_blank" class="txt1">查看更多...</a></li>
-						</ul>
+						<li>
+							<div class="brand-img">
+								<img src="" alt="商标图"/>
+							</div>
+							<div class="brand-name">商标名称</div>
+						</li>
 					</div>
 				</div>
 				<div class="ct">
-					<ul class="m-brands">
+					<ul class="brands">
 						<li>
-							<div class="m-brand-img">
-								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							<div class="brand-img">
+								<img src="" alt="商标图"/>
 							</div>
-							<div class="m-brand-name">商标名称</div>
+							<div class="brand-name">商标名称</div>
 						</li>
 					</ul>
 				</div>
@@ -183,12 +197,12 @@
 					</div>
 				</div>
 				<div class="ct">
-					<ul class="m-brands">
+					<ul class="brands">
 						<li>
-							<div class="m-brand-img">
-								<img src="/upload/brand/20130801080140_HFZ1Z5HYNHIOZRZPx128.png" />
+							<div class="brand-img">
+								<img src="" alt="商标图"/>
 							</div>
-							<div class="m-brand-name">商标名称</div>
+							<div class="brand-name">商标名称</div>
 						</li>
 					</ul>
 				</div>

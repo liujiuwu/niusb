@@ -100,7 +100,6 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   object descn extends MappedString(this, 300)
 
   object pic extends MappedString(this, 100)
-  
 
   object adPic extends MappedString(this, 100) {
     override def dbColumnName = "ad_pic"
@@ -164,11 +163,11 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   def displayStatus: NodeSeq = {
     status.get match {
-      case BrandStatus.ShenHeShiBai => <span class="label label-important">{BrandStatus.ShenHeShiBai}</span>
+      case BrandStatus.ShenHeShiBai => <span class="label label-important">{ BrandStatus.ShenHeShiBai }</span>
       case BrandStatus.ShenHeZhong => <span class="label">审核中</span>
       case BrandStatus.ChuShoZhong => <span class="label label-info">出售中</span>
       case BrandStatus.JiaoYiZhong => <span class="label label-warning">交易中</span>
-      case BrandStatus.ZantiJiaoYi => <span class="label label-warning">{BrandStatus.ZantiJiaoYi}</span>
+      case BrandStatus.ZantiJiaoYi => <span class="label label-warning">{ BrandStatus.ZantiJiaoYi }</span>
       case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
     }
   }
@@ -195,6 +194,17 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * 0.5
     badge("warning", if (forUser || !isFloatSellPrice) realSellPrice else realSellPrice + " - 浮")
   }
+  
+  def displaySellPriceForList = {
+    val isFloatSellPrice = if (sellPrice.get >= basePrice.get) false else true
+    val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * 0.5
+    if (!isFloatSellPrice) {
+      realSellPrice
+    } else {
+      basePrice.get + basePrice.get * 0.5
+    }
+  }
+  
   def displayStrikePrice: NodeSeq = badge("important", strikePrice.get)
   private def badge(state: String, data: AnyVal) = <span class={ "badge badge-" + state }>￥{ data }</span>
 
