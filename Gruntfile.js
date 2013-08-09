@@ -33,6 +33,7 @@ module.exports = function(grunt) {
 					'<%=setting.distJs%>/jquery.fileupload.min.js' : [ '<%=setting.srcJs%>/jquery.fileupload.js' ],
 					'<%=setting.distJs%>/jquery.iframe-transport.min.js' : [ '<%=setting.srcJs%>/jquery.iframe-transport.js' ],
 					'<%=setting.distJs%>/jquery.jcrop.min.js' : [ '<%=setting.srcJs%>/jquery.jcrop.js' ],
+				    '<%=setting.distJs%>/jquery.flexslider.min.js' : [ '<%=setting.srcJs%>/jquery.flexslider.js' ],
 					'<%=setting.distJs%>/application.min.js' : [ '<%=setting.srcJs%>/application.js' ]
 				}
 			}
@@ -73,7 +74,8 @@ module.exports = function(grunt) {
 					'<%=setting.distCss%>/font-awesome-ie7.min.css' : [ '<%=setting.srcLess%>/font-awesome/font-awesome-ie7.less' ],
 					'<%=setting.distCss%>/bootstrap-modal.min.css' : [ '<%=setting.srcLess%>/bootstrap-modal.css' ],
 					'<%=setting.distCss%>/jquery.fileupload-ui.min.css' : [ '<%=setting.srcLess%>/jquery.fileupload-ui.css' ],
-					'<%=setting.distCss%>/jquery.jcrop.min.css' : [ '<%=setting.srcLess%>/jquery.jcrop.css' ]
+					'<%=setting.distCss%>/jquery.jcrop.min.css' : [ '<%=setting.srcLess%>/jquery.jcrop.css' ],
+					'<%=setting.distCss%>/flexslider.min.css' : [ '<%=setting.srcLess%>/flexslider.css' ]
 				}
 			}
 		},

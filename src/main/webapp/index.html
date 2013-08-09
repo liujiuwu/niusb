@@ -32,13 +32,20 @@
 	color: #FFF;
 	padding: 1px 5px;
 }
-
 </style>
 	<div class="row">
 		<div class="span25">
-			<div class="m-box10 m-box10-1">
-				<div id="topBanner" class="m-banner">
+			<div class="m-box10 m-box10-1" style="height:260px">
+				<!-- <div id="topBanner" class="m-banner">
 					<img src="/img/ad.jpg" />
+				</div> -->
+				<div class="flexslider" style="float:left;height:250px;width:700px">
+					<ul class="slides">
+						<li><img src="/img/ad1.jpg" style="height:250px"/></li>
+						<li><img src="/img/ad2.jpg" style="height:250px"/></li>
+						<li><img src="/img/ad3.jpg" style="height:250px"/></li>
+						<li><img src="/img/ad4.jpg" style="height:250px"/></li>
+					</ul>
 				</div>
 				<div class="m-box11">
 					<div class="mn">
@@ -82,7 +89,7 @@
 					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=0" class="brands">
 						<li>
 							<div class="brand-img">
-								<img src="" alt="商标图"/>
+								<img src="" alt="商标图" />
 							</div>
 							<div class="price">￥20万</div>
 							<div class="brand-name">商标名称</div>
@@ -93,7 +100,7 @@
 					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=1" class="brands">
 						<li>
 							<div class="brand-img">
-								<img src="" alt="商标图"/>
+								<img src="" alt="商标图" />
 							</div>
 							<div class="brand-name">商标名称</div>
 						</li>
@@ -103,7 +110,7 @@
 					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=2" class="brands">
 						<li>
 							<div class="brand-img">
-								<img src="" alt="商标图"/>
+								<img src="" alt="商标图" />
 							</div>
 							<div class="brand-name">商标名称</div>
 						</li>
@@ -113,7 +120,7 @@
 					<ul data-lift="IndexOps.tabConent?parallel=true;tabIdx=3" class="brands">
 						<li>
 							<div class="brand-img">
-								<a href=""><img src="" alt="商标图"/></a>
+								<a href=""><img src="" alt="商标图" /></a>
 							</div>
 							<div class="brand-name">商标名称</div>
 						</li>
@@ -141,7 +148,7 @@
 					<ul class="brands">
 						<li>
 							<div class="brand-img">
-								<img src="" alt="商标图"/>
+								<img src="" alt="商标图" />
 							</div>
 							<div class="brand-name">商标名称</div>
 						</li>
@@ -161,7 +168,7 @@
 					<div class="tag">
 						<li>
 							<div class="brand-img">
-								<img src="" alt="商标图"/>
+								<img src="" alt="商标图" />
 							</div>
 							<div class="brand-name">商标名称</div>
 						</li>
@@ -171,7 +178,7 @@
 					<ul class="brands">
 						<li>
 							<div class="brand-img">
-								<img src="" alt="商标图"/>
+								<img src="" alt="商标图" />
 							</div>
 							<div class="brand-name">商标名称</div>
 						</li>
@@ -200,7 +207,7 @@
 					<ul class="brands">
 						<li>
 							<div class="brand-img">
-								<img src="" alt="商标图"/>
+								<img src="" alt="商标图" />
 							</div>
 							<div class="brand-name">商标名称</div>
 						</li>
@@ -214,6 +221,7 @@
 		<script>
 			$(function() {
 				mtab("#part3", 0, "txt1-active", 247);
+				 $('.flexslider').flexslider();
 			});
 		</script>
 	</lift:tail>
