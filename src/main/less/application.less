@@ -1007,12 +1007,13 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
 }
 
 @txtWidth:245px;
+@tabHeight:40px;
 .m-tab .txt1 {
     color: #333333;
     display: block;
     font-size: 14px;
-    height: 40px;
-    line-height: 40px;
+    height: @tabHeight;
+    line-height: @tabHeight;
     text-align: center;
     width: @txtWidth;
 }
@@ -1032,7 +1033,7 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
 }
 .m-tab .rline {
     background: none repeat scroll 0 0 #EE472C;
-    bottom: -41px;
+    bottom: -(@tabHeight+1);
     height: 2px;
     left: 0;
     overflow: hidden;

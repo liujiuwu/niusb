@@ -136,7 +136,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#brand-type" #> brand.displayType &
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
-        "#sellPrice" #> brand.displaySellPrice(false) &
+        "#sellPrice" #> brand.displaySellPrice(style=true) &
         "#strikePrice" #> brand.displayStrikePrice &
         "#regdate" #> brand.regDate.asHtml &
         "#applicant" #> brand.applicant &

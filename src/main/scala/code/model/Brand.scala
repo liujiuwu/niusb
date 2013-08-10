@@ -189,22 +189,19 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   def displayBasePrice: NodeSeq = badge("success", basePrice.get)
-  def displaySellPrice(forUser: Boolean = true): NodeSeq = {
+  def displaySellPrice(forUser: Boolean = true, style: Boolean = false): NodeSeq = {
     val isFloatSellPrice = if (sellPrice.get >= basePrice.get) false else true
     val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * 0.5
-    badge("warning", if (forUser || !isFloatSellPrice) realSellPrice else realSellPrice + " - 浮")
-  }
-  
-  def displaySellPriceForList = {
-    val isFloatSellPrice = if (sellPrice.get >= basePrice.get) false else true
-    val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * 0.5
-    if (!isFloatSellPrice) {
-      realSellPrice
+    val result = (realSellPrice / 10000) + "万"
+    val displayLabel = if (forUser || !isFloatSellPrice) result else result + " - 浮"
+
+    if (style) {
+      badge("warning", displayLabel)
     } else {
-      basePrice.get + basePrice.get * 0.5
+      <span>￥{ displayLabel }</span>
     }
   }
-  
+
   def displayStrikePrice: NodeSeq = badge("important", strikePrice.get)
   private def badge(state: String, data: AnyVal) = <span class={ "badge badge-" + state }>￥{ data }</span>
 

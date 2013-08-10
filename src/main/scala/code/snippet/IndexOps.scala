@@ -48,9 +48,9 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
         brands = Brand.findAll(StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.name, Descending))
     }
     "li" #> brands.map(brand => {
-      ".brand-img *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank"><img src={ brand.displayPicSrc() } alt={ brand.name.get }/></a> &
-        ".brand-name *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank">{brand.name.get}</a> &
-        ".price *" #> brand.displaySellPriceForList
+      ".brand-img *" #> <img src={ brand.displayPicSrc() } alt={ brand.name.get }/> &
+        ".brand-name *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank">{ brand.name.get }</a> &
+        ".price *" #> brand.displaySellPrice()
 
     })
   }
@@ -74,7 +74,8 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     val dataList = ".brands li" #> brands.map(brand => {
       ".brand-img *" #> <img src={ brand.displayPicSrc() } alt={ brand.name.get }/> &
-        ".brand-name *" #> brand.name
+        ".brand-name *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank">{ brand.name.get }</a> &
+        ".price *" #> brand.displaySellPrice()
 
     })
 
