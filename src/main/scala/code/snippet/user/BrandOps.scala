@@ -6,8 +6,6 @@ import scala.xml._
 import org.apache.commons.io.FileUtils
 import code.lib.BoxAlert
 import code.lib.BoxConfirm
-import code.lib.BrandType
-import code.lib.BrandTypeHelper
 import code.lib.SearchHelper
 import code.lib.WebHelper
 import code.model.Brand
@@ -33,6 +31,7 @@ import net.liftweb.http.DispatchSnippet
 import net.liftweb.mapper.QueryParam
 import scala.collection.mutable.ArrayBuffer
 import code.lib.UploadFileHelper
+import code.model.BrandType
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
@@ -48,12 +47,12 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def create = {
     var basePrice = "0"
     var regNo, pic, name, regDateStr, applicant, useDescn, descn, lsqz = ""
-    var brandType: BrandType = BrandTypeHelper.brandTypes.get(25).get
+    var brandType: BrandType = BrandType.getBrandTypes().get(25).get
 
     def process(): JsCmd = {
       val brand = Brand.create.regNo(regNo).name(name).pic(pic).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
       brand.owner(user)
-      brand.brandTypeId(brandType.id)
+      brand.brandTypeCode(brandType.code.get)
       brand.basePrice(tryo(basePrice.toInt).getOrElse(0))
       brand.sellPrice(brand.basePrice + (brand.basePrice.get * 0.1).toInt)
       brand.lsqz(lsqz)
@@ -66,12 +65,12 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
     }
 
-    val brandTypes = BrandTypeHelper.brandTypes.values.toList
+    val brandTypes = BrandType.getBrandTypes().values.toList
     "@regNo" #> text(regNo, regNo = _) &
       "@basePrice" #> text(basePrice, basePrice = _) &
       "@name" #> text(name, name = _) &
       "@pic" #> hidden(pic = _, pic) &
-      "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Empty, v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
+      "@brand_type" #> select(brandTypes.map(v => (v.code.toString, v.code + " -> " + v.name)), Empty, v => (brandType = BrandType.getBrandTypes().get(v.toInt).get)) &
       "@regDate" #> text(regDateStr, regDateStr = _) &
       "@applicant" #> text(applicant, applicant = _) &
       "@useDescn" #> textarea(useDescn, useDescn = _) &

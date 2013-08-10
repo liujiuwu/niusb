@@ -1,14 +1,14 @@
 package code.model
 
 import java.text.SimpleDateFormat
-import scala.xml.NodeSeq
-import code.lib.BrandTypeHelper
+
+import scala.xml._
+
+import code.lib.UploadFileHelper
 import code.lib.WebHelper
-import code.rest.UploadManager
 import net.liftweb.common._
 import net.liftweb.mapper._
 import net.liftweb.util._
-import code.lib.UploadFileHelper
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -31,9 +31,9 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object name extends MappedString(this, 50)
 
-  object brandTypeId extends MappedInt(this) {
+  object brandTypeCode extends MappedInt(this) {
     override def dbIndexed_? = true
-    override def dbColumnName = "brand_type_id"
+    override def dbColumnName = "brand_type_code"
   }
 
   object status extends MappedEnum(this, BrandStatus) {
@@ -184,8 +184,8 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   def displayRecommend = if (recommend.get) "是" else "否"
 
   def displayType: NodeSeq = {
-    val brandType = BrandTypeHelper.brandTypes.get(brandTypeId.get).get
-    <span>{ brandType.id + " -> " + brandType.name }</span>
+    val brandType = BrandType.getBrandTypes().get(brandTypeCode.get).get
+    <span>{ brandType.code + " -> " + brandType.name }</span>
   }
 
   def displayBasePrice: NodeSeq = badge("success", basePrice.get)
@@ -198,7 +198,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     if (style) {
       badge("warning", displayLabel)
     } else {
-      <span>￥{ displayLabel }</span>
+      Text({ "￥" + displayLabel })
     }
   }
 
@@ -210,7 +210,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
   override def dbTableName = "brands"
 
-  override def fieldOrder = List(id, owner, name, brandTypeId, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
+  override def fieldOrder = List(id, owner, name, brandTypeCode, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
 
   def picName(pic: String, prefix: String = "s") = prefix + pic
 

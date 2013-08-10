@@ -1,33 +1,33 @@
 package code.snippet.admin
 
 import java.io.File
+
+import scala.collection.mutable.ArrayBuffer
 import scala.xml._
+
 import org.apache.commons.io.FileUtils
-import code.lib.BrandType
-import code.lib.BrandTypeHelper
+
+import code.lib.BoxConfirm
+import code.lib.TrueOrFalse
+import code.lib.TrueOrFalse2Str
+import code.lib.UploadFileHelper
+import code.lib.WebHelper
 import code.model.Brand
 import code.model.BrandStatus
-import code.rest.UploadManager
+import code.model.BrandType
 import code.snippet.SnippetHelper
 import net.liftweb.common._
+import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
 import net.liftweb.http.SHtml
 import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JsCmd
+import net.liftweb.http.js.JsCmds
+import net.liftweb.http.js.JsCmds._
 import net.liftweb.http.js.JsCmds.Noop
 import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
-import code.lib.WebHelper
-import net.liftweb.http.DispatchSnippet
-import code.lib.BoxConfirm
-import net.liftweb.http.js.JsCmds
-import net.liftweb.http.js.JsCmds._
-import code.lib.BoxAlert
-import code.lib.TrueOrFalse
-import code.lib.TrueOrFalse2Str
-import scala.collection.mutable.ArrayBuffer
-import code.lib.UploadFileHelper
 
 class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -115,7 +115,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#regDate" #> brand.regDate.asHtml &
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
-        "#sellPrice" #> brand.displaySellPrice(false) &
+        "#sellPrice" #> brand.displaySellPrice(false,true) &
         "#self" #> brand.displaySelf &
         "#recommend" #> brand.displayRecommend &
         "#strikePrice" #> brand.displayStrikePrice &
@@ -136,7 +136,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#brand-type" #> brand.displayType &
         "#status" #> brand.displayStatus &
         "#basePrice" #> brand.displayBasePrice &
-        "#sellPrice" #> brand.displaySellPrice(style=true) &
+        "#sellPrice" #> brand.displaySellPrice(style = true) &
         "#strikePrice" #> brand.displayStrikePrice &
         "#regdate" #> brand.regDate.asHtml &
         "#applicant" #> brand.applicant &
@@ -163,13 +163,13 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
       var basePrice = "0"
-      var regNo, pic, name, regDateStr, applicant, useDescn, descn,lsqz = ""
-      var brandType: BrandType = BrandTypeHelper.brandTypes.get(brand.brandTypeId.get).get
+      var regNo, pic, name, regDateStr, applicant, useDescn, descn, lsqz = ""
+      var brandType: BrandType = BrandType.getBrandTypes().get(brand.brandTypeCode.get).get
 
       def process(): JsCmd = {
         val oldPic = brand.pic.get
         brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
-        brand.brandTypeId(brandType.id)
+        brand.brandTypeCode(brandType.code.get)
         brand.lsqz(lsqz)
         brand.validate match {
           case Nil =>
@@ -182,19 +182,19 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
               }
             }
             //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息已成功修改！")))
-             S.redirectTo("/admin/brand/view?id="+brand.id.get)
+            S.redirectTo("/admin/brand/view?id=" + brand.id.get)
           case errors => println(errors); Noop
         }
       }
 
-      val brandTypes = BrandTypeHelper.brandTypes.values.toList
+      val brandTypes = BrandType.getBrandTypes().values.toList
       "@regNo" #> text(brand.regNo.get, regNo = _) &
         "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
         "@name" #> text(brand.name.get, name = _) &
         "@pic" #> hidden(pic = _, brand.pic.get) &
         "#brand_pic [src]" #> brand.displayPicSrc() &
         "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
-        "@brand_type" #> select(brandTypes.map(v => (v.id.toString, v.id + " -> " + v.name)), Full(brandType.id.toString), v => (brandType = BrandTypeHelper.brandTypes.get(v.toInt).get)) &
+        "@brand_type" #> select(brandTypes.map(v => (v.code.toString, v.code + " -> " + v.name)), Full(brandType.code.toString), v => (brandType = BrandType.getBrandTypes().get(v.toInt).get)) &
         "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
         "@applicant" #> text(brand.applicant.get, applicant = _) &
         "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &
@@ -225,7 +225,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
             brand.recommend(TrueOrFalse(recommend)).isSelf(TrueOrFalse(self))
             brand.remark(remark)
             brand.save
-            S.redirectTo("/admin/brand/view?id="+brand.id.get)
+            S.redirectTo("/admin/brand/view?id=" + brand.id.get)
           case errors => println(errors); Noop
         }
       }

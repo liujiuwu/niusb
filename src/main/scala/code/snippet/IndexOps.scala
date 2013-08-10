@@ -1,19 +1,14 @@
 package code.snippet
 
 import scala.xml.Text
-
-import code.lib.BrandTypeHelper
 import code.model.Brand
 import net.liftweb.common.Full
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
-import net.liftweb.mapper.By
-import net.liftweb.mapper.Descending
-import net.liftweb.mapper.MaxRows
-import net.liftweb.mapper.OrderBy
-import net.liftweb.mapper.StartAt
-import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.mapper._
+import net.liftweb.util.Helpers._
+import code.model.BrandType
 
 object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -23,7 +18,7 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def brandTypes = {
-    val brandTypes = BrandTypeHelper.brandTypes
+    val brandTypes = BrandType.getBrandTypes()
     "*" #> Text("")
   }
 
@@ -48,7 +43,7 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
         brands = Brand.findAll(StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.name, Descending))
     }
     "li" #> brands.map(brand => {
-      ".brand-img *" #> <img src={ brand.displayPicSrc() } alt={ brand.name.get }/> &
+      ".brand-img *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank"><img src={ brand.displayPicSrc() } alt={ brand.name.get }/></a> &
         ".brand-name *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank">{ brand.name.get }</a> &
         ".price *" #> brand.displaySellPrice()
 
@@ -62,18 +57,18 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
     }
   }
 
-  def mainBrandDatas(brandTypeId: Int) = {
+  def mainBrandDatas(brandTypeCode: Int) = {
     val limit = S.attr("limit").map(_.toInt).openOr(24)
-    val brands = Brand.findAll(By(Brand.brandTypeId, brandTypeId), MaxRows[Brand](limit))
+    val brands = Brand.findAll(By(Brand.brandTypeCode, brandTypeCode), MaxRows[Brand](limit))
 
-    val brandType = BrandTypeHelper.brandTypes.get(brandTypeId)
+    val brandType = BrandType.getBrandTypes().get(brandTypeCode)
     val tp = brandType match {
       case Some(t) => "#title" #> t.name
       case _ => "#title" #> Text("")
     }
 
     val dataList = ".brands li" #> brands.map(brand => {
-      ".brand-img *" #> <img src={ brand.displayPicSrc() } alt={ brand.name.get }/> &
+      ".brand-img *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank"><img src={ brand.displayPicSrc() } alt={ brand.name.get }/></a> &
         ".brand-name *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank">{ brand.name.get }</a> &
         ".price *" #> brand.displaySellPrice()
 

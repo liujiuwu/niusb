@@ -59,7 +59,7 @@ object SyncData {
                 brand.pic(newPicName)
                 brand.basePrice((t.price * 10000).toInt)
                 brand.useDescn(t.range)
-                brand.brandTypeId(t.category)
+                brand.brandTypeCode(t.category)
                 brand.regNo(t.number)
                 //brand.regDate(t.regdate)
                 brand.owner(user.id.get)

@@ -8,11 +8,14 @@ import net.liftweb.http.S
 import net.liftweb.http.S._
 import net.liftweb.util._
 import net.liftweb.mapper._
+import net.liftweb.util.Helpers._
 import code.model.Brand
+import code.model.BrandType
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "index" => list
+    case "brandTypes" => brandTypes
     case "view" => view
   }
 
@@ -27,6 +30,13 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     } yield {
       "*" #> brand.name
     }): CssSel
+  }
+
+  def brandTypes = {
+    val bts = BrandType.getBrandTypes().values.toList
+    ".brand-types li" #> bts.map(b => {
+      "li *" #> <a href={ "/market/index?type=" + b.code }>{ b.code + "." + b.name }</a>
+    })
   }
 
 }
