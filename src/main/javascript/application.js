@@ -20,10 +20,10 @@ function mtab(selId, activeIdx, activeCls, tabWidth) {
 $(document).ready(function () {
     $(window).scroll(function () {
         var scrolltop = $(document).scrollTop();
-        /*if (scrolltop > 150) {
-            $('.menu').addClass('fixed');
+        /*if (scrolltop > 20) {
+            $('#menu').addClass('fixed');
         } else {
-            $('.menu').removeClass('fixed');
+            $('#menu').removeClass('fixed');
         }*/
         if (scrolltop > 20) {
             $('#toTop').fadeIn();

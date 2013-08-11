@@ -9,6 +9,7 @@ import net.liftweb.http.S
 import net.liftweb.mapper._
 import net.liftweb.util.Helpers._
 import code.model.BrandType
+import code.model.AdSpace
 
 object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {

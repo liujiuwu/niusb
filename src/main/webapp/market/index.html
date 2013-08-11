@@ -2,7 +2,7 @@
 	<style>
 .brands li {
 	float: left;
-	margin: 5px 2px;
+	margin: 5px 10px;
 	position: relative;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .m-box22 .tit {
-	padding:10px;
+	padding: 10px;
 }
 
 .m-box22 .tp {
@@ -84,27 +84,35 @@
 .m-box22 .ct {
 	padding: 5px 8px;
 }
+
+.m-box23 {
+	background-color: #FFFFFF;
+	border: 1px solid #DBDBDB;
+	margin-bottom: 15px;
+	float: left;
+}
+
+.m-box23 .tp {
+	border-bottom: 2px solid #000000;
+}
+
+.m-box23 .tit {
+	padding: 10px;
+}
+
+.m-box23 .ct {
+	padding: 10px;
+}
 </style>
+
 	<div class="row">
-		<div class="span18 m-box12 m-box12-1" data-lift="IndexOps.mainConent?parallel=true;eager_eval=true;brandTypeId=43">
-			<div class="tp">
-				<p class="tit">
-					<span id="title">服装鞋帽</span>
-				</p>
-				<div class="tag">
-					<ul>
-						<li><a href="/find.do#cate=500021" tjparam="{&quot;tid&quot;:500020,&quot;stid&quot;:500021}" target="_blank" class="txt1">女鞋</a></li>
-						<li><a href="/find.do#cate=500022" tjparam="{&quot;tid&quot;:500020,&quot;stid&quot;:500022}" target="_blank" class="txt1">包包</a></li>
-						<li><a href="/find.do#cate=500020" target="_blank" class="txt1">查看更多...</a></li>
-					</ul>
-				</div>
-			</div>
-			<div class="ct">
-				<ul class="brands">
-					<div class='lift:embed?what=_brandUnit'>商标模板</div>
-				</ul>
+		<div class="span25">
+			<div class="well">
+				<input type="text" />
 			</div>
 		</div>
+	</div>
+	<div class="row">
 		<div class="span7">
 			<div class="m-box22" data-lift="MarketOps.brandTypes">
 				<div class="tp">
@@ -115,6 +123,34 @@
 				<div class="ct">
 					<ul class="brand-types">
 						<li>类型名</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="span18" data-lift="IndexOps.mainConent?parallel=true;eager_eval=true;brandTypeId=43;limit=60">
+
+			<div class="m-box23">
+				<div class="tp">
+					<p class="tit">
+						<span id="title">服装鞋帽</span>
+					</p>
+					<div>
+						<div class="btn-group">
+							<button class="btn">
+								<i class="icon-jpy"></i> 价格
+							</button>
+							<button class="btn">
+								<i class="icon-thumbs-up-alt"></i> 推荐
+							</button>
+							<button class="btn">
+								<i class="icon-fire"></i> 热门
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="ct">
+					<ul class="brands">
+						<div class='lift:embed?what=_brandUnit'>商标模板</div>
 					</ul>
 				</div>
 			</div>

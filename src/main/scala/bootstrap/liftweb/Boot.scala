@@ -31,6 +31,8 @@ import code.model.Brand
 import scala.collection.Parallel
 import code.lib.SyncData
 import code.model.BrandType
+import code.model.AdSpace
+import code.model.Ad
 
 class Boot extends Loggable {
   def boot {
@@ -46,7 +48,7 @@ class Boot extends Loggable {
       }
     }*/
     //DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
-    Schemifier.schemify(true, Schemifier.infoF _, User, BrandType, Brand)
+    Schemifier.schemify(true, Schemifier.infoF _, User, BrandType, Brand, AdSpace, Ad)
 
     LiftRules.setSiteMap(Site.siteMap)
 
@@ -112,5 +114,7 @@ class Boot extends Loggable {
     }
 
     //User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
+
+    AdSpace.loadAdSpace(true)
   }
 }
