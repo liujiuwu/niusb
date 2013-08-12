@@ -52,35 +52,98 @@
 	width: 100%;
 	bottom: 0px;
 }
+
+#focus {
+	width: 710px;
+	height: 250px;
+	overflow: hidden;
+	position: relative;
+}
+
+#focus ul {
+	height: 250px;
+	position: absolute;
+}
+
+#focus ul li {
+	float: left;
+	width: 710px;
+	height: 250px;
+	overflow: hidden;
+	position: relative;
+	background: #000;
+}
+
+#focus ul li div {
+	position: absolute;
+	overflow: hidden;
+}
+
+#focus .btnBg {
+	position: absolute;
+	width: 710px;
+	height: 20px;
+	left: 0;
+	bottom: 0;
+	background: #000;
+}
+
+#focus .slider-btn {
+	position: absolute;
+	width: 690px;
+	height: 10px;
+	padding: 5px 10px;
+	right: 0;
+	bottom: 0;
+	text-align: right;
+}
+
+#focus .btn span {
+	display: inline-block;
+	_display: inline;
+	_zoom: 1;
+	width: 25px;
+	height: 10px;
+	_font-size: 0;
+	margin-left: 5px;
+	cursor: pointer;
+	background: #fff;
+}
+
+#focus .btn span.on {
+	background: #fff;
+}
+
+#focus .preNext {
+	width: 45px;
+	height: 100px;
+	position: absolute;
+	top: 90px;
+	background: url(img/slider.png) no-repeat 0 0;
+	cursor: pointer;
+}
+
+#focus .pre {
+	left: 0;
+}
+
+#focus .next {
+	right: 0;
+	background-position: right top;
+}
 </style>
 	<div class="row">
-		<div class="span25">
-			<div class="m-box10 m-box10-1" style="height: 300px">
-				<div data-lift="AdOps.index?code=1">
-					<div class="flexslider" style="float: left; height: 250px; width: 700px">
-						<ul class="slides">
-							<li><img src="/img/ad1.jpg" /></li>
+		<div class="span25 m-box10">
+			<div class="row">
+				<div data-lift="AdOps.index?code=1" class="span18">
+					<div id="focus">
+						<ul>
+							<li><img src="/img/ads/ad1.jpg" style="height: 250px; width: 710px" /></li>
 						</ul>
 					</div>
 				</div>
-				<div class="m-box11">
-					<div class="mn">
-						<ul class="list-group">
-							<li class="list-group-item">Cras justo odio</li>
-							<li class="list-group-item">Dapibus ac facilisis in</li>
-							<li class="list-group-item">Morbi leo risus</li>
-						</ul>
-					</div>
-					<div class="sd">
-						<ul class="list">
-							<li class="item"><span class="u-ico11">·</span> <a target="_blank" href="/trust.do" class="txt6">购物保障计划</a></li>
-							<li class="item"><span class="u-ico11">·</span> <a target="_blank" href="/help.do" class="txt6">新手帮助</a></li>
-							<li class="item"><span class="u-ico11">·</span> <a href="http://zhidao.mail.163.com/zhidao/newsugg.jsp#网易优惠券" target="_blank" class="txt6 js-tj">反馈</a></li>
-							<li class="item"><span class="u-ico11">·</span> <span class="txt6">关注牛标网：</span> <a hidefucus="" class="u-ico14 u-ico14-weixin" href="javascript:;"> <span class="wxpop"> 关注微信 </span>
-							</a> <a hidefucus="" class="u-ico14 u-ico14-weibo js-tj" target="_blank" href="http://weibo.com/quan163">关注新浪微博</a></li>
-						</ul>
-					</div>
-				</div>
+
+				<div class="span7"></div>
 			</div>
 		</div>
 	</div>
@@ -200,13 +263,94 @@
 		<script>
 			$(function() {
 				mtab("#part3", 0, "txt1-active", 247);
-				$('.flexslider').flexslider();
+				//$('.flexslider').flexslider();
 
 				$(".brands li").hover(function() {
 					$(this).children(".img-overflow").fadeIn();
 				}, function() {
 					$(this).children(".img-overflow").hide();
 				})
+			});
+
+			$(function() {
+				var sWidth = $("#focus").width(); //获取焦点图的宽度（显示面积）
+				var len = $("#focus ul li").length; //获取焦点图个数
+				var index = 0;
+				var picTimer;
+
+				//以下代码添加数字按钮和按钮后的半透明条，还有上一页、下一页两个按钮
+				var btn = "<div class='btnBg'></div><div class='btn'>";
+				for( var i = 0; i < len; i++) {
+					btn += "<span></span>";
+				}
+				btn += "</div><div class='preNext pre'></div><div class='preNext next'></div>";
+				$("#focus").append(btn);
+				$("#focus .btnBg").css("opacity", 0.5);
+
+				//为小按钮添加鼠标滑入事件，以显示相应的内容
+				$("#focus .btn span").css("opacity", 0.4).mouseenter(function() {
+					index = $("#focus .btn span").index(this);
+					showPics(index);
+				}).eq(0).trigger("mouseenter");
+
+				//上一页、下一页按钮透明度处理
+				$("#focus .preNext").css("opacity", 0.2).hover(function() {
+					$(this).stop(true, false).animate({
+						"opacity" : "0.5"
+					}, 300);
+				}, function() {
+					$(this).stop(true, false).animate({
+						"opacity" : "0.2"
+					}, 300);
+				});
+
+				//上一页按钮
+				$("#focus .pre").click(function() {
+					index -= 1;
+					if (index == -1) {
+						index = len - 1;
+					}
+					showPics(index);
+				});
+
+				//下一页按钮
+				$("#focus .next").click(function() {
+					index += 1;
+					if (index == len) {
+						index = 0;
+					}
+					showPics(index);
+				});
+
+				//本例为左右滚动，即所有li元素都是在同一排向左浮动，所以这里需要计算出外围ul元素的宽度
+				$("#focus ul").css("width", sWidth * (len));
+
+				//鼠标滑上焦点图时停止自动播放，滑出时开始自动播放
+				$("#focus").hover(function() {
+					clearInterval(picTimer);
+				}, function() {
+					picTimer = setInterval(function() {
+						showPics(index);
+						index++;
+						if (index == len) {
+							index = 0;
+						}
+					}, 4000); //此4000代表自动播放的间隔，单位：毫秒
+				}).trigger("mouseleave");
+
+				//显示图片函数，根据接收的index值显示相应的内容
+				function showPics(index) { //普通切换
+					var nowLeft = -index * sWidth; //根据index值计算ul元素的left值
+					$("#focus ul").stop(true, false).animate({
+						"left" : nowLeft
+					}, 300); //通过animate()调整ul元素滚动到计算出的position
+					//$("#focus .btn span").removeClass("on").eq(index).addClass("on"); //为当前的按钮切换到选中的效果
+					$("#focus .btn span").stop(true, false).animate({
+						"opacity" : "0.4"
+					}, 300).eq(index).stop(true, false).animate({
+						"opacity" : "1"
+					}, 300); //为当前的按钮切换到选中的效果
+				}
 			});
 		</script>
 	</lift:tail>
