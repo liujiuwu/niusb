@@ -60,8 +60,8 @@ class Boot extends Loggable {
     LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
     LiftRules.early.append(_.setCharacterEncoding("utf-8"))
-    LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
-    //LiftRules.htmlProperties.default.set((r: Req) => new StarXHtmlInHtml5OutProperties(r.userAgent))
+    //LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
+    LiftRules.htmlProperties.default.set((r: Req) => new StarXHtmlInHtml5OutProperties(r.userAgent))
     //LiftRules.handleMimeFile = OnDiskFileParamHolder.apply
 
     LiftRules.loggedInTest = Full(
