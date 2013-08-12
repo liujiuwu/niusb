@@ -111,14 +111,14 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
       "#regNo" #> brand.regNo.get &
         "#name" #> <a href={ "/admin/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
-        "#brandType" #> brand.displayType &
+        "#brandType" #> brand.brandTypeCode.displayType &
         "#regDate" #> brand.regDate.asHtml &
-        "#status" #> brand.displayStatus &
-        "#basePrice" #> brand.displayBasePrice &
-        "#sellPrice" #> brand.displaySellPrice(false,true) &
-        "#self" #> brand.displaySelf &
-        "#recommend" #> brand.displayRecommend &
-        "#strikePrice" #> brand.displayStrikePrice &
+        "#status" #> brand.status.displayStatus &
+        "#basePrice" #> brand.basePrice.displayBasePrice &
+        "#sellPrice" #> brand.sellPrice.displaySellPrice(false, true) &
+        "#self" #> brand.isSelf.displaySelf &
+        "#recommend" #> brand.recommend.displayRecommend &
+        "#strikePrice" #> brand.strikePrice.displayStrikePrice &
         "#actions" #> actions(brand)
     })
     searchForm & dataList & "#pagination" #> paginatorModel.paginate _
@@ -131,23 +131,23 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
-      "#regNo" #> brand.regNo &
-        "#name" #> brand.name &
-        "#brand-type" #> brand.displayType &
-        "#status" #> brand.displayStatus &
-        "#basePrice" #> brand.displayBasePrice &
-        "#sellPrice" #> brand.displaySellPrice(style = true) &
-        "#strikePrice" #> brand.displayStrikePrice &
+      "#regNo" #> brand.regNo.get &
+        "#name" #> brand.name.get &
+        "#brand-type" #> brand.brandTypeCode.displayType &
+        "#status" #> brand.status.displayStatus &
+        "#basePrice" #> brand.basePrice.displayBasePrice &
+        "#sellPrice" #> brand.sellPrice.displaySellPrice(style = true) &
+        "#strikePrice" #> brand.strikePrice.displayStrikePrice &
         "#regdate" #> brand.regDate.asHtml &
         "#applicant" #> brand.applicant &
         "#useDescn" #> brand.useDescn &
         "#descn" #> brand.descn &
-        "#self" #> brand.displaySelf &
-        "#recommend" #> brand.displayRecommend &
+        "#self" #> brand.isSelf.displaySelf &
+        "#recommend" #> brand.recommend.displayRecommend &
         "#concernCount" #> brand.concernCount.get &
         "#remark" #> brand.remark.get &
-        "#pic" #> brand.displayPic() &
-        "#spic" #> brand.displaySpic &
+        "#pic" #> brand.pic.displayPic(alt=brand.name.get) &
+        "#spic" #> brand.pic.displaySmallPic &
         "#owner" #> brand.owner.getOwner.displayInfo &
         "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
         "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-info"><i class="icon-bolt"></i> 商标设置</a> &
@@ -192,7 +192,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
         "@name" #> text(brand.name.get, name = _) &
         "@pic" #> hidden(pic = _, brand.pic.get) &
-        "#brand_pic [src]" #> brand.displayPicSrc() &
+        "#brand_pic [src]" #> brand.pic.src &
         "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
         "@brand_type" #> select(brandTypes.map(v => (v.code.toString, v.code + " -> " + v.name)), Full(brandType.code.toString), v => (brandType = BrandType.getBrandTypes().get(v.toInt).get)) &
         "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
@@ -235,7 +235,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@self" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isSelf.get), self = _) &
         "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
         "@sellPrice" #> text(brand.sellPrice.get.toString, sellPrice = _) &
-        "#realSellPrice" #> brand.displaySellPrice(false) &
+        "#realSellPrice" #> brand.sellPrice.displaySellPrice(false) &
         "@strikePrice" #> text(brand.strikePrice.get.toString, strikePrice = _) &
         "@remark" #> textarea(brand.remark.get, remark = _) &
         "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &

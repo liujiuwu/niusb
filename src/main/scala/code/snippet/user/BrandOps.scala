@@ -169,11 +169,11 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
       "#regNo" #> brand.regNo &
         "#name" #> <a href={ "/user/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
-        "#brandType" #> brand.displayType &
+        "#brandType" #> brand.brandTypeCode.displayType &
         "#applicant" #> brand.applicant &
         "#regDate" #> brand.regDate.asHtml &
-        "#status" #> brand.displayStatus &
-        "#basePrice" #> brand.displayBasePrice &
+        "#status" #> brand.status.displayStatus &
+        "#basePrice" #> brand.basePrice.displayBasePrice &
         "#actions " #> actions(brand)
     })
 
@@ -188,11 +188,11 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     } yield {
       "#regNo" #> brand.regNo &
         "#name" #> brand.name &
-        "#pic" #> brand.displayPic() &
-        "#spic" #> brand.displaySpic &
-        "#brand-type" #> brand.displayType &
-        "#status" #> brand.displayStatus &
-        "#basePrice" #> brand.displayBasePrice &
+        "#pic" #> brand.pic.displayPic(alt=brand.name.get) &
+        "#spic" #> brand.pic.displaySmallPic &
+        "#brand-type" #> brand.brandTypeCode.displayType &
+        "#status" #> brand.status.displayStatus &
+        "#basePrice" #> brand.basePrice.displayBasePrice &
         "#regdate" #> brand.regDate.asHtml &
         "#useDescn" #> brand.useDescn &
         "#descn" #> brand.descn

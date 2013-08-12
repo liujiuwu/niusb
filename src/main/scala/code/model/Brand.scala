@@ -34,10 +34,25 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   object brandTypeCode extends MappedInt(this) {
     override def dbIndexed_? = true
     override def dbColumnName = "brand_type_code"
+
+    def displayType: NodeSeq = {
+      val brandType = BrandType.getBrandTypes().get(brandTypeCode.get).get
+      <span>{ brandType.code + " -> " + brandType.name }</span>
+    }
   }
 
   object status extends MappedEnum(this, BrandStatus) {
     override def defaultValue = BrandStatus.ShenHeZhong
+    def displayStatus: NodeSeq = {
+      status.get match {
+        case BrandStatus.ShenHeShiBai => <span class="label label-important">{ BrandStatus.ShenHeShiBai }</span>
+        case BrandStatus.ShenHeZhong => <span class="label">审核中</span>
+        case BrandStatus.ChuShoZhong => <span class="label label-info">出售中</span>
+        case BrandStatus.JiaoYiZhong => <span class="label label-warning">交易中</span>
+        case BrandStatus.ZantiJiaoYi => <span class="label label-warning">{ BrandStatus.ZantiJiaoYi }</span>
+        case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
+      }
+    }
   }
 
   object regNo extends MappedString(this, 15) {
@@ -79,14 +94,29 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object basePrice extends MappedInt(this) {
     override def dbColumnName = "base_price"
+    def displayBasePrice: NodeSeq = WebHelper.badge("success", basePrice.get)
   }
 
   object sellPrice extends MappedInt(this) {
     override def dbColumnName = "sell_price"
+    def displaySellPrice(forUser: Boolean = true, style: Boolean = false): NodeSeq = {
+      val isFloatSellPrice = if (sellPrice.get >= basePrice.get) false else true
+      val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * 0.5
+      val result = (realSellPrice / 10000) + "万"
+      val displayLabel = if (forUser || !isFloatSellPrice) result else result + " - 浮"
+
+      if (style) {
+        WebHelper.badge("warning", displayLabel)
+      } else {
+        Text({ "￥" + displayLabel })
+      }
+    }
+
   }
 
   object strikePrice extends MappedInt(this) {
     override def dbColumnName = "strike_price"
+    def displayStrikePrice: NodeSeq = WebHelper.badge("important", strikePrice.get)
   }
 
   object soldDate extends MappedDate(this) {
@@ -99,7 +129,15 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object descn extends MappedString(this, 300)
 
-  object pic extends MappedString(this, 100)
+  object pic extends MappedString(this, 100) {
+    def displaySmallPic: NodeSeq = displayPic("brand-simg-box")
+
+    def displayPic(css: String = "brand-bimg-box", alt: String = ""): NodeSeq = {
+      <div class={ css }><img src={ src } alt={ alt }/></div>
+    }
+
+    def src = UploadFileHelper.srcPath(pic.get)
+  }
 
   object adPic extends MappedString(this, 100) {
     override def dbColumnName = "ad_pic"
@@ -113,6 +151,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object recommend extends MappedBoolean(this) { //是否推荐
     override def defaultValue = false
+    def displayRecommend = if (recommend.get) "是" else "否"
   }
 
   object brandOrder extends MappedBoolean(this) {
@@ -121,6 +160,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object isSelf extends MappedBoolean(this) {
     override def dbColumnName = "is_self"
+    def displaySelf = if (isSelf.get) "是" else "否"
   }
 
   object remark extends MappedString(this, 300)
@@ -160,50 +200,6 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
       }
     }
   }
-
-  def displayStatus: NodeSeq = {
-    status.get match {
-      case BrandStatus.ShenHeShiBai => <span class="label label-important">{ BrandStatus.ShenHeShiBai }</span>
-      case BrandStatus.ShenHeZhong => <span class="label">审核中</span>
-      case BrandStatus.ChuShoZhong => <span class="label label-info">出售中</span>
-      case BrandStatus.JiaoYiZhong => <span class="label label-warning">交易中</span>
-      case BrandStatus.ZantiJiaoYi => <span class="label label-warning">{ BrandStatus.ZantiJiaoYi }</span>
-      case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
-    }
-  }
-
-  def displaySpic: NodeSeq = displayPic("brand-simg-box", "128")
-
-  def displayPic(css: String = "brand-bimg-box", size: String = "320"): NodeSeq = {
-    <div class={ css }><img src={ displayPicSrc(size) } alt={ name.get }/></div>
-  }
-
-  def displayPicSrc(size: String = "320") = UploadFileHelper.srcPath(pic.get)
-
-  def displaySelf = if (isSelf.get) "是" else "否"
-  def displayRecommend = if (recommend.get) "是" else "否"
-
-  def displayType: NodeSeq = {
-    val brandType = BrandType.getBrandTypes().get(brandTypeCode.get).get
-    <span>{ brandType.code + " -> " + brandType.name }</span>
-  }
-
-  def displayBasePrice: NodeSeq = badge("success", basePrice.get)
-  def displaySellPrice(forUser: Boolean = true, style: Boolean = false): NodeSeq = {
-    val isFloatSellPrice = if (sellPrice.get >= basePrice.get) false else true
-    val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * 0.5
-    val result = (realSellPrice / 10000) + "万"
-    val displayLabel = if (forUser || !isFloatSellPrice) result else result + " - 浮"
-
-    if (style) {
-      badge("warning", displayLabel)
-    } else {
-      Text({ "￥" + displayLabel })
-    }
-  }
-
-  def displayStrikePrice: NodeSeq = badge("important", strikePrice.get)
-  private def badge(state: String, data: AnyVal) = <span class={ "badge badge-" + state }>￥{ data }</span>
 
 }
 

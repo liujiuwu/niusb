@@ -6,7 +6,7 @@ class Ad extends LongKeyedMapper[Ad] with IdPK {
   def getSingleton = Ad
 
   object adSpaceCode extends MappedInt(this) {
-    override def dbColumnName = "adv_spaces_code"
+    override def dbColumnName = "ad_space_code"
   }
 
   object title extends MappedString(this, 30)

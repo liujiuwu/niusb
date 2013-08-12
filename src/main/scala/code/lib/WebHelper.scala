@@ -65,8 +65,10 @@ object TrueOrFalse2Str extends Function1[Boolean, Box[String]] {
   }
 }
 
-object WebHelper extends App{
+object WebHelper extends App {
   println(realMobile(Full("18858078001")))
+
+  def badge(label: String, data: AnyVal, prefix: String = "￥") = <span class={ "badge badge-" + label }>{ prefix }{ data }</span>
 
   def oddOrEven(current: String) = {
     current match {
