@@ -1,0 +1,51 @@
+<div class="box-content" data-lift="surround?with=admin;at=content">
+	<div data-lift="admin.ArticleOps.create">
+		<div class="span25">
+			<div class="tool-well">
+				<div class="well text-right">
+					<button id="sedit-btn" class="btn btn-primary" type="button">商标设置</button>
+					<button id="view-btn" class="btn btn-info" type="button">查看商标</button>
+					<button id="list-btn" class="btn btn-success" type="button">商标列表</button>
+				</div>
+			</div>
+		</div>
+		<div class="span25">
+			<form data-lift="form.ajax?class=form-horizontal">
+				<div id="group_title" class="control-group">
+					<label for="title" class="control-label">标题</label>
+					<div class="controls">
+						<input type="text" id="title" name="title" required="required" class="span20" /> <span id="error_title" class="help-inline"></span>
+					</div>
+				</div>
+				<div id="group_article_type" class="control-group">
+					<label for="article_type" class="control-label">类型</label>
+					<div class="controls">
+						<input type="text" id="article_type" name="article_type" required="required" />
+					</div>
+				</div>
+				<div id="group_article_from" class="control-group">
+					<label for="article_from" class="control-label">来源</label>
+					<div class="controls">
+						<input type="text" id="article_from" name="article_from" required="required" />
+					</div>
+				</div>
+				<div id="group_content" class="control-group">
+					<label for="content" class="control-label">内容</label>
+					<div class="controls">
+						<textarea rows="10" id="content" name="content" class="span20"></textarea>
+					</div>
+				</div>
+				<div id="group_article_order" class="control-group">
+					<label for="article_order" class="control-label">排序</label>
+					<div class="controls">
+						<input type="text" id="article_order" name="article_order" required="required" />
+					</div>
+				</div>
+				<div class="form-actions">
+					<button class="btn btn-primary" type="submit">发布</button>
+					<input type="hidden" name="sub" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
