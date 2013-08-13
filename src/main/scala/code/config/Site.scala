@@ -49,7 +49,8 @@ object Site {
     Menu("AdminViewBrand", menuLoc("AdminViewBrand", "", "查看商标")) / "admin" / "brand" / "view" >> RequireAdminLoggedIn >> Hidden,
     Menu("AdminEditBrand", menuLoc("AdminEditBrand", "", "修改商标")) / "admin" / "brand" / "edit" >> RequireAdminLoggedIn >> Hidden,
     Menu("AdminSeditBrand", menuLoc("AdminSeditBrand", "", "商标设置")) / "admin" / "brand" / "sedit" >> RequireAdminLoggedIn >> Hidden,
-    Menu("AdminListArticle", menuLoc("AdminListArticle", "list", "文章管理")) / "admin" / "article" / ** >> RequireAdminLoggedIn >> AdminMenuGroup,
+    Menu("AdminListArticle", menuLoc("AdminListArticle", "list", "文章管理")) / "admin" / "article" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
+    Menu("AdminCreateArticle", menuLoc("AdminCreateArticle", "plus", "发布文章")) / "admin" / "article" / "create" >> RequireAdminLoggedIn >> Hidden,
     Menu("AdminSms", menuLoc("AdminSms", "envelope", "站内消息")) / "admin" / "sms" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
 
     Menu.i("ajaxExample") / "ajax",

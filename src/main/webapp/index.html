@@ -1,146 +1,13 @@
 <div id="main" class="container" data-lift="surround?with=default;at=content">
-	<style>
-.brands li {
-	float: left;
-	margin: 5px 10px;
-	position: relative;
-}
-
-.brands li .brand-name {
-	color: #999999;
-	font-size: 12px;
-	height: 22px;
-	line-height: 22px;
-	overflow: hidden;
-	text-align: center;
-	width: 128px;
-}
-
-.brands li .brand-img {
-	width: 128px;
-	height: 80px;
-	border: 1px solid #DBDBDB;
-	padding: 5px;
-}
-
-.brands li .img-overflow {
-	position: absolute;
-	background-color: rgba(0, 0, 0, 0.1);
-	top: 0;
-	left: 0;
-	cursor: pointer;
-	color: #f00;
-	width: 139px;
-	height: 91px;
-	display: none;
-	z-index: 1;
-}
-
-.brands li .img-overflow .tools {
-	text-align: center;
-	margin: 5px 0;
-}
-
-.brands li .img-overflow .price {
-	background-color: #EE472C;
-	position: absolute;
-	text-align: center;
-	font-size: 14px;
-	padding: 2px 0;
-	bottom: 0px;
-	color: #fff;
-	width: 100%;
-	bottom: 0px;
-}
-
-#focus {
-	width: 700px;
-	height: 300px;
-	overflow: hidden;
-	position: relative;
-}
-
-#focus ul {
-	height: 300px;
-	position: absolute;
-}
-
-#focus ul li {
-	float: left;
-	width: 700px;
-	height: 300px;
-	overflow: hidden;
-	position: relative;
-	background: #000;
-}
-
-#focus ul li div {
-	position: absolute;
-	overflow: hidden;
-}
-
-#focus .slider-btn-bg {
-	position: absolute;
-	width: 700px;
-	height: 20px;
-	left: 0;
-	bottom: 0;
-	background: #000;
-}
-
-#focus .slider-btn {
-	position: absolute;
-	right: 5px;
-	bottom: 0;
-	text-align: right;
-}
-
-#focus .slider-btn span {
-	display: inline-block;
-	_display: inline;
-	_zoom: 1;
-	width: 25px;
-	height: 10px;
-	_font-size: 0;
-	margin-left: 5px;
-	cursor: pointer;
-	background: #fff;
-}
-
-#focus .preNext {
-	width: 45px;
-	height: 100px;
-	position: absolute;
-	top: 90px;
-	background: url(img/slider.png) no-repeat 0 0;
-	cursor: pointer;
-}
-
-#focus .pre {
-	left: 0;
-}
-
-#focus .next {
-	right: 0;
-	background-position: right top;
-}
-
-.m-box12 .tit{
-	font-size:16px;
-}
-</style>
 	<div class="row">
 		<div class="span25 m-box10">
-			<div class="row" style="padding: 10px;">
-				<div data-lift="AdOps.index?code=1" class="span18">
-					<div id="focus">
-						<ul>
-							<li><img src="/img/ads/ad1.jpg" style="height: 300px; width: 700px" /></li>
-						</ul>
-					</div>
+			<div class="m-box10-1">
+				<div id="topBanner" class="banner" data-lift="AdOps.index?code=1">
+					<ul>
+						<li><img src="/img/ads/ad1.jpg" style="height: 300px; width: 700px" /></li>
+					</ul>
 				</div>
-
-				<div class="span7"></div>
+				<div class="slider">fsfd</div>
 			</div>
 		</div>
 	</div>
@@ -262,15 +129,17 @@
 			// <![CDATA[
 			$(function() {
 				$(".brands li").hover(function() {
-					$(this).children(".img-overflow").fadeIn();
+					$(this).find(".img-overflow").fadeIn();
 				}, function() {
-					$(this).children(".img-overflow").hide();
+					$(this).find(".img-overflow").hide();
 				})
 
-				$("#focus").simpeSlider();
+				$("#topBanner").simpeSlider();
 				$("#mainTab").simpeTab({
 					activeIdx : 4
 				});
+
+				//alert($("#test").width());
 			});
 			// ]]>
 		</script>

@@ -25,7 +25,7 @@ body{background:#fff;}
 
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei UI", "Microsoft YaHei", SimHei, "\5B8B\4F53", simsun, sans-serif;
-  padding-top: 60px;
+  padding-top: 55px;
   background: url("../img/noise-f1.gif") repeat fixed left top #F9F9EF;
 }
 
@@ -38,11 +38,6 @@ a:hover, a:focus {
     text-decoration: underline;
 }*/
 
-.fixed {
-    position: fixed;
-    width:268px;
-    top: 60px;
-}
 
 .no-padding {
   padding: 0;
@@ -876,6 +871,62 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
 
 
 /* main =====================================================================*/
+//brands ====================================
+
+.brands li {
+	float: left;
+	margin: 5px 10px;
+	position: relative;
+}
+
+.brands li .brand-name {
+	color: #999999;
+	font-size: 12px;
+	height: 22px;
+	line-height: 22px;
+	overflow: hidden;
+	text-align: center;
+	width: 128px;
+}
+
+.brands li .brand-img {
+	width: 128px;
+	height: 80px;
+	border: 1px solid #DBDBDB;
+	padding: 5px;
+}
+
+.brands li .img-overflow {
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0.1);
+	top: 0;
+	left: 0;
+	cursor: pointer;
+	color: #f00;
+	width: 139px;
+	height: 91px;
+	display: none;
+	z-index: 1;
+}
+
+.brands li .img-overflow .tools {
+	text-align: center;
+	margin: 5px 0;
+}
+
+.brands li .img-overflow .price {
+	background-color: #EE472C;
+	position: absolute;
+	text-align: center;
+	font-size: 14px;
+	padding: 2px 0;
+	bottom: 0px;
+	color: #fff;
+	width: 100%;
+	bottom: 0px;
+}
+
+//brands end ====================================
 
 .m-box10-1:after,.m-box12 .tp:after,.m-box12 .ct:after{
     clear: both;
@@ -895,19 +946,93 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
     padding: 10px 0 10px 10px;
 }
 
+.m-box10 .banner {
+    width:700px;
+    float:left;
+}
+
+.m-box10 .slider {
+    width:270px;
+    float:right;
+}
+
+#topBanner {
+	width: 700px;
+	height: 300px;
+	overflow: hidden;
+	position: relative;
+}
+
+#topBanner ul {
+	height: 300px;
+	position: absolute;
+}
+
+#topBanner ul li {
+	float: left;
+	width: 700px;
+	height: 300px;
+	overflow: hidden;
+	position: relative;
+	background: #000;
+}
+
+#topBanner ul li div {
+	position: absolute;
+	overflow: hidden;
+}
+
+#topBanner .slider-btn-bg {
+	position: absolute;
+	width: 700px;
+	height: 20px;
+	left: 0;
+	bottom: 0;
+	background: #000;
+}
+
+#topBanner .slider-btn {
+	position: absolute;
+	right: 5px;
+	bottom: 0;
+	text-align: right;
+}
+
+#topBanner .slider-btn span {
+	display: inline-block;
+	_display: inline;
+	_zoom: 1;
+	width: 25px;
+	height: 10px;
+	_font-size: 0;
+	margin-left: 5px;
+	cursor: pointer;
+	background: #fff;
+}
+
+#topBanner .preNext {
+	width: 45px;
+	height: 100px;
+	position: absolute;
+	top: 90px;
+	background: url(img/slider-btns.png) no-repeat 0 0;
+	cursor: pointer;
+}
+
+#topBanner .pre {
+	left: 0;
+}
+
+#topBanner .next {
+	right: 0;
+	background-position: right top;
+}
+
 .m-box10-3 {
     height: 430px;
     position: relative;
 }
 
-
-.m-banner {
-    float: left;
-    height: 250px;
-    overflow: hidden;
-    position: relative;
-    width: 700px;
-}
 
 .m-box11 {
     color: #666666;
