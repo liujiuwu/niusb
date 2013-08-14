@@ -55,15 +55,15 @@ object SyncData {
             handleImg(sdir + t.pic, ddir) match {
               case Full(newPicName) =>
                 val brand = Brand.create
-                brand.name(t.name)
+                brand.name(t.name.trim())
                 brand.pic(newPicName)
                 brand.basePrice((t.price * 10000).toInt)
-                brand.useDescn(t.range)
+                brand.useDescn(t.range.trim())
                 brand.brandTypeCode(t.category)
                 brand.regNo(t.number)
                 //brand.regDate(t.regdate)
                 brand.owner(user.id.get)
-                brand.lsqz(t.lsqz)
+                brand.lsqz(t.lsqz.trim())
                 brand.save()
                 syncNum += 1
               //println(t.id);
