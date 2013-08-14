@@ -28,55 +28,56 @@ import net.liftweb.util.Helpers._
 import code.model.ArticleType
 import code.model.UserType
 import code.model.Article
+import code.model.ArticleStatus
 
 class ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "create" => create
     case "list" => list
-    case "view" => view
     case "edit" => edit
   }
 
-  private def bies: List[QueryParam[Brand]] = {
-    val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
-    val byBuffer = ArrayBuffer[QueryParam[Brand]](OrderBy(Brand.id, Descending))
+  private def bies: List[QueryParam[Article]] = {
+    val (articleType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
+    val byBuffer = ArrayBuffer[QueryParam[Article]](OrderBy(Article.articleOrder, Descending))
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         val kv = k.trim()
-        searchType match {
-          case Full("0") => byBuffer += By(Brand.regNo, kv)
-          case Full("1") => byBuffer += By(Brand.owner, kv.toLong)
-          case _ =>
-        }
+        byBuffer += Like(Article.title, s"%${kv}%")
+      case _ =>
+    }
+
+    articleType match {
+      case Full(s) if (s != "all") =>
+        byBuffer += By(Article.articleType, ArticleType(s.toInt))
       case _ =>
     }
 
     status match {
       case Full(s) if (s != "all") =>
-        byBuffer += By(Brand.status, BrandStatus(s.toInt))
+        byBuffer += By(Article.status, ArticleStatus(s.toInt))
       case _ =>
     }
+
     byBuffer.toList
   }
 
   def list = {
-    def actions(brand: Brand): NodeSeq = {
-      <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-bolt"></i></a> ++ Text(" ") ++
-        <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
+    def actions(article: Article): NodeSeq = {
+      <a href={ "/admin/article/edit?id=" + article.id.get } class="btn btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
         a(() => {
-          BoxConfirm("确定删除【" + brand.name.get + "】商标？此操作不可恢复，请谨慎！", {
-            ajaxInvoke(() => { brand.delete_!; JsCmds.Reload })._2
+          BoxConfirm("确定删除【" + article.title.get + "】？此操作不可恢复，请谨慎！", {
+            ajaxInvoke(() => { article.delete_!; JsCmds.Reload })._2
           })
         }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
     }
 
-    val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
-
-    var searchTypeVal, keywordVal, statusVal = ""
+    val (articleType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
     var url = originalUri
-    searchType match {
+    var articleTypeVal, keywordVal, statusVal = ""
+    articleType match {
       case Full(t) =>
-        searchTypeVal = t
+        articleTypeVal = t
         url = appendParams(url, List("type" -> t))
       case _ =>
     }
@@ -93,116 +94,52 @@ class ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
       case _ =>
     }
 
-    val paginatorModel = Brand.paginator(url, bies: _*)()
+    val paginatorModel = Article.paginator(url, bies: _*)()
 
     val searchForm = "#searchForm" #>
       <form class="form-inline" action={ url } method="get">
-        <select id="searchType" name="type">
-          <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>注册号</option>
-          <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>用户ID</option>
+        <input type="text" id="keyword" name="keyword" class="span8" value={ keywordVal } placeholder="搜索标题关键词"/>
+        <select id="type" name="type">
+          { for ((k, v) <- Article.validArticleTypeSelectValues) yield <option value={ k } selected={ if (articleTypeVal == k) "selected" else null }>{ v }</option> }
         </select>
-        <input type="text" id="keyword" name="keyword" value={ keywordVal }/>
         <select id="status" name="status">
-          { for ((k, v) <- Brand.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
+          { for ((k, v) <- Article.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
         </select>
         <button type="submit" class="btn"><i class="icon-search"></i> 搜索</button>
+        <a href="/admin/article/create" class="btn btn-primary"><i class="icon-plus"></i> 发布文章</a>
       </form>
 
-    val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
-      "#regNo" #> brand.regNo.get &
-        "#name" #> <a href={ "/admin/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
-        "#brandType" #> brand.brandTypeCode.displayType &
-        "#regDate" #> brand.regDate.asHtml &
-        "#status" #> brand.status.displayStatus &
-        "#basePrice" #> brand.basePrice.displayBasePrice &
-        "#sellPrice" #> brand.sellPrice.displaySellPrice(false, true) &
-        "#self" #> brand.isSelf.displaySelf &
-        "#recommend" #> brand.recommend.displayRecommend &
-        "#strikePrice" #> brand.strikePrice.displayStrikePrice &
-        "#actions" #> actions(brand)
+    val dataList = "#dataList tr" #> paginatorModel.datas.map(article => {
+      "#title" #> article.title &
+        "#articleType" #> article.articleType &
+        "#articleFrom" #> article.articleFrom.get &
+        "#status" #> article.status &
+        "#readCount" #> article.readCount.get &
+        "#articleOrder" #> article.articleOrder.get &
+        "#actions" #> actions(article)
     })
     searchForm & dataList & "#pagination" #> paginatorModel.paginate _
   }
 
-  def view = {
-    tabMenuRV(Full("zoom-in" -> "查看商标"))
-
-    (for {
-      brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
-      brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
-    } yield {
-      "#regNo" #> brand.regNo.get &
-        "#name" #> brand.name.get &
-        "#brand-type" #> brand.brandTypeCode.displayType &
-        "#status" #> brand.status.displayStatus &
-        "#basePrice" #> brand.basePrice.displayBasePrice &
-        "#sellPrice" #> brand.sellPrice.displaySellPrice(style = true) &
-        "#strikePrice" #> brand.strikePrice.displayStrikePrice &
-        "#regdate" #> brand.regDate.asHtml &
-        "#applicant" #> brand.applicant &
-        "#useDescn" #> brand.useDescn &
-        "#descn" #> brand.descn &
-        "#self" #> brand.isSelf.displaySelf &
-        "#recommend" #> brand.recommend.displayRecommend &
-        "#concernCount" #> brand.concernCount.get &
-        "#remark" #> brand.remark.get &
-        "#pic" #> brand.pic.displayPic(alt = brand.name.get) &
-        "#spic" #> brand.pic.displaySmallPic &
-        "#owner" #> brand.owner.getOwner.displayInfo &
-        "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
-        "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-info"><i class="icon-bolt"></i> 商标设置</a> &
-        "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a>
-    }): CssSel
-  }
-
   def edit = {
-    tabMenuRV(Full("edit" -> "修改商标"))
+    tabMenuRV(Full("edit" -> "修改文章"))
 
     (for {
-      brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
-      brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
+      articleId <- S.param("id").flatMap(asLong) ?~ "文章ID不存在或无效"
+      article <- Article.find(By(Article.id, articleId)) ?~ s"ID为${articleId}的文章不存在。"
     } yield {
-      var basePrice = "0"
-      var regNo, pic, name, regDateStr, applicant, useDescn, descn, lsqz = ""
-      var brandType: BrandType = BrandType.getBrandTypes().get(brand.brandTypeCode.get).get
-
       def process(): JsCmd = {
-        val oldPic = brand.pic.get
-        brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
-        brand.brandTypeCode(brandType.code.get)
-        brand.lsqz(lsqz)
-        brand.validate match {
-          case Nil =>
-            brand.save
-            UploadFileHelper.handleBrandImg(pic)
-            if (oldPic != pic) {
-              val oldPicFile = new File(UploadFileHelper.uploadBrandDir() + File.separator + oldPic)
-              if (oldPicFile.exists()) {
-                FileUtils.deleteQuietly(oldPicFile)
-              }
-            }
-            //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息已成功修改！")))
-            S.redirectTo("/admin/brand/view?id=" + brand.id.get)
-          case errors => println(errors); Noop
-        }
+        article.save()
+        S.redirectTo("/admin/article/index")
       }
 
-      val brandTypes = BrandType.getBrandTypes().values.toList
-      "@regNo" #> text(brand.regNo.get, regNo = _) &
-        "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
-        "@name" #> text(brand.name.get, name = _) &
-        "@pic" #> hidden(pic = _, brand.pic.get) &
-        "#brand_pic [src]" #> brand.pic.src &
-        "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
-        "@brand_type" #> select(brandTypes.map(v => (v.code.toString, v.code + " -> " + v.name)), Full(brandType.code.toString), v => (brandType = BrandType.getBrandTypes().get(v.toInt).get)) &
-        "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
-        "@applicant" #> text(brand.applicant.get, applicant = _) &
-        "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &
-        "@descn" #> textarea(brand.descn.get, descn = _) &
-        "@lsqz" #> hidden(lsqz = _, lsqz) &
-        "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-bolt"></i> 商标设置</a> &
-        "#view-btn" #> <a href={ "/admin/brand/view?id=" + brand.id.get } class="btn btn-info"><i class="icon-info"></i> 查看商标</a> &
-        "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a> &
+      val articleTypes = ArticleType.values.toList
+      "@title" #> text(article.title.get, article.title(_)) &
+        "@article_from" #> text(article.articleFrom.get, article.articleFrom(_)) &
+        "@article_type" #> selectObj[ArticleType.Value](ArticleType.values.toList.map(v => (v, v.toString)), Full(article.articleType.is), article.articleType(_)) &
+        "@status" #> selectObj[ArticleStatus.Value](ArticleStatus.values.toList.map(v => (v, v.toString)), Full(article.status.is), article.status(_)) &
+        "@article_order" #> text(article.articleOrder.get.toString, v => article.articleOrder(v.toInt)) &
+        "@content" #> textarea(article.content.get, article.content(_)) &
         "@sub" #> hidden(process)
     }): CssSel
   }
@@ -212,12 +149,15 @@ class ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     val article = Article.create
     def process(): JsCmd = {
+      article.save()
+      S.redirectTo("/admin/article/index")
     }
 
     val articleTypes = ArticleType.values.toList
     "@title" #> text(article.title.get, article.title(_)) &
-      "@articleFrom" #> text(article.articleFrom.get, article.articleFrom(_)) &
+      "@article_from" #> text(article.articleFrom.get, article.articleFrom(_)) &
       "@article_type" #> selectObj[ArticleType.Value](ArticleType.values.toList.map(v => (v, v.toString)), Full(article.articleType.is), article.articleType(_)) &
+      "@status" #> selectObj[ArticleStatus.Value](ArticleStatus.values.toList.map(v => (v, v.toString)), Full(article.status.is), article.status(_)) &
       "@article_order" #> text(article.articleOrder.get.toString, v => article.articleOrder(v.toInt)) &
       "@content" #> textarea(article.content.get, article.content(_)) &
       "@sub" #> hidden(process)

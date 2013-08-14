@@ -8,7 +8,15 @@ import net.liftweb.mapper._
 
 object ArticleType extends Enumeration {
   type ArticleType = Value
-  val News = Value(0, "新闻")
+  val System = Value(0, "维护公告")
+  val News = Value(1, "新闻")
+  val Help = Value(2, "帮助")
+}
+
+object ArticleStatus extends Enumeration {
+  type ArticleStatus = Value
+  val Normal = Value(0, "正常")
+  val Close = Value(1, "关闭")
 }
 
 class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
@@ -24,6 +32,10 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
   object content extends MappedText(this)
   object articleOrder extends MappedInt(this) {
     override def dbColumnName = "article_order"
+  }
+
+  object status extends MappedEnum(this, ArticleStatus) {
+    override def defaultValue = ArticleStatus.Normal
   }
 
   object readCount extends MappedInt(this) {
@@ -70,5 +82,9 @@ object Article extends Article with CRUDify[Long, Article] with Paginator[Articl
   def validArticleTypeSelectValues = {
     val articleTypes = ArticleType.values.toList.map(v => (v.id.toString, v.toString))
     ("all", "所有类型") :: articleTypes
+  }
+  def validStatusSelectValues = {
+    val status = ArticleStatus.values.toList.map(v => (v.id.toString, v.toString))
+    ("all", "所有状态") :: status
   }
 }

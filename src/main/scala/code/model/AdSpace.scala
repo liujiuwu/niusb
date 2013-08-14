@@ -16,7 +16,7 @@ object AdSpaceType extends Enumeration {
 object AdSpaceStatus extends Enumeration {
   type AdSpaceStatus = Value
   val Normal = Value(0, "正常")
-  val Disabled = Value(1, "禁止")
+  val Close = Value(1, "关闭")
 }
 
 class AdSpace extends LongKeyedMapper[AdSpace] with IdPK {
@@ -31,7 +31,7 @@ class AdSpace extends LongKeyedMapper[AdSpace] with IdPK {
   object width extends MappedInt(this)
   object height extends MappedInt(this)
 
-  object enabled extends MappedEnum(this, AdSpaceStatus) {
+  object status extends MappedEnum(this, AdSpaceStatus) {
     override def defaultValue = AdSpaceStatus.Normal
   }
 
@@ -49,7 +49,7 @@ class AdSpace extends LongKeyedMapper[AdSpace] with IdPK {
 
 object AdSpace extends AdSpace with CRUDify[Long, AdSpace] with LongKeyedMetaMapper[AdSpace] {
   override def dbTableName = "ad_spaces"
-  override def fieldOrder = List(id, code, name, adSpaceType, width, height, enabled, startTime, endTime, descn)
+  override def fieldOrder = List(id, code, name, adSpaceType, width, height, status, startTime, endTime, descn)
 
   private val adSpaces = LinkedHashMap[Int, AdSpace]()
 
