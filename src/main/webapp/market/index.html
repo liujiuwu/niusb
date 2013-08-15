@@ -74,6 +74,7 @@
 }
 
 .m-box22 .tit {
+	font-size: 14px;
 	padding: 10px;
 }
 
@@ -97,7 +98,14 @@
 }
 
 .m-box23 .tit {
+	float: left;
+	font-size: 14px;
 	padding: 10px;
+}
+
+.m-box23 .tools {
+	float: right;
+	padding: 5px;
 }
 
 .m-box23 .ct {
@@ -105,16 +113,9 @@
 }
 </style>
 
-	<div class="row">
-		<div class="span25">
-			<div class="well">
-				<input type="text" />
-			</div>
-		</div>
-	</div>
-	<div class="row">
+	<div class="row" data-lift="MarketOps.list?parallel=true;eager_eval=true;type=43;limit=60">
 		<div class="span7">
-			<div class="m-box22" data-lift="MarketOps.brandTypes">
+			<div class="m-box22" data-lift="MarketOps.brandTypes?parallel=true">
 				<div class="tp">
 					<p class="tit">
 						<span id="title">商标类别</span>
@@ -127,25 +128,17 @@
 				</div>
 			</div>
 		</div>
-		<div class="span18" data-lift="IndexOps.mainConent?parallel=true;eager_eval=true;brandTypeId=43;limit=60">
-
+		<div class="span18">
 			<div class="m-box23">
 				<div class="tp">
-					<p class="tit">
+					<div class="tit">
 						<span id="title">服装鞋帽</span>
-					</p>
-					<div>
-						<div class="btn-group">
-							<button class="btn">
-								<i class="icon-jpy"></i> 价格
-							</button>
-							<button class="btn">
-								<i class="icon-thumbs-up-alt"></i> 推荐
-							</button>
-							<button class="btn">
-								<i class="icon-fire"></i> 热门
-							</button>
-						</div>
+					</div>
+					<div class="tools btn-group">
+						<a class="btn lift-price"> <i class="icon-jpy"></i> 价格
+						</a> <a class="btn lift-recommend"> <i class="icon-thumbs-up-alt"></i> 推荐
+						</a> <a class="btn lift-hot"> <i class="icon-fire"></i> 热门
+						</a>
 					</div>
 				</div>
 				<div class="ct">
@@ -154,6 +147,7 @@
 					</ul>
 				</div>
 			</div>
+			<span data-lift="embed?what=_paginator"></span>
 		</div>
 	</div>
 </div>

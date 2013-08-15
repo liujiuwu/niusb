@@ -33,6 +33,9 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
     val nv = brandCount.get - v
     brandCount(if (nv < 0) 0 else nv)
   }
+
+  def displayTypeName() = { if (recommend.get) <span style="color:red;">{ code.get + "." + name.get }</span> else code.get + "." + name.get }
+
 }
 
 object BrandType extends BrandType with CRUDify[Long, BrandType] with LongKeyedMetaMapper[BrandType] {
@@ -40,6 +43,10 @@ object BrandType extends BrandType with CRUDify[Long, BrandType] with LongKeyedM
   override def fieldOrder = List(id, code, name, brandCount, recommend, descn)
 
   private val brandTypes = LinkedHashMap[Int, BrandType]()
+
+  def isBrandType(code: Int) = {
+    brandTypes.contains(code)
+  }
 
   def getBrandTypes(force: Boolean = false): LinkedHashMap[Int, BrandType] = {
     if (brandTypes.isEmpty || force) {
