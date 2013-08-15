@@ -22,12 +22,21 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   private def bies: List[QueryParam[Brand]] = {
-    val (searchType, keyword) = (S.param("type"), S.param("keyword"))
-    val byBuffer = ArrayBuffer[QueryParam[Brand]](OrderBy(Brand.id, Descending))
+    val (searchType, keyword, order) = (S.param("type"), S.param("keyword"), S.param("order"))
+    val byBuffer = ArrayBuffer[QueryParam[Brand]]()
     searchType match {
       case Full(t) if (BrandType.isBrandType(t.toInt)) =>
         byBuffer += By(Brand.brandTypeCode, t.toInt)
       case _ =>
+    }
+    order match {
+      case Full(orderBy) => orderBy match {
+        case "price-z" => byBuffer += OrderBy(Brand.basePrice, Descending)
+        case "price-a" => byBuffer += OrderBy(Brand.basePrice, Ascending)
+        case "recommend" => byBuffer += By(Brand.recommend, true)
+        case "hot" => byBuffer += OrderBy(Brand.concernCount, Descending)
+      }
+      case _ => byBuffer += OrderBy(Brand.id, Descending)
     }
     byBuffer.toList
   }
@@ -37,30 +46,50 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     val limit = S.attr("limit").map(_.toInt).openOr(40)
 
     var url = originalUri
+    var orderUrl = url
     var searchTypeVal, keywordVal, orderVal = ""
     searchType match {
       case Full(t) =>
         searchTypeVal = t
         url = appendParams(url, List("type" -> t))
+        orderUrl = url
       case _ =>
     }
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         keywordVal = k
         url = appendParams(url, List("keyword" -> k))
+        orderUrl = url
       case _ =>
     }
+
+    var orderBy, orderDirectional = ""
     order match {
       case Full(o) if (!o.trim().isEmpty()) =>
         orderVal = o
+        orderUrl = url
+        orderBy = orderVal
+        val os = orderVal.split("-")
+        if (os.length >= 2) {
+          orderBy = os(0)
+          orderDirectional = os(1)
+        }
         url = appendParams(url, List("order" -> orderVal))
       case _ =>
     }
 
-    val orderTools = ".lift-price [href]" #> appendParams(url, List("order" -> "price")) &
-      ".lift-hot [href]" #> appendParams(url, List("order" -> "hot")) &
-      ".lift-recommend [href]" #> appendParams(url, List("order" -> "recommend")) &
-      s".lift-${orderVal} [class+]" #> "active"
+    val orderTools = ".lift-price [href]" #> appendParams(orderUrl, List("order" -> "price-z")) & ".lift-price-z [href]" #> appendParams(orderUrl, List("order" -> "price-z")) &
+      ".lift-price-a [href]" #> appendParams(orderUrl, List("order" -> "price-a")) &
+      ".lift-hot [href]" #> appendParams(orderUrl, List("order" -> "hot")) &
+      ".lift-recommend [href]" #> appendParams(orderUrl, List("order" -> "recommend")) &
+      s".lift-${orderBy} [class+]" #> "active" &
+      s".lift-${orderBy} *" #> {
+        orderDirectional match {
+          case "a" => <lift:children><i class="icon-jpy"></i> 从低到高</lift:children>
+          case "z" => <lift:children><i class="icon-jpy"></i> 从高到低</lift:children>
+          case _ => <lift:children><i class="icon-jpy"></i> 价格</lift:children>
+        }
+      }
 
     val paginatorModel = Brand.paginator(url, bies: _*)(itemsOnPage = limit)
     val dataList = ".brands li" #> paginatorModel.datas.map(brand => {
