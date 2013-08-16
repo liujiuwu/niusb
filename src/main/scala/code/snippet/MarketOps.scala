@@ -42,54 +42,66 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def list = {
-    val (searchType, keyword, order) = (S.param("type"), S.param("keyword"), S.param("order"))
+    val (brandTypeCode, keyword, likeType, orderType) = (S.param("brandTypeCode"), S.param("keyword"), S.param("likeType"), S.param("orderType"))
     val limit = S.attr("limit").map(_.toInt).openOr(40)
 
     var url = originalUri
-    var orderUrl = url
-    var searchTypeVal, keywordVal, orderVal = ""
-    searchType match {
-      case Full(t) =>
-        searchTypeVal = t
-        url = appendParams(url, List("type" -> t))
-        orderUrl = url
+    var brandTypeCodeVal, keywordVal, likeTypeVal, orderVal = ""
+    brandTypeCode match {
+      case Full(code) =>
+        brandTypeCodeVal = code
+        url = appendParams(url, List("brandTypeCode" -> code))
       case _ =>
     }
+
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         keywordVal = k
         url = appendParams(url, List("keyword" -> k))
-        orderUrl = url
       case _ =>
     }
 
-    var orderBy, orderDirectional = ""
-    order match {
-      case Full(o) if (!o.trim().isEmpty()) =>
-        orderVal = o
-        orderUrl = url
-        orderBy = orderVal
-        val os = orderVal.split("-")
-        if (os.length >= 2) {
-          orderBy = os(0)
-          orderDirectional = os(1)
-        }
-        url = appendParams(url, List("order" -> orderVal))
+    likeType match {
+      case Full(like) =>
+        likeTypeVal = like
+        url = appendParams(url, List("likeType" -> like))
+      case _ =>
+    }
+    
+     orderType match {
+      case Full(order) =>
+        orderVal = order
+        url = appendParams(url, List("orderType" -> order))
       case _ =>
     }
 
-    val orderTools = ".lift-price [href]" #> appendParams(orderUrl, List("order" -> "price-z")) & ".lift-price-z [href]" #> appendParams(orderUrl, List("order" -> "price-z")) &
-      ".lift-price-a [href]" #> appendParams(orderUrl, List("order" -> "price-a")) &
-      ".lift-hot [href]" #> appendParams(orderUrl, List("order" -> "hot")) &
-      ".lift-recommend [href]" #> appendParams(orderUrl, List("order" -> "recommend")) &
-      s".lift-${orderBy} [class+]" #> "active" &
-      s".lift-${orderBy} *" #> {
-        orderDirectional match {
-          case "a" => <lift:children><i class="icon-jpy"></i> 从低到高</lift:children>
-          case "z" => <lift:children><i class="icon-jpy"></i> 从高到低</lift:children>
-          case _ => <lift:children><i class="icon-jpy"></i> 价格</lift:children>
-        }
-      }
+    val searchForm = "#searchForm" #>
+      <form class="form-inline" action={ url } method="get">
+        <div class="controls">
+          <select id="brandTypeCode" name="brandTypeCode">
+            <option value="all">所有商标类型</option>
+            { brandTypeOptions(brandTypeCodeVal) }
+          </select>
+          <input type="text" id="keyword" placeholder="商标名或注册号"/>
+          <select id="likeType" name="likeType" class="span3">
+            <option value="0" selected={ if (likeTypeVal == "0") "selected" else null }>精确</option>
+            <option value="1" selected={ if (likeTypeVal == "1") "selected" else null }>模糊</option>
+            <option value="2" selected={ if (likeTypeVal == "2") "selected" else null }>前包含</option>
+            <option value="3" selected={ if (likeTypeVal == "3") "selected" else null }>后包含</option>
+          </select>
+          <select id="orderType" name="orderType" class="span4">
+            <option value="0" selected={ if (orderVal == "0") "selected" else null }>由新至旧</option>
+            <option value="1" selected={ if (orderVal == "1") "selected" else null }>价格从低至高</option>
+            <option value="2" selected={ if (orderVal == "2") "selected" else null }>价格从高至低</option>
+            <option value="3" selected={ if (orderVal == "3") "selected" else null }>推荐</option>
+            <option value="4" selected={ if (orderVal == "4") "selected" else null }>热门</option>
+          </select>
+          <button type="submit" class="btn">
+            <i class="icon-search"></i>
+            搜索
+          </button>
+        </div>
+      </form>
 
     val paginatorModel = Brand.paginator(url, bies: _*)(itemsOnPage = limit)
     val dataList = ".brands li" #> paginatorModel.datas.map(brand => {
@@ -98,7 +110,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         ".price *" #> brand.sellPrice.displaySellPrice()
     })
 
-    orderTools & dataList & "#pagination" #> paginatorModel.paginate _
+    searchForm & dataList & "#pagination" #> paginatorModel.paginate _
   }
 
   def view = {
@@ -115,6 +127,13 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     ".brand-types li" #> bts.map(b => {
       "li *" #> <a href={ "/market/index?type=" + b.code }>{ b.displayTypeName() }</a>
     })
+  }
+
+  private def brandTypeOptions(selected: String) = {
+    val bts = BrandType.getBrandTypes().values.toList
+    for (b <- bts; code = b.code.get.toString) yield {
+      <option value={ code } selected={ if (selected == code) "selected" else null }>{ code + "." + b.name.get }</option>
+    }
   }
 
 }
