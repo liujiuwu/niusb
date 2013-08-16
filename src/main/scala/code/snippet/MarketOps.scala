@@ -13,6 +13,7 @@ import code.model.Brand
 import code.model.BrandType
 import net.liftweb.common._
 import scala.collection.mutable.ArrayBuffer
+import code.lib.SelectBoxHelper
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -67,8 +68,8 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         url = appendParams(url, List("likeType" -> like))
       case _ =>
     }
-    
-     orderType match {
+
+    orderType match {
       case Full(order) =>
         orderVal = order
         url = appendParams(url, List("orderType" -> order))
@@ -80,21 +81,14 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         <div class="controls">
           <select id="brandTypeCode" name="brandTypeCode">
             <option value="all">所有商标类型</option>
-            { brandTypeOptions(brandTypeCodeVal) }
+            { SelectBoxHelper.brandTypeOptions(brandTypeCodeVal) }
           </select>
           <input type="text" id="keyword" placeholder="商标名或注册号"/>
           <select id="likeType" name="likeType" class="span3">
-            <option value="0" selected={ if (likeTypeVal == "0") "selected" else null }>精确</option>
-            <option value="1" selected={ if (likeTypeVal == "1") "selected" else null }>模糊</option>
-            <option value="2" selected={ if (likeTypeVal == "2") "selected" else null }>前包含</option>
-            <option value="3" selected={ if (likeTypeVal == "3") "selected" else null }>后包含</option>
+            { SelectBoxHelper.likeOptions(likeTypeVal) }
           </select>
           <select id="orderType" name="orderType" class="span4">
-            <option value="0" selected={ if (orderVal == "0") "selected" else null }>由新至旧</option>
-            <option value="1" selected={ if (orderVal == "1") "selected" else null }>价格从低至高</option>
-            <option value="2" selected={ if (orderVal == "2") "selected" else null }>价格从高至低</option>
-            <option value="3" selected={ if (orderVal == "3") "selected" else null }>推荐</option>
-            <option value="4" selected={ if (orderVal == "4") "selected" else null }>热门</option>
+            { SelectBoxHelper.orderOptions(orderVal) }
           </select>
           <button type="submit" class="btn">
             <i class="icon-search"></i>
@@ -127,13 +121,6 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     ".brand-types li" #> bts.map(b => {
       "li *" #> <a href={ "/market/index?type=" + b.code }>{ b.displayTypeName() }</a>
     })
-  }
-
-  private def brandTypeOptions(selected: String) = {
-    val bts = BrandType.getBrandTypes().values.toList
-    for (b <- bts; code = b.code.get.toString) yield {
-      <option value={ code } selected={ if (selected == code) "selected" else null }>{ code + "." + b.name.get }</option>
-    }
   }
 
 }
