@@ -61,11 +61,21 @@
 	padding: 5px;
 }
 
+.m-box21 {
+	background-color: #FFFFFF;
+	border: 1px solid #DBDBDB;
+	margin-bottom: 15px;
+}
+
+.m-box21-1 {
+	margin-top: 0;
+	padding: 10px;
+}
+
 .m-box22 {
 	background-color: #FFFFFF;
 	border: 1px solid #DBDBDB;
 	margin-bottom: 15px;
-	float: left;
 }
 
 .m-box22-1 {
@@ -113,51 +123,66 @@
 }
 </style>
 
-	<div class="row" data-lift="MarketOps.list?parallel=true;eager_eval=true;type=43;limit=60">
-		<div class="span7">
-			<div class="m-box22" data-lift="MarketOps.brandTypes?parallel=true">
-				<div class="tp">
-					<p class="tit">
-						<span id="title">商标类别</span>
-					</p>
-				</div>
-				<div class="ct">
-					<ul class="brand-types">
-						<li>类型名</li>
-					</ul>
+	<div data-lift="MarketOps.list?parallel=true;eager_eval=true;type=43;limit=60">
+		<div class="row">
+			<div class="span25">
+				<div class="m-box21 m-box21-1">
+					<form class="form-horizontal">
+						<div class="control-group">
+							<label class="control-label" for="inputEmail">Email</label>
+							<div class="controls">
+								<input type="text" id="inputEmail" placeholder="Email"/>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="inputPassword">Password</label>
+							<div class="controls">
+								<input type="password" id="inputPassword" placeholder="Password"/>
+							</div>
+						</div>
+						<div class="control-group">
+							<div class="controls">
+								<label class="checkbox"> <input type="checkbox"/> Remember me
+								</label>
+								<button type="submit" class="btn">Sign in</button>
+							</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
-		<div class="span18">
-			<div class="m-box23">
-				<div class="tp">
-					<div class="tit">
-						<span id="title">服装鞋帽</span>
+		<div class="row">
+			<div class="span25">
+				<div class="m-box23">
+					<div class="tp">
+						<div class="tit">
+							<span id="title">服装鞋帽</span>
+						</div>
+						<div class="tools">
+							<div class="btn-group">
+								<a class="btn lift-price"><i class="icon-jpy"></i> 价格</a> <a class="btn dropdown-toggle" data-toggle="dropdown"> <span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu">
+									<li><a class="lift-price-a"><i class="icon-sort-by-order"></i> 从低到高</a></li>
+									<li class="divider"></li>
+									<li><a class="lift-price-z"><i class="icon-sort-by-order-alt"></i> 从高到低</a></li>
+								</ul>
+							</div>
+							<div class="btn-group">
+								<a class="btn lift-recommend"> <i class="icon-thumbs-up-alt"></i> 推荐
+								</a> <a class="btn lift-hot"> <i class="icon-fire"></i> 热门
+								</a>
+							</div>
+						</div>
 					</div>
-					<div class="tools">
-						<div class="btn-group">
-							<a class="btn lift-price"><i class="icon-jpy"></i> 价格</a> <a class="btn dropdown-toggle" data-toggle="dropdown"> <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a class="lift-price-a"><i class="icon-sort-by-order"></i> 从低到高</a></li>
-								<li class="divider"></li>
-								<li><a class="lift-price-z"><i class="icon-sort-by-order-alt"></i> 从高到低</a></li>
-							</ul>
-						</div>
-						<div class="btn-group">
-							<a class="btn lift-recommend"> <i class="icon-thumbs-up-alt"></i> 推荐
-							</a> <a class="btn lift-hot"> <i class="icon-fire"></i> 热门
-							</a>
-						</div>
+					<div class="ct">
+						<ul class="brands">
+							<div class='lift:embed?what=_brandUnit'>商标模板</div>
+						</ul>
 					</div>
 				</div>
-				<div class="ct">
-					<ul class="brands">
-						<div class='lift:embed?what=_brandUnit'>商标模板</div>
-					</ul>
-				</div>
+				<span data-lift="embed?what=_paginator"></span>
 			</div>
-			<span data-lift="embed?what=_paginator"></span>
 		</div>
 	</div>
 </div>
