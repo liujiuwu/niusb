@@ -1,70 +1,22 @@
 <div id="main" class="container" data-lift="surround?with=default;at=content">
 	<style>
-.brands li {
-	float: left;
-	margin: 5px 10px;
-	position: relative;
-}
-
-.brands li .brand-name {
-	color: #999999;
-	font-size: 12px;
-	height: 22px;
-	line-height: 22px;
-	overflow: hidden;
-	text-align: center;
-	width: 128px;
-}
-
-.brands li .brand-img {
-	width: 128px;
-	height: 80px;
-	border: 1px solid #DBDBDB;
-	padding: 5px;
-}
-
-.brands li .img-overflow {
-	position: absolute;
-	background-color: rgba(0, 0, 0, 0.1);
-	top: 0;
-	left: 0;
-	cursor: pointer;
-	color: #f00;
-	width: 139px;
-	height: 91px;
-	display: none;
-	z-index: 1;
-}
-
-.brands li .img-overflow .tools {
-	text-align: center;
-	margin: 5px 0;
-}
-
-.brands li .img-overflow .price {
-	background-color: #EE472C;
-	position: absolute;
-	text-align: center;
-	font-size: 14px;
-	padding: 2px 0;
-	bottom: 0px;
-	color: #fff;
-	width: 100%;
-	bottom: 0px;
-}
-
-.brand-types li {
-	float: left;
-	display: block;
-	width: 72px;
-	height: 25px;
-	padding: 5px;
-}
-
 .m-box21 {
 	background-color: #FFFFFF;
 	border: 1px solid #DBDBDB;
 	margin-bottom: 15px;
+}
+
+.m-box21 .tp {
+	border-bottom: 2px solid #000000;
+}
+
+.m-box21 .tit {
+	font-size: 14px;
+	padding: 10px;
+}
+
+.m-box21 .ct {
+	padding: 10px 8px;
 }
 
 .m-box21-1 {
@@ -100,7 +52,6 @@
 	background-color: #FFFFFF;
 	border: 1px solid #DBDBDB;
 	margin-bottom: 15px;
-	float: left;
 }
 
 .m-box23 .tp {
@@ -119,21 +70,27 @@
 }
 
 .m-box23 .ct {
-	padding: 10px;
+	background: #FFFFFF;
+	padding: 13px;
 }
 </style>
 
 	<div data-lift="MarketOps.list?parallel=true;eager_eval=true;type=43;limit=60">
 		<div class="row">
 			<div class="span25">
-				<div class="m-box21 m-box21-1">
-					<span id="searchForm"></span>
+				<div class="m-box21">
+					<div class="tp">
+						<div class="tit">商标搜索</div>
+					</div>
+					<div class="ct">
+						<span id="searchForm"></span>
+					</div>
 				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="span25">
-				<div class="m-box23">
+				<div class="m-box23 m-box23-1">
 					<div class="tp">
 						<div class="tit">
 							<span id="title">服装鞋帽</span>
@@ -141,7 +98,7 @@
 					</div>
 					<div class="ct">
 						<ul class="brands">
-							<div class='lift:embed?what=_brandUnit'>商标模板</div>
+							<div class='lift:embed?what=_brandUnitInfo'>商标模板</div>
 						</ul>
 					</div>
 				</div>

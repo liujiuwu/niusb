@@ -34,6 +34,7 @@ import code.model.BrandType
 import code.model.AdSpace
 import code.model.Ad
 import code.model.Article
+import code.model.Message
 
 class Boot extends Loggable {
   def boot {
@@ -49,7 +50,7 @@ class Boot extends Loggable {
       }
     }*/
     //DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
-    Schemifier.schemify(true, Schemifier.infoF _, User, BrandType, Brand, AdSpace, Ad, Article)
+    Schemifier.schemify(true, Schemifier.infoF _, User, BrandType, Brand, AdSpace, Ad, Article, Message)
 
     LiftRules.setSiteMap(Site.siteMap)
 

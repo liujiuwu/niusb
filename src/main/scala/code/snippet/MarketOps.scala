@@ -23,71 +23,117 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   private def bies: List[QueryParam[Brand]] = {
-    val (searchType, keyword, order) = (S.param("type"), S.param("keyword"), S.param("order"))
+    val (brandTypeCode, keywordType, keyword, likeType, orderType) = (S.param("btc"), S.param("kt"), S.param("k"), S.param("lt"), S.param("ot"))
     val byBuffer = ArrayBuffer[QueryParam[Brand]]()
-    searchType match {
-      case Full(t) if (BrandType.isBrandType(t.toInt)) =>
-        byBuffer += By(Brand.brandTypeCode, t.toInt)
+    brandTypeCode match {
+      case Full(code) if (code != "all" && BrandType.isBrandType(code.toInt)) =>
+        byBuffer += By(Brand.brandTypeCode, code.toInt)
       case _ =>
     }
-    order match {
-      case Full(orderBy) => orderBy match {
-        case "price-z" => byBuffer += OrderBy(Brand.basePrice, Descending)
-        case "price-a" => byBuffer += OrderBy(Brand.basePrice, Ascending)
-        case "recommend" => byBuffer += By(Brand.recommend, true)
-        case "hot" => byBuffer += OrderBy(Brand.concernCount, Descending)
+
+    keyword match {
+      case Full(k) if (!k.trim().isEmpty()) => {
+        val kv = k.trim
+        val field = keywordType match {
+          case Full(kt) => kt match {
+            case "0" => Full(Brand.name)
+            case "1" => Full(Brand.regNo)
+            case _ => Full(Brand.name)
+          }
+          case _ => Full(Brand.name)
+
+        }
+        likeType match {
+          case Full(like) => like match {
+            case "0" => byBuffer += By(field.get, kv)
+            case "1" => byBuffer += Like(field.get, "%" + kv + "%")
+            case "2" => byBuffer += Like(field.get, kv + "%")
+            case "3" => byBuffer += Like(field.get, "%" + kv)
+            case _ =>
+          }
+          case _ =>
+        }
       }
-      case _ => byBuffer += OrderBy(Brand.id, Descending)
+      case _ =>
     }
+
+    orderType match {
+      case Full(order) => order match {
+        case "0" =>
+          byBuffer += OrderBy(Brand.id, Descending)
+        case "1" =>
+          byBuffer += OrderBy(Brand.basePrice, Ascending)
+        case "2" =>
+          byBuffer += OrderBy(Brand.basePrice, Descending)
+        case "3" =>
+          byBuffer += By(Brand.recommend, true)
+        case "4" =>
+          byBuffer += OrderBy(Brand.concernCount, Descending)
+        case _ =>
+      }
+
+      case _ =>
+    }
+
     byBuffer.toList
   }
 
   def list = {
-    val (brandTypeCode, keyword, likeType, orderType) = (S.param("brandTypeCode"), S.param("keyword"), S.param("likeType"), S.param("orderType"))
+    val (brandTypeCode, keywordType, keyword, likeType, orderType) = (S.param("btc"), S.param("kt"), S.param("k"), S.param("lt"), S.param("ot"))
     val limit = S.attr("limit").map(_.toInt).openOr(40)
 
     var url = originalUri
-    var brandTypeCodeVal, keywordVal, likeTypeVal, orderVal = ""
+    var brandTypeCodeVal, keywordTypeVal, keywordVal, likeTypeVal, orderVal = ""
     brandTypeCode match {
       case Full(code) =>
         brandTypeCodeVal = code
-        url = appendParams(url, List("brandTypeCode" -> code))
+        url = appendParams(url, List("btc" -> code))
+      case _ =>
+    }
+
+    keywordType match {
+      case Full(t) =>
+        keywordTypeVal = t
+        url = appendParams(url, List("kt" -> t))
       case _ =>
     }
 
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
-        keywordVal = k
-        url = appendParams(url, List("keyword" -> k))
+        keywordVal = k.trim
+        url = appendParams(url, List("k" -> keywordVal))
       case _ =>
     }
 
     likeType match {
       case Full(like) =>
         likeTypeVal = like
-        url = appendParams(url, List("likeType" -> like))
+        url = appendParams(url, List("lt" -> like))
       case _ =>
     }
 
     orderType match {
       case Full(order) =>
         orderVal = order
-        url = appendParams(url, List("orderType" -> order))
+        url = appendParams(url, List("ot" -> order))
       case _ =>
     }
 
     val searchForm = "#searchForm" #>
       <form class="form-inline" action={ url } method="get">
         <div class="controls">
-          <select id="brandTypeCode" name="brandTypeCode">
+          <select id="btc" name="btc">
             <option value="all">所有商标类型</option>
             { SelectBoxHelper.brandTypeOptions(brandTypeCodeVal) }
           </select>
-          <input type="text" id="keyword" placeholder="商标名或注册号"/>
-          <select id="likeType" name="likeType" class="span3">
+          <select id="kt" name="kt" class="span3">
+            { SelectBoxHelper.keywordTypeOptions(keywordTypeVal) }
+          </select>
+          <input type="text" id="k" name="k" placeholder="搜索关键词" value={ keywordVal } class="span7"/>
+          <select id="lt" name="lt" class="span3">
             { SelectBoxHelper.likeOptions(likeTypeVal) }
           </select>
-          <select id="orderType" name="orderType" class="span4">
+          <select id="ot" name="ot" class="span4">
             { SelectBoxHelper.orderOptions(orderVal) }
           </select>
           <button type="submit" class="btn">

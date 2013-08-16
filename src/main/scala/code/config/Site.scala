@@ -52,7 +52,7 @@ object Site {
     Menu("AdminListArticle", menuLoc("AdminListArticle", "list", "文章管理")) / "admin" / "article" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
     Menu("AdminCreateArticle", menuLoc("AdminCreateArticle", "plus", "发布文章")) / "admin" / "article" / "create" >> RequireAdminLoggedIn >> Hidden,
     Menu("AdminEditArticle", menuLoc("AdminEditArticle", "", "修改文章")) / "admin" / "article" / "edit" >> RequireAdminLoggedIn >> Hidden,
-    Menu("AdminSms", menuLoc("AdminSms", "envelope", "站内消息")) / "admin" / "sms" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
+    Menu("AdminCreateSms", menuLoc("AdminCreateSms", "envelope", "发送消息")) / "admin" / "sms" / "create" >> RequireAdminLoggedIn >> AdminMenuGroup,
 
     Menu.i("ajaxExample") / "ajax",
     Menu.i("Error") / "error" >> Hidden,
