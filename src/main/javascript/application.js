@@ -109,6 +109,7 @@
 
 				tab.find(".js-tab").removeClass(activeCls).eq(activeIdx).addClass(activeCls);
 				tab.find(".js-tab-c").hide().eq(activeIdx).show();
+				$(window).scroll();
 			}
 			tab.find(".js-tab").hover(function() {
 				activeTab(tab.find(".js-tab").index($(this)));
@@ -129,6 +130,9 @@
 })(jQuery)
 
 $(document).ready(function() {
+	$("img.lazy").lazyload({
+		effect : "fadeIn"
+	});
 	$(window).scroll(function() {
 		var scrolltop = $(document).scrollTop();
 		if (scrolltop > 20) {

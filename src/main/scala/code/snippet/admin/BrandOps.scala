@@ -1,12 +1,9 @@
 package code.snippet.admin
 
 import java.io.File
-
 import scala.collection.mutable.ArrayBuffer
 import scala.xml._
-
 import org.apache.commons.io.FileUtils
-
 import code.lib.BoxConfirm
 import code.lib.TrueOrFalse
 import code.lib.TrueOrFalse2Str
@@ -28,6 +25,7 @@ import net.liftweb.http.js.JsCmds.Noop
 import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
+import code.lib.WebCacheHelper
 
 class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -164,7 +162,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     } yield {
       var basePrice = "0"
       var regNo, pic, name, regDateStr, applicant, useDescn, descn, lsqz = ""
-      var brandType: BrandType = BrandType.getBrandTypes().get(brand.brandTypeCode.get).get
+      var brandType: BrandType = WebCacheHelper.brandTypes.get(brand.brandTypeCode.get).get
 
       def process(): JsCmd = {
         val oldPic = brand.pic.get
@@ -187,14 +185,14 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         }
       }
 
-      val brandTypes = BrandType.getBrandTypes().values.toList
+      val brandTypes = WebCacheHelper.brandTypes.values.toList
       "@regNo" #> text(brand.regNo.get, regNo = _) &
         "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
         "@name" #> text(brand.name.get, name = _) &
         "@pic" #> hidden(pic = _, brand.pic.get) &
         "#brand_pic [src]" #> brand.pic.src &
         "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
-        "@brand_type" #> select(brandTypes.map(v => (v.code.toString, v.code + " -> " + v.name)), Full(brandType.code.toString), v => (brandType = BrandType.getBrandTypes().get(v.toInt).get)) &
+        "@brand_type" #> select(brandTypes.map(v => (v.code.toString, v.code + " -> " + v.name)), Full(brandType.code.toString), v => (brandType = WebCacheHelper.brandTypes.get(v.toInt).get)) &
         "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
         "@applicant" #> text(brand.applicant.get, applicant = _) &
         "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &

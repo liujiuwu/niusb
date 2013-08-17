@@ -1,14 +1,14 @@
 package code.model
 
 import java.text.SimpleDateFormat
-
 import scala.xml._
-
 import code.lib.UploadFileHelper
 import code.lib.WebHelper
 import net.liftweb.common._
 import net.liftweb.mapper._
 import net.liftweb.util._
+import net.liftweb.util.Helpers._
+import code.lib.WebCacheHelper
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -36,8 +36,12 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def dbColumnName = "brand_type_code"
 
     def displayType: NodeSeq = {
-      val brandType = BrandType.getBrandTypes().get(brandTypeCode.get).get
-      <span>{ brandType.code + " -> " + brandType.name }</span>
+      val brandType = WebCacheHelper.brandTypes.get(brandTypeCode.get).get
+      Text(brandType.code + " -> " + brandType.name)
+    }
+
+    def displayTypeLabel: NodeSeq = {
+      Text(brandTypeCode + "类")
     }
   }
 
@@ -201,6 +205,12 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     }
   }
 
+  def displayBrand = {
+    ".brand-tp img" #> <a href={ "/market/view?id=" + id.get } target="_blank"><img class="lazy" src="/img/grey.gif" data-original={ pic.src } alt={ name.get.trim }/></a> &
+      ".brand-tp .price *" #> sellPrice.displaySellPrice() &
+      ".brand-tp .brand-type-code *" #> brandTypeCode.displayTypeLabel &
+      ".brand-bt .brand-name *" #> <a href={ "/market/view?id=" + id.get } target="_blank">{ name.get.trim }</a>
+  }
 }
 
 object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {

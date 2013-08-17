@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 			distCss : 'src/main/webapp/css',
 			distJs : 'src/main/webapp/js',
 		},
-		clean: {
+		clean : {
 			build : {
 				src : [ "build" ]
 			}
@@ -33,7 +33,8 @@ module.exports = function(grunt) {
 					'<%=setting.distJs%>/bootstrap-modalmanager.min.js' : [ '<%=setting.srcJs%>/bootstrap-modalmanager.js' ],
 					'<%=setting.distJs%>/jquery.fileupload.min.js' : [ '<%=setting.srcJs%>/jquery.fileupload.js' ],
 					'<%=setting.distJs%>/jquery.iframe-transport.min.js' : [ '<%=setting.srcJs%>/jquery.iframe-transport.js' ],
-					'<%=setting.distJs%>/jquery.jcrop.min.js' : [ '<%=setting.srcJs%>/jquery.jcrop.js' ]
+					'<%=setting.distJs%>/jquery.jcrop.min.js' : [ '<%=setting.srcJs%>/jquery.jcrop.js' ],
+					'<%=setting.distJs%>/jquery.lazyload.min.js' : [ '<%=setting.srcJs%>/jquery.lazyload.js' ]
 				}
 			}
 		},
@@ -44,7 +45,8 @@ module.exports = function(grunt) {
 			mainCompile : {
 				files : {
 					'build/application.css' : [ '<%=setting.srcLess%>/application.less' ],
-					'build/admin.css' : [ '<%=setting.srcLess%>/admin.less' ]
+					'build/admin.css' : [ '<%=setting.srcLess%>/admin.less' ],
+					'build/user.css' : [ '<%=setting.srcLess%>/user.less' ]
 				}
 			},
 			thirdCompile : {
@@ -60,7 +62,8 @@ module.exports = function(grunt) {
 				},
 				files : {
 					'<%=setting.distCss%>/application.min.css' : [ '<%=setting.srcLess%>/application.less' ],
-					'<%=setting.distCss%>/admin.min.css' : [ '<%=setting.srcLess%>/admin.less' ]
+					'<%=setting.distCss%>/admin.min.css' : [ '<%=setting.srcLess%>/admin.less' ],
+					'<%=setting.distCss%>/user.min.css' : [ '<%=setting.srcLess%>/user.less' ]
 				}
 			},
 			thirdMin : {
@@ -79,8 +82,8 @@ module.exports = function(grunt) {
 		},
 		watch : {
 			mainRecess : {
-				files : [ '<%=setting.srcLess%>/application.less', '<%=setting.srcLess%>/admin.less' ],
-				tasks : [ 'dist-compile-main','dist-recess-main' ]
+				files : [ '<%=setting.srcLess%>/application.less', '<%=setting.srcLess%>/admin.less', '<%=setting.srcLess%>/user.less' ],
+				tasks : [ 'dist-compile-main', 'dist-recess-main' ]
 			},
 			thirdRecess : {
 				files : [ '<%=setting.srcLess%>/application.less', '<%=setting.srcLess%>/bootstrap/*.less' ],
@@ -103,9 +106,9 @@ module.exports = function(grunt) {
 	grunt.registerTask('dist-compile-third', [ 'recess:thirdCompile' ]);
 	grunt.registerTask('dist-recess-main', [ 'recess:mainMin' ]);
 	grunt.registerTask('dist-recess-third', [ 'recess:thirdMin' ]);
-	grunt.registerTask('dist-js-main', ['uglify:main' ]);
+	grunt.registerTask('dist-js-main', [ 'uglify:main' ]);
 	grunt.registerTask('dist-js', [ 'concat', 'uglify' ]);
 	grunt.registerTask('dist-css', [ 'recess' ]);
-	grunt.registerTask('default', [ 'clean','dist-js', 'dist-css' ]);
+	grunt.registerTask('default', [ 'clean', 'dist-js', 'dist-css' ]);
 
 };

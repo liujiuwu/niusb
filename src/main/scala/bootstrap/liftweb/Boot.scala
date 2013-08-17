@@ -35,6 +35,7 @@ import code.model.AdSpace
 import code.model.Ad
 import code.model.Article
 import code.model.Message
+import code.lib.WebCacheHelper
 
 class Boot extends Loggable {
   def boot {
@@ -117,6 +118,6 @@ class Boot extends Loggable {
 
     User.autologinFunc = if (Props.devMode) Full(testUserLogin) else Empty
 
-    AdSpace.loadAdSpace(true)
+    WebCacheHelper.load()
   }
 }

@@ -32,6 +32,7 @@ import net.liftweb.mapper.QueryParam
 import scala.collection.mutable.ArrayBuffer
 import code.lib.UploadFileHelper
 import code.model.BrandType
+import code.lib.WebCacheHelper
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
@@ -47,7 +48,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def create = {
     var basePrice = "0"
     var regNo, pic, name, regDateStr, applicant, useDescn, descn, lsqz = ""
-    var brandType: BrandType = BrandType.getBrandTypes().get(25).get
+    var brandType: BrandType = WebCacheHelper.brandTypes.get(25).get
 
     def process(): JsCmd = {
       val brand = Brand.create.regNo(regNo).name(name).pic(pic).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
@@ -65,12 +66,12 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
     }
 
-    val brandTypes = BrandType.getBrandTypes().values.toList
+    val brandTypes = WebCacheHelper.brandTypes.values.toList
     "@regNo" #> text(regNo, regNo = _) &
       "@basePrice" #> text(basePrice, basePrice = _) &
       "@name" #> text(name, name = _) &
       "@pic" #> hidden(pic = _, pic) &
-      "@brand_type" #> select(brandTypes.map(v => (v.code.toString, v.code + " -> " + v.name)), Empty, v => (brandType = BrandType.getBrandTypes().get(v.toInt).get)) &
+      "@brand_type" #> select(brandTypes.map(v => (v.code.toString, v.code + " -> " + v.name)), Empty, v => (brandType = WebCacheHelper.brandTypes.get(v.toInt).get)) &
       "@regDate" #> text(regDateStr, regDateStr = _) &
       "@applicant" #> text(applicant, applicant = _) &
       "@useDescn" #> textarea(useDescn, useDescn = _) &

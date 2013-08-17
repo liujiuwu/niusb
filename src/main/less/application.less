@@ -891,9 +891,11 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
 
 .brands li .brand-img {
 	width: 128px;
-	height: 80px;
+	height: 100px;
 	border: 1px solid #DBDBDB;
 	padding: 5px;
+	position: relative;
+	//background:#f00;
 }
 
 .brands li .img-overflow {
@@ -926,9 +928,27 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
 	bottom: 0px;
 }
 
+
+
+.brands li .brand-tp {
+	width: 128px;
+	height: 100px;
+	border: 1px solid #DBDBDB;
+	padding: 5px;
+	position: relative;
+}
+.brands li .brand-tp .info {
+position: absolute; 
+bottom: 0;
+left:0px;
+width:128px; 
+background: #ddd;
+padding:2px 5px;
+}
+
 //brands end ====================================
 
-.m-box10-1:after,.m-box12 .tp:after,.m-box12 .ct:after,.m-box23 .tp:after,.m-box23-1:after{
+.m-box10-1:after,.m-box12 .tp:after,.m-box12 .ct:after,.m-box23 .tp:after,.m-box23-1:after,.m-box10-3:after{
     clear: both;
     content: ".";
     display: block;
@@ -1040,11 +1060,6 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
 #topBanner .next {
 	right: 0;
 	background-position: right top;
-}
-
-.m-box10-3 {
-    height: 430px;
-    position: relative;
 }
 
 

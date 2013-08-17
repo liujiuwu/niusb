@@ -73,14 +73,14 @@
 
 	<div class="row">
 		<div class="span25">
-			<div data-lift="IndexOps.mainConent?parallel=true;brandTypeId=25;eager_eval=true;limit=30" class="m-box12 m-box12-1">
+			<div data-lift="IndexOps.mainConent?parallel=true;brandTypeCode=25;eager_eval=true;limit=30" class="m-box12 m-box12-1">
 				<div class="tp">
 					<p class="tit">
 						<span id="title">服装鞋帽</span>
 					</p>
 					<div class="tag">
 						<ul>
-							<li><a href="/market/" target="_blank" class="txt1">查看更多...</a></li>
+							<li><a href="/market/index?btc=25" target="_blank" class="txt1">查看更多...</a></li>
 						</ul>
 					</div>
 				</div>
@@ -95,14 +95,14 @@
 
 	<div class="row">
 		<div class="span25">
-			<div data-lift="IndexOps.mainConent?parallel=true;eager_eval=true;brandTypeId=3" class="m-box12 m-box12-1">
+			<div data-lift="IndexOps.mainConent?parallel=true;eager_eval=true;brandTypeCode=3" class="m-box12 m-box12-1">
 				<div class="tp">
 					<p class="tit">
 						<span id="title">化妆品</span>
 					</p>
 					<div class="tag">
 						<ul>
-							<li><a href="/market/" target="_blank" class="txt1">查看更多...</a></li>
+							<li><a href="/market/index?btc=3" target="_blank" class="txt1">查看更多...</a></li>
 						</ul>
 					</div>
 				</div>
@@ -117,14 +117,14 @@
 
 	<div class="row">
 		<div class="span25">
-			<div data-lift="IndexOps.mainConent?parallel=true;eager_eval=true;brandTypeId=43" class="m-box12 m-box12-1">
+			<div data-lift="IndexOps.mainConent?parallel=true;eager_eval=true;brandTypeCode=43" class="m-box12 m-box12-1">
 				<div class="tp">
 					<p class="tit">
 						<span id="title">餐饮酒店</span>
 					</p>
 					<div class="tag">
 						<ul>
-							<li><a href="/market/" target="_blank" class="txt1">查看更多...</a></li>
+							<li><a href="/market/index?btc=43" target="_blank" class="txt1">查看更多...</a></li>
 						</ul>
 					</div>
 				</div>
@@ -141,18 +141,8 @@
 		<script>
 			// <![CDATA[
 			$(function() {
-				$(".brands li").hover(function() {
-					$(this).find(".img-overflow").fadeIn();
-				}, function() {
-					$(this).find(".img-overflow").hide();
-				})
-
 				$("#topBanner").simpeSlider();
-				$("#mainTab").simpeTab({
-					activeIdx : 4
-				});
-
-				//alert($("#test").width());
+				$("#mainTab").simpeTab();
 			});
 			// ]]>
 		</script>

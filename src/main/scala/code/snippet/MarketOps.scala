@@ -14,11 +14,11 @@ import code.model.BrandType
 import net.liftweb.common._
 import scala.collection.mutable.ArrayBuffer
 import code.lib.SelectBoxHelper
+import code.lib.WebCacheHelper
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "list" => list
-    case "brandTypes" => brandTypes
     case "view" => view
   }
 
@@ -82,11 +82,18 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     val (brandTypeCode, keywordType, keyword, likeType, orderType) = (S.param("btc"), S.param("kt"), S.param("k"), S.param("lt"), S.param("ot"))
     val limit = S.attr("limit").map(_.toInt).openOr(40)
 
+    var brandTypeName = "所有类型"
     var url = originalUri
     var brandTypeCodeVal, keywordTypeVal, keywordVal, likeTypeVal, orderVal = ""
     brandTypeCode match {
       case Full(code) =>
         brandTypeCodeVal = code
+        if (code != "all") {
+          brandTypeName = WebCacheHelper.brandTypes.get(code.toInt) match {
+            case Some(b) => b.name.get
+            case _ => "所有类型"
+          }
+        }
         url = appendParams(url, List("btc" -> code))
       case _ =>
     }
@@ -144,13 +151,9 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       </form>
 
     val paginatorModel = Brand.paginator(url, bies: _*)(itemsOnPage = limit)
-    val dataList = ".brands li" #> paginatorModel.datas.map(brand => {
-      ".brand-img *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank"><img src={ brand.pic.src } alt={ brand.name.get.trim }/></a> &
-        ".brand-name *" #> <a href={ "/market/view?id=" + brand.id.get } target="_blank">{ brand.name.get.trim }</a> &
-        ".price *" #> brand.sellPrice.displaySellPrice()
-    })
+    val dataList = ".brands li" #> paginatorModel.datas.map(_.displayBrand)
 
-    searchForm & dataList & "#pagination" #> paginatorModel.paginate _
+    "#title" #> brandTypeName & searchForm & dataList & "#pagination" #> paginatorModel.paginate _
   }
 
   def view = {
@@ -161,12 +164,4 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       "*" #> brand.name
     }): CssSel
   }
-
-  def brandTypes = {
-    val bts = BrandType.getBrandTypes().values.toList
-    ".brand-types li" #> bts.map(b => {
-      "li *" #> <a href={ "/market/index?type=" + b.code }>{ b.displayTypeName() }</a>
-    })
-  }
-
 }

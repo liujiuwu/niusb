@@ -2,6 +2,7 @@ package code.model
 
 import net.liftweb.mapper._
 import scala.collection.mutable.LinkedHashMap
+import code.lib.WebCacheHelper
 
 class BrandType extends LongKeyedMapper[BrandType] with IdPK {
   def getSingleton = BrandType
@@ -41,18 +42,5 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
 object BrandType extends BrandType with CRUDify[Long, BrandType] with LongKeyedMetaMapper[BrandType] {
   override def dbTableName = "brand_types"
   override def fieldOrder = List(id, code, name, brandCount, recommend, descn)
-
-  private val brandTypes = LinkedHashMap[Int, BrandType]()
-
-  def isBrandType(code: Int) = {
-    brandTypes.contains(code)
-  }
-
-  def getBrandTypes(force: Boolean = false): LinkedHashMap[Int, BrandType] = {
-    if (brandTypes.isEmpty || force) {
-      brandTypes.clear()
-      findAll(OrderBy(BrandType.code, Ascending)).foreach(brandType => brandTypes.put(brandType.code.get, brandType))
-    }
-    brandTypes
-  }
+  def isBrandType(code: Int) = WebCacheHelper.brandTypes.contains(code)
 }

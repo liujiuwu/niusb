@@ -2,8 +2,6 @@ package code.model
 
 import java.util.Date
 
-import scala.collection.mutable.LinkedHashMap
-
 import net.liftweb.mapper._
 
 object AdSpaceType extends Enumeration {
@@ -50,21 +48,4 @@ class AdSpace extends LongKeyedMapper[AdSpace] with IdPK {
 object AdSpace extends AdSpace with CRUDify[Long, AdSpace] with LongKeyedMetaMapper[AdSpace] {
   override def dbTableName = "ad_spaces"
   override def fieldOrder = List(id, code, name, adSpaceType, width, height, status, startTime, endTime, descn)
-
-  private val adSpaces = LinkedHashMap[Int, AdSpace]()
-
-  def loadAdSpace(force: Boolean = false) {
-    if (adSpaces.isEmpty || force) {
-      adSpaces.clear()
-      val now = new Date
-      findAll(By_<(AdSpace.startTime, now), By_>=(AdSpace.endTime, now)).foreach(adSpace => {
-        adSpaces.put(adSpace.code.get, adSpace)
-        adSpace.ads = Ad.findAll(By(Ad.adSpaceCode, adSpace.code.get))
-      })
-    }
-  }
-
-  def findByCode(code: Int) = {
-    adSpaces.get(code)
-  }
 }

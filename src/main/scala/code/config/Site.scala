@@ -38,6 +38,7 @@ object Site {
     Menu("UserSms", menuLoc("UserSms", "envelope", "我的消息")) / "user" / "sms" / "index" >> RequireLoggedIn >> UserMenuGroup,
     Menu("UserViewBrand", menuLoc("UserViewBrand", "", "查看商标")) / "user" / "brand" / "view" >> RequireLoggedIn >> Hidden,
     Menu("UserEditBrand", menuLoc("UserEditBrand", "", "修改商标")) / "user" / "brand" / "edit" >> RequireLoggedIn >> Hidden,
+    Menu("UserViewSms", menuLoc("UserViewSms", "", "查看消息")) / "user" / "sms" / "view" >> RequireLoggedIn >> Hidden,
 
     Menu("AdminIndex", menuLoc("AdminIndex", "home", "后台首页")) / "admin" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
     Menu("AdminSetting", menuLoc("AdminSetting", "cogs", "网站设置")) / "admin" / "web" / "set" >> RequireAdminLoggedIn >> AdminMenuGroup,
