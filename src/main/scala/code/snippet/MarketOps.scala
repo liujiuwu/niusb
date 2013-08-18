@@ -178,7 +178,16 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
-      "*" #> brand.name
+      "#title" #> brand.name &
+        "img" #> <img src={ brand.pic.src } alt={ brand.name.get.trim } width="320" height="200"/> &
+        "#brandId" #> Text(brand.brandTypeCode + "-" + brand.id) &
+        "#regNo" #> brand.regNo &
+        "#sellPrice" #> brand.sellPrice.displaySellPrice() &
+        "#regdate" #> brand.regDate.asHtml &
+        "#lsqz" #> brand.lsqz &
+        "#useDescn" #> brand.useDescn &
+        "#descn" #> brand.descn 
+        
     }): CssSel
   }
 }
