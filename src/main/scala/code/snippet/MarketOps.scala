@@ -29,6 +29,11 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       case Full(code) if (code != "all" && BrandType.isBrandType(code.toInt)) =>
         byBuffer += By(Brand.brandTypeCode, code.toInt)
       case _ =>
+        S.attr("brandTypeCode") match {
+          case Full(code) if (code != "all" && BrandType.isBrandType(code.toInt)) =>
+            byBuffer += By(Brand.brandTypeCode, code.toInt)
+          case _ =>
+        }
     }
 
     keyword match {
@@ -96,6 +101,18 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         }
         url = appendParams(url, List("btc" -> code))
       case _ =>
+        S.attr("brandTypeCode") match {
+          case Full(code) =>
+            brandTypeCodeVal = code
+            if (code != "all") {
+              brandTypeName = WebCacheHelper.brandTypes.get(code.toInt) match {
+                case Some(b) => b.name.get
+                case _ => "所有类型"
+              }
+            }
+            url = appendParams(url, List("btc" -> code))
+          case _ => "所有类型"
+        }
     }
 
     keywordType match {
