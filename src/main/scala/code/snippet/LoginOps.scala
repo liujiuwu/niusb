@@ -18,6 +18,8 @@ import scala.xml.Text
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import java.util.Date
+import code.lib.SmsHelper
+import net.liftweb.http.js.JsCmds
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -49,16 +51,21 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
     }
 
+    def sendCodeSms(mobile: String): JsCmd = {
+      SmsHelper.sendCodeSms(mobile)
+      Alert("已发送")
+    }
+
     "@mobile" #> ajaxText(mobileBox.get, mobile => {
       realMobile(Full(mobile)) match {
         case Full(m) =>
-
           mobileBox = Full(m)
-          removeFormError("mobile") & JsRaw("""$("#login_btn").removeClass("disabled")""") & JsRaw("""$("#getCode_btn").removeClass("disabled")""")
-        case _ => JsRaw("""$("#getCode_btn").addClass("disabled")""") & JsRaw("""$("#login_btn").addClass("disabled")""") & formError("mobile", "错误的手机号！")
+          removeFormError("mobile") & JsRaw("""$("#login_btn").removeClass("disabled")""") & JsRaw("""$("#getCodeBtn").removeClass("disabled")""")
+        case _ => JsRaw("""$("#getCodeBtn").addClass("disabled")""") & JsRaw("""$("#login_btn").addClass("disabled")""") & formError("mobile", "错误的手机号！")
       }
     }) &
       "@pwd" #> password(pwdBox.get, pwd => pwdBox = Full(pwd)) &
+      "@getCodeBtn [onclick]" #> ajaxCall("$('#mobile').val()", mobile => sendCodeSms(mobile)) &
       "@sub" #> hidden(process)
   }
 }
