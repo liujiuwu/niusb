@@ -29,8 +29,9 @@ object SmsHelper extends App {
 
   def sendCodeSms(mobile: String) {
     val code = random()
-    val sms = s"您正在登录牛标网，校验码：${code}。请勿泄露，此校验码5分钟有效。"
+    val sms = s"您正在登录牛标网，校验码：${code}。泄露有风险，请在5分钟内使用此验证码。"
     MemcachedHelper.set(mobile, code, 300)
+    MemcachedHelper.set(mobile + "_sendTime", System.currentTimeMillis(), 60)
     sendSms(mobile, sms)
   }
 
@@ -38,9 +39,7 @@ object SmsHelper extends App {
     SmsActor ! SendSms(mobile, sms)
   }
 
-  def getSendSmsCode(mobile: String) = {
-    MemcachedHelper.get(mobile)
-  }
+  def getSendSmsCode(mobile: String) = MemcachedHelper.get(mobile)
 
   //sendCodeSms("123456")
   //println(getSendSmsCode("123456"))

@@ -1,15 +1,13 @@
 package code.snippet
 
 import scala.xml.Text
+
 import code.lib.WebCacheHelper
-import code.model.Brand
 import net.liftweb.common.Full
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
-import net.liftweb.util.Helpers._
-import code.model.User
-import code.lib.SmsHelper
+import net.liftweb.util.Helpers.strToCssBindPromoter
 
 object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -18,11 +16,6 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def tabConent = {
-    User.currentUser match {
-      case Full(u) => println(u.mobile + "|" + SmsHelper.getSendSmsCode(u.mobile.get))
-      case _ =>
-    }
-
     S.attr("tabIdx") match {
       case Full(idx) => brandDatas(idx)
       case _ => "*" #> Text("")

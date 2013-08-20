@@ -1,25 +1,24 @@
 package code.snippet
 
+import scala.xml.Text
+import code.lib.SmsHelper
 import code.lib.WebHelper._
 import code.model.User
 import net.liftweb.common.Box
-import net.liftweb.common.Empty
 import net.liftweb.common.Full
-import net.liftweb.http.RequestVar
+import net.liftweb.common.Loggable
+import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
 import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.http.js.JE.ValById
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmd._
 import net.liftweb.http.js.JsCmds._
+import net.liftweb.http.js.JsCmds
 import net.liftweb.mapper.By
 import net.liftweb.util.Helpers._
-import scala.xml.Text
-import net.liftweb.common.Loggable
-import net.liftweb.http.DispatchSnippet
-import java.util.Date
-import code.lib.SmsHelper
-import net.liftweb.http.js.JsCmds
+import code.lib.MemcachedHelper
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -31,8 +30,19 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
     var pwdBox: Box[String] = Full("")
 
     def process(): JsCmd = {
+      var mobile = ""
       realMobile(mobileBox) match {
-        case Full(mobile) =>
+        case Full(m) => mobile = m
+        case _ => return JsRaw("""$("#getCodeBtn,#login_btn")""") & formError("mobile", "错误的手机号！")
+      }
+
+      pwdBox match {
+        case Full(pwd) if (!pwd.isEmpty()) =>
+          val code = MemcachedHelper.get(mobile) match {
+            case Some(code) => code
+            case _ => ""
+          }
+
           User.find(By(User.mobile, mobile)) match {
             case Full(user) =>
               User.logUserIn(user)
@@ -47,25 +57,33 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
                 JsRaw(errorMsg("opt_login_tip", Text("注册失败，请稍候重试！")))
               }
           }
-        case _ => formError("mobile", "错误的手机号！")
+        case _ => removeFormError("mobile") & formError("pwd", "请输入验证码或密码！")
       }
+
     }
 
     def sendCodeSms(mobile: String): JsCmd = {
-      SmsHelper.sendCodeSms(mobile)
-      Alert("已发送")
+      realMobile(Full(mobile)) match {
+        case Full(mb) =>
+          val sendTime = MemcachedHelper.get(mb + "_sendTime") match {
+            case Some(sendTime) => sendTime.toString.toLong
+            case _ => 0
+          }
+
+          if ((System.currentTimeMillis() - sendTime) > 60000) {
+            SmsHelper.sendCodeSms(mb)
+            JsRaw("smsCodeCountdown()") & JsRaw("""$("#opt_login_tip").hide().text("")""")
+          } else {
+            JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
+          }
+        case _ => JsRaw("""$("#getCodeBtn,#login_btn")""") & formError("mobile", "错误的手机号！")
+      }
+
     }
 
-    "@mobile" #> ajaxText(mobileBox.get, mobile => {
-      realMobile(Full(mobile)) match {
-        case Full(m) =>
-          mobileBox = Full(m)
-          removeFormError("mobile") & JsRaw("""$("#login_btn").removeClass("disabled")""") & JsRaw("""$("#getCodeBtn").removeClass("disabled")""")
-        case _ => JsRaw("""$("#getCodeBtn").addClass("disabled")""") & JsRaw("""$("#login_btn").addClass("disabled")""") & formError("mobile", "错误的手机号！")
-      }
-    }) &
+    "@mobile" #> text(mobileBox.get, mobile => mobileBox = Full(mobile)) &
       "@pwd" #> password(pwdBox.get, pwd => pwdBox = Full(pwd)) &
-      "@getCodeBtn [onclick]" #> ajaxCall("$('#mobile').val()", mobile => sendCodeSms(mobile)) &
-      "@sub" #> hidden(process)
+      "@getCodeBtn [onclick]" #> ajaxCall(ValById("mobile"), sendCodeSms) &
+      "type=submit" #> ajaxSubmit("登录", process)
   }
 }
