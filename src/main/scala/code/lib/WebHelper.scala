@@ -66,7 +66,7 @@ object TrueOrFalse2Str extends Function1[Boolean, Box[String]] {
 }
 
 object WebHelper extends App {
-  println(realMobile(Full("18858078001")))
+  println(realMobile(Full("18858078002")))
 
   def badge(label: String, data: AnyVal, prefix: String = "￥") = <span class={ "badge badge-" + label }>{ prefix }{ data }</span>
 
@@ -104,7 +104,7 @@ object WebHelper extends App {
   def realMobile(mobile: Box[String]): Box[String] = {
     mobile match {
       case Full(m) if (!m.trim().isEmpty()) =>
-        val mobileRegx = """^(13[0-9]|14[0-9]|15[0-9]|18[0-9])(\d{8}).*$""".r
+        val mobileRegx = """^(13[0-9]|14[0-9]|15[0-9]|18[0-9])(\d{8})$""".r
         m match {
           case mobileRegx(mp, ms) => Full(mp + ms)
           case _ => Empty
