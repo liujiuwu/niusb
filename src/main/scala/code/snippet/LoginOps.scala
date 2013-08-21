@@ -19,8 +19,8 @@ import net.liftweb.http.js.JsCmds
 import net.liftweb.mapper.By
 import net.liftweb.util.Helpers._
 import code.lib.MemcachedHelper
-import code.lib.WebHelper
 import code.lib.SmsCode
+import code.lib.WebHelper
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -90,9 +90,9 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
         case _ => 0
       }
 
-      removeFormError("mobile") & (if ((WebHelper.now - cacheTime) > 60) {
+      removeFormError("pwd") & removeFormError("mobile") & (if ((WebHelper.now - cacheTime) > 60) {
         SmsHelper.sendCodeSms(mobile)
-        JsRaw("""smsCodeCountdown();$("#opt_login_tip").hide().text("")""")
+        JsRaw("""$("#getCodeBtn").countdown();$("#opt_login_tip").hide().text("")""")
       } else {
         JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
       })

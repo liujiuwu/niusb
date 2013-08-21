@@ -14,14 +14,19 @@ import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.mapper.Genders
 import net.liftweb.util.Helpers._
+import code.lib.WebHelper._
 import net.liftweb.mapper.By
 import code.model.UserType
 import scala.xml.NodeSeq
 import code.snippet.SnippetHelper
+import code.lib.MemcachedHelper
+import code.lib.SmsCode
+import code.lib.SmsHelper
 
-object UserOps extends SnippetHelper{
+object UserOps extends SnippetHelper {
+  def user = User.currentUser.openOrThrowException("not found user")
+
   def edit = {
-    val user = User.currentUser.get
     def process(): JsCmd = {
       user.save
       JsRaw(WebHelper.succMsg("opt_profile_tip", Text("个人信息保存成功！"))) & JsRaw("""$("#displayName").text("%s")""".format(user.displayName))
@@ -38,24 +43,41 @@ object UserOps extends SnippetHelper{
   }
 
   def updatePwd = {
-    val user = User.currentUser.get
     var (code, pwd) = ("", "")
     def process(): JsCmd = {
       if (pwd.isEmpty() || pwd.length() < 6) {
-        return WebHelper.formError("pwd", "新密码不能为空，且不少于6位字符。")
+        return formError("pwd", "新密码不能为空，且不少于6位字符。")
       }
 
       if (code.isEmpty()) {
-        return WebHelper.removeFormError("pwd") & WebHelper.formError("code", "请填写正确的验证码!")
+        return removeFormError("pwd") & formError("code", "请填写正确的验证码!")
       }
 
       user.password(pwd)
-      WebHelper.removeFormError("pwd") & WebHelper.removeFormError("code") & JsRaw(WebHelper.succMsg("opt_pwd_tip", Text(if (user.save) "密码修改成功！" else "密码修改失败！")))
+      removeFormError("pwd") & removeFormError("code") & JsRaw(succMsg("opt_pwd_tip", Text(if (user.save) "密码修改成功！" else "密码修改失败！")))
+    }
+    
+    def sendCodeSms(): JsCmd = {
+      val mobile = user.mobile.get
+      val cacheTime = MemcachedHelper.get(mobile) match {
+        case Some(sc) =>
+          val smsCode = sc.asInstanceOf[SmsCode]
+          smsCode.cacheTime
+        case _ => 0
+      }
+
+      removeFormError("pwd") & removeFormError("code") & (if ((WebHelper.now - cacheTime) > 60) {
+        SmsHelper.sendCodeSms(mobile)
+        JsRaw("""$("#getCodeBtn").countdown();$("#opt_pwd_tip").hide().text("")""")
+      } else {
+        JsRaw("""$("#opt_pwd_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
+      })
     }
 
     "@code" #> password(code, code = _) &
       "@pwd" #> password(pwd, pwd = _) &
-      "@sub" #> hidden(process)
+      "@getCodeBtn [onclick]" #> ajaxInvoke(sendCodeSms) &
+      "type=submit" #> ajaxSubmit("保存", process)
   }
 
 }

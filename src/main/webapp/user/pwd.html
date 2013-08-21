@@ -5,7 +5,7 @@
 			<div id="group_pwd" class="control-group">
 				<label for="pwd" class="control-label">新密码</label>
 				<div class="controls">
-					<input type="text" id="pwd" name="pwd" placeholder="输入您的新密码" required="required" /> <span id="error_pwd" class="help-inline"></span>
+					<input type="text" id="pwd" name="pwd" placeholder="输入您的新密码" /> <span id="error_pwd" class="help-inline"></span>
 				</div>
 			</div>
 			<div id="group_code" class="control-group">
@@ -13,14 +13,15 @@
 				<div class="controls">
 					<div class="input-append">
 						<input type="text" id="code" name="code" style="width: 150px" />
-						<button class="btn" type="button">获取验证码</button>
+						<button class="btn" name="getCodeBtn" id="getCodeBtn">获取验证码</button>
 					</div>
 					<span id="error_code" class="help-inline"></span>
 				</div>
 			</div>
 			<div class="form-actions">
-				<button class="btn btn-primary" type="submit"><i class="icon-ok"></i> 保存</button>
-				<input type="hidden" name="sub" />
+				<button class="btn btn-primary" type="submit">
+					<i class="icon-ok"></i> 保存
+				</button>
 			</div>
 		</form>
 	</div>

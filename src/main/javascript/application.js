@@ -127,6 +127,35 @@
 			activeTab(opts.activeIdx);
 		});
 	}
+
+	$.fn.countdown = function(options) {
+		var defaults = {
+			waitTime : 60,
+			waitBtnText : "秒后重新获取"
+		}
+
+		var opts = $.extend({}, defaults, options);
+		var wt = opts.waitTime;
+		var countDownTimer;
+		var $btn = $(this);
+		var btnText = $btn.text();
+		var smsCodeCountdown = function() {
+			if (wt <= 0) {
+				$btn.removeClass("disabled").text(btnText);
+				wt = opts.waitTime;
+				clearTimeout(countDownTimer);
+			} else {
+				wt--;
+				$btn.addClass("disabled").text(wt + opts.waitBtnText);
+				countDownTimer = setTimeout(function() {
+					smsCodeCountdown();
+				}, 1000)
+			}
+		}
+		return this.each(function() {
+			smsCodeCountdown();
+		});
+	}
 })(jQuery)
 
 $(document).ready(function() {
