@@ -19,6 +19,8 @@ import net.liftweb.http.js.JsCmds
 import net.liftweb.mapper.By
 import net.liftweb.util.Helpers._
 import code.lib.MemcachedHelper
+import code.lib.WebHelper
+import code.lib.SmsCode
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -30,10 +32,9 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
     var pwdBox: Box[String] = Full("")
 
     def process(): JsCmd = {
-      var mobile = ""
-      realMobile(mobileBox) match {
-        case Full(m) => mobile = m
-        case _ => return JsRaw("""$("#getCodeBtn,#login_btn")""") & formError("mobile", "错误的手机号！")
+      val mobile = realMobile(mobileBox) match {
+        case Full(mb) => mb
+        case _ => return formError("mobile", "请输入正确的手机号！")
       }
 
       pwdBox match {
@@ -62,23 +63,25 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     }
 
-    def sendCodeSms(mobile: String): JsCmd = {
-      realMobile(Full(mobile)) match {
-        case Full(mb) =>
-          val sendTime = MemcachedHelper.get(mb + "_sendTime") match {
-            case Some(sendTime) => sendTime.toString.toLong
-            case _ => 0
-          }
-
-          if ((System.currentTimeMillis() - sendTime) > 60000) {
-            SmsHelper.sendCodeSms(mb)
-            JsRaw("smsCodeCountdown()") & JsRaw("""$("#opt_login_tip").hide().text("")""")
-          } else {
-            JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
-          }
-        case _ => JsRaw("""$("#getCodeBtn,#login_btn")""") & formError("mobile", "错误的手机号！")
+    def sendCodeSms(mobileVal: String): JsCmd = {
+      val mobile = realMobile(Full(mobileVal)) match {
+        case Full(mb) => mb
+        case _ => return formError("mobile", "请输入正确的手机号！")
       }
 
+      val cacheTime = MemcachedHelper.get(mobile) match {
+        case Some(sc) =>
+          val smsCode = sc.asInstanceOf[SmsCode]
+          smsCode.cacheTime
+        case _ => 0
+      }
+
+      if ((WebHelper.now - cacheTime) > 60) {
+        SmsHelper.sendCodeSms(mobile)
+        JsRaw("smsCodeCountdown()") & JsRaw("""$("#opt_login_tip").hide().text("")""")
+      } else {
+        JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
+      }
     }
 
     "@mobile" #> text(mobileBox.get, mobile => mobileBox = Full(mobile)) &

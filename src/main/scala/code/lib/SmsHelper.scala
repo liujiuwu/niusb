@@ -5,6 +5,7 @@ import scala.util.Random
 import net.liftweb.actor.LiftActor
 
 case class SendSms(mobile: String, sms: String, sign: String = "牛标网")
+case class SmsCode(code: String, cacheTime: Int = WebHelper.now)
 
 object SmsActor extends LiftActor {
   def messageHandler = {
@@ -30,8 +31,7 @@ object SmsHelper extends App {
   def sendCodeSms(mobile: String) {
     val code = random()
     val sms = s"您正在登录牛标网，校验码：${code}。泄露有风险，请在5分钟内使用此验证码。"
-    MemcachedHelper.set(mobile, code, 300)
-    MemcachedHelper.set(mobile + "_sendTime", System.currentTimeMillis(), 60)
+    MemcachedHelper.set(mobile, SmsCode(code), 300)
     sendSms(mobile, sms)
   }
 
