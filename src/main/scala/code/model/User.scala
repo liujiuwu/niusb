@@ -5,6 +5,8 @@ import net.liftweb.common.Full
 import java.text.SimpleDateFormat
 import code.lib.WebHelper
 import net.liftweb.common.Box
+import code.lib.SmsHelper
+import code.lib.MemcachedHelper
 
 object UserType extends Enumeration {
   type UserType = Value
@@ -108,6 +110,15 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
   def brandCount = Brand.count(By(Brand.owner, this))
   object srcId extends MappedLong(this) {
     override def dbColumnName = "src_id"
+  }
+
+  def authSmsCodeOrPwd(inputCode: String) = {
+    val code = SmsHelper.smsCode(mobile.get)._1
+    val checkRet = (!code.trim.isEmpty() && code == inputCode) || password.match_?(inputCode)
+    if (checkRet) {
+      MemcachedHelper.delete(mobile.get)
+    }
+    checkRet
   }
 }
 

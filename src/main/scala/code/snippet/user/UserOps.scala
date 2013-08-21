@@ -22,9 +22,16 @@ import code.snippet.SnippetHelper
 import code.lib.MemcachedHelper
 import code.lib.SmsCode
 import code.lib.SmsHelper
+import net.liftweb.http.DispatchSnippet
+import code.lib.BoxAlert
 
-object UserOps extends SnippetHelper {
-  def user = User.currentUser.openOrThrowException("not found user")
+object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
+  def dispatch = {
+    case "edit" => edit
+    case "updatePwd" => updatePwd
+  }
+
+  private def user = User.currentUser.openOrThrowException("not found user")
 
   def edit = {
     def process(): JsCmd = {
@@ -50,14 +57,13 @@ object UserOps extends SnippetHelper {
       }
 
       if (code.trim.isEmpty()) {
-        return removeFormError("pwd") & formError("code", "请填写正确的验证码或旧密码!")
+        return removeFormError() & formError("code", "请填写正确的短信验证码或旧密码!")
       }
 
-      val smsCode = SmsHelper.getSendSmsCode2Code(user.mobile.get)
-      val checkRet = (!code.trim.isEmpty() && code == smsCode) || user.password.match_?(code)
-      removeFormError("pwd") & removeFormError("code") & (if (checkRet) {
+      removeFormError() & (if (user.authSmsCodeOrPwd(code)) {
         user.password(pwd)
-        JsRaw(succMsg("opt_pwd_tip", Text(if (user.save) "密码修改成功，请牢记！" else "密码修改失败！")))
+        user.save()
+        BoxAlert("密码修改成功，请牢记！", Reload)
       } else {
         formError("code", "验证码或旧密码错误，请确认!")
       })
@@ -65,19 +71,13 @@ object UserOps extends SnippetHelper {
 
     def sendCodeSms(): JsCmd = {
       val mobile = user.mobile.get
-      val cacheTime = MemcachedHelper.get(mobile) match {
-        case Some(sc) =>
-          val smsCode = sc.asInstanceOf[SmsCode]
-          smsCode.cacheTime
-        case _ => 0
-      }
-
-      removeFormError("pwd") & removeFormError("code") & (if ((WebHelper.now - cacheTime) > 60) {
+      val cacheTime = SmsHelper.smsCode(mobile)._2
+      removeFormError() & (if ((WebHelper.now - cacheTime) > 60) {
         SmsHelper.sendCodeSms(mobile)
         JsRaw("""$("#getCodeBtn").countdown();$("#opt_pwd_tip").hide().text("")""")
       } else {
         JsRaw("""$("#opt_pwd_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
-      }) & Alert(SmsHelper.getSendSmsCode2Code(user.mobile.get))
+      }) & Alert(SmsHelper.smsCode(user.mobile.get)._1)
     }
 
     "@code" #> password(code, code = _) &

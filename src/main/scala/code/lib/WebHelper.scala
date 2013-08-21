@@ -79,16 +79,12 @@ object WebHelper extends App {
     }
   }
 
-  def removeFormErrors(fieldNames: List[String]) = {
-    for (fieldName <- fieldNames) removeFormError(fieldName)
-  }
-
-  def removeFormError(fieldName: String) = {
-    JsRaw("""$("#group_%1$s").removeClass("success error warning");$("#error_%1$s").text("%2$s")""" format (fieldName, ""))
-  }
-
-  def formErrors(errors: Map[String, String]) = {
-    for ((fieldName, errorMsg) <- errors) formError(fieldName, errorMsg)
+  def removeFormError(fieldName: String = "") = {
+    if (fieldName.trim.isEmpty()) {
+      JsRaw("""$(".control-group").removeClass("success error warning");$(".help-block,.help-inline").text("")""")
+    } else {
+      JsRaw("""$("#group_%1$s").removeClass("success error warning");$("#error_%1$s").text("%2$s")""" format (fieldName, ""))
+    }
   }
 
   def formError(fieldName: String, msg: String) = {

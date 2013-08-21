@@ -46,10 +46,10 @@ object SmsHelper extends App with Loggable {
     case _ => None
   }
 
-  def getSendSmsCode2Code(mobile: String) = {
+  def smsCode(mobile: String): (String, Int) = {
     getSendSmsCode(mobile) match {
-      case Some(sc) => sc.code
-      case _ => ""
+      case Some(sc) => (sc.code, sc.cacheTime)
+      case _ => ("", 0)
     }
   }
 

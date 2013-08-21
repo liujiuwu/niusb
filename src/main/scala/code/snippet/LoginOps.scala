@@ -21,6 +21,7 @@ import net.liftweb.util.Helpers._
 import code.lib.MemcachedHelper
 import code.lib.SmsCode
 import code.lib.WebHelper
+import net.liftweb.util.StringHelpers
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -39,32 +40,26 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
 
       val pwd = pwdBox match {
         case Full(p) if (!p.trim.isEmpty()) => p
-        case _ => return removeFormError("mobile") & formError("pwd", "请输入验证码或密码！")
+        case _ => return removeFormError() & formError("pwd", "请输入短信验证码或密码！")
       }
 
-      val code = SmsHelper.getSendSmsCode2Code(mobile)
+      val code = SmsHelper.smsCode(mobile)._1
       User.find(By(User.mobile, mobile)) match {
         case Full(user) =>
-          val checkRet = (!code.trim.isEmpty() && code == pwd) || user.password.match_?(pwd)
-          if (checkRet) {
-            MemcachedHelper.delete(mobile)
+          if (user.authSmsCodeOrPwd(pwd)) {
             User.logUserIn(user)
             if (user.superUser.get) S.redirectTo("/admin/brand/") else S.redirectTo("/")
           } else {
             formError("pwd", "验证码或密码错误，请确认！")
           }
         case _ =>
-          val checkRet = (!code.trim.isEmpty() && code == pwd)
-          if (checkRet) {
-            MemcachedHelper.delete(mobile)
-            val user = User.create
-            user.mobile(mobile)
-            if (user.save()) {
-              User.logUserIn(user)
-              S.redirectTo("/")
-            } else {
-              JsRaw(errorMsg("opt_login_tip", Text("注册失败，请稍候重试！")))
-            }
+          val user = User.create
+          user.mobile(mobile)
+          user.password(StringHelpers.randomString(6))
+          if (user.authSmsCodeOrPwd(pwd)) {
+            user.save()
+            User.logUserIn(user)
+            S.redirectTo("/")
           } else {
             formError("pwd", "验证码错误，请确认！")
           }
@@ -77,19 +72,13 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
         case _ => return formError("mobile", "请输入正确的手机号！")
       }
 
-      val cacheTime = MemcachedHelper.get(mobile) match {
-        case Some(sc) =>
-          val smsCode = sc.asInstanceOf[SmsCode]
-          smsCode.cacheTime
-        case _ => 0
-      }
-
-      removeFormError("pwd") & removeFormError("mobile") & (if ((WebHelper.now - cacheTime) > 60) {
+      val cacheTime = SmsHelper.smsCode(mobile)._2
+      removeFormError() & (if ((WebHelper.now - cacheTime) > 60) {
         SmsHelper.sendCodeSms(mobile)
         JsRaw("""$("#getCodeBtn").countdown();$("#opt_login_tip").hide().text("")""")
       } else {
         JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
-      }) & Alert(SmsHelper.getSendSmsCode2Code(mobile))
+      }) & Alert(SmsHelper.smsCode(mobile)._1)
     }
 
     "@mobile" #> text(mobileBox.get, mobile => mobileBox = Full(mobile)) &
