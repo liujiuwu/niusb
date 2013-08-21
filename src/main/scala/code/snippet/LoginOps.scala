@@ -37,30 +37,44 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
         case _ => return formError("mobile", "请输入正确的手机号！")
       }
 
-      pwdBox match {
-        case Full(pwd) if (!pwd.isEmpty()) =>
-          val code = MemcachedHelper.get(mobile) match {
-            case Some(code) => code
-            case _ => ""
-          }
-
-          User.find(By(User.mobile, mobile)) match {
-            case Full(user) =>
-              User.logUserIn(user)
-              if (user.superUser.get) S.redirectTo("/admin/brand/") else S.redirectTo("/")
-            case _ =>
-              val user = new User
-              user.mobile(mobile)
-              if (user.save()) {
-                User.logUserIn(user)
-                S.redirectTo("/")
-              } else {
-                JsRaw(errorMsg("opt_login_tip", Text("注册失败，请稍候重试！")))
-              }
-          }
-        case _ => removeFormError("mobile") & formError("pwd", "请输入验证码或密码！")
+      val pwd = pwdBox match {
+        case Full(p) if (!p.isEmpty()) => p
+        case _ => return removeFormError("mobile") & formError("pwd", "请输入验证码或密码！")
       }
 
+      val code = MemcachedHelper.get(mobile) match {
+        case Some(sc) =>
+          val smsCode = sc.asInstanceOf[SmsCode]
+          smsCode.code
+        case _ => ""
+      }
+
+      User.find(By(User.mobile, mobile)) match {
+        case Full(user) =>
+          val checkRet = (!code.isEmpty() && code == pwd) || user.password.match_?(pwd)
+          if (checkRet) {
+            MemcachedHelper.delete(mobile)
+            User.logUserIn(user)
+            if (user.superUser.get) S.redirectTo("/admin/brand/") else S.redirectTo("/")
+          } else {
+            formError("pwd", "验证码或密码错误，请确认！")
+          }
+        case _ =>
+          val checkRet = (!code.isEmpty() && code == pwd)
+          if (checkRet) {
+            MemcachedHelper.delete(mobile)
+            val user = User.create
+            user.mobile(mobile)
+            if (user.save()) {
+              User.logUserIn(user)
+              S.redirectTo("/")
+            } else {
+              JsRaw(errorMsg("opt_login_tip", Text("注册失败，请稍候重试！")))
+            }
+          } else {
+            formError("pwd", "验证码错误，请确认！")
+          }
+      }
     }
 
     def sendCodeSms(mobileVal: String): JsCmd = {
@@ -76,12 +90,12 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
         case _ => 0
       }
 
-      if ((WebHelper.now - cacheTime) > 60) {
+      removeFormError("mobile") & (if ((WebHelper.now - cacheTime) > 60) {
         SmsHelper.sendCodeSms(mobile)
-        JsRaw("smsCodeCountdown()") & JsRaw("""$("#opt_login_tip").hide().text("")""")
+        JsRaw("""smsCodeCountdown();$("#opt_login_tip").hide().text("")""")
       } else {
         JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
-      }
+      })
     }
 
     "@mobile" #> text(mobileBox.get, mobile => mobileBox = Full(mobile)) &
