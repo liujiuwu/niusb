@@ -38,20 +38,14 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
 
       val pwd = pwdBox match {
-        case Full(p) if (!p.isEmpty()) => p
+        case Full(p) if (!p.trim.isEmpty()) => p
         case _ => return removeFormError("mobile") & formError("pwd", "请输入验证码或密码！")
       }
 
-      val code = MemcachedHelper.get(mobile) match {
-        case Some(sc) =>
-          val smsCode = sc.asInstanceOf[SmsCode]
-          smsCode.code
-        case _ => ""
-      }
-
+      val code = SmsHelper.getSendSmsCode2Code(mobile)
       User.find(By(User.mobile, mobile)) match {
         case Full(user) =>
-          val checkRet = (!code.isEmpty() && code == pwd) || user.password.match_?(pwd)
+          val checkRet = (!code.trim.isEmpty() && code == pwd) || user.password.match_?(pwd)
           if (checkRet) {
             MemcachedHelper.delete(mobile)
             User.logUserIn(user)
@@ -60,7 +54,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             formError("pwd", "验证码或密码错误，请确认！")
           }
         case _ =>
-          val checkRet = (!code.isEmpty() && code == pwd)
+          val checkRet = (!code.trim.isEmpty() && code == pwd)
           if (checkRet) {
             MemcachedHelper.delete(mobile)
             val user = User.create
@@ -95,7 +89,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
         JsRaw("""$("#getCodeBtn").countdown();$("#opt_login_tip").hide().text("")""")
       } else {
         JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
-      })
+      }) & Alert(SmsHelper.getSendSmsCode2Code(mobile))
     }
 
     "@mobile" #> text(mobileBox.get, mobile => mobileBox = Full(mobile)) &

@@ -41,7 +41,17 @@ object SmsHelper extends App with Loggable {
     SmsActor ! SendSms(mobile, sms)
   }
 
-  def getSendSmsCode(mobile: String) = MemcachedHelper.get(mobile)
+  def getSendSmsCode(mobile: String): Option[SmsCode] = MemcachedHelper.get(mobile) match {
+    case Some(sc) => Option(sc.asInstanceOf[SmsCode])
+    case _ => None
+  }
+
+  def getSendSmsCode2Code(mobile: String) = {
+    getSendSmsCode(mobile) match {
+      case Some(sc) => sc.code
+      case _ => ""
+    }
+  }
 
   //sendCodeSms("123456")
   //println(getSendSmsCode("123456"))

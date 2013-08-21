@@ -45,18 +45,24 @@ object UserOps extends SnippetHelper {
   def updatePwd = {
     var (code, pwd) = ("", "")
     def process(): JsCmd = {
-      if (pwd.isEmpty() || pwd.length() < 6) {
+      if (pwd.trim.isEmpty() || pwd.trim.length() < 6) {
         return formError("pwd", "新密码不能为空，且不少于6位字符。")
       }
 
-      if (code.isEmpty()) {
-        return removeFormError("pwd") & formError("code", "请填写正确的验证码!")
+      if (code.trim.isEmpty()) {
+        return removeFormError("pwd") & formError("code", "请填写正确的验证码或旧密码!")
       }
 
-      user.password(pwd)
-      removeFormError("pwd") & removeFormError("code") & JsRaw(succMsg("opt_pwd_tip", Text(if (user.save) "密码修改成功！" else "密码修改失败！")))
+      val smsCode = SmsHelper.getSendSmsCode2Code(user.mobile.get)
+      val checkRet = (!code.trim.isEmpty() && code == smsCode) || user.password.match_?(code)
+      removeFormError("pwd") & removeFormError("code") & (if (checkRet) {
+        user.password(pwd)
+        JsRaw(succMsg("opt_pwd_tip", Text(if (user.save) "密码修改成功，请牢记！" else "密码修改失败！")))
+      } else {
+        formError("code", "验证码或旧密码错误，请确认!")
+      })
     }
-    
+
     def sendCodeSms(): JsCmd = {
       val mobile = user.mobile.get
       val cacheTime = MemcachedHelper.get(mobile) match {
@@ -71,7 +77,7 @@ object UserOps extends SnippetHelper {
         JsRaw("""$("#getCodeBtn").countdown();$("#opt_pwd_tip").hide().text("")""")
       } else {
         JsRaw("""$("#opt_pwd_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
-      })
+      }) & Alert(SmsHelper.getSendSmsCode2Code(user.mobile.get))
     }
 
     "@code" #> password(code, code = _) &
