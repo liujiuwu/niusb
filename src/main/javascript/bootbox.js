@@ -479,6 +479,7 @@ var bootbox = window.bootbox || (function(document, $) {
             // we *never* want the modal to be shown before we can bind stuff to it
             // this method can also take a 'show' option, but we'll only use that
             // later if we need to
+			martinTop:100,//自定义顶部位置
             show     : false
         });
 

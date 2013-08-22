@@ -132,9 +132,9 @@
 
 			var modalOverflow = $(window).height() - 10 < this.$element.height();
             
-			if (modalOverflow || this.options.modalOverflow) {
+			if (modalOverflow || this.options.modalOverflow || this.options.martinTop>0) {
 				this.$element
-					.css('margin-top', 0)
+					.css('margin-top', this.options.martinTop)
 					.addClass('modal-overflow');
 			} else {
 				this.$element
@@ -331,6 +331,7 @@
 	};
 
 	$.fn.modal.defaults = {
+		marginTop:0,//自定义顶部位置
 		keyboard: true,
 		backdrop: true,
 		loading: false,
