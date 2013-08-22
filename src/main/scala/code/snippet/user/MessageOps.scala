@@ -20,6 +20,7 @@ import com.tristanhunt.knockoff.DefaultDiscounter._
 import com.tristanhunt.knockoff._
 import net.liftweb.http.MessageState
 import code.model.UserMessage
+import code.model.UserData
 
 class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   val user = User.currentUser.get
@@ -46,12 +47,12 @@ class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     var url = originalUri
 
-    val messages = (UserMessage.find(By(UserMessage.user, user.id.get)) match {
-      case Full(userMessage) =>
-        userMessage.userMessages match {
-          case Some(messageFlag) =>
-            Some(for (mg <- messageFlag; msg <- Message.findByKey(mg.id)) yield {
-              msg.isRead = mg.readFlag
+    val messages = (UserData.find(By(UserData.user, user.id.get)) match {
+      case Full(userData) =>
+        userData.userMessages match {
+          case Some(userMessages) =>
+            Some(for (userMsg <- userMessages; if (userMsg.flag <= 1); msg <- Message.findByKey(userMsg.messageId)) yield {
+              msg.isRead = userMsg.flag == 1
               msg
             })
           case _ => None
@@ -65,6 +66,7 @@ class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
     val dataList = "#dataList tr" #> messages.map(message => {
       "#title" #> <a href={ "/user/sms/view?id=" + message.id.get }>{ message.title.get }</a> &
         "#messageType" #> message.messageType.asHtml &
+        "#status" #> { if (message.isRead) "已读" else "未读" } &
         "#sender" #> message.sender.asHtml &
         "#createdAt" #> message.createdAt.asHtml &
         "#actions" #> actions(message)
@@ -75,8 +77,20 @@ class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   def view = {
     tabMenuRV(Full("zoom-in" -> "查看信息"))
 
+    val userData = UserData.find(By(UserData.user, user.id.get))
     (for {
       messageId <- S.param("id").flatMap(asLong) ?~ "消息ID不存在或无效"
+      if (userData match {
+        case Full(ud) => ud.userMessages match {
+          case Some(userMsgs) =>
+            if (userMsgs.exists(_.messageId == messageId)) {
+              ud.updateUserMessages(messageId)
+            }
+            true
+          case _ => false
+        }
+        case _ => false
+      })
       message <- Message.find(By(Message.id, messageId)) ?~ s"ID为${messageId}的消息不存在。"
     } yield {
       "#title *" #> message.title.get &

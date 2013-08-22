@@ -11,6 +11,14 @@ object MessageType extends Enumeration {
   val System = Value(0, "系统消息")
 }
 
+object ReceiverType extends Enumeration {
+  type ReceiverType = Value
+  val All = Value(0, "所有用户")
+  val Vip = Value(1, "Vip用户")
+  val Agent = Value(2, "代理用户")
+  val UserId = Value(3, "指定用户")
+}
+
 class Message extends LongKeyedMapper[Message] with CreatedUpdated with IdPK {
   def getSingleton = Message
   object title extends MappedString(this, 100)
@@ -25,6 +33,12 @@ class Message extends LongKeyedMapper[Message] with CreatedUpdated with IdPK {
       User.find(By(User.id, sender.get)).openOrThrowException("not found user")
     }
   }
+
+  object receiverType extends MappedEnum(this, ReceiverType) {
+    override def defaultValue = ReceiverType.All
+    override def dbColumnName = "receiver_type"
+  }
+  object receiver extends MappedText(this)
   object content extends MappedString(this, 600)
 
   override lazy val createdAt = new MyCreatedAt(this) {

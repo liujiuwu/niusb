@@ -9,17 +9,23 @@
 							<input type="text" id="title" name="title" required="required" class="span20" /> <span id="error_title" class="help-inline"></span>
 						</div>
 					</div>
-					<div id="group_message_type" class="control-group">
-						<label for="message_type" class="control-label">类型</label>
+					<div id="group_messageType" class="control-group">
+						<label for="messageType" class="control-label">类型</label>
 						<div class="controls">
-							<input type="text" id="message_type" name="message_type" required="required" />
+							<input type="text" id="messageType" name="messageType" required="required" />
 						</div>
 					</div>
 					<div id="group_receiver" class="control-group">
 						<label for="receiver" class="control-label">发送给</label>
-						<div class="controls">
-							<textarea rows="3" id="receiver" name="receiver" class="span20"></textarea>
-							<span class="help-block">多个id之间用英文逗号(,)隔开，不填写送给所有用户。</span>
+						<div class="controls controls-row">
+							<select id="receiverType" name="receiverType">
+								<option value="0">所有用户</option>
+								<option value="1">代理用户</option>
+								<option value="2">指定Id列表</option>
+							</select>
+							<div id="receivers" class="hide" style="margin-top: 5px">
+								<textarea rows="3" id="receiver" name="receiver" class="span20" placeholder="多个id之间用英文逗号(,)隔开，不填写送给所有用户。"></textarea>
+							</div>
 						</div>
 					</div>
 					<div id="group_content" class="control-group">
@@ -37,4 +43,19 @@
 			</div>
 		</div>
 	</div>
+	<lift:tail>
+		<script type="text/javascript">
+			// <![CDATA[
+			$(function() {
+				$("#receiverType").change(function(){
+					if($(this).val()=="3"){
+						$("#receivers").show();
+					}else{
+						$("#receivers").hide();
+					}
+				})
+			});
+			// ]]>
+		</script>
+	</lift:tail>
 </div>
