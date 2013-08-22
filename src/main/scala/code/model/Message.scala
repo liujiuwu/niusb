@@ -11,12 +11,6 @@ object MessageType extends Enumeration {
   val System = Value(0, "系统消息")
 }
 
-object MessageStatus extends Enumeration {
-  type MessageStatus = Value
-  val Unread = Value(0, "未读")
-  val Read = Value(1, "已读")
-}
-
 class Message extends LongKeyedMapper[Message] with CreatedUpdated with IdPK {
   def getSingleton = Message
   object title extends MappedString(this, 100)
@@ -24,9 +18,7 @@ class Message extends LongKeyedMapper[Message] with CreatedUpdated with IdPK {
     override def defaultValue = MessageType.System
     override def dbColumnName = "message_type"
   }
-  object receiver extends MappedLong(this) {
-    override def dbColumnName = "receive_user_id"
-  }
+
   object sender extends MappedLong(this) {
     override def dbColumnName = "send_user_id"
     def getSender = {
@@ -34,10 +26,6 @@ class Message extends LongKeyedMapper[Message] with CreatedUpdated with IdPK {
     }
   }
   object content extends MappedString(this, 600)
-
-  object status extends MappedEnum(this, MessageStatus) {
-    override def defaultValue = MessageStatus.Unread
-  }
 
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
@@ -70,10 +58,12 @@ class Message extends LongKeyedMapper[Message] with CreatedUpdated with IdPK {
       }
     }
   }
+
+  var isRead: Boolean = false
 }
 
 object Message extends Message with CRUDify[Long, Message] with Paginator[Message] {
   override def dbTableName = "messages"
-  override def fieldOrder = List(id, title, messageType, receiver, sender, status, content, createdAt, updatedAt)
+  override def fieldOrder = List(id, title, messageType, sender, content, createdAt, updatedAt)
 
 }

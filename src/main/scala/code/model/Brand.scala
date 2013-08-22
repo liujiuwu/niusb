@@ -97,6 +97,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   object basePrice extends MappedInt(this) {
+    override def dbIndexed_? = true
     override def dbColumnName = "base_price"
     def displayBasePrice: NodeSeq = WebHelper.badge("success", basePrice.get)
   }

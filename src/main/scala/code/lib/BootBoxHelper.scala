@@ -13,8 +13,5 @@ case class BoxConfirm(text: String, yes: JsCmd, locale: String = "zh_CN") extend
 }
 
 case class BoxAlert(text: String, click: JsCmd = Noop, locale: String = "zh_CN") extends JsCmd {
-  val clickJsCmd = if (click != Noop) {
-    ",function(){" + click.toJsCmd + "}"
-  }
-  def toJsCmd = BootBoxHelper.setLocale(locale) + "bootbox.alert(" + text.encJs + clickJsCmd + ")"
+  def toJsCmd = BootBoxHelper.setLocale(locale) + "bootbox.alert(" + text.encJs + ",function(){" + click.toJsCmd + "}" + ")"
 }

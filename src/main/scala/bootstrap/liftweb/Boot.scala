@@ -6,35 +6,21 @@ import code.lib.SearchHelper
 import code.model.MyDBVendor
 import code.model.User
 import code.rest.UploadManager
-import net.liftweb.common.Empty
-import net.liftweb.common.Full
-import net.liftweb.common.Loggable
+import net.liftweb.common._
 import net.liftweb.db.DB
 import net.liftweb.db.DB1.db1ToDb
 import net.liftweb.db.DefaultConnectionIdentifier
 import net.liftweb.http.Html5Properties
-import net.liftweb.http.LiftRules
-import net.liftweb.http.LiftRulesMocker.toLiftRules
-import net.liftweb.http.NotFoundAsTemplate
-import net.liftweb.http.ParsePath
-import net.liftweb.http.Req
-import net.liftweb.http.RewriteRequest
-import net.liftweb.http.RewriteResponse
+import net.liftweb.http._
 import net.liftweb.http.S
 import net.liftweb.mapper.By
-import net.liftweb.util.NamedPF
-import net.liftweb.util.Props
-import net.liftweb.util.Vendor.valToVender
-import net.liftweb.http.provider.HTTPCookie
+import net.liftweb.util._
+import net.liftweb.util.Vendor._
 import net.liftweb.mapper.Schemifier
 import code.model.Brand
 import scala.collection.Parallel
 import code.lib.SyncData
-import code.model.BrandType
-import code.model.AdSpace
-import code.model.Ad
-import code.model.Article
-import code.model.Message
+import code.model._
 import code.lib.WebCacheHelper
 
 class Boot extends Loggable {
@@ -51,7 +37,7 @@ class Boot extends Loggable {
       }
     }*/
     //DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
-    Schemifier.schemify(true, Schemifier.infoF _, User, BrandType, Brand, AdSpace, Ad, Article, Message)
+    Schemifier.schemify(true, Schemifier.infoF _, User, BrandType, Brand, AdSpace, Ad, Article, Message, UserMessage)
 
     LiftRules.setSiteMap(Site.siteMap)
 

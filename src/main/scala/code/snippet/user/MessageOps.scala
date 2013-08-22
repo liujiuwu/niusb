@@ -16,6 +16,10 @@ import net.liftweb.mapper._
 import net.liftweb.util.Helpers._
 import net.liftweb.http.S
 import net.liftweb.util.CssSel
+import com.tristanhunt.knockoff.DefaultDiscounter._
+import com.tristanhunt.knockoff._
+import net.liftweb.http.MessageState
+import code.model.UserMessage
 
 class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   val user = User.currentUser.get
@@ -41,17 +45,31 @@ class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
     }
 
     var url = originalUri
-    val paginatorModel = Message.paginator(url, bies: _*)()
 
-    val dataList = "#dataList tr" #> paginatorModel.datas.map(message => {
+    val messages = (UserMessage.find(By(UserMessage.user, user.id.get)) match {
+      case Full(userMessage) =>
+        userMessage.userMessages match {
+          case Some(messageFlag) =>
+            Some(for (mg <- messageFlag; msg <- Message.findByKey(mg.id)) yield {
+              msg.isRead = mg.readFlag
+              msg
+            })
+          case _ => None
+        }
+      case _ => None
+    }) match {
+      case Some(messages) => messages
+      case _ => List[Message]()
+    }
+
+    val dataList = "#dataList tr" #> messages.map(message => {
       "#title" #> <a href={ "/user/sms/view?id=" + message.id.get }>{ message.title.get }</a> &
-        "#status" #> message.status.asHtml &
         "#messageType" #> message.messageType.asHtml &
         "#sender" #> message.sender.asHtml &
         "#createdAt" #> message.createdAt.asHtml &
         "#actions" #> actions(message)
     })
-    dataList & "#pagination" #> paginatorModel.paginate _
+    dataList
   }
 
   def view = {
@@ -62,7 +80,7 @@ class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
       message <- Message.find(By(Message.id, messageId)) ?~ s"ID为${messageId}的消息不存在。"
     } yield {
       "#title *" #> message.title.get &
-      "#content" #> message.content.get
+        "#content" #> toXHTML(knockoff(message.content.get))
     }): CssSel
   }
 }
