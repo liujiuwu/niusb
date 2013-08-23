@@ -7,6 +7,7 @@ import code.lib.WebHelper
 import net.liftweb.common.Box
 import code.lib.SmsHelper
 import code.lib.MemcachedHelper
+import net.liftweb.util.Helpers
 
 object UserType extends Enumeration {
   type UserType = Value
@@ -70,6 +71,11 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
   object lastLoginTime extends MappedDateTime(this)
 
   object loginTime extends MappedDateTime(this)
+
+  object upgradedAt extends MappedDateTime(this) {
+    override def dbColumnName = "upgraded_at"
+    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+  }
 
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"

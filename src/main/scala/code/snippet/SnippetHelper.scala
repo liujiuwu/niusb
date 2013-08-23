@@ -43,6 +43,6 @@ trait SnippetHelper {
           resultMsg = "操作发生异常，请稍候重试或联系我们！"
       }
       "*" #> errorHtml(<p>{ resultMsg }</p>)
-    case _ => S.redirectTo("/")
+    case _ => "*" #> errorHtml(<p>404</p>)
   }
 }

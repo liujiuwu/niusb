@@ -1,25 +1,38 @@
 package code.snippet.admin
 
-import scala.xml._
+import scala.xml.NodeSeq
+import scala.xml.Text
+
 import code.lib.BoxConfirm
-import code.lib.WebHelper
 import code.model.User
 import code.model.UserStatus
 import code.model.UserSupper
 import code.model.UserType
-import net.liftweb.common._
+import code.snippet.SnippetHelper
+import net.liftweb.common.Full
+import net.liftweb.common.Loggable
+import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
-import net.liftweb.http._
-import net.liftweb.http.SHtml._
-import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.http.SHtml.ElemAttr.pairToBasic
+import net.liftweb.http.SHtml.a
+import net.liftweb.http.SHtml.ajaxInvoke
+import net.liftweb.http.SHtml.hidden
+import net.liftweb.http.SHtml.selectObj
+import net.liftweb.http.SHtml.text
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds
-import net.liftweb.http.js.JsCmds._
-import net.liftweb.mapper._
-import net.liftweb.util._
-import net.liftweb.util.Helpers._
-import code.snippet.SnippetHelper
-import code.snippet.PaginatorHelper
+import net.liftweb.http.js.JsCmds.jsExpToJsCmd
+import net.liftweb.mapper.By
+import net.liftweb.mapper.Descending
+import net.liftweb.mapper.Genders
+import net.liftweb.mapper.OrderBy
+import net.liftweb.mapper.QueryParam
+import net.liftweb.util.CssSel
+import net.liftweb.util.Helpers
+import net.liftweb.util.Helpers.appendParams
+import net.liftweb.util.Helpers.asLong
+import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.util.Helpers.strToSuperArrowAssoc
 
 object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
 
@@ -111,6 +124,7 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#name" #> user.name.get &
         "#gender" #> user.gender &
         "#type" #> user.userType &
+        "#upgradedAt" #> user.upgradedAt.asHtml &
         "#email" #> user.email.get &
         "#phone" #> user.phone.get &
         "#qq" #> user.qq.get &
@@ -125,14 +139,19 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def edit = {
     tabMenuRV(Full("edit" -> "编辑用户"))
+    var userType = UserType.Normal
     (for {
       userId <- S.param("id").flatMap(asLong) ?~ "用户ID不存在或无效"
       user <- User.find(By(User.id, userId)) ?~ s"ID为${userId}的用户不存在。"
     } yield {
+      userType = user.userType.get
       def process(): JsCmd = {
+        if (userType != user.userType) {
+          user.upgradedAt(Helpers.now)
+        }
         user.save
         //JsRaw(WebHelper.succMsg("opt_profile_tip", Text("信息保存成功！")))
-        S.redirectTo("/admin/user/view?id="+user.id.get)
+        S.redirectTo("/admin/user/view?id=" + user.id.get)
       }
 
       val isSupper = if (user.superUser.get) UserSupper.Supper else UserSupper.Normal

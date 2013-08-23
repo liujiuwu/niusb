@@ -54,7 +54,11 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
           }
 
           if (!ids._2.isEmpty) {
-            return BoxAlert("发送给数据中存在非法id，请确认！")
+            return BoxAlert("发送给数据中存在非法Id，请确认！")
+          }
+
+          if (ids._1.isEmpty) {
+            return BoxAlert("请输入接收用户Id，请确认！")
           }
 
           message.receiver(ids._1.mkString(","))

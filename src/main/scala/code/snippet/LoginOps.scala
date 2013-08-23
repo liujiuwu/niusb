@@ -22,6 +22,7 @@ import code.lib.MemcachedHelper
 import code.lib.SmsCode
 import code.lib.WebHelper
 import net.liftweb.util.StringHelpers
+import net.liftweb.util.Helpers
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -47,6 +48,9 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
       User.find(By(User.mobile, mobile)) match {
         case Full(user) =>
           if (user.authSmsCodeOrPwd(pwd)) {
+            user.lastLoginTime(user.loginTime.get)
+            user.loginTime(Helpers.now)
+            user.save()
             User.logUserIn(user)
             if (user.superUser.get) S.redirectTo("/admin/brand/") else S.redirectTo("/")
           } else {
@@ -57,6 +61,8 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
           user.mobile(mobile)
           user.password(StringHelpers.randomString(6))
           if (user.authSmsCodeOrPwd(pwd)) {
+            user.loginTime(Helpers.now)
+            user.lastLoginTime(user.loginTime.get)
             user.save()
             User.logUserIn(user)
             S.redirectTo("/")

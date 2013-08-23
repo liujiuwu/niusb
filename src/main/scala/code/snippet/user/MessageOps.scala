@@ -21,9 +21,12 @@ import com.tristanhunt.knockoff._
 import net.liftweb.http.MessageState
 import code.model.UserMessage
 import code.model.UserData
+import code.model.MessageFlagType
+import code.model.UserType
+import code.model.ReceiverType
 
-class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
-  val user = User.currentUser.get
+object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
+  def user = User.currentUser.get
 
   def dispatch = {
     case "list" => list
@@ -40,30 +43,38 @@ class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
     def actions(message: Message): NodeSeq = {
       a(() => {
         BoxConfirm("确定删除【" + message.title.get + "】？此操作不可恢复，请谨慎！", {
-          ajaxInvoke(() => { message.delete_!; JsCmds.Reload })._2
+          ajaxInvoke(() => {
+            for (ud <- UserData.find(By(UserData.user, user.id.get))) {
+              ud.updateUserMessages(message.id.get, MessageFlagType.Del)
+            }
+            JsCmds.Reload
+          })._2
         })
       }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
     }
 
     var url = originalUri
-
-    val messages = (UserData.find(By(UserData.user, user.id.get)) match {
-      case Full(userData) =>
-        userData.userMessages match {
-          case Some(userMessages) =>
-            Some(for (userMsg <- userMessages; if (userMsg.flag <= 1); msg <- Message.findByKey(userMsg.messageId)) yield {
-              msg.isRead = userMsg.flag == 1
-              msg
-            })
-          case _ => None
+    val (messages, delMessages) = UserData.getOrCreateUserData(user.id.get).userMessages match {
+      case Some(userMessages) =>
+        val twoMsgs = userMessages.partition(_.flag != MessageFlagType.Del)
+        val msg = for (userMsg <- twoMsgs._1; msg <- Message.findByKey(userMsg.messageId)) yield {
+          msg.isRead = userMsg.flag == MessageFlagType.Readed
+          msg
         }
-      case _ => None
-    }) match {
-      case Some(messages) => messages
-      case _ => List[Message]()
+        (msg, twoMsgs._2)
+      case _ => (List[Message](), List[UserMessage]())
     }
 
-    val dataList = "#dataList tr" #> messages.map(message => {
+    val allMsg = Message.findAll(By(Message.receiverType, ReceiverType.All), By_>=(Message.createdAt, user.createdAt), OrderBy(Message.id, Descending))
+    val sysMessages = (user.userType.get match {
+      case UserType.Vip =>
+        Message.findAll(By(Message.receiverType, ReceiverType.Vip), By_>=(Message.createdAt, user.upgradedAt.get), OrderBy(Message.id, Descending))
+      case UserType.Agent =>
+        Message.findAll(By(Message.receiverType, ReceiverType.Agent), By_>=(Message.createdAt, user.upgradedAt.get), OrderBy(Message.id, Descending))
+    }):::allMsg
+
+    val datas = sysMessages.filterNot(m => (delMessages.exists(_.messageId == m.id.get) || messages.exists(_.id.get == m.id.get))) ::: messages
+    val dataList = "#dataList tr" #> datas.map(message => {
       "#title" #> <a href={ "/user/sms/view?id=" + message.id.get }>{ message.title.get }</a> &
         "#messageType" #> message.messageType.asHtml &
         "#status" #> { if (message.isRead) "已读" else "未读" } &
@@ -76,25 +87,31 @@ class MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def view = {
     tabMenuRV(Full("zoom-in" -> "查看信息"))
-
-    val userData = UserData.find(By(UserData.user, user.id.get))
     (for {
       messageId <- S.param("id").flatMap(asLong) ?~ "消息ID不存在或无效"
-      if (userData match {
-        case Full(ud) => ud.userMessages match {
-          case Some(userMsgs) =>
-            if (userMsgs.exists(_.messageId == messageId)) {
-              ud.updateUserMessages(messageId)
-            }
-            true
-          case _ => false
-        }
-        case _ => false
-      })
       message <- Message.find(By(Message.id, messageId)) ?~ s"ID为${messageId}的消息不存在。"
+      if (isView(messageId, message))
     } yield {
       "#title *" #> message.title.get &
         "#content" #> toXHTML(knockoff(message.content.get))
     }): CssSel
   }
+
+  private def isView(messageId: Long, message: Message): Boolean = {
+    val enableView = message.receiverType.get match {
+      case ReceiverType.All =>
+        user.createdAt.get.before(message.createdAt.get)
+      case _ => user.userType.get match {
+        case UserType.Normal => false
+        case UserType.Vip => message.receiverType.get == ReceiverType.Vip
+        case UserType.Agent => message.receiverType.get == ReceiverType.Agent
+      }
+    }
+
+    if (!enableView) {
+      return enableView
+    }
+    UserData.getOrCreateUserData(user.id.get).prependMessage(messageId, MessageFlagType.Readed)
+  }
+
 }
