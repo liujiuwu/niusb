@@ -20,13 +20,14 @@ import com.tristanhunt.knockoff.DefaultDiscounter._
 import com.tristanhunt.knockoff._
 import net.liftweb.http.MessageState
 import code.model.UserMessage
+import code.model.PaginatorByMem
 import code.model.UserData
 import code.model.MessageFlagType
 import code.model.UserType
 import code.model.ReceiverType
 
 object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
-  def user = User.currentUser.get
+  private def user = User.currentUser.openOrThrowException("not found user")
 
   def dispatch = {
     case "list" => list
@@ -39,14 +40,29 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
     byBuffer.toList
   }
 
+  private def findVipUserMsgs() = {
+    Message.findAll(By(Message.receiverType, ReceiverType.Vip), By_>=(Message.createdAt, user.upgradedAt.get), OrderBy(Message.id, Descending))
+  }
+
+  private def findAgentUserMsgs() = {
+    Message.findAll(By(Message.receiverType, ReceiverType.Agent), By_>=(Message.createdAt, user.upgradedAt.get), OrderBy(Message.id, Descending))
+  }
+  private def findAllUserMsgs() = {
+    Message.findAll(By(Message.receiverType, ReceiverType.All), By_>=(Message.createdAt, user.createdAt.get), OrderBy(Message.id, Descending))
+  }
+
+  private def filterDelMsgs(userMsg: UserMessage, msg: Message): Boolean = {
+    !(userMsg.flag == MessageFlagType.Del && msg.receiverType == ReceiverType.UserId)
+  }
+
   def list = {
+    val ud = UserData.getOrCreateUserData(user.id.get)
+
     def actions(message: Message): NodeSeq = {
       a(() => {
         BoxConfirm("确定删除【" + message.title.get + "】？此操作不可恢复，请谨慎！", {
           ajaxInvoke(() => {
-            for (ud <- UserData.find(By(UserData.user, user.id.get))) {
-              ud.updateUserMessages(message.id.get, MessageFlagType.Del)
-            }
+            ud.updateUserMessages(message.id.get, MessageFlagType.Del)
             JsCmds.Reload
           })._2
         })
@@ -54,27 +70,25 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
     }
 
     var url = originalUri
-    val (messages, delMessages) = UserData.getOrCreateUserData(user.id.get).userMessages match {
-      case Some(userMessages) =>
-        val twoMsgs = userMessages.partition(_.flag != MessageFlagType.Del)
-        val msg = for (userMsg <- twoMsgs._1; msg <- Message.findByKey(userMsg.messageId)) yield {
-          msg.isRead = userMsg.flag == MessageFlagType.Readed
-          msg
-        }
-        (msg, twoMsgs._2)
-      case _ => (List[Message](), List[UserMessage]())
+    val messages = for {
+      userMsg <- ud.userMessages
+      if (userMsg.flag != MessageFlagType.Del)
+      msg <- Message.findByKey(userMsg.messageId)
+    } yield {
+      msg.isRead = userMsg.flag == MessageFlagType.Readed
+      msg
     }
 
-    val allMsg = Message.findAll(By(Message.receiverType, ReceiverType.All), By_>=(Message.createdAt, user.createdAt), OrderBy(Message.id, Descending))
     val sysMessages = (user.userType.get match {
-      case UserType.Vip =>
-        Message.findAll(By(Message.receiverType, ReceiverType.Vip), By_>=(Message.createdAt, user.upgradedAt.get), OrderBy(Message.id, Descending))
-      case UserType.Agent =>
-        Message.findAll(By(Message.receiverType, ReceiverType.Agent), By_>=(Message.createdAt, user.upgradedAt.get), OrderBy(Message.id, Descending))
-    }):::allMsg
+      case UserType.Vip => findVipUserMsgs()
+      case UserType.Agent => findAgentUserMsgs()
+      case _ => List[Message]()
+    }) ::: findAllUserMsgs()
 
-    val datas = sysMessages.filterNot(m => (delMessages.exists(_.messageId == m.id.get) || messages.exists(_.id.get == m.id.get))) ::: messages
-    val dataList = "#dataList tr" #> datas.map(message => {
+    val datas = sysMessages.filterNot(m => { ud.userMessages.exists(_.messageId == m.id.get) }) ::: messages
+
+    val paginatorModel = PaginatorByMem.paginator(url, datas)()
+    val dataList = "#dataList tr" #> paginatorModel.datas.map(message => {
       "#title" #> <a href={ "/user/sms/view?id=" + message.id.get }>{ message.title.get }</a> &
         "#messageType" #> message.messageType.asHtml &
         "#status" #> { if (message.isRead) "已读" else "未读" } &
@@ -82,7 +96,7 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#createdAt" #> message.createdAt.asHtml &
         "#actions" #> actions(message)
     })
-    dataList
+    dataList & "#pagination" #> paginatorModel.paginate _
   }
 
   def view = {
@@ -98,20 +112,18 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   private def isView(messageId: Long, message: Message): Boolean = {
+    val ud = UserData.getOrCreateUserData(user.id.get)
     val enableView = message.receiverType.get match {
-      case ReceiverType.All =>
-        user.createdAt.get.before(message.createdAt.get)
-      case _ => user.userType.get match {
-        case UserType.Normal => false
-        case UserType.Vip => message.receiverType.get == ReceiverType.Vip
-        case UserType.Agent => message.receiverType.get == ReceiverType.Agent
-      }
+      case ReceiverType.All => user.createdAt.get.before(message.createdAt.get)
+      case ReceiverType.Vip => user.userType.get == UserType.Vip && user.upgradedAt.get.before(message.createdAt.get)
+      case ReceiverType.Agent => user.userType.get == UserType.Agent && user.upgradedAt.get.before(message.createdAt.get)
+      case ReceiverType.UserId => ud.userMessages.exists(_.messageId == messageId)
     }
 
     if (!enableView) {
       return enableView
     }
-    UserData.getOrCreateUserData(user.id.get).prependMessage(messageId, MessageFlagType.Readed)
+    ud.prependMessage(messageId, MessageFlagType.Readed)
   }
 
 }

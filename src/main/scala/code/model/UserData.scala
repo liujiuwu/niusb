@@ -10,6 +10,12 @@ object MessageFlagType extends Enumeration {
   val Readed = Value(1, "已读")
 }
 
+object FollowFlagType extends Enumeration {
+  type FollowFlagType = Value
+  val Del = Value(-1, "删除")
+  val Normal = Value(0, "正常")
+}
+
 case class UserMessage(messageId: Long, flag: MessageFlagType.Value = MessageFlagType.UnRead) {
   override def toString = messageId + ":" + flag.id
 }
@@ -24,7 +30,7 @@ object UserMessage {
     })
   }
 }
-case class UserFollow(brandId: Long, flag: Int = 0) {
+case class UserFollow(brandId: Long, flag: FollowFlagType.Value = FollowFlagType.Normal) {
   override def toString = brandId + ":" + flag
 }
 object UserFollow {
@@ -34,7 +40,7 @@ object UserFollow {
     }
     val fls = follows.split(",").toList
     Some(for (f <- fls; items = f.split(":")) yield {
-      UserFollow(items(0).toLong, items(1).toInt)
+      UserFollow(items(0).toLong, FollowFlagType(items(1).toInt))
     })
   }
 }
@@ -50,64 +56,72 @@ class UserData extends LongKeyedMapper[UserData] with CreatedUpdated with IdPK {
   object messages extends MappedText(this)
   object follows extends MappedText(this)
 
-  def userMessages: Option[List[UserMessage]] = {
+  def userMessages: List[UserMessage] = {
     messages.get match {
-      case UserMessage(messages) => Some(messages)
-      case _ => None
+      case UserMessage(messages) => messages
+      case _ => List[UserMessage]()
     }
   }
 
   def updateUserMessages(messageId: Long, flag: MessageFlagType.Value = MessageFlagType.Readed): Boolean = {
-    userMessages match {
-      case Some(userMsgs) =>
-        val results = (for (userMsg <- userMsgs) yield {
-          if (userMsg.flag != MessageFlagType.Del && userMsg.messageId == messageId) {
-            UserMessage(messageId, flag)
-          } else {
-            userMsg
-          }
-        })
-        messages(results.mkString(","))
-        save
-      case _ => false
+    val results = for (userMsg <- userMessages) yield {
+      if (userMsg.messageId == messageId) UserMessage(messageId, flag) else userMsg
     }
-  }
 
-  def userFollows: Option[List[UserFollow]] = {
-    messages.get match {
-      case UserFollow(follows) => Some(follows)
-      case _ => None
+    //删除不存在的消息及用户私人消息标记为删除的消息
+    val msgs = for {
+      userMsg <- results
+      msg <- Message.findByKey(userMsg.messageId)
+      if (!(userMsg.flag == MessageFlagType.Del && msg.receiverType.get == ReceiverType.UserId))
+    } yield {
+      userMsg
     }
-  }
-
-  def updateUserFollows(brandId: Long, flag: Int = 1): Boolean = {
-    userFollows match {
-      case Some(userFlws) =>
-        val results = (for (userFlw <- userFlws) yield {
-          if (userFlw.brandId == brandId) {
-            UserFollow(brandId, flag)
-          } else {
-            userFlw
-          }
-        })
-        follows(results.mkString(","))
-        save
-      case _ => false
-    }
+    messages(msgs.sortWith((a, b) => a.messageId > b.messageId).mkString(","))
+    save
   }
 
   def prependMessage(messageId: Long, flag: MessageFlagType.Value = MessageFlagType.UnRead): Boolean = {
-    val messagesStr = userMessages match {
-      case Some(ms) =>
-        if (ms.exists(_.messageId == messageId)) None else Some((UserMessage(messageId, flag) :: ms).mkString(","))
-      case _ => Some(UserMessage(messageId, flag).toString())
+    if (userMessages.exists(_.messageId == messageId)) { //消息已经存在，更新状态
+      updateUserMessages(messageId, flag)
+    } else {
+      messages((UserMessage(messageId, flag) :: userMessages).mkString(","))
+      save
     }
+  }
 
-    messagesStr match {
-      case Some(msgstr) =>
-        messages(msgstr)
-        save
-      case None => updateUserMessages(messageId) //消息已经存在，更新状态
+  def userFollows: List[UserFollow] = {
+    follows.get match {
+      case UserFollow(follows) => follows
+      case _ => List[UserFollow]()
+    }
+  }
+
+  def updateUserFollows(brandId: Long, flag: FollowFlagType.Value = FollowFlagType.Del): Boolean = {
+    val results = (for (userFlw <- userFollows) yield {
+      if (userFlw.flag != MessageFlagType.Del && userFlw.brandId == brandId) {
+        UserFollow(brandId, flag)
+      } else {
+        userFlw
+      }
+    })
+
+    val userFlws = for {
+      userFlw <- results
+      if (userFlw.flag == FollowFlagType.Normal)
+      brand <- Brand.findByKey(userFlw.brandId)
+    } yield {
+      userFlw
+    }
+    follows(userFlws.sortWith((a, b) => a.brandId > b.brandId).mkString(","))
+    save
+  }
+
+  def prependFollow(brandId: Long, flag: FollowFlagType.Value = FollowFlagType.Normal): Boolean = {
+    if (!userFollows.exists(_.brandId == brandId)) {
+      follows((UserFollow(brandId, flag) :: userFollows).mkString(","))
+      save
+    } else {
+      true
     }
   }
 }

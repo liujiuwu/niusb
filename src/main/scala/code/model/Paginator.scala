@@ -6,6 +6,13 @@ import net.liftweb.util.Helpers._
 import net.liftweb.util.IterableConst._
 import net.liftweb.http.S
 
+object PaginatorByMem {
+  def paginator[T](url: String, datas: List[T])(currentPage: Long = S.param("page").map(toLong).openOr(1), itemsOnPage: Int = 10): PaginatorModel[T] = {
+    val start = ((currentPage - 1) max 0) * itemsOnPage
+    PaginatorModel(url, datas.size, datas.slice(start.toInt, start.toInt + itemsOnPage), currentPage, itemsOnPage)
+  }
+}
+
 trait Paginator[T <: LongKeyedMapper[T]] extends LongKeyedMetaMapper[T] {
   self: T with LongKeyedMapper[T] =>
 
@@ -82,7 +89,6 @@ case class PaginatorModel[T](url: String, total: Long, datas: Seq[T], currentPag
 
   def gt(totalPage: Int, currentPage: Long, edges: Int = 2): NodeSeq = {
     val (start, end) = interval(totalPage, currentPage)
-    println(start + "|" + end)
     var pt = List[NodeSeq]()
     if (start > 0 && edges > 0) {
       val uEnd = edges min start

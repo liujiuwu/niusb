@@ -26,6 +26,10 @@ EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE16)
 
 EclipseKeys.withSource := true
 
+ideaExcludeFolders += ".idea"
+
+ideaExcludeFolders += ".idea_modules"
+
 libraryDependencies ++= {
   val liftVersion = "2.5"
   Seq(
