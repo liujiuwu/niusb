@@ -1,16 +1,13 @@
 package code.snippet.admin
 
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
+import scala.util._
 import code.lib.BoxAlert
 import code.model.ArticleType
 import code.model.MessageType
 import code.model.User
 import code.snippet.SnippetHelper
 import net.liftweb.common._
-import net.liftweb.http.DispatchSnippet
-import net.liftweb.http.SHtml._
+import net.liftweb.http._
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.util.Helpers._
@@ -20,6 +17,10 @@ import net.liftweb.mapper._
 import code.model.ReceiverType
 import scala.xml.Text
 import code.model.UserData
+import net.liftweb.http.SHtml._
+import net.liftweb.http.S._
+import code.lib.BoxConfirm
+import scala.xml.NodeSeq
 
 object Receivers {
   def unapply(receivers: String): Option[List[String]] = {
@@ -34,15 +35,18 @@ object Receivers {
 object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "create" => create
+    case "list" => list
   }
 
   private def user = User.currentUser.openOrThrowException("not found user")
 
   def create = {
+    tabMenuRV(Full("plus" -> "发送消息"))
+    
     var receivers = ""
     var receiverType = ReceiverType.All
     val message = Message.create
-    message.sender(0)
+    message.sender(user.id.get)
     def process(): JsCmd = {
       message.receiverType(receiverType)
       message.receiver("")
@@ -84,13 +88,40 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
       BoxAlert("消息已经成功发送！", Reload)
     }
 
-    val articleTypes = ArticleType.values.toList
     "@title" #> text(message.title.get, message.title(_)) &
       "@messageType" #> selectObj[MessageType.Value](MessageType.values.toList.map(v => (v, v.toString)), Full(message.messageType.is), message.messageType(_)) &
       "@receiverType" #> select(ReceiverType.values.toList.map(v => (v.id.toString, v.toString)), Some(receiverType.id.toString), v => receiverType = ReceiverType(v.toInt)) &
       "@receiver" #> textarea(receivers, receivers = _) &
       "@content" #> textarea(message.content.get, message.content(_)) &
       "type=submit" #> ajaxSubmit("发送", process)
+  }
+
+  def list = {
+    def actions(message: Message): NodeSeq = {
+      a(() => {
+        BoxConfirm("确定删除【" + message.title.get + "】？此操作不可恢复，请谨慎！", {
+          ajaxInvoke(() => { message.delete_!; Reload })._2
+        })
+      }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
+    }
+
+    var url = originalUri
+    val paginatorModel = Message.paginator(url)()
+
+    val searchForm = "#searchForm" #>
+      <form class="form-inline" action={ url } method="get">
+        <a href="/admin/sms/create" class="btn btn-primary"><i class="icon-plus"></i> 发送消息</a>
+      </form>
+
+    val dataList = "#dataList tr" #> paginatorModel.datas.map(message => {
+      "#title" #> <a href={ "/admin/sms/view?id=" + message.id }>{ message.title.get }</a> &
+        "#messageType" #> message.messageType &
+        "#sender" #> message.sender.get &
+        "#receiverType" #> message.receiverType &
+        "#createdAt" #> message.createdAt.asHtml &
+        "#actions" #> actions(message)
+    })
+    searchForm & dataList & "#pagination" #> paginatorModel.paginate _
   }
 
 }
