@@ -10,6 +10,7 @@ import net.liftweb.db.DB
 import net.liftweb.db.DefaultConnectionIdentifier
 import net.liftweb.mapper.Schemifier
 import code.model.Brand
+import java.text.SimpleDateFormat
 
 object Test extends App {
 
@@ -56,5 +57,8 @@ object Test extends App {
     case _ => println("no")
   }*/
   
+  lazy val sdf = new SimpleDateFormat("yyyy-M-dd")
+  lazy val sdf2 = new SimpleDateFormat("yyyy-MM-dd")
+  println(sdf2.format(sdf.parse("2002-2-14")))
 
 }

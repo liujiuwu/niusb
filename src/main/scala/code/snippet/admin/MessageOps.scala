@@ -21,6 +21,7 @@ import net.liftweb.http.SHtml._
 import net.liftweb.http.S._
 import code.lib.BoxConfirm
 import scala.xml.NodeSeq
+import net.liftweb.http.js.JE.JsRaw
 
 object Receivers {
   def unapply(receivers: String): Option[List[String]] = {
@@ -42,7 +43,7 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def create = {
     tabMenuRV(Full("plus" -> "发送消息"))
-    
+
     var receivers = ""
     var receiverType = ReceiverType.All
     val message = Message.create
@@ -105,6 +106,20 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
       }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
     }
 
+    def viewMsg(message: Message): JsCmd = {
+      JsRaw("$('#msgTitle').text('" + message.title.get + "')") &
+        JsRaw("$('#msgInfo').text('" + message.receiverType.get + "')") &
+        JsRaw("$('#msgContent').text('" + message.content.get + "')") &
+        {
+          if (message.receiverType.get == ReceiverType.UserId) {
+            JsRaw("$('#msgInfo').text('接收用户Id:" + message.receiver.get + "')")
+          }else{
+            JsRaw("$('#msgInfo').text('')")
+          }
+        } &
+        JsRaw("""$("#viewMsg").modal('show')""")
+    }
+
     var url = originalUri
     val paginatorModel = Message.paginator(url)()
 
@@ -114,7 +129,9 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
       </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(message => {
-      "#title" #> <a href={ "/admin/sms/view?id=" + message.id }>{ message.title.get }</a> &
+      val title = message.title.get
+      //"#title" #> <a href="#">{ message.title.get }</a> andThen " [onclick]" #> Text("") &
+      "#title" #> SHtml.a(() => viewMsg(message), Text(message.title.get)) &
         "#messageType" #> message.messageType &
         "#sender" #> message.sender.get &
         "#receiverType" #> message.receiverType &

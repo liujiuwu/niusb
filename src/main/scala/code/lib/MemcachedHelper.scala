@@ -12,7 +12,10 @@ object MemcachedHelper extends App {
     val builder = new XMemcachedClientBuilder(AddrUtil.getAddresses(servers))
     //builder.setConnectionPoolSize(5)
     builder.setCommandFactory(new BinaryCommandFactory())
-    builder.build()
+    //builder.getConfiguration().setStatisticsServer(false)
+    val memcachedClient = builder.build()
+    memcachedClient.setEnableHeartBeat(false)
+    memcachedClient
   }
 
   private def checkKey(key: String) {
