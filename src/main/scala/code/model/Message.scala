@@ -39,7 +39,7 @@ class Message extends LongKeyedMapper[Message] with CreatedUpdated with IdPK {
     override def dbColumnName = "receiver_type"
   }
   object receiver extends MappedText(this)
-  object content extends MappedString(this, 600)
+  object content extends MappedText(this)
 
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"

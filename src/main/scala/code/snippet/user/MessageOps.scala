@@ -25,6 +25,7 @@ import code.model.UserData
 import code.model.MessageFlagType
 import code.model.UserType
 import code.model.ReceiverType
+import scala.xml.Unparsed
 
 object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   private def user = User.currentUser.openOrThrowException("not found user")
@@ -107,7 +108,10 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
       if (isView(messageId, message))
     } yield {
       "#title *" #> message.title.get &
-        "#content" #> toXHTML(knockoff(message.content.get))
+        "#createdAt" #> message.createdAt.asHtml &
+        "#messageType" #> message.messageType &
+        "#sender" #> message.sender.get &
+        "#msgContent *" #> Unparsed(message.content.get)
     }): CssSel
   }
 

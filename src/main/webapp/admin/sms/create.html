@@ -1,4 +1,7 @@
 <div class="box-content" data-lift="surround?with=admin;at=content">
+	<head_merge>
+	<link rel="stylesheet" href="/kindeditor/themes/default/default.css" />
+	</head_merge>
 	<div data-lift="admin.MessageOps.create?eager_eval=true">
 		<div class="row-fluid">
 			<div class="span25">
@@ -28,14 +31,14 @@
 							</div>
 						</div>
 					</div>
-					<div id="group_content" class="control-group">
-						<label for="content" class="control-label">内容</label>
+					<div id="group_msgContent" class="control-group">
+						<label for="msgContent" class="control-label">内容</label>
 						<div class="controls">
-							<textarea rows="5" id="content" name="content" class="span20" required="required"></textarea>
+							<textarea rows="5" id="msgContent" name="msgContent" class="span20" required="required" style="height: 300px"></textarea>
 						</div>
 					</div>
 					<div class="form-actions">
-						<button class="btn btn-primary" type="submit">
+						<button id="sbt" class="btn btn-primary" type="submit">
 							<i class="icon-ok"></i> 发送
 						</button>
 					</div>
@@ -44,15 +47,25 @@
 		</div>
 	</div>
 	<lift:tail>
+		<script charset="utf-8" src="/kindeditor/kindeditor-min.js"></script>
+		<script charset="utf-8" src="/kindeditor/lang/zh_CN.js"></script>
 		<script type="text/javascript">
 			// <![CDATA[
+			KindEditor.ready(function(K) {
+				window.editor = K.create('#msgContent');
+			});
+
 			$(function() {
-				$("#receiverType").change(function(){
-					if($(this).val()=="3"){
+				$("#receiverType").change(function() {
+					if ($(this).val() == "3") {
 						$("#receivers").show();
-					}else{
+					} else {
 						$("#receivers").hide();
 					}
+				})
+
+				$('input[type="submit"]').click(function() {
+					editor.sync();
 				})
 			});
 			// ]]>

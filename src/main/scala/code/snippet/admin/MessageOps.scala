@@ -93,7 +93,7 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@messageType" #> selectObj[MessageType.Value](MessageType.values.toList.map(v => (v, v.toString)), Full(message.messageType.is), message.messageType(_)) &
       "@receiverType" #> select(ReceiverType.values.toList.map(v => (v.id.toString, v.toString)), Some(receiverType.id.toString), v => receiverType = ReceiverType(v.toInt)) &
       "@receiver" #> textarea(receivers, receivers = _) &
-      "@content" #> textarea(message.content.get, message.content(_)) &
+      "@msgContent" #> textarea(message.content.get, message.content(_)) &
       "type=submit" #> ajaxSubmit("发送", process)
   }
 

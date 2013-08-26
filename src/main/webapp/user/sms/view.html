@@ -1,13 +1,11 @@
 <div class="box-content" data-lift="surround?with=user;at=content">
-	<div data-lift="user.MessageOps.view?eager_eval=true">
-
-		<div class="well-white">
-			<div class="page-header">
-				<h4 id="title"></h4>
-			</div>
-			<div style="padding:10px">
-				<span id="content"> </span>
-			</div>
-		</div>
+	<div class="panel" data-lift="user.MessageOps.view?eager_eval=true">
+		<div class="panel-heading"><h4 id="title">Panel heading</h4></div>
+		<ul class="msg-info">
+			<li><b>发送日期：</b><span id="createdAt"></span></li>
+			<li><b>消息类型：</b><span id="messageType"></span></li>
+			<li><b>来源：</b><span id="sender"></span></li>
+		</ul>
+		<div id="msgContent" class="msg-content"></div>
 	</div>
 </div>

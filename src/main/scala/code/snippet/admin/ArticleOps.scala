@@ -139,7 +139,7 @@ class ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@article_type" #> selectObj[ArticleType.Value](ArticleType.values.toList.map(v => (v, v.toString)), Full(article.articleType.is), article.articleType(_)) &
         "@status" #> selectObj[ArticleStatus.Value](ArticleStatus.values.toList.map(v => (v, v.toString)), Full(article.status.is), article.status(_)) &
         "@article_order" #> text(article.articleOrder.get.toString, v => article.articleOrder(v.toInt)) &
-        "@content" #> textarea(article.content.get, article.content(_)) &
+        "@articleContent" #> textarea(article.content.get, article.content(_)) &
         "@sub" #> hidden(process)
     }): CssSel
   }
@@ -159,8 +159,8 @@ class ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@article_type" #> selectObj[ArticleType.Value](ArticleType.values.toList.map(v => (v, v.toString)), Full(article.articleType.is), article.articleType(_)) &
       "@status" #> selectObj[ArticleStatus.Value](ArticleStatus.values.toList.map(v => (v, v.toString)), Full(article.status.is), article.status(_)) &
       "@article_order" #> text(article.articleOrder.get.toString, v => article.articleOrder(v.toInt)) &
-      "@content" #> textarea(article.content.get, article.content(_)) &
-      "@sub" #> hidden(process)
+      "@articleContent" #> textarea(article.content.get, article.content(_)) &
+      "type=submit" #> ajaxSubmit("发布", process)
   }
 
 }
