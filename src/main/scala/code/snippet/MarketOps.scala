@@ -186,21 +186,22 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def view = {
-    def follow(brand: Brand): JsCmd = {
-      val ud = UserData.getOrCreateUserData(user.id.get)
-      if (ud.isFollow(brand.id.get)) {
-        BoxAlert("您已经关注过此商标，不需要再关注了！")
-      } else {
-        val followCount = brand.followCount.incr
-        ud.prependFollow(brand.id.get)
-        SetHtml("followCount", Text(followCount.toString))
-        //JsRaw("""$("#followCount").text("${followCount}"}""")
-      }
+    val followedBtn = <a class="btn btn-small btn-info">已关注</a>
+    def follow(userData: UserData, brand: Brand): JsCmd = {
+      val followCount = brand.followCount.incr
+      userData.prependFollow(brand.id.get)
+      SetHtml("followCount", Text(followCount.toString)) & SetHtml("followCountBtn", followedBtn)
     }
 
     def followCountBtn(brand: Brand): NodeSeq = {
       if (User.loggedIn_?) {
-        SHtml.a(() => follow(brand), Text("关注此商标"), "class" -> "btn btn-small btn-success")
+        val userData = UserData.getOrCreateUserData(user.id.get)
+        val isFollow = userData.isFollow(brand.id.get)
+        if (isFollow) {
+          followedBtn
+        } else {
+          SHtml.a(() => follow(userData, brand), Text("关注此商标"), "class" -> "btn btn-small btn-success")
+        }
       } else {
         <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以关注此商标。</span>
       }

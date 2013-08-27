@@ -18,6 +18,11 @@ trait SnippetHelper {
 
   def originalUri = S.originalRequest.map(_.uri).openOr(sys.error("No request"))
 
+  def redirectUrl(default: String = originalUri) = S.originalRequest.get.request.queryString match {
+    case Full(queryString) => default + "?" + queryString
+    case _ => default
+  }
+
   def alertHtml(msg: NodeSeq, title: String = "出错啦！", alertType: String = "error"): NodeSeq = {
     <div class={ "alert alert-" + alertType }>
       <button type="button" class="close" data-dismiss="alert">&times;</button>
