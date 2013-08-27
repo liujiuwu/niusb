@@ -15,6 +15,11 @@ import net.liftweb.common._
 import scala.collection.mutable.ArrayBuffer
 import code.lib.SelectBoxHelper
 import code.lib.WebCacheHelper
+import code.model.User
+import scala.xml.NodeSeq
+import net.liftweb.http.SHtml
+import net.liftweb.http.js.JsCmds.Alert
+import net.liftweb.http.js.JsCmd
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -174,6 +179,16 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def view = {
+    def concern(brand: Brand): JsCmd = {
+      Alert(brand.name.get)
+    }
+    def concernCountBtn(brand: Brand): NodeSeq = {
+      if (User.loggedIn_?) {
+        SHtml.a(() => concern(brand), Text("关注此商标"), "class" -> "btn btn-small btn-success")
+      } else {
+        <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以关注此商标。</span>
+      }
+    }
     (for {
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
@@ -186,8 +201,10 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#regdate" #> brand.regDate.asHtml &
         "#lsqz" #> brand.lsqz &
         "#useDescn" #> brand.useDescn &
-        "#descn" #> brand.descn 
-        
+        "#concernCount" #> brand.concernCount.get &
+        "#concernCountBtn *" #> concernCountBtn(brand) &
+        "#descn" #> brand.descn
+
     }): CssSel
   }
 }

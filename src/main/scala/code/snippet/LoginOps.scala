@@ -44,6 +44,11 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
         case _ => return removeFormError() & formError("pwd", "请输入短信验证码或密码！")
       }
 
+      var redirectUrl = S.originalRequest.get.request.queryString match {
+        case Full(queryString) => originalUri + "?" + queryString
+        case _ => originalUri
+      }
+
       val code = SmsHelper.smsCode(mobile)._1
       User.find(By(User.mobile, mobile)) match {
         case Full(user) =>
@@ -52,7 +57,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             user.loginTime(Helpers.now)
             user.save()
             User.logUserIn(user)
-            if (user.superUser.get) S.redirectTo("/admin/brand/") else S.redirectTo("/")
+            S.redirectTo(redirectUrl)
           } else {
             formError("pwd", "验证码或密码错误，请确认！")
           }
@@ -65,7 +70,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             user.lastLoginTime(user.loginTime.get)
             user.save()
             User.logUserIn(user)
-            S.redirectTo("/")
+            S.redirectTo(redirectUrl)
           } else {
             formError("pwd", "验证码错误，请确认！")
           }
