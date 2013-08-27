@@ -63,6 +63,8 @@ class Boot extends Loggable {
     LiftRules.statelessRewrite.append {
       case RewriteRequest(ParsePath("user" :: "sign_out" :: Nil, _, _, _), _, _) =>
         RewriteResponse("user_mgt" :: "logout" :: Nil)
+      case RewriteRequest(ParsePath("market" :: "view" :: id :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "view" :: Nil, Map("id" -> id))
     }
 
     LiftRules.dispatch.append {

@@ -145,10 +145,9 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def dbColumnName = "use_descn"
   }
 
-  object descn extends MappedString(this, 300){
+  object descn extends MappedString(this, 300) {
     override def displayName = "商标创意说明"
   }
-  
 
   object pic extends MappedString(this, 100) {
     override def displayName = "商标图"
@@ -166,14 +165,18 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def dbColumnName = "ad_pic"
   }
 
-  object lsqz extends MappedString(this, 300){
+  object lsqz extends MappedString(this, 300) {
     override def displayName = "商标类似群组"
   }
-  
 
-  object concernCount extends MappedInt(this) { //关注数
+  object followCount extends MappedInt(this) { //关注数
     override def displayName = "观注数"
-    override def dbColumnName = "concern_count"
+    override def dbColumnName = "follow_count"
+    def incr: Int = {
+      this(this + 1)
+      save
+      this.get
+    }
   }
 
   object recommend extends MappedBoolean(this) { //是否推荐
@@ -193,7 +196,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     def displaySelf = if (isSelf.get) "是" else "否"
   }
 
-  object remark extends MappedString(this, 300){
+  object remark extends MappedString(this, 300) {
     override def displayName = "备注"
   }
 
@@ -232,17 +235,17 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   def displayBrand = {
-    ".brand-tp img" #> <a href={ "/market/view?id=" + id.get } target="_blank"><img class="lazy" src="/img/grey.gif" data-original={ pic.src } alt={ name.get.trim }/></a> &
+    ".brand-tp img" #> <a href={ "/market/view/" + id.get } target="_blank"><img class="lazy" src="/img/grey.gif" data-original={ pic.src } alt={ name.get.trim }/></a> &
       ".brand-tp .price *" #> sellPrice.displaySellPrice() &
       ".brand-tp .brand-type-code *" #> brandTypeCode.displayTypeLabel &
-      ".brand-bt .brand-name *" #> <a href={ "/market/view?id=" + id.get } target="_blank">{ name.get.trim }</a>
+      ".brand-bt .brand-name *" #> <a href={ "/market/view/" + id.get } target="_blank">{ name.get.trim }</a>
   }
 }
 
 object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
   override def dbTableName = "brands"
 
-  override def fieldOrder = List(id, owner, name, brandTypeCode, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, concernCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
+  override def fieldOrder = List(id, owner, name, brandTypeCode, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, followCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
 
   def picName(pic: String, prefix: String = "s") = prefix + pic
 

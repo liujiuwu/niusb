@@ -142,7 +142,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#descn" #> brand.descn &
         "#self" #> brand.isSelf.displaySelf &
         "#recommend" #> brand.recommend.displayRecommend &
-        "#concernCount" #> brand.concernCount.get &
+        "#followCount" #> brand.followCount.get &
         "#remark" #> brand.remark.get &
         "#pic" #> brand.pic.displayPic(alt=brand.name.get) &
         "#spic" #> brand.pic.displaySmallPic &

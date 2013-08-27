@@ -18,14 +18,21 @@ import code.lib.WebCacheHelper
 import code.model.User
 import scala.xml.NodeSeq
 import net.liftweb.http.SHtml
-import net.liftweb.http.js.JsCmds.Alert
+import net.liftweb.http.js.JsCmds._
 import net.liftweb.http.js.JsCmd
+import net.liftweb.http.js.JsCmd._
+import code.model.UserData
+import code.lib.BootBoxHelper
+import code.lib.BoxAlert
+import net.liftweb.http.js.JE._
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "list" => list
     case "view" => view
   }
+
+  private def user = User.currentUser.openOrThrowException("not found user")
 
   private def bies: List[QueryParam[Brand]] = {
     val (brandTypeCode, keywordType, keyword, likeType, orderType) = (S.param("btc"), S.param("kt"), S.param("k"), S.param("lt"), S.param("ot"))
@@ -78,7 +85,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         case "3" =>
           byBuffer += By(Brand.recommend, true)
         case "4" =>
-          byBuffer += OrderBy(Brand.concernCount, Descending)
+          byBuffer += OrderBy(Brand.followCount, Descending)
         case _ =>
       }
 
@@ -179,12 +186,21 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def view = {
-    def concern(brand: Brand): JsCmd = {
-      Alert(brand.name.get)
+    def follow(brand: Brand): JsCmd = {
+      val ud = UserData.getOrCreateUserData(user.id.get)
+      if (ud.isFollow(brand.id.get)) {
+        BoxAlert("您已经关注过此商标，不需要再关注了！")
+      } else {
+        val followCount = brand.followCount.incr
+        ud.prependFollow(brand.id.get)
+        SetHtml("followCount", Text(followCount.toString))
+        //JsRaw("""$("#followCount").text("${followCount}"}""")
+      }
     }
-    def concernCountBtn(brand: Brand): NodeSeq = {
+
+    def followCountBtn(brand: Brand): NodeSeq = {
       if (User.loggedIn_?) {
-        SHtml.a(() => concern(brand), Text("关注此商标"), "class" -> "btn btn-small btn-success")
+        SHtml.a(() => follow(brand), Text("关注此商标"), "class" -> "btn btn-small btn-success")
       } else {
         <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以关注此商标。</span>
       }
@@ -201,8 +217,8 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#regdate" #> brand.regDate.asHtml &
         "#lsqz" #> brand.lsqz &
         "#useDescn" #> brand.useDescn &
-        "#concernCount" #> brand.concernCount.get &
-        "#concernCountBtn *" #> concernCountBtn(brand) &
+        "#followCount *" #> brand.followCount.get &
+        "#followCountBtn *" #> followCountBtn(brand) &
         "#descn" #> brand.descn
 
     }): CssSel

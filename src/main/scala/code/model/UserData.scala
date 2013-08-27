@@ -31,7 +31,7 @@ object UserMessage {
   }
 }
 case class UserFollow(brandId: Long, flag: FollowFlagType.Value = FollowFlagType.Normal) {
-  override def toString = brandId + ":" + flag
+  override def toString = brandId + ":" + flag.id
 }
 object UserFollow {
   def unapply(follows: String): Option[List[UserFollow]] = {
@@ -96,6 +96,8 @@ class UserData extends LongKeyedMapper[UserData] with CreatedUpdated with IdPK {
     }
   }
 
+  def isFollow(brandId: Long): Boolean = userFollows.exists(_.brandId == brandId)
+
   def updateUserFollows(brandId: Long, flag: FollowFlagType.Value = FollowFlagType.Del): Boolean = {
     val results = (for (userFlw <- userFollows) yield {
       if (userFlw.flag != MessageFlagType.Del && userFlw.brandId == brandId) {
@@ -117,7 +119,7 @@ class UserData extends LongKeyedMapper[UserData] with CreatedUpdated with IdPK {
   }
 
   def prependFollow(brandId: Long, flag: FollowFlagType.Value = FollowFlagType.Normal): Boolean = {
-    if (!userFollows.exists(_.brandId == brandId)) {
+    if (!isFollow(brandId)) {
       follows((UserFollow(brandId, flag) :: userFollows).mkString(","))
       save
     } else {
