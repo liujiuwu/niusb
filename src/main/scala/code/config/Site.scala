@@ -26,16 +26,18 @@ object Site {
   private def menus = List(
     Menu("Home", menuLoc("Home", "home", "首页")) / "index" >> TopBarGroup,
     Menu("Market", menuLoc("Market", "globe", "商标集市")) / "market" / ** >> TopBarGroup,
+    Menu("Recommend", menuLoc("Recommend", "recommend", "精品商标")) / "market" / "recommend" >> TopBarGroup,
+    Menu("Offer", menuLoc("Offer", "offer", "特价商标")) / "market" / "offer" >> TopBarGroup,
+    Menu("Own", menuLoc("Own", "own", "自有商标")) / "market" / "own" >> TopBarGroup,
     Menu("Wenda", menuLoc("Wenda", "question-sign", "问答频道")) / "wenda" / ** >> TopBarGroup,
-    Menu("BrandSearch", menuLoc("BrandSearch", "search", "商标查询")) / "brand-search" >> TopBarGroup,
     Menu("Profile", menuLoc("Profile", "edit", "帐户信息")) / "user" / "profile" >> RequireLoggedIn >> UserMenuGroup,
     Menu("Pwd", menuLoc("Pwd", "key", "修改密码")) / "user" / "pwd" >> RequireLoggedIn >> UserMenuGroup,
 
-    //Menu("ViewBrandDetail", menuLoc("ViewBrandDetail", "view", "查看商标")) / "view" /   >> UserMenuGroup,
 
     Menu("UserCreateBrand", menuLoc("UserCreateBrand", "plus", "发布商标")) / "user" / "brand" / "create" >> RequireLoggedIn >> UserMenuGroup,
     Menu("UserListBrand", menuLoc("UserListBrand", "list", "我的商标")) / "user" / "brand" / "index" >> RequireLoggedIn >> UserMenuGroup,
     Menu("UserSms", menuLoc("UserSms", "envelope", "我的消息")) / "user" / "sms" / "index" >> RequireLoggedIn >> UserMenuGroup,
+    Menu("UserFollow", menuLoc("UserFollow", "heart", "我的关注")) / "user" / "brand" / "follow" >> RequireLoggedIn >> UserMenuGroup,
     Menu("UserViewBrand", menuLoc("UserViewBrand", "", "查看商标")) / "user" / "brand" / "view" >> RequireLoggedIn >> Hidden,
     Menu("UserEditBrand", menuLoc("UserEditBrand", "", "修改商标")) / "user" / "brand" / "edit" >> RequireLoggedIn >> Hidden,
     Menu("UserViewSms", menuLoc("UserViewSms", "", "查看消息")) / "user" / "sms" / "view" >> RequireLoggedIn >> Hidden,

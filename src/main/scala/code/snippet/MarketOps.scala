@@ -92,6 +92,13 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       case _ =>
     }
 
+    val marketType = S.param("marketType").map(_.toString).openOr("recommend")
+    marketType match {
+      case "recommend" => byBuffer += By(Brand.recommend, true)
+      case "offer" => byBuffer += By(Brand.recommend, true)
+      case "own" => byBuffer += By(Brand.isSelf, true)
+    }
+
     byBuffer.toList
   }
 
