@@ -177,6 +177,12 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
       save
       this.get
     }
+    def decr: Int = {
+      val v = this.get - 1
+      this(if (v < 0) 0 else v)
+      save
+      this.get
+    }
   }
 
   object recommend extends MappedBoolean(this) { //是否推荐

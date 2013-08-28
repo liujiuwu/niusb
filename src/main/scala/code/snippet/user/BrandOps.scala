@@ -33,6 +33,8 @@ import scala.collection.mutable.ArrayBuffer
 import code.lib.UploadFileHelper
 import code.model.BrandType
 import code.lib.WebCacheHelper
+import code.model.UserData
+import code.model.PaginatorByMem
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def user = User.currentUser.openOrThrowException("not found user")
@@ -43,6 +45,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "view" => view
     case "uploadBrandPic" => uploadBrandPic
     case "queryRemoteData" => queryRemoteData
+    case "follow" => follow
   }
 
   def create = {
@@ -189,7 +192,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     } yield {
       "#regNo" #> brand.regNo &
         "#name" #> brand.name &
-        "#pic" #> brand.pic.displayPic(alt=brand.name.get) &
+        "#pic" #> brand.pic.displayPic(alt = brand.name.get) &
         "#spic" #> brand.pic.displaySmallPic &
         "#brand-type" #> brand.brandTypeCode.displayType &
         "#status" #> brand.status.displayStatus &
@@ -221,5 +224,35 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@w" #> hidden(w = _, w) &
       "@h" #> hidden(h = _, h) &
       "type=submit" #> ajaxSubmit("保存商标图", process)
+  }
+
+  def follow = {
+    var url = originalUri
+    val userData = UserData.getOrCreateUserData(user.id.get)
+
+    def actions(brand: Brand): NodeSeq = {
+      a(() => {
+        if (userData.isFollow(brand.id.get)) {
+          brand.followCount.decr
+          userData.cancelFollow(brand.id.get)
+        }
+        Reload
+      }, Text("取消关注"), "class" -> "btn btn-danger")
+    }
+
+    val datas = (for (follow <- userData.userFollows; brand <- Brand.findByKey(follow.brandId)) yield {
+      brand
+    })
+
+    val paginatorModel = PaginatorByMem.paginator(url, datas)()
+    val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
+      "#regNo" #> brand.regNo &
+        "#name" #> <a href={ "/market/view/" + brand.id.get }>{ brand.name }</a> &
+        "#brandType" #> brand.brandTypeCode.displayType &
+        "#status" #> brand.status.displayStatus &
+        "#regDate" #> brand.regDate.asHtml &
+        "#actions " #> actions(brand)
+    })
+    dataList & "#pagination" #> paginatorModel.paginate _
   }
 }

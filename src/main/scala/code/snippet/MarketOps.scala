@@ -193,22 +193,28 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def view = {
-    val followedBtn = <a class="btn btn-small btn-info">已关注</a>
-    def follow(userData: UserData, brand: Brand): JsCmd = {
-      val followCount = brand.followCount.incr
-      userData.prependFollow(brand.id.get)
-      SetHtml("followCount", Text(followCount.toString)) & SetHtml("followCountBtn", followedBtn)
+    def followBtn(brand: Brand) = {
+      def userData = UserData.getOrCreateUserData(user.id.get)
+      def isFollow = userData.isFollow(brand.id.get)
+      def cancelFollowBtn = SHtml.a(() => follow(), Text("取消关注"), "class" -> "btn btn-small btn-danger")
+      def followBtn = SHtml.a(() => follow(), Text("关注此商标"), "class" -> "btn btn-small btn-primary")
+      def follow(): JsCmd = {
+        if (isFollow) {
+          val followCount = brand.followCount.decr
+          userData.cancelFollow(brand.id.get)
+          SetHtml("followCount", Text(followCount.toString)) & SetHtml("followCountBtn", followBtn)
+        } else {
+          val followCount = brand.followCount.incr
+          userData.prependFollow(brand.id.get)
+          SetHtml("followCount", Text(followCount.toString)) & SetHtml("followCountBtn", cancelFollowBtn)
+        }
+      }
+      if (isFollow) cancelFollowBtn else followBtn
     }
 
     def followCountBtn(brand: Brand): NodeSeq = {
       if (User.loggedIn_?) {
-        val userData = UserData.getOrCreateUserData(user.id.get)
-        val isFollow = userData.isFollow(brand.id.get)
-        if (isFollow) {
-          followedBtn
-        } else {
-          SHtml.a(() => follow(userData, brand), Text("关注此商标"), "class" -> "btn btn-small btn-success")
-        }
+        followBtn(brand)
       } else {
         <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以关注此商标。</span>
       }

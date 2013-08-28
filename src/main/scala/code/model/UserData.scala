@@ -10,12 +10,6 @@ object MessageFlagType extends Enumeration {
   val Readed = Value(1, "已读")
 }
 
-object FollowFlagType extends Enumeration {
-  type FollowFlagType = Value
-  val Del = Value(-1, "删除")
-  val Normal = Value(0, "正常")
-}
-
 case class UserMessage(messageId: Long, flag: MessageFlagType.Value = MessageFlagType.UnRead) {
   override def toString = messageId + ":" + flag.id
 }
@@ -30,8 +24,8 @@ object UserMessage {
     })
   }
 }
-case class UserFollow(brandId: Long, flag: FollowFlagType.Value = FollowFlagType.Normal) {
-  override def toString = brandId + ":" + flag.id
+case class UserFollow(brandId: Long) {
+  override def toString = brandId.toString
 }
 object UserFollow {
   def unapply(follows: String): Option[List[UserFollow]] = {
@@ -39,8 +33,8 @@ object UserFollow {
       return None
     }
     val fls = follows.split(",").toList
-    Some(for (f <- fls; items = f.split(":")) yield {
-      UserFollow(items(0).toLong, FollowFlagType(items(1).toInt))
+    Some(for (f <- fls) yield {
+      UserFollow(f.toLong)
     })
   }
 }
@@ -98,18 +92,11 @@ class UserData extends LongKeyedMapper[UserData] with CreatedUpdated with IdPK {
 
   def isFollow(brandId: Long): Boolean = userFollows.exists(_.brandId == brandId)
 
-  def updateUserFollows(brandId: Long, flag: FollowFlagType.Value = FollowFlagType.Del): Boolean = {
-    val results = (for (userFlw <- userFollows) yield {
-      if (userFlw.flag != MessageFlagType.Del && userFlw.brandId == brandId) {
-        UserFollow(brandId, flag)
-      } else {
-        userFlw
-      }
-    })
-
+  def cancelFollow(brandId: Long): Boolean = {
+    if (!isFollow(brandId)) return false
     val userFlws = for {
-      userFlw <- results
-      if (userFlw.flag == FollowFlagType.Normal)
+      userFlw <- userFollows
+      if (userFlw.brandId != brandId)
       brand <- Brand.findByKey(userFlw.brandId)
     } yield {
       userFlw
@@ -118,9 +105,9 @@ class UserData extends LongKeyedMapper[UserData] with CreatedUpdated with IdPK {
     save
   }
 
-  def prependFollow(brandId: Long, flag: FollowFlagType.Value = FollowFlagType.Normal): Boolean = {
+  def prependFollow(brandId: Long): Boolean = {
     if (!isFollow(brandId)) {
-      follows((UserFollow(brandId, flag) :: userFollows).mkString(","))
+      follows((UserFollow(brandId) :: userFollows).mkString(","))
       save
     } else {
       true
