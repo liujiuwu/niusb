@@ -1,14 +1,15 @@
 package code
 package config
 
+import scala.xml.Text
+import code.model.User
 import net.liftweb._
+import net.liftweb.http.Factory
+import net.liftweb.http.RedirectResponse
 import net.liftweb.sitemap._
 import net.liftweb.sitemap.Loc._
-import net.liftweb.http.S
-import code.model.User
-import net.liftweb.http.RedirectResponse
-import net.liftweb.http.Factory
-import scala.xml.Text
+import net.liftweb.sitemap.Loc
+import scala.xml.NodeSeq
 
 object MenuGroups {
   val TopBarGroup = LocGroup("topbar")
@@ -23,53 +24,54 @@ object Site {
   val RequireAdminLoggedIn = If(() => User.loggedIn_? && User.superUser_?, () => RedirectResponse("/"))
   val HiddenSign = Unless(() => User.loggedIn_?, () => RedirectResponse("/user/"))
 
-  private def menus = List(
-    Menu("Home", menuLoc("Home", "home", "首页")) / "index" >> TopBarGroup,
-    Menu("Market", menuLoc("Market", "globe", "商标集市")) / "market" / ** >> TopBarGroup,
-    Menu("Recommend", menuLoc("Recommend", "recommend", "精品商标")) / "market" / "recommend" >> TopBarGroup,
-    Menu("Offer", menuLoc("Offer", "offer", "特价商标")) / "market" / "offer" >> TopBarGroup,
-    Menu("Own", menuLoc("Own", "own", "自有商标")) / "market" / "own" >> TopBarGroup,
-    Menu("Wenda", menuLoc("Wenda", "question-sign", "问答频道")) / "wenda" / ** >> TopBarGroup,
-    Menu("Profile", menuLoc("Profile", "edit", "帐户信息")) / "user" / "profile" >> RequireLoggedIn >> UserMenuGroup,
-    Menu("Pwd", menuLoc("Pwd", "key", "修改密码")) / "user" / "pwd" >> RequireLoggedIn >> UserMenuGroup,
+  val pageMenus = List[Menu](
+    Menu(Loc("Home", List("index"), menuText("首页", "home"), TopBarGroup)),
+    Menu(Loc("Market", List("market") -> true, menuText("商标集市", "globe"), TopBarGroup)),
+    Menu(Loc("Recommend", List("recommend", "index"), menuText("精品商标"), TopBarGroup)),
+    Menu(Loc("Offer", List("offer", "index"), menuText("特价商标"), TopBarGroup)),
+    Menu(Loc("Own", List("own", "index"), menuText("自有商标"), TopBarGroup)),
+    Menu(Loc("Wenda", List("wenda") -> true, menuText("问答频道", "question-sign"), TopBarGroup)))
 
+  val userMenus = List[Menu](
+    Menu(Loc("Profile", List("user", "profile"), menuText("帐户信息", "edit"), RequireLoggedIn, UserMenuGroup)),
+    Menu(Loc("Pwd", List("user", "pwd"), menuText("修改密码", "key"), RequireLoggedIn, UserMenuGroup)),
+    Menu(Loc("UserCreateBrand", List("user", "brand", "create"), menuText("发布商标", "plus"), RequireLoggedIn, UserMenuGroup)),
+    Menu(Loc("UserListBrand", List("user", "brand", "index"), menuText("我的商标", "list"), RequireLoggedIn, UserMenuGroup)),
+    Menu(Loc("UserViewBrand", List("user", "brand", "view"), menuText("查看商标"), RequireLoggedIn, Hidden)),
+    Menu(Loc("UserEditBrand", List("user", "brand", "edit"), menuText("修改商标"), RequireLoggedIn, Hidden)),
+    Menu(Loc("UserFollow", List("user", "brand", "follow"), menuText("我的关注", "heart"), RequireLoggedIn, UserMenuGroup)),
+    Menu(Loc("UserSms", List("user", "sms", "index"), menuText("我的消息", "envelope"), RequireLoggedIn, UserMenuGroup)),
+    Menu(Loc("UserViewSms", List("user", "sms", "view"), menuText("查看消息"), RequireLoggedIn, Hidden)))
 
-    Menu("UserCreateBrand", menuLoc("UserCreateBrand", "plus", "发布商标")) / "user" / "brand" / "create" >> RequireLoggedIn >> UserMenuGroup,
-    Menu("UserListBrand", menuLoc("UserListBrand", "list", "我的商标")) / "user" / "brand" / "index" >> RequireLoggedIn >> UserMenuGroup,
-    Menu("UserSms", menuLoc("UserSms", "envelope", "我的消息")) / "user" / "sms" / "index" >> RequireLoggedIn >> UserMenuGroup,
-    Menu("UserFollow", menuLoc("UserFollow", "heart", "我的关注")) / "user" / "brand" / "follow" >> RequireLoggedIn >> UserMenuGroup,
-    Menu("UserViewBrand", menuLoc("UserViewBrand", "", "查看商标")) / "user" / "brand" / "view" >> RequireLoggedIn >> Hidden,
-    Menu("UserEditBrand", menuLoc("UserEditBrand", "", "修改商标")) / "user" / "brand" / "edit" >> RequireLoggedIn >> Hidden,
-    Menu("UserViewSms", menuLoc("UserViewSms", "", "查看消息")) / "user" / "sms" / "view" >> RequireLoggedIn >> Hidden,
+  val adminMenus = List[Menu](
+    Menu(Loc("AdminIndex", List("admin", "index"), menuText("后台首页", "home"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminSetting", List("admin", "web", "set"), menuText("网站设置", "cogs"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminListUser", List("admin", "user", "index"), menuText("用户管理", "user-md"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminViewUser", List("admin", "user", "view"), menuText("查看用户"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminEditUser", List("admin", "user", "edit"), menuText("修改用户"), RequireAdminLoggedIn, AdminMenuGroup)),
 
-    Menu("AdminIndex", menuLoc("AdminIndex", "home", "后台首页")) / "admin" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
-    Menu("AdminSetting", menuLoc("AdminSetting", "cogs", "网站设置")) / "admin" / "web" / "set" >> RequireAdminLoggedIn >> AdminMenuGroup,
-    Menu("AdminListUser", menuLoc("AdminListUser", "user-md", "用户管理")) / "admin" / "user" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
-    Menu("AdminViewUser", menuLoc("AdminViewUser", "", "查看用户")) / "admin" / "user" / "view" >> RequireAdminLoggedIn >> Hidden,
-    Menu("AdminEditUser", menuLoc("AdminEditUser", "", "修改用户")) / "admin" / "user" / "edit" >> RequireAdminLoggedIn >> Hidden,
+    Menu(Loc("AdminListBrand", List("admin", "brand", "index"), menuText("商标管理", "list"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminViewBrand", List("admin", "brand", "view"), menuText("查看商标"), RequireAdminLoggedIn, Hidden)),
+    Menu(Loc("AdminEditBrand", List("admin", "brand", "edit"), menuText("修改商标"), RequireAdminLoggedIn, Hidden)),
+    Menu(Loc("AdminSeditBrand", List("admin", "brand", "sedit"), menuText("商标设置"), RequireAdminLoggedIn, Hidden)),
+    Menu(Loc("AdminListArticle", List("admin", "article", "index"), menuText("文章管理", "list"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminCreateArticle", List("admin", "article", "create"), menuText("发布文章", "plus"), RequireAdminLoggedIn, Hidden)),
+    Menu(Loc("AdminEditArticle", List("admin", "article", "edit"), menuText("修改文章"), RequireAdminLoggedIn, Hidden)),
+    Menu(Loc("AdminListSms", List("admin", "sms", "index"), menuText("消息管理", "envelope"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminCreateSms", List("admin", "sms", "create"), menuText("发送消息", "plus"), RequireAdminLoggedIn, Hidden)))
 
-    Menu("AdminListBrand", menuLoc("AdminListBrand", "list", "商标管理")) / "admin" / "brand" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
-    Menu("AdminViewBrand", menuLoc("AdminViewBrand", "", "查看商标")) / "admin" / "brand" / "view" >> RequireAdminLoggedIn >> Hidden,
-    Menu("AdminEditBrand", menuLoc("AdminEditBrand", "", "修改商标")) / "admin" / "brand" / "edit" >> RequireAdminLoggedIn >> Hidden,
-    Menu("AdminSeditBrand", menuLoc("AdminSeditBrand", "", "商标设置")) / "admin" / "brand" / "sedit" >> RequireAdminLoggedIn >> Hidden,
-    Menu("AdminListArticle", menuLoc("AdminListArticle", "list", "文章管理")) / "admin" / "article" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
-    Menu("AdminCreateArticle", menuLoc("AdminCreateArticle", "plus", "发布文章")) / "admin" / "article" / "create" >> RequireAdminLoggedIn >> Hidden,
-    Menu("AdminEditArticle", menuLoc("AdminEditArticle", "", "修改文章")) / "admin" / "article" / "edit" >> RequireAdminLoggedIn >> Hidden,
-    Menu("AdminListSms", menuLoc("AdminListSms", "envelope", "消息管理")) / "admin" / "sms" / "index" >> RequireAdminLoggedIn >> AdminMenuGroup,
-    Menu("AdminCreateSms", menuLoc("AdminCreateSms", "plus", "发送消息")) / "admin" / "sms" / "create" >> RequireAdminLoggedIn >> Hidden,
-
+  val otherMenus = List(
     Menu.i("ajaxExample") / "ajax",
     Menu.i("Error") / "error" >> Hidden,
     Menu.i("404") / "404" >> Hidden,
     Menu.i("Throw") / "throw" >> Hidden >> EarlyResponse(() => throw new Exception("This is only a test.")))
 
-  def menuLoc(name: String, icon: String, linkText: String) = {
-    S.loc(name, <span>
-                  {
-                    if (!icon.isEmpty)
-                      <i class={ "icon-" + icon }></i> ++ Text(" ")
-                  }{ linkText }
-                </span>)
+  val menus = pageMenus ::: userMenus ::: adminMenus ::: otherMenus
+
+  val m = Menu(Loc("AdminCreateSms", List("tt"), "", RequireAdminLoggedIn, Hidden), otherMenus: _*)
+  def menuText(lnText: String, icon: String = ""): NodeSeq = {
+    val iconNodeSeq = if (!icon.isEmpty) <i class={ "icon-" + icon }></i> ++ Text(" ") else Text("")
+    <span>{ iconNodeSeq ++ lnText }</span>
   }
 
   def siteMap: SiteMap = User.sitemapMutator(SiteMap(menus: _*))
