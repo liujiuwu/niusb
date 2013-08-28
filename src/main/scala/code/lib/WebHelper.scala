@@ -66,8 +66,6 @@ object TrueOrFalse2Str extends Function1[Boolean, Box[String]] {
 }
 
 object WebHelper extends App {
-  println(realMobile(Full("18858078002")))
-
   def now = (System.currentTimeMillis() / 1000).toInt
 
   def badge(label: String, data: AnyVal, prefix: String = "￥") = <span class={ "badge badge-" + label }>{ prefix }{ data }</span>

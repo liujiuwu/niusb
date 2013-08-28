@@ -25,6 +25,7 @@ import code.model.UserData
 import code.lib.BootBoxHelper
 import code.lib.BoxAlert
 import net.liftweb.http.js.JE._
+import code.lib.WebHelper
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -83,7 +84,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         case "2" =>
           byBuffer += OrderBy(Brand.basePrice, Descending)
         case "3" =>
-          byBuffer += By(Brand.recommend, true)
+          byBuffer += By(Brand.isRecommend, true)
         case "4" =>
           byBuffer += OrderBy(Brand.followCount, Descending)
         case _ =>
@@ -94,9 +95,9 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     val marketType = S.param("marketType").map(_.toString).openOr("recommend")
     marketType match {
-      case "recommend" => byBuffer += By(Brand.recommend, true)
-      case "offer" => byBuffer += By(Brand.recommend, true)
-      case "own" => byBuffer += By(Brand.isSelf, true)
+      case "recommend" => byBuffer += By(Brand.isRecommend, true)
+      case "offer" => byBuffer += By(Brand.isOffer, true)
+      case "own" => byBuffer += By(Brand.isOwn, true)
     }
 
     byBuffer.toList
@@ -219,6 +220,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以关注此商标。</span>
       }
     }
+
     (for {
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
@@ -231,6 +233,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#regdate" #> brand.regDate.asHtml &
         "#lsqz" #> brand.lsqz &
         "#useDescn" #> brand.useDescn &
+        "#viewCount *" #> brand.viewCount.incr(realIp) &
         "#followCount *" #> brand.followCount.get &
         "#followCountBtn *" #> followCountBtn(brand) &
         "#descn" #> brand.descn

@@ -9,6 +9,8 @@ import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import code.lib.WebCacheHelper
+import code.lib.MemcachedHelper
+import java.util.Date
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -185,10 +187,34 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     }
   }
 
-  object recommend extends MappedBoolean(this) { //是否推荐
+  object viewCount extends MappedInt(this) { //查看数
+    override def displayName = "查看数"
+    override def dbColumnName = "view_count"
+    def incr(ip: String): Int = {
+      val key = ip + "_" + id.get
+      MemcachedHelper.get(key) match {
+        case Some(time) =>
+        case _ =>
+          this(this + 1)
+          save
+          MemcachedHelper.set(key, 0, 30)
+      }
+      this.get
+    }
+  }
+
+  object isRecommend extends MappedBoolean(this) { //是否推荐
     override def displayName = "推荐"
     override def defaultValue = false
-    def displayRecommend = if (recommend.get) "是" else "否"
+    override def dbColumnName = "is_recommend"
+    def displayRecommend = if (isRecommend.get) "是" else "否"
+  }
+
+  object isOffer extends MappedBoolean(this) { //是否特价
+    override def displayName = "是否特价"
+    override def dbColumnName = "is_offer"
+    override def defaultValue = false
+    def displayOffer = if (isOffer.get) "是" else "否"
   }
 
   object brandOrder extends MappedBoolean(this) {
@@ -196,10 +222,10 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def dbColumnName = "brand_order"
   }
 
-  object isSelf extends MappedBoolean(this) {
+  object isOwn extends MappedBoolean(this) {
     override def displayName = "自有商标"
-    override def dbColumnName = "is_self"
-    def displaySelf = if (isSelf.get) "是" else "否"
+    override def dbColumnName = "is_own"
+    def displaySelf = if (isOwn.get) "是" else "否"
   }
 
   object remark extends MappedString(this, 300) {
@@ -251,7 +277,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
   override def dbTableName = "brands"
 
-  override def fieldOrder = List(id, owner, name, brandTypeCode, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, followCount, recommend, isSelf, remark, brandOrder, createdAt, updatedAt)
+  override def fieldOrder = List(id, owner, name, brandTypeCode, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, followCount, isRecommend, isOwn, isOffer, remark, brandOrder, createdAt, updatedAt)
 
   def picName(pic: String, prefix: String = "s") = prefix + pic
 

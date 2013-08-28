@@ -37,7 +37,7 @@ libraryDependencies ++= {
     "net.liftweb" %% "lift-mapper" % liftVersion % "compile->default" withSources(),
     "net.liftmodules" %% "extras_2.5" % "0.2-SNAPSHOT" % "compile",
     //"org.pegdown"             %  "pegdown"           % "1.4.1",
-    "com.tristanhunt" %% "knockoff" % "0.8.1",
+    //"com.tristanhunt" %% "knockoff" % "0.8.1",
     "com.googlecode.xmemcached" % "xmemcached" % "1.4.2",
     "org.seleniumhq.selenium" % "selenium-java" % "2.33.0",
     "mysql" % "mysql-connector-java" % "5.1.21" % "runtime->default",

@@ -16,6 +16,15 @@ object SnippetHelper extends SnippetHelper
 trait SnippetHelper {
   object tabMenuRV extends RequestVar[Box[(String, String)]](Empty)
 
+  def realIp = {
+    val ip = S.containerRequest.map(_.remoteAddress).openOr("")
+    if (ip == "") {
+      S.request.flatMap(_.header("X-Real-IP")).openOr("127.0.0.1")
+    } else {
+      ip
+    }
+  }
+
   def originalUri = S.originalRequest.map(_.uri).openOr(sys.error("No request"))
 
   def redirectUrl(default: String = originalUri) = S.originalRequest.get.request.queryString match {

@@ -16,8 +16,6 @@ import net.liftweb.mapper._
 import net.liftweb.util.Helpers._
 import net.liftweb.http.S
 import net.liftweb.util.CssSel
-import com.tristanhunt.knockoff.DefaultDiscounter._
-import com.tristanhunt.knockoff._
 import net.liftweb.http.MessageState
 import code.model.UserMessage
 import code.model.PaginatorByMem

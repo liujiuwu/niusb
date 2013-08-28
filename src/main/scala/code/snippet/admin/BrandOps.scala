@@ -114,8 +114,8 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#status" #> brand.status.displayStatus &
         "#basePrice" #> brand.basePrice.displayBasePrice &
         "#sellPrice" #> brand.sellPrice.displaySellPrice(false, true) &
-        "#self" #> brand.isSelf.displaySelf &
-        "#recommend" #> brand.recommend.displayRecommend &
+        "#own" #> brand.isOwn.displaySelf &
+        "#recommend" #> brand.isRecommend.displayRecommend &
         "#strikePrice" #> brand.strikePrice.displayStrikePrice &
         "#actions" #> actions(brand)
     })
@@ -140,11 +140,11 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#applicant" #> brand.applicant &
         "#useDescn" #> brand.useDescn &
         "#descn" #> brand.descn &
-        "#self" #> brand.isSelf.displaySelf &
-        "#recommend" #> brand.recommend.displayRecommend &
+        "#own" #> brand.isOwn.displaySelf &
+        "#recommend" #> brand.isRecommend.displayRecommend &
         "#followCount" #> brand.followCount.get &
         "#remark" #> brand.remark.get &
-        "#pic" #> brand.pic.displayPic(alt=brand.name.get) &
+        "#pic" #> brand.pic.displayPic(alt = brand.name.get) &
         "#spic" #> brand.pic.displaySmallPic &
         "#owner" #> brand.owner.getOwner.displayInfo &
         "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
@@ -213,14 +213,14 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
       var basePrice, sellPrice, strikePrice = "0"
-      var recommend, self = "0"
+      var recommend, own, offer = "0"
       var remark = ""
 
       def process(): JsCmd = {
         brand.validate match {
           case Nil =>
             brand.basePrice(basePrice.toInt).sellPrice(sellPrice.toInt).strikePrice(strikePrice.toInt)
-            brand.recommend(TrueOrFalse(recommend)).isSelf(TrueOrFalse(self))
+            brand.isRecommend(TrueOrFalse(recommend)).isOwn(TrueOrFalse(own)).isOffer(TrueOrFalse(offer))
             brand.remark(remark)
             brand.save
             S.redirectTo("/admin/brand/view?id=" + brand.id.get)
@@ -229,8 +229,9 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
 
       "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
-        "@recommend" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.recommend.get), recommend = _) &
-        "@self" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isSelf.get), self = _) &
+        "@recommend" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isRecommend.get), recommend = _) &
+        "@own" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isOwn.get), own = _) &
+        "@offer" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isOffer.get), offer = _) &
         "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
         "@sellPrice" #> text(brand.sellPrice.get.toString, sellPrice = _) &
         "#realSellPrice" #> brand.sellPrice.displaySellPrice(false) &
