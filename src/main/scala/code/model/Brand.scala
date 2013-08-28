@@ -197,7 +197,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
         case _ =>
           this(this + 1)
           save
-          MemcachedHelper.set(key, 0, 30)
+          MemcachedHelper.set(key, 0, 600)
       }
       this.get
     }
