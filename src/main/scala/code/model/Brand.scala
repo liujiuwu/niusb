@@ -268,10 +268,11 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   def displayBrand = {
-    ".brand-tp img" #> <a href={ "/market/view/" + id.get } target="_blank"><img class="lazy" src="/img/grey.gif" data-original={ pic.src } alt={ name.get.trim }/></a> &
-      ".brand-tp .price *" #> sellPrice.displaySellPrice() &
-      ".brand-tp .brand-type-code *" #> brandTypeCode.displayTypeLabel &
-      ".brand-bt .brand-name *" #> <a href={ "/market/view/" + id.get } target="_blank">{ name.get.trim }</a>
+    def viewLink(c: NodeSeq) = <a href={ "/market/view/" + id.get } target="_blank">{ c }</a>
+    "#brand-img" #> viewLink(<img class="lazy" src="/img/grey.gif" data-original={ pic.src } alt={ name.get.trim }/>) &
+      ".price *" #> sellPrice.displaySellPrice() &
+      ".brand-type-code *" #> brandTypeCode.displayTypeLabel &
+      ".brand-name *" #> viewLink(Text(name.get.trim))
   }
 }
 
