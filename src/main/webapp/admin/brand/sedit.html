@@ -10,6 +10,12 @@
 		<div id="opt_brand_tip" class="alert hide"></div>
 		<form data-lift="form.ajax?class=form-horizontal">
 			<fieldset>
+				<div id="group_name" class="control-group">
+					<label for="name" class="control-label">商标名称</label>
+					<div class="controls">
+						<input type="text" id="name" name="name" required="required" disabled="true"/> <span id="error_name" class="help-inline"></span>
+					</div>
+				</div>
 				<div id="group_brand_status" class="control-group">
 					<label for="brand_status" class="control-label">商标状态</label>
 					<div class="controls">
@@ -51,10 +57,17 @@
 						</select>
 					</div>
 				</div>
-				<div id="group_self" class="control-group">
-					<label for="self" class="control-label">是否自有</label>
+				<div id="group_own" class="control-group">
+					<label for="own" class="control-label">是否自有</label>
 					<div class="controls">
-						<select id="self" name="self">
+						<select id="own" name="own">
+						</select>
+					</div>
+				</div>
+				<div id="group_offer" class="control-group">
+					<label for="offer" class="control-label">是否特价</label>
+					<div class="controls">
+						<select id="offer" name="offer">
 						</select>
 					</div>
 				</div>
@@ -66,7 +79,6 @@
 				</div>
 				<div class="form-actions">
 					<button class="btn btn-primary" type="submit">保存修改</button>
-					<input type="hidden" name="sub" />
 				</div>
 			</fieldset>
 		</form>

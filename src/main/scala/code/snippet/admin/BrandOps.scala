@@ -114,7 +114,8 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#status" #> brand.status.displayStatus &
         "#basePrice" #> brand.basePrice.displayBasePrice &
         "#sellPrice" #> brand.sellPrice.displaySellPrice(false, true) &
-        "#own" #> brand.isOwn.displaySelf &
+        "#own" #> brand.isOwn.displayOwn &
+        "#offer" #> brand.isOffer.displayOffer &
         "#recommend" #> brand.isRecommend.displayRecommend &
         "#strikePrice" #> brand.strikePrice.displayStrikePrice &
         "#actions" #> actions(brand)
@@ -140,9 +141,11 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#applicant" #> brand.applicant &
         "#useDescn" #> brand.useDescn &
         "#descn" #> brand.descn &
-        "#own" #> brand.isOwn.displaySelf &
+        "#own" #> brand.isOwn.displayOwn &
         "#recommend" #> brand.isRecommend.displayRecommend &
+        "#offer" #> brand.isOffer.displayOffer &
         "#followCount" #> brand.followCount.get &
+        "#viewCount" #> brand.viewCount.get &
         "#remark" #> brand.remark.get &
         "#pic" #> brand.pic.displayPic(alt = brand.name.get) &
         "#spic" #> brand.pic.displaySmallPic &
@@ -201,7 +204,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-bolt"></i> 商标设置</a> &
         "#view-btn" #> <a href={ "/admin/brand/view?id=" + brand.id.get } class="btn btn-info"><i class="icon-info"></i> 查看商标</a> &
         "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a> &
-        "@sub" #> hidden(process)
+        "type=submit" #> ajaxSubmit("保存修改", process)
     }): CssSel
   }
 
@@ -214,21 +217,18 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     } yield {
       var basePrice, sellPrice, strikePrice = "0"
       var recommend, own, offer = "0"
-      var remark = ""
+      var name, remark = ""
 
       def process(): JsCmd = {
-        brand.validate match {
-          case Nil =>
-            brand.basePrice(basePrice.toInt).sellPrice(sellPrice.toInt).strikePrice(strikePrice.toInt)
-            brand.isRecommend(TrueOrFalse(recommend)).isOwn(TrueOrFalse(own)).isOffer(TrueOrFalse(offer))
-            brand.remark(remark)
-            brand.save
-            S.redirectTo("/admin/brand/view?id=" + brand.id.get)
-          case errors => println(errors); Noop
-        }
+        brand.basePrice(basePrice.toInt).sellPrice(sellPrice.toInt).strikePrice(strikePrice.toInt)
+        brand.isRecommend(TrueOrFalse(recommend)).isOwn(TrueOrFalse(own)).isOffer(TrueOrFalse(offer))
+        brand.remark(remark)
+        brand.save
+        S.redirectTo("/admin/brand/view?id=" + brand.id.get)
       }
 
-      "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
+      "@name" #> text(brand.name.get, name = _, "disabled" -> "disabled") &
+        "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
         "@recommend" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isRecommend.get), recommend = _) &
         "@own" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isOwn.get), own = _) &
         "@offer" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isOffer.get), offer = _) &
@@ -240,7 +240,7 @@ class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
         "#view-btn" #> <a href={ "/admin/brand/view?id=" + brand.id.get } class="btn btn-info"><i class="icon-info"></i> 查看商标</a> &
         "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a> &
-        "@sub" #> hidden(process)
+        "type=submit" #> ajaxSubmit("保存修改", process)
     }): CssSel
   }
 

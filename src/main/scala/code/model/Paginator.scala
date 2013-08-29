@@ -47,7 +47,7 @@ case class PaginatorModel[T](url: String, total: Long, datas: Seq[T], currentPag
   }
 
   def pageXml(pageNo: Long, ns: NodeSeq): NodeSeq = {
-    if (currentPageNo == pageNo || pageNo <= 0 || pageNo >= totalPage) {
+    if (currentPageNo == pageNo || pageNo <= 0 || pageNo > totalPage) {
       <span class="current">{ ns }</span>
     } else {
       <a href={ pageUrl(pageNo) } class="page-link">{ ns }</a>

@@ -117,15 +117,16 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def displayName = "商标出售价"
     override def dbColumnName = "sell_price"
     def displaySellPrice(forUser: Boolean = true, style: Boolean = false): NodeSeq = {
-      val isFloatSellPrice = if (sellPrice.get >= basePrice.get) false else true
+      val isQuote = basePrice.get > 0
+      val isFloatSellPrice = if (sellPrice.get >= basePrice.get || !isQuote) false else true
       val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * 0.5
-      val result = (realSellPrice / 10000) + "万"
+      val result = if (realSellPrice <= 0) "面议" else (realSellPrice / 10000) + "万"
       val displayLabel = if (forUser || !isFloatSellPrice) result else result + " - 浮"
 
       if (style) {
         WebHelper.badge("warning", displayLabel)
       } else {
-        Text({ "￥" + displayLabel })
+        Text({ (if (isQuote) "￥" else "") + displayLabel })
       }
     }
 
@@ -207,14 +208,14 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def displayName = "推荐"
     override def defaultValue = false
     override def dbColumnName = "is_recommend"
-    def displayRecommend = if (isRecommend.get) "是" else "否"
+    def displayRecommend = if (this.get) "是" else "否"
   }
 
   object isOffer extends MappedBoolean(this) { //是否特价
     override def displayName = "是否特价"
     override def dbColumnName = "is_offer"
     override def defaultValue = false
-    def displayOffer = if (isOffer.get) "是" else "否"
+    def displayOffer = if (this.get) "是" else "否"
   }
 
   object brandOrder extends MappedBoolean(this) {
@@ -225,7 +226,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   object isOwn extends MappedBoolean(this) {
     override def displayName = "自有商标"
     override def dbColumnName = "is_own"
-    def displaySelf = if (isOwn.get) "是" else "否"
+    def displayOwn = if (this.get) "是" else "否"
   }
 
   object remark extends MappedString(this, 300) {
