@@ -30,7 +30,7 @@ import code.model.UserType
 import code.model.Article
 import code.model.ArticleStatus
 
-class ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
+object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "create" => create
     case "list" => list

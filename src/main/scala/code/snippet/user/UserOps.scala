@@ -24,6 +24,7 @@ import code.lib.SmsCode
 import code.lib.SmsHelper
 import net.liftweb.http.DispatchSnippet
 import code.lib.BoxAlert
+import code.lib.BoxAlert
 
 object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -31,14 +32,14 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "updatePwd" => updatePwd
   }
 
-  private def user = User.currentUser.openOrThrowException("not found user")
-
   def edit = {
     def process(): JsCmd = {
-      user.save
-      JsRaw(WebHelper.succMsg("opt_profile_tip", Text("个人信息保存成功！"))) & JsRaw("""$("#displayName").text("%s")""".format(user.displayName))
+      loginUser.save
+      //JsRaw(WebHelper.succMsg("opt_profile_tip", Text("个人信息保存成功！"))) & JsRaw("""$("#displayName").text("%s")""".format(loginUser.displayName))
+      BoxAlert("个人信息保存成功！", Reload)
     }
 
+    val user = loginUser
     "@name" #> text(user.name.is, user.name(_)) &
       "@gender" #> selectObj[Genders.Value](Genders.values.toList.map(v => (v, v.toString)), Full(user.gender.is), user.gender(_)) &
       "@user_type" #> selectObj[UserType.Value](UserType.values.toList.map(v => (v, v.toString)), Full(user.userType.is), user.userType(_), "disabled" -> "disabled") &
@@ -46,7 +47,7 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@phone" #> text(user.phone.is, user.phone(_)) &
       "@email" #> text(user.email.is, user.email(_)) &
       "@address" #> text(user.address.is, user.address(_)) &
-      "@sub" #> hidden(process)
+      "type=submit" #> ajaxSubmit("保存", process)
   }
 
   def updatePwd = {
@@ -60,7 +61,8 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
         return removeFormError() & formError("code", "请填写正确的短信验证码或旧密码!")
       }
 
-      removeFormError() & (if (user.authSmsCodeOrPwd(code)) {
+      val user = loginUser
+      removeFormError() & (if (loginUser.authSmsCodeOrPwd(code)) {
         user.password(pwd)
         user.save()
         BoxAlert("密码修改成功，请牢记！", Reload)
@@ -70,8 +72,9 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
     }
 
     def sendCodeSms(): JsCmd = {
-      val mobile = user.mobile.get
+      val mobile = loginUser.mobile.get
       val cacheTime = SmsHelper.smsCode(mobile)._2
+      val user = loginUser
       removeFormError() & (if ((WebHelper.now - cacheTime) > 60) {
         SmsHelper.sendCodeSms(mobile)
         JsRaw("""$("#getCodeBtn").countdown();$("#opt_pwd_tip").hide().text("")""")

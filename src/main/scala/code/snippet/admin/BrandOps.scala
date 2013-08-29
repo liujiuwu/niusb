@@ -27,7 +27,7 @@ import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import code.lib.WebCacheHelper
 
-class BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
+object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "list" => list
     case "view" => view

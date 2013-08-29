@@ -48,8 +48,8 @@ object Site {
     Menu(Loc("AdminIndex", List("admin", "index"), menuText("后台首页", "home"), RequireAdminLoggedIn, AdminMenuGroup)),
     Menu(Loc("AdminSetting", List("admin", "web", "set"), menuText("网站设置", "cogs"), RequireAdminLoggedIn, AdminMenuGroup)),
     Menu(Loc("AdminListUser", List("admin", "user", "index"), menuText("用户管理", "user-md"), RequireAdminLoggedIn, AdminMenuGroup)),
-    Menu(Loc("AdminViewUser", List("admin", "user", "view"), menuText("查看用户"), RequireAdminLoggedIn, AdminMenuGroup)),
-    Menu(Loc("AdminEditUser", List("admin", "user", "edit"), menuText("修改用户"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminViewUser", List("admin", "user", "view"), menuText("查看用户"), RequireAdminLoggedIn, Hidden)),
+    Menu(Loc("AdminEditUser", List("admin", "user", "edit"), menuText("修改用户"), RequireAdminLoggedIn, Hidden)),
 
     Menu(Loc("AdminListBrand", List("admin", "brand", "index"), menuText("商标管理", "list"), RequireAdminLoggedIn, AdminMenuGroup)),
     Menu(Loc("AdminViewBrand", List("admin", "brand", "view"), menuText("查看商标"), RequireAdminLoggedIn, Hidden)),

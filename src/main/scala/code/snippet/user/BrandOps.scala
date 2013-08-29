@@ -26,7 +26,6 @@ import net.liftweb.http.js.JsExp._
 import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
-import code.snippet.PaginatorHelper
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.mapper.QueryParam
 import scala.collection.mutable.ArrayBuffer
@@ -37,8 +36,6 @@ import code.model.UserData
 import code.model.PaginatorByMem
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
-  def user = User.currentUser.openOrThrowException("not found user")
-
   def dispatch = {
     case "create" => create
     case "list" => list
@@ -55,7 +52,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     def process(): JsCmd = {
       val brand = Brand.create.regNo(regNo).name(name).pic(pic).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
-      brand.owner(user)
+      brand.owner(loginUser)
       brand.brandTypeCode(brandType.code.get)
       brand.basePrice(tryo(basePrice.toInt).getOrElse(0))
       brand.sellPrice(brand.basePrice + (brand.basePrice.get * 0.1).toInt)
@@ -107,7 +104,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   private def bies: List[QueryParam[Brand]] = {
     val (searchType, keyword) = (S.param("type"), S.param("keyword"))
-    val byBuffer = ArrayBuffer[QueryParam[Brand]](OrderBy(Brand.id, Descending), By(Brand.owner, user))
+    val byBuffer = ArrayBuffer[QueryParam[Brand]](OrderBy(Brand.id, Descending), By(Brand.owner, loginUser))
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         val kv = k.trim()
@@ -188,7 +185,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     tabMenuRV(Full("zoom-in" -> "查看商标"))
     (for {
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
-      brand <- Brand.find(By(Brand.owner, user), By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
+      brand <- Brand.find(By(Brand.owner, loginUser), By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
       "#regNo" #> brand.regNo &
         "#name" #> brand.name &
@@ -228,7 +225,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def follow = {
     var url = originalUri
-    val userData = UserData.getOrCreateUserData(user.id.get)
+    val userData = UserData.getOrCreateUserData(loginUser.id.get)
 
     def actions(brand: Brand): NodeSeq = {
       a(() => {

@@ -39,15 +39,13 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "list" => list
   }
 
-  private def user = User.currentUser.openOrThrowException("not found user")
-
   def create = {
     tabMenuRV(Full("plus" -> "发送消息"))
 
     var receivers = ""
     var receiverType = ReceiverType.All
     val message = Message.create
-    message.sender(user.id.get)
+    message.sender(loginUser.id.get)
     def process(): JsCmd = {
       message.receiverType(receiverType)
       message.receiver("")
@@ -113,7 +111,7 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
         {
           if (message.receiverType.get == ReceiverType.UserId) {
             JsRaw("$('#msgInfo').text('接收用户Id:" + message.receiver.get + "')")
-          }else{
+          } else {
             JsRaw("$('#msgInfo').text('')")
           }
         } &

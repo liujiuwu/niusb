@@ -10,11 +10,18 @@ import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.http.RequestVar
 import net.liftweb.common.Empty
 import scala.xml.Text
+import code.lib.SelectBoxHelper
+import code.lib.WebCacheHelper
+import scala.util.Try
+import scala.util.Success
+import net.liftweb.util.Helpers._
+import code.model.User
 
 object SnippetHelper extends SnippetHelper
 
 trait SnippetHelper {
   object tabMenuRV extends RequestVar[Box[(String, String)]](Empty)
+  protected def loginUser = User.currentUser.openOrThrowException("not found user")
 
   def realIp = {
     val ip = S.containerRequest.map(_.remoteAddress).openOr("")
@@ -59,4 +66,5 @@ trait SnippetHelper {
       "*" #> errorHtml(<p>{ resultMsg }</p>)
     case _ => "*" #> errorHtml(<p>404</p>)
   }
+
 }

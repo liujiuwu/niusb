@@ -26,8 +26,6 @@ import code.model.ReceiverType
 import scala.xml.Unparsed
 
 object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
-  private def user = User.currentUser.openOrThrowException("not found user")
-
   def dispatch = {
     case "list" => list
     case "view" => view
@@ -40,14 +38,14 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   private def findVipUserMsgs() = {
-    Message.findAll(By(Message.receiverType, ReceiverType.Vip), By_>=(Message.createdAt, user.upgradedAt.get), OrderBy(Message.id, Descending))
+    Message.findAll(By(Message.receiverType, ReceiverType.Vip), By_>=(Message.createdAt, loginUser.upgradedAt.get), OrderBy(Message.id, Descending))
   }
 
   private def findAgentUserMsgs() = {
-    Message.findAll(By(Message.receiverType, ReceiverType.Agent), By_>=(Message.createdAt, user.upgradedAt.get), OrderBy(Message.id, Descending))
+    Message.findAll(By(Message.receiverType, ReceiverType.Agent), By_>=(Message.createdAt, loginUser.upgradedAt.get), OrderBy(Message.id, Descending))
   }
   private def findAllUserMsgs() = {
-    Message.findAll(By(Message.receiverType, ReceiverType.All), By_>=(Message.createdAt, user.createdAt.get), OrderBy(Message.id, Descending))
+    Message.findAll(By(Message.receiverType, ReceiverType.All), By_>=(Message.createdAt, loginUser.createdAt.get), OrderBy(Message.id, Descending))
   }
 
   private def filterDelMsgs(userMsg: UserMessage, msg: Message): Boolean = {
@@ -55,7 +53,7 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def list = {
-    val ud = UserData.getOrCreateUserData(user.id.get)
+    val ud = UserData.getOrCreateUserData(loginUser.id.get)
 
     def actions(message: Message): NodeSeq = {
       a(() => {
@@ -78,7 +76,7 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
       msg
     }
 
-    val sysMessages = (user.userType.get match {
+    val sysMessages = (loginUser.userType.get match {
       case UserType.Vip => findVipUserMsgs()
       case UserType.Agent => findAgentUserMsgs()
       case _ => List[Message]()
@@ -114,11 +112,11 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   private def isView(messageId: Long, message: Message): Boolean = {
-    val ud = UserData.getOrCreateUserData(user.id.get)
+    val ud = UserData.getOrCreateUserData(loginUser.id.get)
     val enableView = message.receiverType.get match {
-      case ReceiverType.All => user.createdAt.get.before(message.createdAt.get)
-      case ReceiverType.Vip => user.userType.get == UserType.Vip && user.upgradedAt.get.before(message.createdAt.get)
-      case ReceiverType.Agent => user.userType.get == UserType.Agent && user.upgradedAt.get.before(message.createdAt.get)
+      case ReceiverType.All => loginUser.createdAt.get.before(message.createdAt.get)
+      case ReceiverType.Vip => loginUser.userType.get == UserType.Vip && loginUser.upgradedAt.get.before(message.createdAt.get)
+      case ReceiverType.Agent => loginUser.userType.get == UserType.Agent && loginUser.upgradedAt.get.before(message.createdAt.get)
       case ReceiverType.UserId => ud.userMessages.exists(_.messageId == messageId)
     }
 

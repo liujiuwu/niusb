@@ -57,11 +57,19 @@ object Test extends App {
     case r(f, e) => println(f + "x320|" + e)
     case _ => println("no")
   }*/
-  
-  
+
   /*lazy val sdf = new SimpleDateFormat("yyyy-M-dd")
   lazy val sdf2 = new SimpleDateFormat("yyyy-MM-dd")
   println(sdf2.format(sdf.parse("2002-2-14")))*/
-  println(Helpers.randomInt(6))
+  // println(Helpers.randomInt(6))
+
+  val vv = "value"
+  val tv = v()
+  println(tv)
+
+  def v() = {
+    println("ok"+vv)
+    "ooops"
+  }
 
 }
