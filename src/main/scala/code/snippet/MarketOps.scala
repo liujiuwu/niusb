@@ -13,7 +13,6 @@ import code.model.Brand
 import code.model.BrandType
 import net.liftweb.common._
 import scala.collection.mutable.ArrayBuffer
-import code.lib.SelectBoxHelper
 import code.lib.WebCacheHelper
 import code.model.User
 import scala.xml.NodeSeq

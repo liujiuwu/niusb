@@ -4,6 +4,7 @@ import scala.collection.mutable.LinkedHashSet
 import scala.util.Random
 import net.liftweb.actor.LiftActor
 import net.liftweb.common.Loggable
+import net.liftweb.util.Helpers._
 
 case class SendSms(mobile: String, sms: String, sign: String = "牛标网")
 case class SmsCode(code: String, cacheTime: Int = WebHelper.now)
@@ -32,7 +33,7 @@ object SmsHelper extends App with Loggable {
   def sendCodeSms(mobile: String) {
     val code = random()
     val sms = s"您正在登录牛标网，校验码：${code}。泄露有风险，请在5分钟内使用此验证码。"
-    MemcachedHelper.set(mobile, SmsCode(code), 300)
+    MemcachedHelper.set(mobile, SmsCode(code), 5 minutes)
     logger.info(mobile + "|" + code)
     sendSms(mobile, sms)
   }

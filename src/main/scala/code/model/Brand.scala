@@ -1,5 +1,6 @@
 package code.model
 
+import scala.language.postfixOps
 import java.text.SimpleDateFormat
 import scala.xml._
 import code.lib.UploadFileHelper
@@ -7,10 +8,10 @@ import code.lib.WebHelper
 import net.liftweb.common._
 import net.liftweb.mapper._
 import net.liftweb.util._
-import net.liftweb.util.Helpers._
 import code.lib.WebCacheHelper
 import code.lib.MemcachedHelper
 import java.util.Date
+import net.liftweb.util.Helpers._
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -198,7 +199,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
         case _ =>
           this(this + 1)
           save
-          MemcachedHelper.set(key, 0, 600)
+          MemcachedHelper.set(key, 0, 10 minutes)
       }
       this.get
     }

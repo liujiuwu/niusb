@@ -29,7 +29,7 @@ import net.liftweb.http.js.jquery.JqJsCmds.jsExpToJsCmd
 import net.liftweb.util.Helpers
 import net.liftweb.util.Helpers.TimeSpan
 import net.liftweb.util.Helpers.intToTimeSpanBuilder
-import net.liftweb.util.Helpers.strToSuperArrowAssoc
+
 
 case class CacheValue[T](compute: () => T, lifespanInMillis: Long) {
   private var currentValue: Box[T] = Empty

@@ -10,7 +10,6 @@ import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.http.RequestVar
 import net.liftweb.common.Empty
 import scala.xml.Text
-import code.lib.SelectBoxHelper
 import code.lib.WebCacheHelper
 import scala.util.Try
 import scala.util.Success

@@ -4,6 +4,8 @@ import net.rubyeye.xmemcached.MemcachedClient
 import net.rubyeye.xmemcached.XMemcachedClientBuilder
 import net.rubyeye.xmemcached.command.BinaryCommandFactory
 import net.rubyeye.xmemcached.utils.AddrUtil
+import net.liftweb.util.TimeHelpers
+import net.liftweb.util.Helpers._
 
 object MemcachedHelper extends App {
   lazy val client = initMemcachedClient()
@@ -22,9 +24,9 @@ object MemcachedHelper extends App {
     require(!key.isEmpty(), "key不能为空")
   }
 
-  def set(key: String, value: Any, exp: Int = 0): Boolean = {
+  def set(key: String, value: Any, exp: TimeSpan = 0 seconds): Boolean = {
     checkKey(key)
-    client.set(key, exp, value)
+    client.set(key, (exp.millis / 1000L).toInt, value)
   }
 
   def get(key: String): Option[Any] = {
@@ -36,7 +38,4 @@ object MemcachedHelper extends App {
     checkKey(key)
     client.delete(key)
   }
-
-  set("name", List(1, 2, 3, 4))
-  println(get("name"))
 }

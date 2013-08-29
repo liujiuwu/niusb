@@ -5,15 +5,48 @@ import code.lib.WebCacheHelper
 import scala.util.Try
 import scala.util.Success
 import net.liftweb.util.Helpers._
-import code.lib.SelectBoxHelper
 import net.liftweb.common.Full
 import net.liftweb.mapper.QueryParam
 import scala.collection.mutable.ArrayBuffer
 import code.model.BrandType
 import code.model.Brand
 import net.liftweb.mapper._
+import scala.xml.NodeSeq
 
 trait SearchBrandForm {
+  lazy val orderTypes = List[(String, String)]("0" -> "由新至旧", "1" -> "价格从低至高", "2" -> "价格从高至低", "3" -> "浏览次数", "4" -> "热门关注")
+  lazy val likeTypes = List[(String, String)]("0" -> "精确", "1" -> "模糊", "2" -> "前包含", "3" -> "后包含")
+  lazy val keywordTypes = List[(String, String)]("0" -> "商标名称", "1" -> "商标注册号")
+  lazy val brandTypes = WebCacheHelper.brandTypes.values.toList
+
+  def orderOptions(selected: String): NodeSeq = {
+    for (option <- orderTypes; (value, label) = option) yield {
+      options(value, label, selected)
+    }
+  }
+
+  def likeOptions(selected: String): NodeSeq = {
+    for (option <- likeTypes; (value, label) = option) yield {
+      options(value, label, selected)
+    }
+  }
+
+  def keywordTypeOptions(selected: String): NodeSeq = {
+    for (option <- keywordTypes; (value, label) = option) yield {
+      options(value, label, selected)
+    }
+  }
+
+  def brandTypeOptions(selected: String): NodeSeq = {
+    for (option <- brandTypes; (value, label) = (option.code.get.toString, option.name.get)) yield {
+      options(value, label, selected, true)
+    }
+  }
+
+  private def options(value: String, label: String, selected: String, prependValue: Boolean = false) = {
+    <option value={ value } selected={ if (selected == value) "selected" else null }>{ if (prependValue) value + "." + label else label }</option>
+  }
+
   case class SearchBrandFormParam(url: String, brandTypeName: String, brandTypeCode: String, keywordType: String, keyword: String, likeType: String, order: String)
   def searchBrandForm(param: SearchBrandFormParam) = {
     val searchForm = {
@@ -22,17 +55,17 @@ trait SearchBrandForm {
           <div class="controls">
             <select id="btc" name="btc">
               <option value="all">所有商标类型</option>
-              { SelectBoxHelper.brandTypeOptions(param.brandTypeCode) }
+              { brandTypeOptions(param.brandTypeCode) }
             </select>
             <select id="kt" name="kt" class="span3">
-              { SelectBoxHelper.keywordTypeOptions(param.keywordType) }
+              { keywordTypeOptions(param.keywordType) }
             </select>
             <input type="text" id="k" name="k" placeholder="搜索关键词" value={ param.keyword } class="span7"/>
             <select id="lt" name="lt" class="span3">
-              { SelectBoxHelper.likeOptions(param.likeType) }
+              { likeOptions(param.likeType) }
             </select>
             <select id="ot" name="ot" class="span4">
-              { SelectBoxHelper.orderOptions(param.order) }
+              { orderOptions(param.order) }
             </select>
             <button type="submit" class="btn">
               <i class="icon-search"></i>
@@ -122,7 +155,7 @@ trait SearchBrandForm {
       case "2" =>
         byBuffer += OrderBy(Brand.basePrice, Descending)
       case "3" =>
-        byBuffer += By(Brand.isRecommend, true)
+        byBuffer += OrderBy(Brand.viewCount, Descending)
       case "4" =>
         byBuffer += OrderBy(Brand.followCount, Descending)
       case _ => byBuffer += OrderBy(Brand.id, Descending)

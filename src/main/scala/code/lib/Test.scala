@@ -17,8 +17,9 @@ import net.liftweb.common.Full
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
-import net.liftweb.util.Helpers._
-import scala.xml.NodeSeq
+import net.liftweb.util.Helpers
+import net.liftweb.util.Helpers.TimeSpan
+import net.liftweb.util.Helpers.intToTimeSpanBuilder
 
 object Test extends App {
 
@@ -70,20 +71,8 @@ object Test extends App {
   println(sdf2.format(sdf.parse("2002-2-14")))*/
   // println(Helpers.randomInt(6))
 
-  val xhtml = <ul class="brands"><li>
-                <div class="brand-tp">
-                  <span id="brand-img"></span>
-                  <div class="info">
-                    <div class="brand-type-code pull-left"></div>
-                    <div class="price pull-right">25类</div>
-                  </div>
-                </div>
-                <div class="brand-bt">
-                  <div class="brand-name">商标名称</div>
-                </div>
-              </li></ul>
-    
-    val ret = ".brand-name" #> Text("ok") & "#brand-img" #> <img src=""/>
-    println(ret(xhtml))
+  val time: TimeSpan = 0 seconds
+  
+  println(time.millis)
 
 }
