@@ -24,17 +24,17 @@ import net.liftweb.json.JsonDSL.string2jvalue
 import net.liftweb.util.StringHelpers
 import com.sksamuel.scrimage.Format
 import net.liftweb.http.JsonResponse
-import code.lib.UploadFileHelper
+import com.niusb.util.UploadHelpers
 
 object UploadManager extends RestHelper with Loggable {
   serve {
     case "uploading" :: Nil Post req => {
       def saveImage(fph: FileParamHolder) = {
-        val newFileName = UploadFileHelper.genNewFileName()
-        val uploadFileName = UploadFileHelper.uploadTmpDir + File.separator + newFileName
+        val newFileName = UploadHelpers.genNewFileName()
+        val uploadFileName = UploadHelpers.uploadTmpDir + File.separator + newFileName
 
         val oImg = Image(fph.fileStream)
-        UploadFileHelper.myFit(oImg, (400, 300), (oImg.width, oImg.height)).writer(Format.JPEG).withProgressive(true).withCompression(100).write(uploadFileName)
+        UploadHelpers.myFit(oImg, (400, 300), (oImg.width, oImg.height)).writer(Format.JPEG).withProgressive(true).withCompression(100).write(uploadFileName)
         ("name" -> newFileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
       }
 

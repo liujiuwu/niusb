@@ -1,4 +1,4 @@
-package code.lib
+package com.niusb.util
 
 import net.liftweb.http.provider.servlet.HTTPServletContext
 import java.awt.Graphics2D
@@ -10,11 +10,14 @@ import org.apache.commons.io.FileUtils
 import java.io.File
 import net.liftweb.common.Empty
 import com.sksamuel.scrimage.Image
-import code.rest.UploadManager
 import java.util.Date
 import net.liftweb.util.StringHelpers
+import net.liftweb.common.Box.box2Option
+import net.liftweb.http.LiftRulesMocker.toLiftRules
 
-object UploadFileHelper {
+object UploadHelpers extends UploadHelpers
+
+trait UploadHelpers {
   val fmt = new SimpleDateFormat("yyyyMMddHHmmss")
   val hmsFmt = new SimpleDateFormat("HHmmss")
   val ymdFmt = new SimpleDateFormat("yyyyMMdd")

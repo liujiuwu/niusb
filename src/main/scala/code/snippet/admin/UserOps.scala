@@ -3,7 +3,6 @@ package code.snippet.admin
 import scala.xml.NodeSeq
 import scala.xml.Text
 
-import code.lib.BoxConfirm
 import code.model.User
 import code.model.UserStatus
 import code.model.UserSupper
@@ -14,25 +13,15 @@ import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
 import net.liftweb.http.SHtml.ElemAttr.pairToBasic
-import net.liftweb.http.SHtml.a
-import net.liftweb.http.SHtml.ajaxInvoke
-import net.liftweb.http.SHtml.hidden
-import net.liftweb.http.SHtml.selectObj
-import net.liftweb.http.SHtml.text
+import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds
 import net.liftweb.http.js.JsCmds.jsExpToJsCmd
-import net.liftweb.mapper.By
-import net.liftweb.mapper.Descending
-import net.liftweb.mapper.Genders
-import net.liftweb.mapper.OrderBy
-import net.liftweb.mapper.QueryParam
-import net.liftweb.util.CssSel
+import net.liftweb.mapper._
+import net.liftweb.util._
 import net.liftweb.util.Helpers
-import net.liftweb.util.Helpers.appendParams
-import net.liftweb.util.Helpers.asLong
-import net.liftweb.util.Helpers.strToCssBindPromoter
-import net.liftweb.util.Helpers.strToSuperArrowAssoc
+import net.liftweb.util.Helpers._
+import com.niusb.util.WebHelpers._
 
 object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
 

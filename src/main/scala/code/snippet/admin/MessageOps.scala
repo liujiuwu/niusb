@@ -1,7 +1,6 @@
 package code.snippet.admin
 
 import scala.util._
-import code.lib.BoxAlert
 import code.model.ArticleType
 import code.model.MessageType
 import code.model.User
@@ -19,9 +18,9 @@ import scala.xml.Text
 import code.model.UserData
 import net.liftweb.http.SHtml._
 import net.liftweb.http.S._
-import code.lib.BoxConfirm
 import scala.xml.NodeSeq
 import net.liftweb.http.js.JE.JsRaw
+import com.niusb.util.WebHelpers._
 
 object Receivers {
   def unapply(receivers: String): Option[List[String]] = {

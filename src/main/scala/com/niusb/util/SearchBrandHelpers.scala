@@ -1,26 +1,21 @@
-package code.lib
+package com.niusb.util
 
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.openqa.selenium.By
 import scala.collection.JavaConversions._
 import sys.process._
-import java.net.URL
-import java.io.File
 import net.liftweb.http.InMemoryResponse
-import org.apache.commons.io.IOUtils
 import net.liftweb.common.Box
 import net.liftweb.http.LiftResponse
 import net.liftweb.common.Full
 import net.liftweb.common.Empty
-import com.gargoylesoftware.htmlunit.WebRequest
-import com.gargoylesoftware.htmlunit.WebClient
-import javax.imageio.ImageIO
-import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
+import code.lib.SyncData
 
-object SearchHelper {
-  //println(searchBrandByRegNo("5536534"))
+object SearchBrandHelpers extends SearchBrandHelpers
+
+trait SearchBrandHelpers {
   def searchBrandByRegNo(regno: String): Map[String, String] = {
     if (regno == null) {
       return Map.empty
@@ -117,10 +112,5 @@ object SearchHelper {
 
     //WebHelper.captcha
     Full(InMemoryResponse(imageBytes, ("Content-Type" -> "image/jpeg") :: Nil, Nil, 200))
-  }
-
-  def initData: Box[LiftResponse] = {
-    SyncData.init()
-    Full(InMemoryResponse("".getBytes(), ("Content-Type" -> "text/plain") :: Nil, Nil, 200))
   }
 }

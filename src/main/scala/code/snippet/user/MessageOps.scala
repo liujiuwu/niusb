@@ -2,7 +2,6 @@ package code.snippet.user
 
 import scala.collection.mutable.ArrayBuffer
 import scala.xml.NodeSeq
-import code.lib.BoxConfirm
 import code.model.Message
 import code.model.User
 import code.snippet.SnippetHelper
@@ -24,6 +23,7 @@ import code.model.MessageFlagType
 import code.model.UserType
 import code.model.ReceiverType
 import scala.xml.Unparsed
+import com.niusb.util.WebHelpers._
 
 object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {

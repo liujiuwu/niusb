@@ -4,11 +4,6 @@ import java.io.File
 import scala.collection.mutable.ArrayBuffer
 import scala.xml._
 import org.apache.commons.io.FileUtils
-import code.lib.BoxConfirm
-import code.lib.TrueOrFalse
-import code.lib.TrueOrFalse2Str
-import code.lib.UploadFileHelper
-import code.lib.WebHelper
 import code.model.Brand
 import code.model.BrandStatus
 import code.model.BrandType
@@ -29,6 +24,7 @@ import code.model.ArticleType
 import code.model.UserType
 import code.model.Article
 import code.model.ArticleStatus
+import com.niusb.util.WebHelpers._
 
 object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {

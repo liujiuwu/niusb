@@ -2,7 +2,6 @@ package bootstrap.liftweb
 
 import java.util.Date
 import code.config.Site
-import code.lib.SearchHelper
 import code.model.MyDBVendor
 import code.model.User
 import code.rest.UploadManager
@@ -22,6 +21,7 @@ import scala.collection.Parallel
 import code.lib.SyncData
 import code.model._
 import code.lib.WebCacheHelper
+import com.niusb.util.SearchBrandHelpers
 
 class Boot extends Loggable {
   def boot {
@@ -69,9 +69,7 @@ class Boot extends Loggable {
 
     LiftRules.dispatch.append {
       case Req("brand" :: regNo :: Nil, _, _) =>
-        SearchHelper.searchBrandPicByRegNo(regNo)
-      case Req("initData" :: Nil, _, _) =>
-        SearchHelper.initData
+        SearchBrandHelpers.searchBrandPicByRegNo(regNo)
     }
 
     LiftRules.uriNotFound.prepend(NamedPF("404handler") {

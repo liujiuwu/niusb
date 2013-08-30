@@ -4,11 +4,6 @@ import java.io.File
 import scala.collection.mutable.ArrayBuffer
 import scala.xml._
 import org.apache.commons.io.FileUtils
-import code.lib.BoxConfirm
-import code.lib.TrueOrFalse
-import code.lib.TrueOrFalse2Str
-import code.lib.UploadFileHelper
-import code.lib.WebHelper
 import code.model.Brand
 import code.model.BrandStatus
 import code.model.BrandType
@@ -26,6 +21,9 @@ import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import code.lib.WebCacheHelper
+import com.niusb.util.WebHelpers._
+import com.niusb.util.WebHelpers
+import com.niusb.util.UploadHelpers
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -169,15 +167,15 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
       def process(): JsCmd = {
         val oldPic = brand.pic.get
-        brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
+        brand.regNo(regNo).basePrice(basePrice.toInt).pic(pic).name(name).regDate(WebHelpers.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
         brand.brandTypeCode(brandType.code.get)
         brand.lsqz(lsqz)
         brand.validate match {
           case Nil =>
             brand.save
-            UploadFileHelper.handleBrandImg(pic)
+            UploadHelpers.handleBrandImg(pic)
             if (oldPic != pic) {
-              val oldPicFile = new File(UploadFileHelper.uploadBrandDir() + File.separator + oldPic)
+              val oldPicFile = new File(UploadHelpers.uploadBrandDir() + File.separator + oldPic)
               if (oldPicFile.exists()) {
                 FileUtils.deleteQuietly(oldPicFile)
               }

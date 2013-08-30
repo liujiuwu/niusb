@@ -1,13 +1,13 @@
-package code.lib
+package com.niusb.util
 
-import net.rubyeye.xmemcached.MemcachedClient
 import net.rubyeye.xmemcached.XMemcachedClientBuilder
 import net.rubyeye.xmemcached.command.BinaryCommandFactory
 import net.rubyeye.xmemcached.utils.AddrUtil
-import net.liftweb.util.TimeHelpers
 import net.liftweb.util.Helpers._
 
-object MemcachedHelper extends App {
+object MemHelpers extends MemHelpers
+
+trait MemHelpers {
   lazy val client = initMemcachedClient()
 
   private def initMemcachedClient(servers: String = "42.120.5.18:11211") = {

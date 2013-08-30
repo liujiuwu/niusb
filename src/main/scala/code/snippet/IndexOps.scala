@@ -8,11 +8,14 @@ import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import scala.xml.NodeSeq
+import com.niusb.util.WebHelpers._
+import com.niusb.util.SearchBrandFormHelpers
 
 object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "tabConent" => tabConent
     case "mainConent" => mainConent
+    case "searchBrandForm" => searchBrandForm
   }
 
   def tabConent = {
@@ -22,7 +25,7 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
     }
   }
 
-  def brandDatas(idx: String) = {
+  private def brandDatas(idx: String) = {
     WebCacheHelper.indexTabBrands.get(idx) match {
       case Some(brands) => "li" #> brands.map(_.displayBrand)
       case _ => "*" #> "无数据"
@@ -36,7 +39,7 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
     }
   }
 
-  def mainBrandDatas(brandTypeCode: Int) = {
+  private def mainBrandDatas(brandTypeCode: Int) = {
     val limit = S.attr("limit").map(_.toInt).openOr(24)
     val dataList = WebCacheHelper.indexBrandsByType.get(brandTypeCode) match {
       case Some(brands) => ".brands li" #> brands.slice(0, limit).map(_.displayBrand)
@@ -49,5 +52,10 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
     })
 
     tp & dataList
+  }
+
+  def searchBrandForm = {
+    val formParam = SearchBrandFormHelpers.getSearchBrandFormParam()
+    "#searchBrandForm" #> SearchBrandFormHelpers.form(formParam)
   }
 }

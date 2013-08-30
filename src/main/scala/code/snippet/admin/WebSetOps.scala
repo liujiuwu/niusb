@@ -4,7 +4,6 @@ import scala.xml.NodeSeq
 import net.liftweb.http.DispatchSnippet
 import code.model.WebSet
 import net.liftweb.common.Box
-import code.lib.WebHelper
 import net.liftweb.util.Helpers._
 import net.liftweb.http.SHtml._
 

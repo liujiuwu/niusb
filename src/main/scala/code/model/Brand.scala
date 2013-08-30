@@ -3,15 +3,16 @@ package code.model
 import scala.language.postfixOps
 import java.text.SimpleDateFormat
 import scala.xml._
-import code.lib.UploadFileHelper
-import code.lib.WebHelper
 import net.liftweb.common._
 import net.liftweb.mapper._
 import net.liftweb.util._
 import code.lib.WebCacheHelper
-import code.lib.MemcachedHelper
 import java.util.Date
 import net.liftweb.util.Helpers._
+import com.niusb.util.WebHelpers
+import com.niusb.util.WebHelpers._
+import com.niusb.util.UploadHelpers
+import com.niusb.util.MemHelpers
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -89,7 +90,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
       isDate _ :: Nil
     }
 
-    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
 
     override def parse(s: String): Box[java.util.Date] = {
       val df = new SimpleDateFormat("yyyy-MM-dd")
@@ -111,7 +112,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def displayName = "商标基价"
     override def dbIndexed_? = true
     override def dbColumnName = "base_price"
-    def displayBasePrice: NodeSeq = WebHelper.badge("success", basePrice.get)
+    def displayBasePrice: NodeSeq = WebHelpers.badge("success", basePrice.get)
   }
 
   object sellPrice extends MappedInt(this) {
@@ -125,7 +126,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
       val displayLabel = if (forUser || !isFloatSellPrice) result else result + " - 浮"
 
       if (style) {
-        WebHelper.badge("warning", displayLabel)
+        WebHelpers.badge("warning", displayLabel)
       } else {
         Text({ (if (isQuote) "￥" else "") + displayLabel })
       }
@@ -136,7 +137,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   object strikePrice extends MappedInt(this) {
     override def displayName = "商标成交价"
     override def dbColumnName = "strike_price"
-    def displayStrikePrice: NodeSeq = WebHelper.badge("important", strikePrice.get)
+    def displayStrikePrice: NodeSeq = WebHelpers.badge("important", strikePrice.get)
   }
 
   object soldDate extends MappedDate(this) {
@@ -161,7 +162,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
       <div class={ css }><img src={ src } alt={ alt }/></div>
     }
 
-    def src = UploadFileHelper.srcPath(pic.get)
+    def src = UploadHelpers.srcPath(pic.get)
   }
 
   object adPic extends MappedString(this, 100) {
@@ -194,12 +195,12 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def dbColumnName = "view_count"
     def incr(ip: String): Int = {
       val key = ip + "_" + id.get
-      MemcachedHelper.get(key) match {
+      MemHelpers.get(key) match {
         case Some(time) =>
         case _ =>
           this(this + 1)
           save
-          MemcachedHelper.set(key, 0, 10 minutes)
+          MemHelpers.set(key, 0, 10 minutes)
       }
       this.get
     }
@@ -238,7 +239,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def displayName = "发布时间"
     override def dbColumnName = "created_at"
 
-    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
 
     override def parse(s: String): Box[java.util.Date] = {
       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
@@ -255,7 +256,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def displayName = "最近更新时间"
     override def dbColumnName = "updated_at"
 
-    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
 
     override def parse(s: String): Box[java.util.Date] = {
       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")

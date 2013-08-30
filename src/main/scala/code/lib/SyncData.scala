@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat
 import scala.util.Success
 import scala.util.Failure
 import net.liftweb.util.Helpers
+import com.niusb.util.UploadHelpers
+import com.niusb.util.WebHelpers
 
 case class Fbtm(id: Int, number: String, name: String, sbsm: String)
 case class Kehu(id: Int, name: String, tel: String, tel1: String, qq: String, bz: String, indate: Date, sqname: String)
@@ -98,8 +100,8 @@ object SyncData extends App {
     val imgFile = new File(picPath)
     if (imgFile.isFile() && imgFile.exists()) {
       val oImg = Image(imgFile)
-      val newFileName = UploadFileHelper.genNewFileName()
-      val destPic = new File(UploadFileHelper.uploadBrandDir(Full(dir)) + File.separator + newFileName)
+      val newFileName = UploadHelpers.genNewFileName()
+      val destPic = new File(UploadHelpers.uploadBrandDir(Full(dir)) + File.separator + newFileName)
       //UploadManager.myFit(oImg, (320, 200), (oImg.width, oImg.height)).writer(Format.JPEG).withCompression(50).write(destPic)
       //UploadManager.myFit(oImg, (320, 200), (oImg.width, oImg.height)).write(destPic)
       oImg.scaleTo(320, 200).writer(Format.JPEG).withProgressive(true).withCompression(80).write(destPic)
@@ -118,7 +120,7 @@ object SyncData extends App {
           case Some(tel) =>
             val tels = tel.split(",")
             val regTel = tels(0).replaceAll("""\s|-""", "")
-            WebHelper.realMobile(Full(regTel)) match {
+            WebHelpers.realMobile(Full(regTel)) match {
               case Full(mobile) =>
                 val user = User.create
                 user.srcId(u.id)

@@ -1,7 +1,6 @@
 package code.snippet.user
 
 import scala.xml.Text
-import code.lib.WebHelper
 import code.model.User
 import net.liftweb.common._
 import net.liftweb.http.RequestVar
@@ -14,17 +13,15 @@ import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.mapper.Genders
 import net.liftweb.util.Helpers._
-import code.lib.WebHelper._
 import net.liftweb.mapper.By
 import code.model.UserType
 import scala.xml.NodeSeq
 import code.snippet.SnippetHelper
-import code.lib.MemcachedHelper
-import code.lib.SmsCode
-import code.lib.SmsHelper
+import com.niusb.util.SmsCode
 import net.liftweb.http.DispatchSnippet
-import code.lib.BoxAlert
-import code.lib.BoxAlert
+import com.niusb.util.WebHelpers
+import com.niusb.util.WebHelpers._
+import com.niusb.util.SmsHelpers
 
 object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -73,14 +70,14 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     def sendCodeSms(): JsCmd = {
       val mobile = loginUser.mobile.get
-      val cacheTime = SmsHelper.smsCode(mobile)._2
+      val cacheTime = SmsHelpers.smsCode(mobile).cacheTime
       val user = loginUser
-      removeFormError() & (if ((WebHelper.now - cacheTime) > 60) {
-        SmsHelper.sendCodeSms(mobile)
+      removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
+        SmsHelpers.sendCodeSms(mobile)
         JsRaw("""$("#getCodeBtn").countdown();$("#opt_pwd_tip").hide().text("")""")
       } else {
         JsRaw("""$("#opt_pwd_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
-      }) & Alert(SmsHelper.smsCode(user.mobile.get)._1)
+      }) & Alert(SmsHelpers.smsCode(user.mobile.get).code)
     }
 
     "@code" #> password(code, code = _) &

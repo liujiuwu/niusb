@@ -1,8 +1,6 @@
 package code.snippet
 
 import scala.xml.Text
-import code.lib.SmsHelper
-import code.lib.WebHelper._
 import code.model.User
 import net.liftweb.common.Box
 import net.liftweb.common.Full
@@ -18,11 +16,11 @@ import net.liftweb.http.js.JsCmds._
 import net.liftweb.http.js.JsCmds
 import net.liftweb.mapper.By
 import net.liftweb.util.Helpers._
-import code.lib.MemcachedHelper
-import code.lib.SmsCode
-import code.lib.WebHelper
+import com.niusb.util.SmsCode
 import net.liftweb.util.StringHelpers
 import net.liftweb.util.Helpers
+import com.niusb.util.WebHelpers
+import com.niusb.util.SmsHelpers
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -34,17 +32,17 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
     var pwdBox: Box[String] = Full("")
 
     def process(): JsCmd = {
-      val mobile = realMobile(mobileBox) match {
+      val mobile = WebHelpers.realMobile(mobileBox) match {
         case Full(mb) => mb
-        case _ => return formError("mobile", "请输入正确的手机号！")
+        case _ => return WebHelpers.formError("mobile", "请输入正确的手机号！")
       }
 
       val pwd = pwdBox match {
         case Full(p) if (!p.trim.isEmpty()) => p
-        case _ => return removeFormError() & formError("pwd", "请输入短信验证码或密码！")
+        case _ => return WebHelpers.removeFormError() & WebHelpers.formError("pwd", "请输入短信验证码或密码！")
       }
 
-      val code = SmsHelper.smsCode(mobile)._1
+      val code = SmsHelpers.smsCode(mobile).code
       User.find(By(User.mobile, mobile)) match {
         case Full(user) =>
           if (user.authSmsCodeOrPwd(pwd)) {
@@ -54,7 +52,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             User.logUserIn(user)
             S.redirectTo(redirectUrl())
           } else {
-            formError("pwd", "验证码或密码错误，请确认！")
+            WebHelpers.formError("pwd", "验证码或密码错误，请确认！")
           }
         case _ =>
           val user = User.create
@@ -67,24 +65,24 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             User.logUserIn(user)
             S.redirectTo(redirectUrl())
           } else {
-            formError("pwd", "验证码错误，请确认！")
+            WebHelpers.formError("pwd", "验证码错误，请确认！")
           }
       }
     }
 
     def sendCodeSms(mobileVal: String): JsCmd = {
-      val mobile = realMobile(Full(mobileVal)) match {
+      val mobile = WebHelpers.realMobile(Full(mobileVal)) match {
         case Full(mb) => mb
-        case _ => return formError("mobile", "请输入正确的手机号！")
+        case _ => return WebHelpers.formError("mobile", "请输入正确的手机号！")
       }
 
-      val cacheTime = SmsHelper.smsCode(mobile)._2
-      removeFormError() & (if ((WebHelper.now - cacheTime) > 60) {
-        SmsHelper.sendCodeSms(mobile)
+      val cacheTime = SmsHelpers.smsCode(mobile).cacheTime
+      WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
+        SmsHelpers.sendCodeSms(mobile)
         JsRaw("""$("#getCodeBtn").countdown();$("#opt_login_tip").hide().text("")""")
       } else {
         JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
-      }) & Alert(SmsHelper.smsCode(mobile)._1)
+      }) & Alert(SmsHelpers.smsCode(mobile).code)
     }
 
     "@mobile" #> text(mobileBox.get, mobile => mobileBox = Full(mobile)) &

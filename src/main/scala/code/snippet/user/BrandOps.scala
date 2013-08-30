@@ -4,10 +4,6 @@ import java.io.File
 import scala.language.postfixOps
 import scala.xml._
 import org.apache.commons.io.FileUtils
-import code.lib.BoxAlert
-import code.lib.BoxConfirm
-import code.lib.SearchHelper
-import code.lib.WebHelper
 import code.model.Brand
 import code.model.BrandStatus
 import code.model.User
@@ -29,11 +25,14 @@ import net.liftweb.util.Helpers._
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.mapper.QueryParam
 import scala.collection.mutable.ArrayBuffer
-import code.lib.UploadFileHelper
 import code.model.BrandType
 import code.lib.WebCacheHelper
 import code.model.UserData
 import code.model.PaginatorByMem
+import com.niusb.util.WebHelpers._
+import com.niusb.util.WebHelpers
+import com.niusb.util.UploadHelpers
+import com.niusb.util.SearchBrandHelpers
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -51,7 +50,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     var brandType: BrandType = WebCacheHelper.brandTypes.get(25).get
 
     def process(): JsCmd = {
-      val brand = Brand.create.regNo(regNo).name(name).pic(pic).regDate(WebHelper.dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
+      val brand = Brand.create.regNo(regNo).name(name).pic(pic).regDate(dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
       brand.owner(loginUser)
       brand.brandTypeCode(brandType.code.get)
       brand.basePrice(tryo(basePrice.toInt).getOrElse(0))
@@ -60,7 +59,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       brand.validate match {
         case Nil =>
           brand.save
-          UploadFileHelper.handleBrandImg(pic)
+          UploadHelpers.handleBrandImg(pic)
           S.redirectTo("/user/brand/")
         case errors => println(errors); Noop
       }
@@ -86,9 +85,9 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         //TODO 检查标号合法性
         //WebHelper.formError("regNo", "错误的商标注册号，请核实！")
         //TODO 从标局获取商标数据
-        val brandData = SearchHelper.searchBrandByRegNo(regNo)
+        val brandData = SearchBrandHelpers.searchBrandByRegNo(regNo)
         if (brandData.isEmpty) {
-          JsRaw(WebHelper.errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
+          JsRaw(errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
         } else {
           val name = brandData.getOrElse("name", "")
           val flh = brandData.getOrElse("flh", "")
@@ -203,7 +202,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def uploadBrandPic = {
     var picName, x, y, w, h = ""
     def process(): JsCmd = {
-      val uploadPic = new File(UploadFileHelper.uploadTmpDir + File.separator + picName)
+      val uploadPic = new File(UploadHelpers.uploadTmpDir + File.separator + picName)
       Thumbnails.of(uploadPic)
         .sourceRegion(x.toInt, y.toInt, w.toInt, h.toInt)
         .size(w.toInt, h.toInt)
@@ -211,7 +210,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         .toFile(uploadPic)
 
       //FileUtils.deleteQuietly(uploadPic)
-      val imgSrc = UploadFileHelper.srcTmpPath(picName)
+      val imgSrc = UploadHelpers.srcTmpPath(picName)
       JsRaw("$('#uploadDialog').modal('hide');$('#brandPic').attr('src','" + imgSrc + "')")
     }
 

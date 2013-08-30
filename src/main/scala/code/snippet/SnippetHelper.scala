@@ -1,20 +1,17 @@
 package code.snippet
 
 import scala.xml.NodeSeq
+
+import code.model.User
 import net.liftweb.common.Box
+import net.liftweb.common.Box.box2Option
+import net.liftweb.common.Empty
 import net.liftweb.common.Failure
 import net.liftweb.common.Full
+import net.liftweb.http.RequestVar
 import net.liftweb.http.S
 import net.liftweb.util.CssSel
 import net.liftweb.util.Helpers.strToCssBindPromoter
-import net.liftweb.http.RequestVar
-import net.liftweb.common.Empty
-import scala.xml.Text
-import code.lib.WebCacheHelper
-import scala.util.Try
-import scala.util.Success
-import net.liftweb.util.Helpers._
-import code.model.User
 
 object SnippetHelper extends SnippetHelper
 
@@ -65,5 +62,4 @@ trait SnippetHelper {
       "*" #> errorHtml(<p>{ resultMsg }</p>)
     case _ => "*" #> errorHtml(<p>404</p>)
   }
-
 }

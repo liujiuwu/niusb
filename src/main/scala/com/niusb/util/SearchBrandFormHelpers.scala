@@ -1,19 +1,23 @@
-package code.snippet
+package com.niusb.util
 
-import net.liftweb.http.S
 import code.lib.WebCacheHelper
+import net.liftweb.common.Full
+import net.liftweb.http.S
+import scala.xml.NodeSeq
 import scala.util.Try
 import scala.util.Success
 import net.liftweb.util.Helpers._
-import net.liftweb.common.Full
 import net.liftweb.mapper.QueryParam
-import scala.collection.mutable.ArrayBuffer
-import code.model.BrandType
 import code.model.Brand
+import scala.collection.mutable.ArrayBuffer
 import net.liftweb.mapper._
-import scala.xml.NodeSeq
+import scala.xml.NodeSeq.seqToNodeSeq
 
-trait SearchBrandForm {
+object SearchBrandFormHelpers extends SearchBrandFormHelpers {
+}
+
+trait SearchBrandFormHelpers {
+  case class SearchBrandFormParam(url: String, brandTypeName: String, brandTypeCode: String, keywordType: String, keyword: String, likeType: String, orderType: String, module: String)
   lazy val orderTypes = List[(String, String)]("0" -> "由新至旧", "1" -> "价格从低至高", "2" -> "价格从高至低", "3" -> "浏览次数", "4" -> "热门关注")
   lazy val likeTypes = List[(String, String)]("0" -> "精确", "1" -> "模糊", "2" -> "前包含", "3" -> "后包含")
   lazy val keywordTypes = List[(String, String)]("0" -> "商标名称", "1" -> "商标注册号")
@@ -38,44 +42,13 @@ trait SearchBrandForm {
   }
 
   def brandTypeOptions(selected: String): NodeSeq = {
-    for (option <- brandTypes; (value, label) = (option.code.get.toString, option.name.get)) yield {
+    <option value="all">所有商标类型</option> :: (for (option <- brandTypes; (value, label) = (option.code.get.toString, option.name.get)) yield {
       options(value, label, selected, true)
-    }
+    })
   }
 
   private def options(value: String, label: String, selected: String, prependValue: Boolean = false) = {
     <option value={ value } selected={ if (selected == value) "selected" else null }>{ if (prependValue) value + "." + label else label }</option>
-  }
-
-  case class SearchBrandFormParam(url: String, brandTypeName: String, brandTypeCode: String, keywordType: String, keyword: String, likeType: String, order: String, module: String)
-  def searchBrandForm(param: SearchBrandFormParam) = {
-    val searchForm = {
-      "#searchForm" #>
-        <form class="form-inline" action={ param.url } method="get">
-          <div class="controls">
-            <select id="btc" name="btc">
-              <option value="all">所有商标类型</option>
-              { brandTypeOptions(param.brandTypeCode) }
-            </select>
-            <select id="kt" name="kt" class="span3">
-              { keywordTypeOptions(param.keywordType) }
-            </select>
-            <input type="text" id="k" name="k" placeholder="搜索关键词" value={ param.keyword } class="span7"/>
-            <select id="lt" name="lt" class="span3">
-              { likeOptions(param.likeType) }
-            </select>
-            <select id="ot" name="ot" class="span4">
-              { orderOptions(param.order) }
-            </select>
-            <button type="submit" class="btn">
-              <i class="icon-search"></i>
-              搜索
-            </button>
-          </div>
-        </form>
-    }
-
-    searchForm
   }
 
   def getSearchBrandFormParam(): SearchBrandFormParam = {
@@ -90,7 +63,7 @@ trait SearchBrandForm {
       }
     }
 
-    var url = S.originalRequest.map(_.uri).openOr(sys.error("No request"))
+    var url = S.attr("url").openOr(S.originalRequest.map(_.uri).openOr(sys.error("No request")))
     val (brandTypeCode, keywordType, keyword, likeType, orderType) = (S.param("btc"), S.param("kt"), S.param("k"), S.param("lt"), S.param("ot"))
 
     val brandTypeCodeVal = brandTypeCode.openOr(S.attr("brandTypeCode").openOr("all"))
@@ -123,7 +96,7 @@ trait SearchBrandForm {
     SearchBrandFormParam(url, brandTypeName, brandTypeCodeVal, keywordTypeVal, keywordVal, likeTypeVal, orderVal, module)
   }
 
-  def SearchBrandFormBies(param: SearchBrandFormParam): List[QueryParam[Brand]] = {
+  def searchBrandFormBies(param: SearchBrandFormParam): List[QueryParam[Brand]] = {
     val byBuffer = ArrayBuffer[QueryParam[Brand]]()
     Try(param.brandTypeCode.toInt) match {
       case Success(code) => byBuffer += By(Brand.brandTypeCode, code)
@@ -149,7 +122,7 @@ trait SearchBrandForm {
       case _ =>
     }
 
-    param.order match {
+    param.orderType match {
       case "0" =>
         byBuffer += OrderBy(Brand.id, Descending)
       case "1" =>
@@ -171,5 +144,15 @@ trait SearchBrandForm {
     }
 
     byBuffer.toList
+  }
+
+  def form(formParam: SearchBrandFormParam) = {
+    "form [action]" #> formParam.url &
+      "#btc *" #> { brandTypeOptions(formParam.brandTypeCode) } &
+      "#kt *" #> { keywordTypeOptions(formParam.keywordType) } &
+      "#lt *" #> { likeOptions(formParam.likeType) } &
+      "#ot *" #> { orderOptions(formParam.orderType) } &
+      "@name [value]" #> formParam.keyword
+
   }
 }

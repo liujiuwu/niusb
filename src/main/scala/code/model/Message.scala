@@ -1,10 +1,9 @@
 package code.model
 
 import java.text.SimpleDateFormat
-
-import code.lib.WebHelper
 import net.liftweb.common._
 import net.liftweb.mapper._
+import com.niusb.util.WebHelpers
 
 object MessageType extends Enumeration {
   type MessageType = Value
@@ -44,7 +43,7 @@ class Message extends LongKeyedMapper[Message] with CreatedUpdated with IdPK {
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
 
-    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
 
     override def parse(s: String): Box[java.util.Date] = {
       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
@@ -60,7 +59,7 @@ class Message extends LongKeyedMapper[Message] with CreatedUpdated with IdPK {
   override lazy val updatedAt = new MyUpdatedAt(this) {
     override def dbColumnName = "updated_at"
 
-    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
 
     override def parse(s: String): Box[java.util.Date] = {
       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")

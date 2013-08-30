@@ -1,32 +1,24 @@
 package code.snippet
 
+import scala.xml.NodeSeq
 import scala.xml.Text
+import code.model.Brand
+import code.model.User
+import code.model.UserData
+import com.niusb.util.WebHelpers._
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
-import net.liftweb.util.Helpers._
 import net.liftweb.http.S
-import net.liftweb.http.S._
-import net.liftweb.util._
-import net.liftweb.mapper._
-import net.liftweb.util.Helpers._
-import code.model.Brand
-import code.model.BrandType
-import net.liftweb.common._
-import scala.collection.mutable.ArrayBuffer
-import code.lib.WebCacheHelper
-import code.model.User
-import scala.xml.NodeSeq
 import net.liftweb.http.SHtml
-import net.liftweb.http.js.JsCmds._
+import net.liftweb.http.SHtml.ElemAttr.pairToBasic
 import net.liftweb.http.js.JsCmd
-import net.liftweb.http.js.JsCmd._
-import code.model.UserData
-import code.lib.BootBoxHelper
-import code.lib.BoxAlert
-import net.liftweb.http.js.JE._
-import code.lib.WebHelper
+import net.liftweb.http.js.JsCmds.SetHtml
+import net.liftweb.mapper.By
+import net.liftweb.util.CssSel
+import net.liftweb.util.Helpers._
+import com.niusb.util.SearchBrandFormHelpers
 
-object MarketOps extends DispatchSnippet with SnippetHelper with SearchBrandForm with Loggable {
+object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "list" => list
     case "view" => view
@@ -34,11 +26,13 @@ object MarketOps extends DispatchSnippet with SnippetHelper with SearchBrandForm
 
   def list = {
     val limit = S.attr("limit").map(_.toInt).openOr(40)
-    val searchBrandFormParam = getSearchBrandFormParam()
-    val searchForm = searchBrandForm(searchBrandFormParam)
-    val paginatorModel = Brand.paginator(searchBrandFormParam.url, SearchBrandFormBies(searchBrandFormParam): _*)(itemsOnPage = limit)
+    val formParam = SearchBrandFormHelpers.getSearchBrandFormParam()
+    val searchForm = "#searchBrandForm" #> SearchBrandFormHelpers.form(formParam)
+    val paginatorModel = Brand.paginator(formParam.url, SearchBrandFormHelpers.searchBrandFormBies(formParam): _*)(itemsOnPage = limit)
+    val pagination = "#pagination" #> paginatorModel.paginate _
+
     val dataList = ".brands li" #> paginatorModel.datas.map(_.displayBrand)
-    "#title" #> searchBrandFormParam.brandTypeName & searchForm & dataList & "#pagination" #> paginatorModel.paginate _
+    "#title" #> formParam.brandTypeName & searchForm & dataList & pagination
   }
 
   def view = {

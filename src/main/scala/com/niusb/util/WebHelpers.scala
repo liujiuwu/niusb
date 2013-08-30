@@ -1,71 +1,70 @@
-package code.lib
+package com.niusb.util
 
-import java.awt.Color
-import java.awt.Font
-import java.awt.GradientPaint
-import java.awt.RenderingHints
-import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
+import net.liftweb.util.Helpers
+import net.liftweb.common._
+import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.http.LiftResponse
+import net.liftweb.http.js.JsCmd
+import net.liftweb.http.js.jquery.JqJsCmds._
+import java.awt.image._
+import javax.imageio.ImageIO
 import java.text.SimpleDateFormat
-import java.util.Random
-
+import scala.xml.NodeSeq
+import net.liftweb.util.Helpers.TimeSpan
+import net.liftweb.util.Helpers.intToTimeSpanBuilder
+import net.liftweb.http.InMemoryResponse
+import net.liftweb.http.S
+import scala.util.Random
+import net.liftweb.http.js.jquery.JqJsCmds.Show
+import java.io.ByteArrayOutputStream
+import net.liftweb.http.js.jquery.JqJsCmds.JqSetHtml
 import scala.language.postfixOps
 import scala.math.abs
 import scala.xml.NodeSeq
-
-import javax.imageio.ImageIO
-import net.liftweb.common.Box
-import net.liftweb.common.Empty
-import net.liftweb.common.Full
-import net.liftweb.http.InMemoryResponse
-import net.liftweb.http.LiftResponse
-import net.liftweb.http.S
-import net.liftweb.http.js.JE.JsRaw
-import net.liftweb.http.js.JsCmd
-import net.liftweb.http.js.jquery.JqJsCmds.FadeOut
-import net.liftweb.http.js.jquery.JqJsCmds.JqSetHtml
-import net.liftweb.http.js.jquery.JqJsCmds.Show
-import net.liftweb.http.js.jquery.JqJsCmds.jsExpToJsCmd
+import java.awt.RenderingHints
+import java.awt.GradientPaint
+import java.awt.Font
+import java.awt.Color
 import net.liftweb.util.Helpers
-import net.liftweb.util.Helpers.TimeSpan
-import net.liftweb.util.Helpers.intToTimeSpanBuilder
 
+object WebHelpers extends WebHelpers with BootBoxHelpers {
+}
 
-case class CacheValue[T](compute: () => T, lifespanInMillis: Long) {
-  private var currentValue: Box[T] = Empty
-  private var lastCalc: Long = 0
-  def get: T = synchronized {
-    if (lastCalc + lifespanInMillis < Helpers.millis) {
-      currentValue = Empty
-    }
-    currentValue match {
-      case Full(v) => v
-      case _ => {
-        val ret = compute()
-        lastCalc = Helpers.millis
-        currentValue = Full(ret)
-        ret
+trait WebHelpers {
+  case class CacheValue[T](compute: () => T, lifespanInMillis: Long) {
+    private var currentValue: Box[T] = Empty
+    private var lastCalc: Long = 0
+    def get: T = synchronized {
+      if (lastCalc + lifespanInMillis < Helpers.millis) {
+        currentValue = Empty
+      }
+      currentValue match {
+        case Full(v) => v
+        case _ => {
+          val ret = compute()
+          lastCalc = Helpers.millis
+          currentValue = Full(ret)
+          ret
+        }
       }
     }
   }
-}
 
-object TrueOrFalse extends Function1[String, Boolean] {
-  lazy val selectTrueOrFalse = Seq("0" -> "否", "1" -> "是")
-  def apply(v: String) = v match {
-    case "0" => false
-    case "1" => true
+  object TrueOrFalse extends Function1[String, Boolean] {
+    lazy val selectTrueOrFalse = Seq("0" -> "否", "1" -> "是")
+    def apply(v: String) = v match {
+      case "0" => false
+      case "1" => true
+    }
   }
-}
 
-object TrueOrFalse2Str extends Function1[Boolean, Box[String]] {
-  def apply(v: Boolean) = v match {
-    case false => Full("0")
-    case true => Full("1")
+  object TrueOrFalse2Str extends Function1[Boolean, Box[String]] {
+    def apply(v: Boolean) = v match {
+      case false => Full("0")
+      case true => Full("1")
+    }
   }
-}
 
-object WebHelper extends App {
   def now = (System.currentTimeMillis() / 1000).toInt
 
   def badge(label: String, data: AnyVal, prefix: String = "￥") = <span class={ "badge badge-" + label }>{ prefix }{ data }</span>
@@ -188,5 +187,4 @@ object WebHelper extends App {
 
     captchaData
   }
-
 }

@@ -3,11 +3,11 @@ package code.model
 import net.liftweb.mapper._
 import net.liftweb.common.Full
 import java.text.SimpleDateFormat
-import code.lib.WebHelper
 import net.liftweb.common.Box
-import code.lib.SmsHelper
-import code.lib.MemcachedHelper
 import net.liftweb.util.Helpers
+import com.niusb.util.WebHelpers
+import com.niusb.util.MemHelpers
+import com.niusb.util.SmsHelpers
 
 object UserType extends Enumeration {
   type UserType = Value
@@ -74,13 +74,13 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
 
   object upgradedAt extends MappedDateTime(this) {
     override def dbColumnName = "upgraded_at"
-    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
   }
 
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
 
-    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
 
     override def parse(s: String): Box[java.util.Date] = {
       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
@@ -96,7 +96,7 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
   override lazy val updatedAt = new MyUpdatedAt(this) {
     override def dbColumnName = "updated_at"
 
-    override def format(d: java.util.Date): String = WebHelper.fmtDateStr(d)
+    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
 
     override def parse(s: String): Box[java.util.Date] = {
       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
@@ -118,10 +118,10 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
   }
 
   def authSmsCodeOrPwd(inputCode: String) = {
-    val code = SmsHelper.smsCode(mobile.get)._1
+    val code = SmsHelpers.smsCode(mobile.get).code
     val checkRet = (!code.trim.isEmpty() && code == inputCode) || password.match_?(inputCode)
     if (checkRet) {
-      MemcachedHelper.delete(mobile.get)
+      MemHelpers.delete(mobile.get)
     }
     checkRet
   }
