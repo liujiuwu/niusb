@@ -47,7 +47,7 @@ trait SearchBrandForm {
     <option value={ value } selected={ if (selected == value) "selected" else null }>{ if (prependValue) value + "." + label else label }</option>
   }
 
-  case class SearchBrandFormParam(url: String, brandTypeName: String, brandTypeCode: String, keywordType: String, keyword: String, likeType: String, order: String)
+  case class SearchBrandFormParam(url: String, brandTypeName: String, brandTypeCode: String, keywordType: String, keyword: String, likeType: String, order: String, module: String)
   def searchBrandForm(param: SearchBrandFormParam) = {
     val searchForm = {
       "#searchForm" #>
@@ -118,7 +118,9 @@ trait SearchBrandForm {
     if (orderVal != "") {
       url = appendParams(url, List("ot" -> orderVal))
     }
-    SearchBrandFormParam(url, brandTypeName, brandTypeCodeVal, keywordTypeVal, keywordVal, likeTypeVal, orderVal)
+
+    val module = S.attr("module").openOr("")
+    SearchBrandFormParam(url, brandTypeName, brandTypeCodeVal, keywordTypeVal, keywordVal, likeTypeVal, orderVal, module)
   }
 
   def SearchBrandFormBies(param: SearchBrandFormParam): List[QueryParam[Brand]] = {
@@ -159,6 +161,13 @@ trait SearchBrandForm {
       case "4" =>
         byBuffer += OrderBy(Brand.followCount, Descending)
       case _ => byBuffer += OrderBy(Brand.id, Descending)
+    }
+
+    param.module match {
+      case "recommend" => byBuffer += By(Brand.isRecommend, true)
+      case "offer" => byBuffer += By(Brand.isOffer, true)
+      case "own" => byBuffer += By(Brand.isOwn, true)
+      case _ =>
     }
 
     byBuffer.toList

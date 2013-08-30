@@ -28,9 +28,9 @@ object Site {
     Menu(Loc("Home", List("index"), menuText("首页", "home"), TopBarGroup)),
     Menu(Loc("Market", List("market","index"), menuText("商标集市", "globe"), TopBarGroup)),
     Menu(Loc("ViewBrand", List("market","view"), menuText("查看商标"), Hidden)),
-    Menu(Loc("Recommend", List("market", "recommend"), menuText("精品商标"), TopBarGroup)),
-    Menu(Loc("Offer", List("market", "offer"), menuText("特价商标"), TopBarGroup)),
-    Menu(Loc("Own", List("market", "own"), menuText("自有商标"), TopBarGroup)),
+    Menu(Loc("Recommend", List("market", "recommend"), menuText("精品商标","sun"), TopBarGroup)),
+    Menu(Loc("Offer", List("market", "offer"), menuText("特价商标","tag"), TopBarGroup)),
+    Menu(Loc("Own", List("market", "own"), menuText("自有商标","asterisk"), TopBarGroup)),
     Menu(Loc("Wenda", List("wenda") -> true, menuText("问答频道", "question-sign"), TopBarGroup)))
 
   val userMenus = List[Menu](

@@ -12,6 +12,34 @@
 <link data-lift="with-resource-id" rel="stylesheet" href="/css/bootstrap-modal.min.css" />
 <link data-lift="with-resource-id" rel="stylesheet" href="/css/application.min.css" />
 <link rel="shortcut icon" href="/img/favicon.ico" />
+<style>
+
+.navbar-inner {
+    background-color: #FFFFF;
+    background-image: linear-gradient(to bottom, #FFFFFF, #FFFFFF);
+    background-repeat: repeat-x;
+    border: 1px solid #D4D4D4;
+    border-radius: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+    min-height: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size:14px;
+}
+
+.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus {
+    background-color: #FFFFFF;
+    box-shadow: none;
+    color: #EE472C;
+    text-decoration: none;
+    font-size:14px;
+}
+
+
+.navbar-fixed-top .navbar-inner, .navbar-static-top .navbar-inner {
+    border-bottom:2px solid #EE472C;
+}
+</style>
 </head>
 <body>
 	<div class='lift:embed?what=_topNavbar'>Embed the top toolbar here.</div>
