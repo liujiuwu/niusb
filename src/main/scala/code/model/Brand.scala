@@ -194,7 +194,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def displayName = "查看数"
     override def dbColumnName = "view_count"
     def incr(ip: String): Int = {
-      val key = ip + "_" + id.get
+      val key = WebHelpers.memKey(ip, "brand", id.get.toString())
       MemHelpers.get(key) match {
         case Some(time) =>
         case _ =>

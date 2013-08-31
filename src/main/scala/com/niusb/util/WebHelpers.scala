@@ -31,6 +31,12 @@ object WebHelpers extends WebHelpers with BootBoxHelpers {
 }
 
 trait WebHelpers {
+  val df = new SimpleDateFormat("yyyy-MM-dd")
+  val dfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+  val dfLongTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+  val WebSiteUrlAndName = ("http://www.niusb.com", "牛标网")
+
   case class CacheValue[T](compute: () => T, lifespanInMillis: Long) {
     private var currentValue: Box[T] = Empty
     private var lastCalc: Long = 0
@@ -108,21 +114,24 @@ trait WebHelpers {
     }
   }
 
-  def fmtDateStr(date: java.util.Date) = {
+  def fmtDateStr(date: java.util.Date, fmt: SimpleDateFormat = df) = {
     date match {
       case null => ""
-      case _ => val format = new SimpleDateFormat("yyyy-MM-dd"); format.format(date)
+      case _ => fmt.format(date)
     }
   }
 
   def dateParse(s: String): Box[java.util.Date] = {
-    val df = new SimpleDateFormat("yyyy-MM-dd")
     try {
       val date = df.parse(s)
       Full(date)
     } catch {
       case _: Exception => Empty
     }
+  }
+
+  def memKey(ip: String, module: String, flag: String, otherFlag: String = "") = {
+    s"${ip}_${module}_${flag}" + (if (!otherFlag.isEmpty()) "_" + otherFlag else "")
   }
 
   def captcha(): Box[LiftResponse] = {

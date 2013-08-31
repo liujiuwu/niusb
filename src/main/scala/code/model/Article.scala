@@ -4,6 +4,10 @@ import java.text.SimpleDateFormat
 import net.liftweb.common._
 import net.liftweb.mapper._
 import com.niusb.util.WebHelpers
+import com.niusb.util.MemHelpers
+import net.liftweb.util.Helpers._
+import scala.xml.Unparsed
+import scala.xml.Text
 
 object ArticleType extends Enumeration {
   type ArticleType = Value
@@ -30,8 +34,21 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
     override def defaultValue = ArticleType.News
     override def dbColumnName = "article_type"
   }
-  object articleFrom extends MappedString(this, 50) {
+  object articleFrom extends MappedString(this, 300) {
     override def dbColumnName = "article_from"
+    def displayFrom = {
+      Unparsed(
+        if (this.get == null || this.get.trim.isEmpty()) {
+          s"""<a href="${WebHelpers.WebSiteUrlAndName._1}" target="_blank">${WebHelpers.WebSiteUrlAndName._2}</a>"""
+        } else {
+          val fromLink = this.get.split(":")
+          if (fromLink.length >= 2) {
+            s"""<a href="${fromLink(0)}" target="_blank">${fromLink(1)}</a>"""
+          } else {
+            this.get
+          }
+        })
+    }
   }
   object content extends MappedText(this)
   object articleOrder extends MappedInt(this) {
@@ -44,12 +61,23 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
 
   object readCount extends MappedInt(this) {
     override def dbColumnName = "read_count"
+    def incr(ip: String): Int = {
+      val key = WebHelpers.memKey(ip, "article", id.get.toString())
+      MemHelpers.get(key) match {
+        case Some(time) =>
+        case _ =>
+          this(this + 1)
+          save
+          MemHelpers.set(key, 0, 10 minutes)
+      }
+      this.get
+    }
   }
 
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
 
-    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
+    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d, WebHelpers.dfLongTime)
 
     override def parse(s: String): Box[java.util.Date] = {
       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
