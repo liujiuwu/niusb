@@ -136,7 +136,7 @@ object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@status" #> selectObj[ArticleStatus.Value](ArticleStatus.values.toList.map(v => (v, v.toString)), Full(article.status.is), article.status(_)) &
         "@article_order" #> text(article.articleOrder.get.toString, v => article.articleOrder(v.toInt)) &
         "@articleContent" #> textarea(article.content.get, article.content(_)) &
-        "@sub" #> hidden(process)
+        "type=submit" #> ajaxSubmit("发布", process)
     }): CssSel
   }
 

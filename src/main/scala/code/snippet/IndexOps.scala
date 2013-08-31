@@ -10,12 +10,16 @@ import net.liftweb.util.Helpers.strToCssBindPromoter
 import scala.xml.NodeSeq
 import com.niusb.util.WebHelpers._
 import com.niusb.util.SearchBrandFormHelpers
+import code.model.Article
+import net.liftweb.mapper.By
+import code.model.ArticleType
 
 object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "tabConent" => tabConent
     case "mainConent" => mainConent
     case "searchBrandForm" => searchBrandForm
+    case "news" => news
   }
 
   def tabConent = {
@@ -57,5 +61,13 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def searchBrandForm = {
     val formParam = SearchBrandFormHelpers.getSearchBrandFormParam()
     "#searchBrandForm" #> SearchBrandFormHelpers.form(formParam)
+  }
+
+  def news = {
+    val limit = S.attr("limit").map(_.toInt).openOr(6)
+    val bies = By(Article.articleType, ArticleType.News)
+    val paginatorModel = Article.paginator(originalUri, bies)(itemsOnPage = limit)
+    val dataList = "li *" #> paginatorModel.datas.map(_.title.displayTitle)
+    dataList
   }
 }

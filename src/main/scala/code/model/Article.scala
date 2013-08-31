@@ -20,7 +20,12 @@ object ArticleStatus extends Enumeration {
 
 class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
   def getSingleton = Article
-  object title extends MappedString(this, 100)
+  object title extends MappedString(this, 100) {
+    def displayTitle = {
+      <a href={ "/news/view/" + id.get } title={ this.get }>{ this.get }</a>
+    }
+  }
+
   object articleType extends MappedEnum(this, ArticleType) {
     override def defaultValue = ArticleType.News
     override def dbColumnName = "article_type"
