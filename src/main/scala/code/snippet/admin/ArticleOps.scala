@@ -108,7 +108,7 @@ object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
     val dataList = "#dataList tr" #> paginatorModel.datas.map(article => {
       "#title" #> article.title &
         "#articleType" #> article.articleType &
-        "#articleFrom" #> article.articleFrom.get &
+        "#articleFrom" #> article.articleFrom.displayFrom &
         "#status" #> article.status &
         "#readCount" #> article.readCount.get &
         "#articleOrder" #> article.articleOrder.get &

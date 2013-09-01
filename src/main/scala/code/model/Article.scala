@@ -41,9 +41,9 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
         if (this.get == null || this.get.trim.isEmpty()) {
           s"""<a href="${WebHelpers.WebSiteUrlAndName._1}" target="_blank">${WebHelpers.WebSiteUrlAndName._2}</a>"""
         } else {
-          val fromLink = this.get.split(":")
+          val fromLink = this.get.split(":", 2)
           if (fromLink.length >= 2) {
-            s"""<a href="${fromLink(0)}" target="_blank">${fromLink(1)}</a>"""
+            s"""<a href="${fromLink(1)}" target="_blank">${fromLink(0)}</a>"""
           } else {
             this.get
           }

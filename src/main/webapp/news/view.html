@@ -1,33 +1,38 @@
 <div class="container" data-lift="surround?with=default;at=content">
 	<div class="row">
-		<div data-lift="NewsOps.view"  class="span18">
+		<div data-lift="NewsOps.view" class="span18">
 			<div class="m-box m-box-1">
 				<div class="tp">
 					<div class="tit">常见问答</div>
 				</div>
 				<div class="ct">
-					<div class="info-bar"><a href="">牛标网</a>发布于：2013-08-31</div>
+					<div class="info-bar">
+						<a href="">牛标网</a>发布于：2013-08-31
+					</div>
 					<div class="text-ct">常见问答</div>
 				</div>
 			</div>
 		</div>
 		<div class="span7">
-			<div class="m-box23 m-box23-1">
-				<div class="tp">
-					<div class="tit">
-						<span id="title">商标问答</span>
-					</div>
-				</div>
-				<div class="ct"></div>
-			</div>
-
-			<div class="m-box23 m-box23-1">
+			<div class="m-box m-box-2">
 				<div class="tp">
 					<div class="tit">
 						<span id="title">行业动态</span>
 					</div>
 				</div>
-				<div class="ct"></div>
+				<div class="ct">
+					<ul data-lift="IndexOps.news?limit=6" class="mod-list main-list">
+						<li>新闻标题</li>
+					</ul>
+				</div>
+			</div>
+			<div class="m-box m-box-2">
+				<div class="tp">
+					<div class="tit">
+						<span id="title">商标问答</span>
+					</div>
+				</div>
+				<div class="ct">内容</div>
 			</div>
 		</div>
 	</div>
