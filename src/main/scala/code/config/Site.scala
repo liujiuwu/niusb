@@ -31,6 +31,7 @@ object Site {
     Menu(Loc("Recommend", List("market", "recommend"), menuText("精品商标", "sun"), TopBarGroup)),
     Menu(Loc("Offer", List("market", "offer"), menuText("特价商标", "tag"), TopBarGroup)),
     Menu(Loc("Own", List("market", "own"), menuText("自有商标", "asterisk"), TopBarGroup)),
+    Menu(Loc("News", List("news", "index"), menuText("新闻公告"), Hidden)),
     Menu(Loc("ViewNews", List("news", "view"), menuText("查看新闻"), Hidden)),
     Menu(Loc("Wenda", List("wenda") -> true, menuText("问答频道", "question-sign"), TopBarGroup)))
 

@@ -32,7 +32,7 @@ object WebHelpers extends WebHelpers with BootBoxHelpers {
 
 trait WebHelpers {
   val df = new SimpleDateFormat("yyyy-MM-dd")
-  val dfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+  val dfShortTime = new SimpleDateFormat("yyyy-MM-dd HH:mm")
   val dfLongTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
   val WebSiteUrlAndName = ("http://www.niusb.com", "牛标网")

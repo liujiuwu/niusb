@@ -26,7 +26,7 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
   def getSingleton = Article
   object title extends MappedString(this, 100) {
     def displayTitle = {
-      <a href={ "/news/view/" + id.get } title={ this.get }>{ this.get }</a>
+      <a href={ "/news/view/" + id.get } title={ this.get } target="_blank">{ this.get }</a>
     }
   }
 

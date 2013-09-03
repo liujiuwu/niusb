@@ -23,6 +23,7 @@ import scala.xml.Unparsed
 
 object NewsOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
+    case "index" => index
     case "view" => view
   }
 
@@ -38,5 +39,14 @@ object NewsOps extends DispatchSnippet with SnippetHelper with Loggable {
         ".info-bar *" #> info(news) &
         ".text-ct *" #> Unparsed(news.content.get)
     }): CssSel
+  }
+
+  def index = {
+    val limit = S.attr("limit").map(_.toInt).openOr(20)
+    val bies = By(Article.articleType, ArticleType.News)
+    val paginatorModel = Article.paginator(originalUri, bies)(itemsOnPage = limit)
+    val dataList = "m-box" #> paginatorModel.datas.map(_.title.displayTitle)
+    
+    dataList
   }
 }
