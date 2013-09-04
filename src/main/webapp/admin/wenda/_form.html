@@ -1,0 +1,61 @@
+<lift:children>
+	<head_merge>
+	<link rel="stylesheet" href="/kindeditor/themes/default/default.css" />
+	</head_merge>
+	<form data-lift="form.ajax?class=form-horizontal">
+		<div id="group_title" class="control-group">
+			<label for="title" class="control-label">标题</label>
+			<div class="controls">
+				<input type="text" id="title" name="title" required="required" class="span20" /> <span id="error_title" class="help-inline"></span>
+			</div>
+		</div>
+		<div id="group_wenda_type" class="control-group">
+			<label for="wenda_type" class="control-label">类型</label>
+			<div class="controls">
+				<input type="text" id="wenda_type" name="wenda_type" required="required" />
+			</div>
+		</div>
+		<div id="group_status" class="control-group">
+			<label for="status" class="control-label">状态</label>
+			<div class="controls">
+				<input type="text" id="status" name="status" required="required" />
+			</div>
+		</div>
+		<div id="group_askContent" class="control-group">
+			<label for="askContent" class="control-label">问题</label>
+			<div class="controls">
+				<textarea rows="10" id="askContent" name="askContent" class="span20" required="required" style="height: 300px"></textarea>
+			</div>
+		</div>
+		<div id="group_replyContent" class="control-group">
+			<label for="replyContent" class="control-label">回答</label>
+			<div class="controls">
+				<textarea rows="10" id="replyContent" name="replyContent" class="span20" required="required" style="height: 300px"></textarea>
+			</div>
+		</div>
+		<div class="form-actions">
+			<button class="btn btn-primary" type="submit">
+				<i class="icon-ok"></i> 发布
+			</button>
+		</div>
+	</form>
+	<lift:tail>
+		<script charset="utf-8" src="/kindeditor/kindeditor-min.js"></script>
+		<script charset="utf-8" src="/kindeditor/lang/zh_CN.js"></script>
+		<script type="text/javascript">
+			// <![CDATA[
+			KindEditor.ready(function(K) {
+				window.askContentEditor = K.create('#askContent');
+				window.replyContentEditor = K.create('#replyContent');
+			});
+
+			$(function() {
+				$('input[type="submit"]').click(function() {
+					askContentEditor.sync();
+					replyContentEditor.sync();
+				})
+			});
+			// ]]>
+		</script>
+	</lift:tail>
+</lift:children>

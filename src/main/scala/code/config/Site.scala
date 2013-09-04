@@ -60,6 +60,8 @@ object Site {
     Menu(Loc("AdminListArticle", List("admin", "article", "index"), menuText("文章管理", "list"), RequireAdminLoggedIn, AdminMenuGroup)),
     Menu(Loc("AdminCreateArticle", List("admin", "article", "create"), menuText("发布文章", "plus"), RequireAdminLoggedIn, Hidden)),
     Menu(Loc("AdminEditArticle", List("admin", "article", "edit"), menuText("修改文章"), RequireAdminLoggedIn, Hidden)),
+    Menu(Loc("AdminListWenda", List("admin", "wenda", "index"), menuText("问答管理", "list"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminCreateWenda", List("admin", "wenda", "create"), menuText("发布问答", "plus"), RequireAdminLoggedIn, Hidden)),
     Menu(Loc("AdminListSms", List("admin", "sms", "index"), menuText("消息管理", "envelope"), RequireAdminLoggedIn, AdminMenuGroup)),
     Menu(Loc("AdminCreateSms", List("admin", "sms", "create"), menuText("发送消息", "plus"), RequireAdminLoggedIn, Hidden)))
 

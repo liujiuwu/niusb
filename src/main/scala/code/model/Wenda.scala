@@ -43,6 +43,7 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   object askContent extends MappedText(this)
 
   object asker extends MappedLong(this) {
+    override def defaultValue = 0
     override def displayName = "提问人"
     override def dbColumnName = "ask_id"
   }
@@ -50,11 +51,13 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   object replyContent extends MappedText(this)
 
   object reply extends MappedLong(this) {
+    override def defaultValue = 0
     override def displayName = "回答人"
     override def dbColumnName = "reply_id"
   }
 
   object replyDate extends MappedDate(this) {
+    override def defaultValue = new Date
     override def displayName = "回答日期"
     override def dbColumnName = "reply_date"
     override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
@@ -65,6 +68,7 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   }
 
   object readCount extends MappedInt(this) {
+    override def defaultValue = 0
     override def dbColumnName = "read_count"
     def incr(ip: String): Int = {
       val key = WebHelpers.memKey(ip, "wenda", id.get.toString())
@@ -93,4 +97,13 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
 object Wenda extends Wenda with CRUDify[Long, Wenda] with Paginator[Wenda] {
   override def dbTableName = "wendas"
   override def fieldOrder = List(id, title, wendaType, askContent, asker, readCount, replyContent, reply, createdAt, updatedAt)
+
+  def validWendaTypeSelectValues = {
+    val wendaTypes = WendaType.values.toList.map(v => (v.id.toString, v.toString))
+    ("all", "所有类型") :: wendaTypes
+  }
+  def validStatusSelectValues = {
+    val status = WendaStatus.values.toList.map(v => (v.id.toString, v.toString))
+    ("all", "所有状态") :: status
+  }
 }

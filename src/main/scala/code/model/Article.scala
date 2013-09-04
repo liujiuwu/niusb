@@ -60,6 +60,7 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
   }
 
   object readCount extends MappedInt(this) {
+    override def defaultValue = 0
     override def dbColumnName = "read_count"
     def incr(ip: String): Int = {
       val key = WebHelpers.memKey(ip, "article", id.get.toString())
@@ -76,34 +77,12 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
 
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
-
-    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d, WebHelpers.dfLongTime)
-
-    override def parse(s: String): Box[java.util.Date] = {
-      val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
-      try {
-        val date = df.parse(s)
-        Full(date)
-      } catch {
-        case _: Exception => Full(this.set(null))
-      }
-    }
+    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
   }
 
   override lazy val updatedAt = new MyUpdatedAt(this) {
     override def dbColumnName = "updated_at"
-
-    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
-
-    override def parse(s: String): Box[java.util.Date] = {
-      val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
-      try {
-        val date = df.parse(s)
-        Full(date)
-      } catch {
-        case _: Exception => Full(this.set(null))
-      }
-    }
+    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
   }
 }
 

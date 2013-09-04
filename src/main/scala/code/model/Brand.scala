@@ -13,6 +13,8 @@ import com.niusb.util.WebHelpers
 import com.niusb.util.WebHelpers._
 import com.niusb.util.UploadHelpers
 import com.niusb.util.MemHelpers
+import scala.util.Try
+import scala.util.Success
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -90,15 +92,12 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
       isDate _ :: Nil
     }
 
-    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
+    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.df)
 
     override def parse(s: String): Box[java.util.Date] = {
-      val df = new SimpleDateFormat("yyyy-MM-dd")
-      try {
-        val date = df.parse(s)
-        Full(date)
-      } catch {
-        case _: Exception => Full(this.set(null))
+      Try { WebHelpers.df.parse(s) } match {
+        case Success(date) => Full(date)
+        case _ => Full(new Date)
       }
     }
   }
@@ -175,6 +174,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   object followCount extends MappedInt(this) { //关注数
+    override def defaultValue = 0
     override def displayName = "观注数"
     override def dbColumnName = "follow_count"
     def incr: Int = {
@@ -191,6 +191,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   object viewCount extends MappedInt(this) { //查看数
+    override def defaultValue = 0
     override def displayName = "查看数"
     override def dbColumnName = "view_count"
     def incr(ip: String): Int = {
@@ -238,35 +239,13 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   override lazy val createdAt = new MyCreatedAt(this) {
     override def displayName = "发布时间"
     override def dbColumnName = "created_at"
-
-    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
-
-    override def parse(s: String): Box[java.util.Date] = {
-      val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
-      try {
-        val date = df.parse(s)
-        Full(date)
-      } catch {
-        case _: Exception => Full(this.set(null))
-      }
-    }
+    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
   }
 
   override lazy val updatedAt = new MyUpdatedAt(this) {
     override def displayName = "最近更新时间"
     override def dbColumnName = "updated_at"
-
-    override def format(d: java.util.Date): String = WebHelpers.fmtDateStr(d)
-
-    override def parse(s: String): Box[java.util.Date] = {
-      val df = new SimpleDateFormat("yyyy-MM-dd HH:mm")
-      try {
-        val date = df.parse(s)
-        Full(date)
-      } catch {
-        case _: Exception => Full(this.set(null))
-      }
-    }
+    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
   }
 
   def displayBrand = {
