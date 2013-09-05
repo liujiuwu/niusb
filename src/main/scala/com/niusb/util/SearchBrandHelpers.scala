@@ -2,12 +2,11 @@ package com.niusb.util
 
 import java.io.FileOutputStream
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConversions.asScalaBuffer
 
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.scalatest.selenium.WebBrowser
 
 import net.liftweb.common.Box
 import net.liftweb.common.Empty
