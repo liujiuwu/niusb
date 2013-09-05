@@ -51,6 +51,7 @@ libraryDependencies ++= {
     "net.coobird" % "thumbnailator" % "0.4.5",
     "com.sksamuel.scrimage" % "scrimage-core" % "1.3.1",
     "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.1",
+    "org.scalatest" % "scalatest_2.10" % "2.0.M6" % "test",
     "junit" % "junit" % "4.10" % "test->default"
   )
 }

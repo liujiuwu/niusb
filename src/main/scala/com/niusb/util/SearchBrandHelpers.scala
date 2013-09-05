@@ -1,17 +1,19 @@
 package com.niusb.util
 
+import java.io.FileOutputStream
+
+import scala.collection.JavaConversions._
+
+import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.openqa.selenium.By
-import scala.collection.JavaConversions._
-import sys.process._
-import net.liftweb.http.InMemoryResponse
+import org.scalatest.selenium.WebBrowser
+
 import net.liftweb.common.Box
-import net.liftweb.http.LiftResponse
-import net.liftweb.common.Full
 import net.liftweb.common.Empty
-import java.io.FileOutputStream
-import code.lib.SyncData
+import net.liftweb.common.Full
+import net.liftweb.http.InMemoryResponse
+import net.liftweb.http.LiftResponse
 
 object SearchBrandHelpers extends SearchBrandHelpers
 
