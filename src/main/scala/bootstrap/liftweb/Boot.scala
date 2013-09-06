@@ -69,11 +69,6 @@ class Boot extends Loggable {
         RewriteResponse("news" :: "view" :: Nil, Map("id" -> id))
     }
 
-    LiftRules.dispatch.append {
-      case Req("brand" :: regNo :: Nil, _, _) =>
-        SearchBrandHelpers.searchBrandPicByRegNo(regNo)
-    }
-
     LiftRules.uriNotFound.prepend(NamedPF("404handler") {
       case (req, failure) =>
         NotFoundAsTemplate(ParsePath(List("404"), "html", true, false))

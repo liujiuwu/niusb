@@ -14,3 +14,5 @@ libraryDependencies <+= sbtVersion(v => "com.github.siasia" %% "xsbt-web-plugin"
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.2.0")
 
 //addSbtPlugin("me.lessis" % "less-sbt" % "0.1.10")
+
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")

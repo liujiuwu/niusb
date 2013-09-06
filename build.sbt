@@ -10,6 +10,8 @@ scanDirectories in Compile := Nil
 
 resolvers ++= Seq("aliyun nexus" at "http://42.120.5.18:9081/nexus/content/groups/public/")
 
+net.virtualvoid.sbt.graph.Plugin.graphSettings
+
 seq(com.github.siasia.WebPlugin.webSettings :_*)
 
 port in container.Configuration := 9001
@@ -39,9 +41,7 @@ libraryDependencies ++= {
     //"org.pegdown"             %  "pegdown"           % "1.4.1",
     //"com.tristanhunt" %% "knockoff" % "0.8.1",
     "com.googlecode.xmemcached" % "xmemcached" % "1.4.2",
-    "org.seleniumhq.selenium" % "selenium-java" % "2.33.0",
-    "mysql" % "mysql-connector-java" % "5.1.21" % "runtime->default",
-    "org.seleniumhq.selenium" % "selenium-java" % "2.33.0",
+    "org.seleniumhq.selenium" % "selenium-java" % "2.35.0" excludeAll(ExclusionRule(organization = "org.slf4j")),
     "mysql" % "mysql-connector-java" % "5.1.21" % "runtime->default",
     //"com.typesafe.slick" % "slick_2.10" % "2.0.0-M2",
     "com.typesafe.slick" % "slick_2.10" % "1.0.1",
@@ -49,9 +49,10 @@ libraryDependencies ++= {
     "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "provided->default",
     "ch.qos.logback" % "logback-classic" % "1.0.6",
     "net.coobird" % "thumbnailator" % "0.4.5",
-    "com.sksamuel.scrimage" % "scrimage-core" % "1.3.1",
-    "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.1",
-    "org.scalatest" % "scalatest_2.10" % "2.0.M6" % "test",
+    "net.databinder.dispatch" %% "dispatch-core" % "0.11.0",
+    "com.sksamuel.scrimage" % "scrimage-core" % "1.3.1" excludeAll(ExclusionRule(organization = "org.slf4j")),
+    "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.1" excludeAll(ExclusionRule(organization = "org.slf4j")),
+    "org.scalatest" % "scalatest_2.10" % "2.0.M6" % "test" excludeAll(ExclusionRule(organization = "org.slf4j")),
     "junit" % "junit" % "4.10" % "test->default"
   )
 }

@@ -82,21 +82,16 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def queryRemoteData = {
     "@queryRemoteData [onclick]" #> ajaxCall(ValById("regNo"),
       regNo => {
-        //TODO 检查标号合法性
-        //WebHelper.formError("regNo", "错误的商标注册号，请核实！")
-        //TODO 从标局获取商标数据
-        val brandData = SearchBrandHelpers.searchBrandByRegNo(regNo)
-        if (brandData.isEmpty) {
-          JsRaw(errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
-        } else {
-          val name = brandData.getOrElse("name", "")
-          val flh = brandData.getOrElse("flh", "")
-          val applicant = brandData.getOrElse("sqr", "")
-          val zcggrq = brandData.getOrElse("zcggrq", "")
-          val fwlb = brandData.getOrElse("fwlb", "")
-          val lsqz = brandData.getOrElse("lsqz", "")
-          SetValById("name", name) & SetValById("applicant", applicant) & SetValById("brand_type", flh) & SetValById("stest", "2") &
-            SetValById("regDate", zcggrq) & SetValById("useDescn", fwlb) & SetValById("lsqz", lsqz) & JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
+        SearchBrandHelpers.searchBrandByRegNo(regNo) match {
+          case Some(data) =>
+            SetValById("name", data.name) &
+              SetValById("applicant", data.zwsqr) &
+              SetValById("brand_type", data.brandType) &
+              SetValById("regDate", data.zcggrq) &
+              SetValById("useDescn", data.fwlb) &
+              SetValById("lsqz", data.lsqz) &
+              JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
+          case _ => JsRaw(errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
         }
       })
   }
