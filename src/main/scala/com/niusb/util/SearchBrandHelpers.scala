@@ -1,17 +1,15 @@
 package com.niusb.util
 
-import scala.collection.mutable.LinkedHashSet
+import java.io.FileOutputStream
+import scala.collection.JavaConversions.asScalaBuffer
+import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import net.liftweb.actor.LiftActor
-import org.openqa.selenium.By
-import scala.collection.JavaConversions._
-import scala.xml.XML
-import org.openqa.selenium.WebElement
-import net.liftweb.common.Full
-import com.gargoylesoftware.htmlunit.html.HtmlPage
+import com.gargoylesoftware.htmlunit.UnexpectedPage
 import com.gargoylesoftware.htmlunit.WebClient
-import com.gargoylesoftware.htmlunit.BinaryPage
+import net.liftweb.actor.LiftActor
+import net.liftweb.common.Full
+import org.apache.commons.io.IOUtils
 
 case class SearchBrandRegno(regno: String)
 case class SearchBrandResult(regno: String, brandType: String, name: String, zwsqr: String, zwdz: String, ywsqr: String, ywdz: String, fwlb: String, lsqz: String, zcggrq: String)
@@ -81,11 +79,13 @@ object SearchBrandHelpers extends SearchBrandByWebBrowser {
 }
 
 object WebTest extends App {
-  //val webDriver: WebDriver = new HtmlUnitDriver
-  //val baseUrl = "http://sbcx.saic.gov.cn/trade/servlet?"
   val webClient = new WebClient
-
-  val page = webClient.getPage("http://sbcx.saic.gov.cn/trade/pictureservlet?RegNO=10951333&IntCls=25")
-  //println(page)
+  val page: UnexpectedPage = webClient.getPage("http://sbcx.saic.gov.cn/trade/pictureservlet?RegNO=10951328&IntCls=25")
+  val input = page.getWebResponse().getContentAsStream()
+  val destinationFile = "d://tmp//image.jpg"
+  val os = new FileOutputStream(destinationFile)
+  os.write(IOUtils.toByteArray(input))
+  os.close()
+  input.close()
 }
 
