@@ -98,8 +98,12 @@ trait UploadHelpers {
   }
 
   def srcPath(fileName: String, module: String = "brand") = {
-    val dir = fileName.substring(0, 8)
-    s"/upload/${module}/${dir}/${fileName}"
+    if (fileName != null && !fileName.trim.isEmpty()) {
+      val dir = fileName.substring(0, 8)
+      s"/upload/${module}/${dir}/${fileName}"
+    } else {
+      ""
+    }
   }
 
   def srcTmpPath(fileName: String) = s"/upload/tmp/${fileName}"
@@ -107,10 +111,12 @@ trait UploadHelpers {
   def genNewFileName(extension: String = "jpg") = fmt.format(new Date) + "_" + StringHelpers.randomString(16) + "." + extension
 
   def handleBrandImg(pic: String) = {
-    val srcPic = new File(uploadTmpDir + File.separator + pic)
-    val destPic = new File(uploadBrandDir() + File.separator + pic)
-    if (srcPic.exists()) {
-      FileUtils.moveFile(srcPic, destPic)
+    if (pic != null && !pic.trim().isEmpty()) {
+      val srcPic = new File(uploadTmpDir + File.separator + pic)
+      val destPic = new File(uploadBrandDir() + File.separator + pic)
+      if (srcPic.exists()) {
+        FileUtils.moveFile(srcPic, destPic)
+      }
     }
   }
 }

@@ -33,6 +33,7 @@ import com.niusb.util.WebHelpers._
 import com.niusb.util.WebHelpers
 import com.niusb.util.UploadHelpers
 import com.niusb.util.SearchBrandHelpers
+import scala.util._
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -50,16 +51,26 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     var brandType: BrandType = WebCacheHelper.brandTypes.get(25).get
 
     def process(): JsCmd = {
-      val brand = Brand.create.regNo(regNo).name(name).pic(pic).regDate(dateParse(regDateStr).openOrThrowException("商标注册日期错误")).applicant(applicant).useDescn(useDescn).descn(descn)
+      val brand = Brand.create.regNo(regNo).name(name).pic(pic)
+      Try { basePrice.toInt } match {
+        case Success(b) => brand.basePrice(b)
+        case _ => return WebHelpers.formError("basePrice", "商标出售底价格式错误，请确认")
+      }
+      Try { WebHelpers.df.parse(regDateStr) } match {
+        case Success(regDate) => brand.regDate(regDate)
+        case _ => return WebHelpers.formError("regDate", "商标注册日期格式错误，请确认")
+      }
+      brand.applicant(applicant)
+      brand.useDescn(useDescn).descn(descn)
       brand.owner(loginUser)
       brand.brandTypeCode(brandType.code.get)
-      brand.basePrice(tryo(basePrice.toInt).getOrElse(0))
+
       brand.sellPrice(brand.basePrice + (brand.basePrice.get * 0.1).toInt)
       brand.lsqz(lsqz)
       brand.validate match {
         case Nil =>
-          brand.save
           UploadHelpers.handleBrandImg(pic)
+          brand.save
           S.redirectTo("/user/brand/")
         case errors => println(errors); Noop
       }
@@ -76,7 +87,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@useDescn" #> textarea(useDescn, useDescn = _) &
       "@descn" #> textarea(descn, descn = _) &
       "@lsqz" #> hidden(lsqz = _, lsqz) &
-      "@sub" #> hidden(process)
+      "type=submit" #> ajaxSubmit("发布", process)
   }
 
   def queryRemoteData = {

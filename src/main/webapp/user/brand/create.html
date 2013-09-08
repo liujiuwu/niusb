@@ -39,7 +39,7 @@
 					<div id="group_regDate" class="control-group">
 						<label for="regDate" class="control-label">注册日期</label>
 						<div class="controls">
-							<input type="text" id="regDate" name="regDate" placeholder="格式:xxxx年xx月xx日" /> <span id="error_regDate" class="help-inline"></span>
+							<input type="text" id="regDate" name="regDate" placeholder="格式:xxxx-xx-xx" /><span id="error_regDate" class="help-inline"></span>
 						</div>
 					</div>
 					<div id="group_applicant" class="control-group">
@@ -55,15 +55,16 @@
 						</div>
 					</div>
 					<div id="group_descn" class="control-group">
-						<label for="descn" class="control-label">商标说明</label>
+						<label for="descn" class="control-label">商标创意说明</label>
 						<div class="controls">
 							<textarea rows="3" id="descn" name="descn" class="span10"></textarea>
 						</div>
 					</div>
 					<div class="form-actions">
-						<button class="btn btn-primary" type="submit"><i class="icon-ok"></i> 确认发布</button>
+						<button class="btn btn-primary" type="submit">
+							<i class="icon-ok"></i> 确认发布
+						</button>
 						<input type="hidden" id="lsqz" name="lsqz" />
-						<input type="hidden" name="sub" />
 					</div>
 				</form>
 				<div class='lift:embed?what=_uploadBrand'>上传组件</div>
