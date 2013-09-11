@@ -38,7 +38,7 @@ object Site {
   val userMenus = List[Menu](
     Menu(Loc("Profile", List("user", "profile"), menuText("帐户信息", "edit"), RequireLoggedIn, UserMenuGroup)),
     Menu(Loc("Pwd", List("user", "pwd"), menuText("修改密码", "key"), RequireLoggedIn, UserMenuGroup)),
-    Menu(Loc("UserCreateBrand", List("user", "brand", "create"), menuText("发布商标", "plus"), RequireLoggedIn, UserMenuGroup)),
+    Menu(Loc("UserCreateBrand", List("user", "brand", "create"), menuText("转让商标", "plus"), RequireLoggedIn, UserMenuGroup)),
     Menu(Loc("UserListBrand", List("user", "brand", "index"), menuText("我的商标", "list"), RequireLoggedIn, UserMenuGroup)),
     Menu(Loc("UserViewBrand", List("user", "brand", "view"), menuText("查看商标"), RequireLoggedIn, Hidden)),
     Menu(Loc("UserEditBrand", List("user", "brand", "edit"), menuText("修改商标"), RequireLoggedIn, Hidden)),
