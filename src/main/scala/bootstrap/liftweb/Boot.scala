@@ -37,7 +37,7 @@ class Boot extends Loggable {
       }
     }*/
     //DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
-    Schemifier.schemify(true, Schemifier.infoF _, User, BrandType, Brand, AdSpace, Ad, Article, Message, UserData,Wenda)
+    Schemifier.schemify(true, Schemifier.infoF _, User, BrandType, Brand, AdSpace, Ad, Article, Message, UserData, Wenda)
 
     LiftRules.setSiteMap(Site.siteMap)
 
@@ -65,8 +65,16 @@ class Boot extends Loggable {
         RewriteResponse("user_mgt" :: "logout" :: Nil)
       case RewriteRequest(ParsePath("market" :: "view" :: id :: Nil, _, _, _), _, _) =>
         RewriteResponse("market" :: "view" :: Nil, Map("id" -> id))
+      case RewriteRequest(ParsePath("news" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("news" :: "index" :: Nil)
       case RewriteRequest(ParsePath("news" :: "view" :: id :: Nil, _, _, _), _, _) =>
         RewriteResponse("news" :: "view" :: Nil, Map("id" -> id))
+      case RewriteRequest(ParsePath("about" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("help" :: "about" :: Nil)
+      case RewriteRequest(ParsePath("contact_us" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("help" :: "contact_us" :: Nil)
+      case RewriteRequest(ParsePath("sitemap" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("help" :: "sitemap" :: Nil)
     }
 
     LiftRules.uriNotFound.prepend(NamedPF("404handler") {

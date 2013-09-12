@@ -69,6 +69,7 @@ object Site {
     Menu.i("ajaxExample") / "ajax",
     Menu.i("Error") / "error" >> Hidden,
     Menu.i("404") / "404" >> Hidden,
+    Menu.i("Help") / "help" / ** >> Hidden,
     Menu.i("Throw") / "throw" >> Hidden >> EarlyResponse(() => throw new Exception("This is only a test.")))
 
   val menus = pageMenus ::: userMenus ::: adminMenus ::: otherMenus
