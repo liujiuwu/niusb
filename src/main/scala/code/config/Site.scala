@@ -16,6 +16,7 @@ object MenuGroups {
   val TopBarGroup = LocGroup("topbar")
   val UserMenuGroup = LocGroup("userMenu")
   val AdminMenuGroup = LocGroup("adminMenu")
+  val AboutGroup = LocGroup("aboutMenu")
 }
 
 object Site {
@@ -67,9 +68,10 @@ object Site {
     Menu(Loc("AdminCreateSms", List("admin", "sms", "create"), menuText("发送消息", "plus"), RequireAdminLoggedIn, Hidden)))
 
   val aboutMenus = List[Menu](
-    Menu(Loc("About", List("about"), menuText("关于我们"), TemplateBox(() => Templates(List("help", "about"))))),
-    Menu(Loc("ContactUs", List("help", "contact_us"), menuText("联系我们"))),
-    Menu(Loc("Sitemap", List("help", "sitemap"), menuText("网站地图"))))
+    Menu(Loc("About", List("help", "about"), menuText("关于我们"), AboutGroup)),
+    Menu(Loc("ContactUs", List("help", "contact_us"), menuText("联系我们"), AboutGroup)),
+    Menu(Loc("PayInfo", List("help", "pay_info"), menuText("付款账户"), AboutGroup)),
+    Menu(Loc("Sitemap", List("help", "sitemap"), menuText("网站地图"), AboutGroup)))
 
   val otherMenus = List(
     Menu.i("ajaxExample") / "ajax",

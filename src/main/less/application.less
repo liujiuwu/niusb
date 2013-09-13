@@ -23,6 +23,9 @@ h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
 del,ins,u,s,a,a:hover{text-decoration:none;}
 body{background:#fff;}
 
+@mainColor:#EE472C;
+@mainLinkColor:#777777;
+
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei UI", "Microsoft YaHei", SimHei, "\5B8B\4F53", simsun, sans-serif;
   padding-top: 100px;
@@ -30,12 +33,16 @@ body {
 }
 
 a {
-    color: #777777;
+    color: @mainLinkColor;
     text-decoration: none;
 }
 a:hover, a:focus {
-    color: #EE472C;
+    color: @mainColor;
     //text-decoration: underline;
+}
+
+p.indent{
+	text-indent: 2em;
 }
 
 
@@ -865,13 +872,13 @@ a.list-group-item.active .list-group-item-text {
 	{
 	background-color: #FFFFFF;
 	box-shadow: none;
-	color: #EE472C;
+	color: @mainColor;
 	text-decoration: none;
 	font-size:14px;
 }
 
 .navbar-fixed-top .navbar-inner,.navbar-static-top .navbar-inner {
-	border-bottom: 2px solid #EE472C;
+	border-bottom: 2px solid @mainColor;
 }
 
 .navbar-fixed-top .navbar-inner,.navbar-static-top .navbar-inner {
@@ -880,7 +887,7 @@ a.list-group-item.active .list-group-item-text {
 
 .navbar .nav>li>a:focus,.navbar .nav>li>a:hover {
 	background-color: #FFFFFF;
-	color: #EE472C;
+	color: @mainColor;
 	text-decoration: none;
 }
 
@@ -904,7 +911,7 @@ a.list-group-item.active .list-group-item-text {
 /*------------------------------------------------------------------
 [ Dropdown Menu / .dropdown-menu ]
 */
-/*.dropdown-menu {
+.dropdown-menu {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
@@ -915,21 +922,7 @@ a.list-group-item.active .list-group-item-text {
   font-size: 100%;
   .border-radius(4px);
 }
-.dropdown-menu li > a:hover,
-.dropdown-menu li > a:focus,
-.dropdown-menu:hover > a {
-  color: #ffffff;
-  background-color: #ff9900;
-  background-image: -moz-linear-gradient(top, #ff9900, #ff9900);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff9900), to(#ff9900));
-  background-image: -webkit-linear-gradient(top, #ff9900, #ff9900);
-  background-image: -o-linear-gradient(top, #ff9900, #ff9900);
-  background-image: linear-gradient(to bottom, #ff9900, #ff9900);
-  background-repeat: repeat-x;
-  filter: none;//progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffff9900', endColorstr='#ffff9900', GradientType=0);
-  background: #ff9900;
-  text-shadow: none;//0 -1px 0 rgba(0, 0, 0, 0.25);
-}
+
 .dropdown-menu .active > a,
 .dropdown-menu .active > a:hover {
   color: #ffffff;
@@ -945,17 +938,23 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
 .dropdown-menu li > a:hover,
 .dropdown-menu li > a:focus,
 .dropdown-submenu:hover > a {
-  background-color: #ff9900;
-  background-image: -moz-linear-gradient(top, #ff9900, #ff9900);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff9900), to(#ff9900));
-  background-image: -webkit-linear-gradient(top, #ff9900, #ff9900);
-  background-image: -o-linear-gradient(top, #ff9900, #ff9900);
-  background-image: linear-gradient(to bottom, #ff9900, #ff9900);
+  background-color: @mainColor;
+  background-image: -moz-linear-gradient(top, @mainColor, @mainColor);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@mainColor), to(@mainColor));
+  background-image: -webkit-linear-gradient(top, @mainColor, @mainColor);
+  background-image: -o-linear-gradient(top, @mainColor, @mainColor);
+  background-image: linear-gradient(to bottom, @mainColor, @mainColor);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffff9900', endColorstr='#ffff9900', GradientType=0);
-  background: #ff9900;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@mainColor', endColorstr='@mainColor', GradientType=0);
+  background: @mainColor;
 }
-*/
+
+
+.nav-list > .active > a, .nav-list > .active > a:hover, .nav-list > .active > a:focus {
+    background-color: @mainColor;
+    color: #FFFFFF;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
 
 
 /* main =====================================================================*/
@@ -1005,7 +1004,7 @@ body:not(:-moz-handler-blocked) .dropdown-submenu > a:after {
 }
 
 .brands li .img-overflow .price {
-	background-color: #EE472C;
+	background-color: @mainColor;
 	position: absolute;
 	text-align: center;
 	font-size: 14px;
@@ -1311,11 +1310,11 @@ padding:2px 5px;
     width: @txtWidth;
 }
 .m-tab .txt1:hover {
-    color: #EE472C;
+    color: @mainColor;
     text-decoration: none;
 }
 .m-tab .txt1-active {
-    color: #EE472C;
+    color: @mainColor;
 }
 .m-tab .bdr {
     border-left: 1px solid #DBDBDB;
@@ -1325,7 +1324,7 @@ padding:2px 5px;
     overflow: hidden;
 }
 .m-tab .rline {
-    background: none repeat scroll 0 0 #EE472C;
+    background: none repeat scroll 0 0 @mainColor;
     bottom: -(@tabHeight+1);
     height: 2px;
     left: 0;
@@ -1465,4 +1464,11 @@ padding:2px 5px;
 
 .main-list li:last-child {
     border-bottom: none;
+}
+
+
+.box_txt{
+	color:#444444;
+	line-height:25px;
+	margin-bottom:20px
 }
