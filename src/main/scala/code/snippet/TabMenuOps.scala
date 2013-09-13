@@ -9,6 +9,7 @@ import net.liftweb.http.DispatchSnippet
 class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "tabMenu" => tabMenu
+    case "helpNav" => helpNav
   }
 
   def tabMenu = {
@@ -18,4 +19,11 @@ class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
     }
     "span" #> menu
   }
+
+  def helpNav = {
+    val url = originalUri
+    
+    "*" #> ""
+  }
+
 }

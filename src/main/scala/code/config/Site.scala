@@ -10,6 +10,7 @@ import net.liftweb.sitemap._
 import net.liftweb.sitemap.Loc._
 import net.liftweb.sitemap.Loc
 import scala.xml.NodeSeq
+import net.liftweb.http.Templates
 
 object MenuGroups {
   val TopBarGroup = LocGroup("topbar")
@@ -65,14 +66,19 @@ object Site {
     Menu(Loc("AdminListSms", List("admin", "sms", "index"), menuText("消息管理", "envelope"), RequireAdminLoggedIn, AdminMenuGroup)),
     Menu(Loc("AdminCreateSms", List("admin", "sms", "create"), menuText("发送消息", "plus"), RequireAdminLoggedIn, Hidden)))
 
+  val aboutMenus = List[Menu](
+    Menu(Loc("About", List("about"), menuText("关于我们"), TemplateBox(() => Templates(List("help", "about"))))),
+    Menu(Loc("ContactUs", List("help", "contact_us"), menuText("联系我们"))),
+    Menu(Loc("Sitemap", List("help", "sitemap"), menuText("网站地图"))))
+
   val otherMenus = List(
     Menu.i("ajaxExample") / "ajax",
     Menu.i("Error") / "error" >> Hidden,
     Menu.i("404") / "404" >> Hidden,
-    Menu.i("Help") / "help" / ** >> Hidden,
+    /* Menu.i("Help") / "help" / ** >> Hidden,*/
     Menu.i("Throw") / "throw" >> Hidden >> EarlyResponse(() => throw new Exception("This is only a test.")))
 
-  val menus = pageMenus ::: userMenus ::: adminMenus ::: otherMenus
+  val menus = pageMenus ::: userMenus ::: adminMenus ::: aboutMenus ::: otherMenus
 
   val m = Menu(Loc("AdminCreateSms", List("tt"), "", RequireAdminLoggedIn, Hidden), otherMenus: _*)
   def menuText(lnText: String, icon: String = ""): NodeSeq = {
