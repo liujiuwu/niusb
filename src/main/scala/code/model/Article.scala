@@ -84,6 +84,8 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
     override def dbColumnName = "updated_at"
     override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
   }
+
+  def shortCreatedAt = WebHelpers.fmtDateStr(createdAt.get, WebHelpers.df)
 }
 
 object Article extends Article with CRUDify[Long, Article] with Paginator[Article] {

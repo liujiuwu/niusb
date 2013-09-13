@@ -1,38 +1,51 @@
 <div class="container" data-lift="surround?with=default;at=content">
-	<div class="row">
-		<div data-lift="NewsOps.index" class="span18">
-			<div class="m-box m-box-1">
-				<div class="tp">
-					<div class="tit">常见问答</div>
-				</div>
-				<div class="ct">
-					<div class="info-bar">
-						<a href="">牛标网</a>发布于：2013-08-31
-					</div>
-					<div class="text-ct">常见问答</div>
-				</div>
-			</div>
+	<head_merge>
+	<style>
+.news-text h3 {
+	font-weight: normal;
+}
+
+.news-text h3 a {
+	font-size: 16px;
+}
+
+.news-text li {
+	display: block;
+}
+
+.news-text {
+	margin-bottom: 10px;
+}
+
+.news-content {
+	text-indent: 2em;
+	font-size: 12px;
+	color: #777
+}
+
+.news-time {
+	padding-left: 5px;
+}
+</style>
+	</head_merge>
+	<div class="row" data-lift="NewsOps.list?eager_eval=true">
+		<div class="span5">
+			<div class='lift:embed?what=help/_help_nav'></div>
 		</div>
-		<div class="span7">
-			<div class="m-box m-box-2">
-				<div class="tp">
-					<div class="tit">
-						<span id="title">新闻公告</span>
+		<div class="span20 box_txt">
+			<h4>新闻公告</h4>
+			<ul id="dataList">
+				<li>
+					<div class="news-text">
+						<h3>
+							<span class="news-title"><a href="#">新闻标题</a></span><span class="news-time"></span>
+						</h3>
+						<div class="news-content"></div>
 					</div>
-				</div>
-				<div class="ct">
-					<ul data-lift="IndexOps.news?limit=10" class="mod-list main-list">
-						<li>新闻标题</li>
-					</ul>
-				</div>
-			</div>
-			<div class="m-box m-box-2">
-				<div class="tp">
-					<div class="tit">
-						<span id="title">商标问答</span>
-					</div>
-				</div>
-				<div class="ct">内容</div>
+				</li>
+			</ul>
+			<div style="padding-top: 10px">
+				<span data-lift="embed?what=_paginator"></span>
 			</div>
 		</div>
 	</div>

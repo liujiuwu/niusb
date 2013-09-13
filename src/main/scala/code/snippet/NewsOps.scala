@@ -20,10 +20,15 @@ import com.niusb.util.SearchBrandFormHelpers
 import code.model.Article
 import code.model.ArticleType
 import scala.xml.Unparsed
+import scala.tools.scalap.scalax.util.StringUtil
+import net.liftweb.util.Helpers
+import net.liftweb.util.Html5
+import scala.xml.XML
+import com.niusb.util.WebHelpers
 
 object NewsOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
-    case "index" => index
+    case "list" => list
     case "view" => view
   }
 
@@ -41,12 +46,19 @@ object NewsOps extends DispatchSnippet with SnippetHelper with Loggable {
     }): CssSel
   }
 
-  def index = {
-    val limit = S.attr("limit").map(_.toInt).openOr(20)
+  def list = {
+    val limit = S.attr("limit").map(_.toInt).openOr(15)
     val bies = By(Article.articleType, ArticleType.News)
     val paginatorModel = Article.paginator(originalUri, bies)(itemsOnPage = limit)
-    val dataList = "m-box" #> paginatorModel.datas.map(_.title.displayTitle)
-    
-    dataList
+    val dataList = "#dataList li" #> paginatorModel.datas.map { news =>
+      val newContent = XML.loadString({ "<b>" + news.content.get + "</b>" }).text
+      val len = newContent.length()
+      val fcontent = if (len > 100) newContent.substring(0, 100) + " ..." else newContent
+      ".news-title" #> news.title.displayTitle &
+        ".news-time *" #> { "(" + news.shortCreatedAt + ")" } &
+        ".news-content *" #> fcontent
+    }
+
+    dataList & "#pagination" #> paginatorModel.paginate _
   }
 }

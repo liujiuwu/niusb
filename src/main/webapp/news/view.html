@@ -1,39 +1,38 @@
 <div class="container" data-lift="surround?with=default;at=content">
+	<head_merge>
+	<style>
+.info-bar {
+	margin-bottom: 5px;
+	color: #7E7E7E;
+	font-size: 12px;
+}
+
+.info-bar span {
+	margin-right: 10px;
+}
+
+.text-ct{
+	clear:both;
+	font-size:14px;
+	font-family: Microsoft Yahei,STXihei,arial,sans-serif;
+	line-height:28px;
+	padding-bottom:10px
+}
+</style>
+	</head_merge>
 	<div class="row">
-		<div data-lift="NewsOps.view" class="span18">
-			<div class="m-box m-box-1">
-				<div class="tp">
-					<div class="tit">常见问答</div>
-				</div>
-				<div class="ct">
-					<div class="info-bar">
-						<a href="">牛标网</a>发布于：2013-08-31
-					</div>
-					<div class="text-ct">常见问答</div>
-				</div>
-			</div>
+		<div class="span5">
+			<div class='lift:embed?what=help/_help_nav'></div>
 		</div>
-		<div class="span7">
-			<div class="m-box m-box-2">
-				<div class="tp">
-					<div class="tit">
-						<span id="title">新闻公告</span>
-					</div>
-				</div>
-				<div class="ct">
-					<ul data-lift="IndexOps.news?limit=10" class="mod-list main-list">
-						<li>新闻标题</li>
-					</ul>
-				</div>
+		<div class="span20 box_txt" data-lift="NewsOps.view">
+			<h4 class="tit"></h4>
+			<div class="info-bar">
+				<a href="">牛标网</a>发布于：2013-08-31
 			</div>
-			<div class="m-box m-box-2">
-				<div class="tp">
-					<div class="tit">
-						<span id="title">商标问答</span>
-					</div>
-				</div>
-				<div class="ct">内容</div>
-			</div>
+			<div class="text-ct">常见问答</div>
 		</div>
 	</div>
 </div>
+
+
+
