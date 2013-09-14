@@ -11,7 +11,7 @@ import scala.xml.Text
 
 object ArticleType extends Enumeration {
   type ArticleType = Value
-  val System = Value(0, "维护公告")
+  val Notice = Value(0, "公告")
   val News = Value(1, "新闻")
   val Help = Value(2, "帮助")
 }
@@ -26,7 +26,7 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
   def getSingleton = Article
   object title extends MappedString(this, 100) {
     def displayTitle = {
-      <a href={ "/news/view/" + id.get } title={ this.get } target="_blank">{ this.get }</a>
+      <a href={ "/news/view/" + id.get } title={ this.get } target="_blank" style={ if (isRecommend.is) "color:#EE472C" else null }>{ this.get }</a>
     }
   }
 
@@ -57,6 +57,13 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
 
   object status extends MappedEnum(this, ArticleStatus) {
     override def defaultValue = ArticleStatus.Normal
+  }
+
+  object isRecommend extends MappedBoolean(this) { //是否推荐
+    override def displayName = "推荐"
+    override def defaultValue = false
+    override def dbColumnName = "is_recommend"
+    def displayRecommend = if (this.get) "是" else "否"
   }
 
   object readCount extends MappedInt(this) {

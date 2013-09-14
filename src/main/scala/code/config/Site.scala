@@ -68,6 +68,7 @@ object Site {
     Menu(Loc("AdminCreateSms", List("admin", "sms", "create"), menuText("发送消息", "plus"), RequireAdminLoggedIn, Hidden)))
 
   val aboutMenus = List[Menu](
+    Menu(Loc("Help", List("help", "index"), menuText("帮助中心"), AboutGroup)),
     Menu(Loc("About", List("help", "about"), menuText("关于我们"), AboutGroup)),
     Menu(Loc("ContactUs", List("help", "contact_us"), menuText("联系我们"), AboutGroup)),
     Menu(Loc("PayInfo", List("help", "pay_info"), menuText("付款账户"), AboutGroup)),

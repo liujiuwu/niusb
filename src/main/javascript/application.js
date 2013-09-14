@@ -175,4 +175,15 @@ $(function() {
 			scrollTop : 0
 		}, 600);
 	});
+
+	$(".help-box,.news-box").find(".box-header").addClass("pointer").click(function() {
+		$(this).parent().find(".box-content").toggle();
+		var $boxIcon = $(this).find(".box-icon i");
+		var oc = $boxIcon.attr("class");
+		var nc = "icon-chevron-down";
+		if (oc == "icon-chevron-down"){
+			nc = "icon-chevron-up"
+		}
+		$boxIcon.attr("class",nc);
+	});
 });

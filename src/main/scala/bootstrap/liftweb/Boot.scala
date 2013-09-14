@@ -69,6 +69,8 @@ class Boot extends Loggable {
         RewriteResponse("news" :: "index" :: Nil)
       case RewriteRequest(ParsePath("news" :: "view" :: id :: Nil, _, _, _), _, _) =>
         RewriteResponse("news" :: "view" :: Nil, Map("id" -> id))
+      case RewriteRequest(ParsePath("help" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("help" :: "index" :: Nil)
       case RewriteRequest(ParsePath("about" :: Nil, _, _, _), _, _) =>
         RewriteResponse("help" :: "about" :: Nil)
       case RewriteRequest(ParsePath("contact_us" :: Nil, _, _, _), _, _) =>

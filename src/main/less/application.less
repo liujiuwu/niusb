@@ -1035,7 +1035,7 @@ padding:2px 5px;
 
 //brands end ====================================
 
-.m-box10-1:after,.m-box12 .tp:after,.m-box12 .ct:after,.m-box23 .tp:after,.m-box23-1:after,.m-box10-3:after ,.m-box:after{
+.m-box10-1:after,.m-box12 .tp:after,.m-box12 .ct:after,.m-box23 .tp:after,.m-box23-1:after,.m-box23 .ct:after,.m-box10-3:after ,.m-box:after{
     clear: both;
     content: ".";
     display: block;
@@ -1272,7 +1272,6 @@ padding:2px 5px;
 
 .m-box23 {
 	background-color: #FFFFFF;
-	border: 1px solid #DBDBDB;
 	margin-bottom: 15px;
 }
 
@@ -1281,11 +1280,17 @@ padding:2px 5px;
 }
 
 .m-box23 .tit {
-	font-size: 14px;
-	padding: 10px;
+	float: left;
+    height: 24px;
+    padding-bottom: 5px;
+    padding-left:5px;
+    font-size:18px;
+    width: 200px;
 }
 
 .m-box23 .ct {
+    border: 1px solid #DBDBDB;
+    border-width: 0 1px 1px;
 	background: #FFFFFF;
 	padding: 13px;
 }
@@ -1472,6 +1477,51 @@ padding:2px 5px;
     font-weight: bold;
     height: 30px;
     line-height: 30px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     padding-bottom: 3px;
+}
+
+.pointer {
+    cursor: hand;
+    cursor: pointer;
+}
+
+.box{
+}
+
+.box-header {
+	border-bottom: 1px solid #dddddd;
+	background-color: #FAFAFA;
+	background-image: linear-gradient(to bottom, #FAFAFA, #EFEFEF);
+	border: 1px solid #DDDDDD;
+	border-radius: 2px 2px 0 0;
+	box-shadow: none;
+	height: 20px;
+	margin-bottom: -1px;
+	overflow: hidden;
+	padding: 10px;
+}
+
+.box-header h2 {
+	color: #646464;
+	float: left;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 16px;
+	margin-top: 2px;
+	text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.box-icon {
+	float: right;
+	margin-top: 1px;
+}
+
+.box-content {
+	padding: 10px;
+	line-height: 25px;
+	background: none repeat scroll 0 0 #FCFCFC;
+	border: 1px solid #DDDDDD;
+	border-radius: 0 0 2px 2px;
+	margin-top: -1px;
 }

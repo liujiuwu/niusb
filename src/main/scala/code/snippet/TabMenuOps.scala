@@ -30,7 +30,7 @@ class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
              <li class={ if (url.startsWith("/news")) "active" else null }><a href="/news">新闻公告</a></li>
              <li class={ if (url == "/sitemap") "active" else null }><a href="/sitemap">网站地图</a></li>
              <li class="divider"></li>
-             <li class={ if (url == "/help/") "active" else null }><a href="/help/">帮助中心</a></li>
+             <li class={ if (url == "/help") "active" else null }><a href="/help">帮助中心</a></li>
            </ul>
   }
 
