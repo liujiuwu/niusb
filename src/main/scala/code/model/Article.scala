@@ -14,6 +14,8 @@ object ArticleType extends Enumeration {
   val Notice = Value(0, "公告")
   val News = Value(1, "新闻")
   val Help = Value(2, "帮助")
+  val Knowledge = Value(3, "商标知识")
+  val Laws = Value(4, "政策法规")
 }
 
 object ArticleStatus extends Enumeration {
