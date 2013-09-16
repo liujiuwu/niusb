@@ -16,15 +16,23 @@ import java.util.Date
 
 object WendaType extends Enumeration {
   type WendaType = Value
-  val Normal = Value(0, "普通")
-  val Faq = Value(1, "FAQ")
-  val User = Value(2, "用户问答")
+  val WendaType0 = Value(0, "商标知识")
+  val WendaType1 = Value(1, "商标注册")
+  val WendaType2 = Value(2, "商标查询")
+  val WendaType3 = Value(3, "商标分类")
+  val WendaType4 = Value(4, "商标设计")
+  val WendaType5 = Value(5, "商标取名")
+  val WendaType6 = Value(6, "商标维权")
+  val WendaType7 = Value(7, "驰名商标")
+  val WendaType8 = Value(8, "商标转让")
+  val WendaType9 = Value(9, "商标法")
 }
 
 object WendaStatus extends Enumeration {
   type WendaStatus = Value
-  val Normal = Value(0, "正常")
-  val Close = Value(1, "关闭")
+  val ToReplay = Value(0, "待回复")
+  val Reply = Value(1, "已回复")
+  val Close = Value(-1, "关闭问题")
 }
 
 class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
@@ -36,7 +44,7 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   }
 
   object wendaType extends MappedEnum(this, WendaType) {
-    override def defaultValue = WendaType.Normal
+    override def defaultValue = WendaType.WendaType0
     override def dbColumnName = "webda_type"
   }
 
@@ -64,7 +72,7 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   }
 
   object status extends MappedEnum(this, WendaStatus) {
-    override def defaultValue = WendaStatus.Normal
+    override def defaultValue = WendaStatus.ToReplay
   }
 
   object readCount extends MappedInt(this) {
