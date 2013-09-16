@@ -180,13 +180,13 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     def incr: Int = {
       this(this + 1)
       save
-      this.get
+      this.is
     }
     def decr: Int = {
       val v = this.get - 1
       this(if (v < 0) 0 else v)
       save
-      this.get
+      this.is
     }
   }
 

@@ -113,7 +113,7 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
   def displayInfo = if (name.get.isEmpty()) <span>{ mobile.get }-{ id.get }</span> else <span>{ name.get }-{ mobile.get }-{ id.get }</span>
   def displaySuper = if (superUser.get) <span class="badge badge-success">是</span> else <span class="badge badge-important">否</span>
 
-  object srcId extends MappedLong(this) {
+  object srcId extends MappedLong(this) { //同步数据的原id
     override def dbColumnName = "src_id"
   }
 

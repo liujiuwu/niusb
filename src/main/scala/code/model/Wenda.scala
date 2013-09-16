@@ -26,13 +26,16 @@ object WendaType extends Enumeration {
   val WendaType7 = Value(7, "驰名商标")
   val WendaType8 = Value(8, "商标转让")
   val WendaType9 = Value(9, "商标法")
-}
-
-object WendaStatus extends Enumeration {
-  type WendaStatus = Value
-  val ToReplay = Value(0, "待回复")
-  val Reply = Value(1, "已回复")
-  val Close = Value(-1, "关闭问题")
+  /*3=商标知识
+5=商标注册
+2=商标查询
+4=商标分类
+6=商标设计
+7=商标取名
+8=商标维权
+9=驰名商标
+10=商标转让
+11=商标法*/
 }
 
 class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
@@ -48,31 +51,12 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
     override def dbColumnName = "webda_type"
   }
 
-  object askContent extends MappedText(this)
+  object content extends MappedText(this)
 
   object asker extends MappedLong(this) {
     override def defaultValue = 0
     override def displayName = "提问人"
     override def dbColumnName = "ask_id"
-  }
-
-  object replyContent extends MappedText(this)
-
-  object reply extends MappedLong(this) {
-    override def defaultValue = 0
-    override def displayName = "回答人"
-    override def dbColumnName = "reply_id"
-  }
-
-  object replyDate extends MappedDate(this) {
-    override def defaultValue = new Date
-    override def displayName = "回答日期"
-    override def dbColumnName = "reply_date"
-    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
-  }
-
-  object status extends MappedEnum(this, WendaStatus) {
-    override def defaultValue = WendaStatus.ToReplay
   }
 
   object readCount extends MappedInt(this) {
@@ -91,6 +75,34 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
     }
   }
 
+  object replyCount extends MappedInt(this) {
+    override def dbColumnName = "reply_count"
+    def incr: Int = {
+      this(this + 1)
+      save
+      this.is
+    }
+    def decr: Int = {
+      val v = this.get - 1
+      this(if (v < 0) 0 else v)
+      save
+      this.is
+    }
+  }
+
+  object isRecommend extends MappedBoolean(this) { //是否推荐问题
+    override def displayName = "推荐"
+    override def defaultValue = false
+    override def dbColumnName = "is_recommend"
+    def displayRecommend = if (this.get) "是" else "否"
+  }
+
+  def replies = {
+    val results = WendaReply.findAll(By(WendaReply.wenda, id.is));
+    val (recommend, noRecommend) = results.partition(_.isRecommend.is)
+    recommend :: noRecommend //将推荐答案放在最前面
+  }
+
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
     override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
@@ -100,18 +112,18 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
     override def dbColumnName = "updated_at"
     override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
   }
+
+  object srcId extends MappedLong(this) { //同步数据的原id
+    override def dbColumnName = "src_id"
+  }
 }
 
 object Wenda extends Wenda with CRUDify[Long, Wenda] with Paginator[Wenda] {
   override def dbTableName = "wendas"
-  override def fieldOrder = List(id, title, wendaType, askContent, asker, readCount, replyContent, reply, createdAt, updatedAt)
+  override def fieldOrder = List(id, title, wendaType, content, asker, readCount, createdAt, updatedAt)
 
   def validWendaTypeSelectValues = {
     val wendaTypes = WendaType.values.toList.map(v => (v.id.toString, v.toString))
     ("all", "所有类型") :: wendaTypes
-  }
-  def validStatusSelectValues = {
-    val status = WendaStatus.values.toList.map(v => (v.id.toString, v.toString))
-    ("all", "所有状态") :: status
   }
 }
