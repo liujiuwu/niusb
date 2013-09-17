@@ -1,0 +1,34 @@
+<div id="createWendaDialog" data-lift="WendaOps.create" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="750">
+	<form data-lift="form.ajax?class=form-horizontal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3>我要提问</h3>
+		</div>
+		<div class="modal-body">
+			<div class="row-fluid">
+				<div id="group_title" class="control-group">
+					<label for="title" class="control-label">标题</label>
+					<div class="controls">
+						<input type="text" id="title" name="title" required="required" placeholder="请输入问题的简短标题" class="span20"/> <span id="error_title" class="help-inline"></span>
+					</div>
+				</div>
+				<div id="group_wendaType" class="control-group">
+					<label class="control-label" for="wendaType">类型</label>
+					<div class="controls">
+						<select id="wendaType" name="wendaType"></select> <span id="error_wendaType" class="help-block"></span>
+					</div>
+				</div>
+			</div>
+			<div id="group_askContent" class="control-group">
+				<label for="askContent" class="control-label">问题内容</label>
+				<div class="controls">
+					<textarea rows="10" id="askContent" name="askContent" required="required" placeholder="请输入问题的详细内容" class="span12"></textarea>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+			<button class="btn btn-primary" type="submit">发布</button>
+		</div>
+	</form>
+</div>

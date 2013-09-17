@@ -55,14 +55,6 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       if (isFollow) cancelFollowBtn else followBtn
     }
 
-    def followCountBtn(brand: Brand): NodeSeq = {
-      if (User.loggedIn_?) {
-        followBtn(brand)
-      } else {
-        <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以关注此商标。</span>
-      }
-    }
-
     (for {
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
@@ -77,7 +69,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#useDescn" #> brand.useDescn &
         "#viewCount *" #> brand.viewCount.incr(realIp) &
         "#followCount *" #> brand.followCount.get &
-        "#followCountBtn *" #> followCountBtn(brand) &
+        "#followCountBtn *" #> requiredLogin("关注此商标", followBtn(brand)) &
         "#descn" #> brand.descn
 
     }): CssSel

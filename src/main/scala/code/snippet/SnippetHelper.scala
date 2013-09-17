@@ -47,6 +47,14 @@ trait SnippetHelper {
   def warningHtml(msg: NodeSeq, title: String = "警告！"): NodeSeq = alertHtml(msg, title, "warning")
   def errorHtml(msg: NodeSeq, title: String = "出错啦！"): NodeSeq = alertHtml(msg, title, "error")
 
+  def requiredLogin(tip: String, logined: => NodeSeq): NodeSeq = {
+    if (User.loggedIn_?) {
+      logined
+    } else {
+      <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以{ tip }。</span>
+    }
+  }
+
   implicit protected def boxCssSelToCssSel(in: Box[CssSel]): CssSel = in match {
     case Full(cssSel) => cssSel
     case Failure(msg, except, _) =>
