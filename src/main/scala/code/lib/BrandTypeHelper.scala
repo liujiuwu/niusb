@@ -1,6 +1,7 @@
 package code.lib
 
 import scala.collection.mutable.LinkedHashMap
+import code.model.WendaType2
 
 case class BrandType2(id: Int, name: String, descn: String)
 
@@ -53,9 +54,20 @@ object BrandType2Helper extends App {
     45 -> BrandType2(45, "社会法律", ""))
 
   val es = BrandType2s.values.toList
-  es.foreach(e => {
-	  println(s"""INSERT INTO `brand_types` VALUES ('${e.id}', '${e.name}', '${e.id}', '${e.name}', '0');""")
-  })
+  es.zipWithIndex.foreach {
+    case (v, i) => {
+      println(s"""INSERT INTO `brand_types` VALUES ('${i+1}', '${v.id}', '${v.name}', '0', '0', '${v.name}');""")
+
+    }
+  }
+
+ /* val es = WendaType2.values.toList
+		  es.zipWithIndex.foreach {
+		  case (v, i) => {
+			  println(s"""INSERT INTO `wenda_types` VALUES ('${i+1}', '${v.id}', '${v}', '0', '0', '${v}');""")
+			  
+		  }
+  }*/
 }
 
 

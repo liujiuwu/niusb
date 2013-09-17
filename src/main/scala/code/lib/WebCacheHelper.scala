@@ -9,6 +9,7 @@ import code.model.Brand
 import code.model.BrandType
 import net.liftweb.mapper._
 import net.liftweb.common.Loggable
+import code.model.WendaType
 
 object WebCacheHelper extends Loggable {
   val brandTypes = LinkedHashMap[Int, BrandType]()
@@ -18,6 +19,16 @@ object WebCacheHelper extends Loggable {
       brandTypes.clear()
       BrandType.findAll(OrderBy(BrandType.code, Ascending)).foreach(brandType => brandTypes.put(brandType.code.get, brandType))
       logger.info("load brandTypes finished.")
+    }
+  }
+
+  val wendaTypes = LinkedHashMap[Int, WendaType]()
+  def loadWendaTypes(force: Boolean = false) {
+    if (wendaTypes.isEmpty || force) {
+      logger.info("load wendaTypes ...")
+      wendaTypes.clear()
+      WendaType.findAll(OrderBy(WendaType.code, Ascending)).foreach(wendaType => wendaTypes.put(wendaType.code.get, wendaType))
+      logger.info("load wendaTypes finished.")
     }
   }
 
@@ -78,6 +89,7 @@ object WebCacheHelper extends Loggable {
     logger.info("load cahche start ...")
     val startTime = System.currentTimeMillis()
     loadBrandTypes(force)
+    loadWendaTypes(force)
     loadAdSpaces(force)
     loadIndexTabBrands(force)
     loadIndexBrandTypeBrands(force)

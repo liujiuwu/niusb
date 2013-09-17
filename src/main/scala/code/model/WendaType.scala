@@ -3,9 +3,10 @@ package code.model
 import net.liftweb.mapper._
 import scala.collection.mutable.LinkedHashMap
 import code.lib.WebCacheHelper
+import scala.xml.NodeSeq
 
-class BrandType extends LongKeyedMapper[BrandType] with IdPK {
-  def getSingleton = BrandType
+class WendaType extends LongKeyedMapper[WendaType] with IdPK {
+  def getSingleton = WendaType
 
   object code extends MappedInt(this) {
     override def dbIndexed_? = true
@@ -15,18 +16,20 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
     def displayTypeName() = { if (isRecommend.get) <span style="color:red;">{ code.get + "." + this.is }</span> else code.get + "." + this.is }
   }
 
-  object brandCount extends MappedInt(this) {
+  object wendaCount extends MappedInt(this) {
     override def dbColumnName = "brand_count"
     override def defaultValue = 0
     def incr(v: Int = 1) = {
       require(v > 0)
       this(this.is + v)
+      save
     }
 
     def decr(v: Int = 1) = {
       require(v > 0)
       val nv = this.is - v
       this(if (nv < 0) 0 else nv)
+      save
     }
   }
 
@@ -40,8 +43,15 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
   object descn extends MappedString(this, 600)
 }
 
-object BrandType extends BrandType with CRUDify[Long, BrandType] with LongKeyedMetaMapper[BrandType] {
-  override def dbTableName = "brand_types"
-  override def fieldOrder = List(id, code, name, brandCount, isRecommend, descn)
-  def isBrandType(code: Int) = WebCacheHelper.brandTypes.contains(code)
+object WendaType extends WendaType with CRUDify[Long, WendaType] with LongKeyedMetaMapper[WendaType] {
+  import com.niusb.util.WebHelpers._
+  lazy val wendaTypes = WebCacheHelper.wendaTypes.values.toList
+  override def dbTableName = "wenda_types"
+  override def fieldOrder = List(id, code, name, wendaCount, isRecommend, descn)
+
+  def wendaTypeOptions(selected: String): NodeSeq = {
+    <option value="all">所有问答类型</option> :: (for (option <- wendaTypes; (value, label) = (option.code.get.toString, option.name.get)) yield {
+      options(value, label, selected, true)
+    })
+  }
 }

@@ -13,9 +13,11 @@ import net.liftweb.common.Full
 import scala.util.Success
 import net.liftweb.common.Box
 import java.util.Date
+import scala.xml.NodeSeq
+import code.lib.WebCacheHelper
 
-object WendaType extends Enumeration {
-  type WendaType = Value
+object WendaType2 extends Enumeration {
+  type WendaType2 = Value
   val WendaType0 = Value(0, "商标知识")
   val WendaType1 = Value(1, "商标注册")
   val WendaType2 = Value(2, "商标查询")
@@ -26,6 +28,7 @@ object WendaType extends Enumeration {
   val WendaType7 = Value(7, "驰名商标")
   val WendaType8 = Value(8, "商标转让")
   val WendaType9 = Value(9, "商标法")
+
   /*3=商标知识
 5=商标注册
 2=商标查询
@@ -46,9 +49,15 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
     }
   }
 
-  object wendaType extends MappedEnum(this, WendaType) {
-    override def defaultValue = WendaType.WendaType0
+  object wendaTypeCode extends MappedInt(this) {
+    override def dbIndexed_? = true
     override def dbColumnName = "webda_type"
+    override def displayName = "问答类型"
+
+    def displayType: NodeSeq = {
+      val wendType = WebCacheHelper.wendaTypes.get(this.is).get
+      Text(wendType.name.is)
+    }
   }
 
   object content extends MappedText(this)
@@ -112,18 +121,9 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
     override def dbColumnName = "updated_at"
     override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
   }
-
-  object srcId extends MappedLong(this) { //同步数据的原id
-    override def dbColumnName = "src_id"
-  }
 }
 
 object Wenda extends Wenda with CRUDify[Long, Wenda] with Paginator[Wenda] {
   override def dbTableName = "wendas"
-  override def fieldOrder = List(id, title, wendaType, content, asker, readCount, createdAt, updatedAt)
-
-  def validWendaTypeSelectValues = {
-    val wendaTypes = WendaType.values.toList.map(v => (v.id.toString, v.toString))
-    ("all", "所有类型") :: wendaTypes
-  }
+  override def fieldOrder = List(id, title, wendaTypeCode, content, asker, readCount, createdAt, updatedAt)
 }

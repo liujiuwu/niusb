@@ -197,4 +197,8 @@ trait WebHelpers {
 
     captchaData
   }
+
+  def options(value: String, label: String, selected: String, prependValue: Boolean = false) = {
+    <option value={ value } selected={ if (selected == value) "selected" else null }>{ if (prependValue) value + "." + label else label }</option>
+  }
 }

@@ -1,6 +1,7 @@
 package com.niusb.util
 
 import code.lib.WebCacheHelper
+import com.niusb.util.WebHelpers._
 import net.liftweb.common.Full
 import net.liftweb.http.S
 import scala.xml.NodeSeq
@@ -45,10 +46,6 @@ trait SearchBrandFormHelpers {
     <option value="all">所有商标类型</option> :: (for (option <- brandTypes; (value, label) = (option.code.get.toString, option.name.get)) yield {
       options(value, label, selected, true)
     })
-  }
-
-  private def options(value: String, label: String, selected: String, prependValue: Boolean = false) = {
-    <option value={ value } selected={ if (selected == value) "selected" else null }>{ if (prependValue) value + "." + label else label }</option>
   }
 
   def getSearchBrandFormParam(): SearchBrandFormParam = {

@@ -1,0 +1,10 @@
+INSERT INTO `wenda_types` VALUES ('1', '0', '商标知识', '0', '0', '商标知识');
+INSERT INTO `wenda_types` VALUES ('2', '1', '商标注册', '0', '0', '商标注册');
+INSERT INTO `wenda_types` VALUES ('3', '2', '商标查询', '0', '0', '商标查询');
+INSERT INTO `wenda_types` VALUES ('4', '3', '商标分类', '0', '0', '商标分类');
+INSERT INTO `wenda_types` VALUES ('5', '4', '商标设计', '0', '0', '商标设计');
+INSERT INTO `wenda_types` VALUES ('6', '5', '商标取名', '0', '0', '商标取名');
+INSERT INTO `wenda_types` VALUES ('7', '6', '商标维权', '0', '0', '商标维权');
+INSERT INTO `wenda_types` VALUES ('8', '7', '驰名商标', '0', '0', '驰名商标');
+INSERT INTO `wenda_types` VALUES ('9', '8', '商标转让', '0', '0', '商标转让');
+INSERT INTO `wenda_types` VALUES ('10', '9', '商标法', '0', '0', '商标法');

@@ -2,9 +2,7 @@ package code.snippet.admin
 
 import scala.collection.mutable.ArrayBuffer
 import scala.xml._
-
 import com.niusb.util.WebHelpers._
-
 import code.model.Article
 import code.model.ArticleStatus
 import code.model.ArticleType
@@ -23,6 +21,7 @@ import net.liftweb.http.js.JsCmds.Noop
 import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
+import code.lib.WebCacheHelper
 
 object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -30,7 +29,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   private def bies: List[QueryParam[Wenda]] = {
-    val (wendaType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
+    val (wendaType, keyword) = (S.param("type"), S.param("keyword"))
     val byBuffer = ArrayBuffer[QueryParam[Wenda]]()
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
@@ -41,7 +40,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     wendaType match {
       case Full(s) if (s != "all") =>
-        byBuffer += By(Wenda.wendaType, WendaType(s.toInt))
+        byBuffer += By(Wenda.wendaTypeCode, s.toInt)
       case _ =>
     }
     byBuffer.toList
@@ -56,9 +55,9 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
       }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
     }
 
-    val (wendaType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
+    val (wendaType, keyword) = (S.param("type"), S.param("keyword"))
     var url = originalUri
-    var wendaTypeVal, keywordVal, statusVal = ""
+    var wendaTypeVal, keywordVal = ""
     wendaType match {
       case Full(t) =>
         wendaTypeVal = t
@@ -71,27 +70,20 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
         url = appendParams(url, List("keyword" -> k))
       case _ =>
     }
-    status match {
-      case Full(s) =>
-        statusVal = s
-        url = appendParams(url, List("status" -> s))
-      case _ =>
-    }
 
     val paginatorModel = Wenda.paginator(url, bies: _*)()
-
     val searchForm = "#searchForm" #>
       <form class="form-inline" action={ url } method="get">
         <input type="text" id="keyword" name="keyword" class="span8" value={ keywordVal } placeholder="搜索标题关键词"/>
         <select id="type" name="type">
-          { for ((k, v) <- Wenda.validWendaTypeSelectValues) yield <option value={ k } selected={ if (wendaTypeVal == k) "selected" else null }>{ v }</option> }
+          { WendaType.wendaTypeOptions(wendaTypeVal) }
         </select>
         <button type="submit" class="btn"><i class="icon-search"></i> 搜索</button>
       </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(wenda => {
       "#title" #> wenda.title.is &
-        "#wendaType" #> wenda.wendaType &
+        "#wendaType" #> wenda.wendaTypeCode.displayType &
         "#readCount" #> wenda.readCount.is &
         "#actions" #> actions(wenda)
     })

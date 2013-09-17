@@ -25,14 +25,15 @@ import scala.util.Failure
 import net.liftweb.util.Helpers
 import com.niusb.util.UploadHelpers
 import com.niusb.util.WebHelpers
-import code.model.Wenda
+import code.model._
+import net.liftweb.mapper.By
 
 case class Wenwen(id: Int, content: String, classid: Int)
 
 object SyncDataWenda extends App {
   implicit val getWenwenResult = GetResult(r => Wenwen(r.nextInt(), r.nextString(), r.nextInt()))
-  //DB.defineConnectionManager(DefaultConnectionIdentifier, MyDBVendor)
-  //Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
+  DB.defineConnectionManager(DefaultConnectionIdentifier, MyDBVendor)
+  Schemifier.schemify(true, Schemifier.infoF _, User, WendaType, Wenda, WendaReply)
   lazy val db = Database.forURL("jdbc:mysql://localhost:3306/new_haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
   lazy val sdf = new SimpleDateFormat("yyyy-M-dd")
 
@@ -47,12 +48,39 @@ object SyncDataWenda extends App {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
       Q.queryNA[Wenwen](sql) foreach { wenwen =>
-        val replySql = s"""SELECT id,content,classid FROM `wenwen` where hf=1 and hfid=${wenwen.id} limit 1"""
+        val replySql = s"""SELECT id,hfcontent,classid FROM `wenwen` where hf=1 and hfid=${wenwen.id} limit 1"""
         Q.queryNA[Wenwen](replySql) foreach { reply =>
           val wenda = Wenda.create
+          wenda.asker(1)
+          val wendaTypeCode = wenwen.classid match {
+            case 2 => 2
+            case 3 => 0
+            case 4 => 3
+            case 5 => 1
+            case 6 => 4
+            case 7 => 5
+            case 8 => 6
+            case 9 => 7
+            case 10 => 8
+            case 11 => 9
+          }
+          wenda.wendaTypeCode(wendaTypeCode)
           wenda.content(wenwen.content)
-          wenda.readCount(1)
-          println(wenwen + "|" + reply)
+          wenda.replyCount(1)
+          wenda.save
+
+          val wendaType = WendaType.find(By(WendaType.code, wendaTypeCode))
+          wendaType match {
+            case Full(w) => w.wendaCount.incr()
+            case _ =>
+          }
+
+          val wendaReply = WendaReply.create
+          wendaReply.wenda(wenda.id.is)
+          wendaReply.content(reply.content)
+          wendaReply.isRecommend(true)
+          wendaReply.reply(1)
+          wendaReply.save
         }
       }
     }

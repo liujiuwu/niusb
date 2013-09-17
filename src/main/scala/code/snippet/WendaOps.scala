@@ -2,7 +2,6 @@ package code.snippet
 
 import scala.xml.Text
 import code.model.Wenda
-import code.model.WendaType
 import net.liftweb.common.Full
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
@@ -12,6 +11,9 @@ import net.liftweb.http.js.JsCmd
 import net.liftweb.util.Helpers._
 import scala.xml.NodeSeq
 import code.model.User
+import code.model.WendaType
+import code.lib.WebCacheHelper
+import net.liftweb.common.Empty
 
 object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -44,9 +46,9 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
       S.redirectTo("/wenda/index")
     }
 
-    val wendaTypes = WendaType.values.toList
+    val wendaTypes = WebCacheHelper.wendaTypes.values.toList
     "@title" #> text(wenda.title.get, wenda.title(_)) &
-      "@wendaType" #> selectObj[WendaType.Value](WendaType.values.toList.map(v => (v, v.toString)), Full(wenda.wendaType.is), wenda.wendaType(_)) &
+      "@wendaType" #> select(wendaTypes.map(v => (v.code.is.toString, v.name.is)), Empty, v => wenda.wendaTypeCode(v.toInt)) &
       "@askContent" #> textarea(wenda.content.is, wenda.content(_)) &
       "type=submit" #> ajaxSubmit("发布", process)
   }

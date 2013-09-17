@@ -81,7 +81,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@basePrice" #> text(basePrice, basePrice = _) &
       "@name" #> text(name, name = _) &
       "@pic" #> hidden(pic = _, pic) &
-      "@brand_type" #> select(brandTypes.map(v => (v.code.toString, v.code + " -> " + v.name)), Empty, v => (brandType = WebCacheHelper.brandTypes.get(v.toInt).get)) &
+      "@brandType" #> select(brandTypes.map(v => (v.code.is.toString, v.code.is + " -> " + v.name.is)), Empty, v => (brandType = WebCacheHelper.brandTypes.get(v.toInt).get)) &
       "@regDate" #> text(regDateStr, regDateStr = _) &
       "@applicant" #> text(applicant, applicant = _) &
       "@useDescn" #> textarea(useDescn, useDescn = _) &
