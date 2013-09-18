@@ -8,8 +8,21 @@ import net.liftweb.http.DispatchSnippet
 
 class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
+    case "topMainNav" => topMainNav
     case "tabMenu" => tabMenu
     case "helpNav" => helpNav
+  }
+
+  def topMainNav = {
+    val url = originalUri
+    "*" #> <ul class="ui-nav-main">
+             <li><a class={ if (url == "" || url == "/" || url == "/index") "active" else null } href="/index">首页</a></li>
+             <li><a class={ if (url.startsWith("/market")) "active" else null } href="/market">商标集市</a></li>
+             <li><a class={ if (url.startsWith("/recommend")) "active" else null } href="/recommend">精品商标</a></li>
+             <li><a class={ if (url.startsWith("/offer")) "active" else null } href="/offer">特价商标</a></li>
+             <li><a class={ if (url.startsWith("/own")) "active" else null } href="/own">自有商标</a></li>
+             <li><a class={ if (url.startsWith("/wenda")) "active" else null } href="/wenda">问答频道</a></li>
+           </ul>
   }
 
   def tabMenu = {

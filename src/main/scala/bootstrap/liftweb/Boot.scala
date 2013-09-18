@@ -61,6 +61,17 @@ class Boot extends Loggable {
 
     //Rewrite
     LiftRules.statelessRewrite.append {
+      case RewriteRequest(ParsePath("/" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("index" :: Nil)
+      case RewriteRequest(ParsePath("market" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "index" :: Nil)
+      case RewriteRequest(ParsePath("recommend" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "recommend" :: Nil)
+      case RewriteRequest(ParsePath("offer" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "offer" :: Nil)
+      case RewriteRequest(ParsePath("own" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "own" :: Nil)
+
       case RewriteRequest(ParsePath("user" :: "sign_out" :: Nil, _, _, _), _, _) =>
         RewriteResponse("user_mgt" :: "logout" :: Nil)
       case RewriteRequest(ParsePath("market" :: "view" :: id :: Nil, _, _, _), _, _) =>
@@ -81,6 +92,8 @@ class Boot extends Loggable {
         RewriteResponse("help" :: "sitemap" :: Nil)
       case RewriteRequest(ParsePath("wenda" :: "view" :: id :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "view" :: Nil, Map("id" -> id))
+      case RewriteRequest(ParsePath("wenda" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "all"))
       case RewriteRequest(ParsePath("wenda" :: "all" :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "all"))
       case RewriteRequest(ParsePath("wenda" :: "common" :: Nil, _, _, _), _, _) =>

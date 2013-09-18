@@ -68,4 +68,27 @@ object Menus extends BsMenu {
 
     "* *" #> menus
   }
+  
+  def userStatus2 = {
+    val menus: NodeSeq = User.currentUser match {
+      case Full(user) =>
+         <span class="user-info">
+          <span><i class="icon-user"></i> <span id="displayName">{ user.displayName } </span><b class='caret'></b></span>
+          <ul class="user-menu">
+            <lift:Menu.group group="userMenu">
+              <li><menu:bind/></li>
+            </lift:Menu.group>
+            {
+              if (User.superUser_?)
+                <li class="last"><a href="/admin/web/set"><span><i class="icon-cogs"></i> 后台管理</span></a></li>
+            }
+            <li class="last"><a href="/user/sign_out"><span><i class="icon-signout"></i> 退出</span></a></li>
+          </ul>
+        </span>
+      case _ =>
+        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#loginDialog">登录或注册</button>
+    }
+
+    "* *" #> menus
+  }
 }
