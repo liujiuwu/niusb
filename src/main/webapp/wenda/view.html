@@ -1,22 +1,15 @@
 <div class="container" data-lift="surround?with=default;at=content">
-	<style>
-	.wenda-footer{
-	  text-align:right;
-	}
-	
-	.wenda-footer span{
-		padding-left:10px;
-	}
-	</style>
-	<div class="lift:embed?what=wenda/_create">我要提问</div>
+	<div class="lift:embed?what=wenda/_reply">我来回答</div>
 	<div class="row" data-lift="WendaOps.view?eager_eval=true">
 		<div class="span19">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<i class="icon-question-sign" style="color: #EE472C; font-size: 16px"></i> <span class="wenda-title">Q0：什么是返利，返利有什么用？</span>
+					<i class="icon-question-sign  wenda-icon"></i> <span class="wenda-title">Q0：什么是返利，返利有什么用？</span>
 				</div>
 				<div class="panel-body wenda-content">Panel content</div>
-				<div class="panel-footer wenda-footer"><span class="stat">2 浏览</span><span class="author">发布人</span><span class="date"></span></div>
+				<div class="panel-footer wenda-footer" style="padding: 5px">
+					<span class="stat">2 浏览</span><span class="author">发布人</span><span class="date"></span><span data-lift="WendaOps.replyWendaBtn"><a class="btn btn-success">我来回答</a></span>
+				</div>
 			</div>
 
 			<ul id="wendaReply">

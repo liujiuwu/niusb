@@ -8,6 +8,8 @@ import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
 import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JsCmd
+import net.liftweb.http.js.JsCmd._
+import net.liftweb.http.js.JsCmds._
 import net.liftweb.util.Helpers._
 import scala.xml.NodeSeq
 import code.model.User
@@ -20,12 +22,16 @@ import scala.collection.mutable.ArrayBuffer
 import code.model.Brand
 import net.liftweb.util.CssSel
 import scala.xml.Unparsed
+import net.liftweb.http.js.JE.JsRaw
 
 object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "create" => create
+    case "reply" => reply
     case "list" => list
     case "view" => view
+    case "createWendaBtn" => createWendaBtn
+    case "replyWendaBtn" => replyWendaBtn
   }
 
   private def bies: List[QueryParam[Wenda]] = {
@@ -56,6 +62,9 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
         <li class={ if (pageType == "common") "active" else null }><a href="/wenda/common">常见问答</a></li>
         <li class={ if (pageType == "hot") "active" else null }><a href="/wenda/hot">热门问答</a></li>
         <li class={ if (pageType == "wait") "active" else null }><a href="/wenda/wait">待回答问题</a></li>
+        <div class="pull-right" data-lift="WendaOps.createWendaBtn">
+          <button class="btn btn-danger">我要提问</button>
+        </div>
       </ul>
 
     val limit = S.attr("limit").map(_.toInt).openOr(30)
@@ -77,7 +86,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     } yield {
       wenda.readCount.incr(realIp)
       val wendaSelf = ".wenda-title *" #> wenda.title.is &
-        ".wenda-content *" #> wenda.content.asHtml &
+        ".wenda-content *" #> Unparsed(wenda.content.is) &
         ".stat *" #> wenda.readCount.display &
         ".date *" #> { "发布时间:" + wenda.createdAt.asHtml }
 
@@ -91,13 +100,13 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     }): CssSel
   }
 
-  def creteWendaBtn(wenda: Wenda): NodeSeq = {
+  /*def creteWendaBtn(wenda: Wenda): NodeSeq = {
     if (User.loggedIn_?) {
       <button class="btn btn-success" type="button" data-toggle="modal" data-target="#createWendaDialog">我要提问</button>
     } else {
       <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以提问。</span>
     }
-  }
+  }*/
 
   def create = {
     val wenda = Wenda.create
@@ -111,7 +120,46 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     "@title" #> text(wenda.title.get, wenda.title(_)) &
       "@wendaType" #> select(wendaTypes.map(v => (v.code.is.toString, v.name.is)), Empty, v => wenda.wendaTypeCode(v.toInt)) &
       "@askContent" #> textarea(wenda.content.is, wenda.content(_)) &
-      "type=submit" #> ajaxSubmit("发布", process)
+      "type=submit" #> ajaxSubmit("确认发布", process)
+  }
+
+  def reply = {
+    def process(): JsCmd = {
+      S.redirectTo("/wenda/index")
+    }
+
+    "@replyContent" #> textarea("", println(_)) &
+      "type=submit" #> ajaxSubmit("确认回答", process)
+  }
+
+  private def btnCss = {
+    val isLogined = User.currentUser match {
+      case Full(user) => true
+      case _ => false
+    }
+    if (isLogined) "btn-success" else "btn-danger"
+  }
+
+  def createWendaBtn = {
+    def process(): JsCmd = {
+      User.currentUser match {
+        case Full(user) =>
+          JsRaw("""$("#createWendaDialog").modal();editorInit()""")
+        case _ => JsRaw("""$("#loginDialog").modal()""")
+      }
+    }
+    ".btn" #> a(() => process, Text("我要提问?"), "class" -> ("btn " + btnCss))
+  }
+
+  def replyWendaBtn = {
+    def process(): JsCmd = {
+      User.currentUser match {
+        case Full(user) =>
+          JsRaw("""$("#replyWendaDialog").modal();editorInit()""")
+        case _ => JsRaw("""$("#loginDialog").modal()""")
+      }
+    }
+    ".btn" #> a(() => process, Text("我来回答"), "class" -> ("btn " + btnCss))
   }
 
 }
