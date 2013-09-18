@@ -51,6 +51,8 @@ object SyncDataWenda extends App {
         val replySql = s"""SELECT id,hfcontent,classid FROM `wenwen` where hf=1 and hfid=${wenwen.id} limit 1"""
         Q.queryNA[Wenwen](replySql) foreach { reply =>
           val wenda = Wenda.create
+          val title = wenwen.content
+          wenda.title(if (title.length() > 90) title.substring(0, 90) + " ..." else title)
           wenda.asker(1)
           val wendaTypeCode = wenwen.classid match {
             case 2 => 2

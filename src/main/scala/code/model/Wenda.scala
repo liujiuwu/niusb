@@ -45,7 +45,7 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   def getSingleton = Wenda
   object title extends MappedString(this, 100) {
     def displayTitle = {
-      <a href={ "/wenda/view/" + id.get } title={ this.get } target="_blank">{ this.get }</a>
+      <a href={ "/wenda/view/" + id.get } title={ this.get } target="_blank">{ this.is }</a>
     }
   }
 
@@ -56,7 +56,7 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
 
     def displayType: NodeSeq = {
       val wendType = WebCacheHelper.wendaTypes.get(this.is).get
-      Text(wendType.name.is)
+      Text("【" + wendType.name.is + "】")
     }
   }
 
@@ -66,6 +66,14 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
     override def defaultValue = 0
     override def displayName = "提问人"
     override def dbColumnName = "ask_id"
+
+    def display = {
+      User.findByKey(this.is) match {
+        case Full(user) => user.name
+        case _ => "牛标用户"
+      }
+
+    }
   }
 
   object readCount extends MappedInt(this) {
@@ -82,6 +90,9 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
       }
       this.get
     }
+    def display = {
+      <em>{ this.is }</em> ++ Text("次浏览")
+    }
   }
 
   object replyCount extends MappedInt(this) {
@@ -97,6 +108,10 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
       save
       this.is
     }
+
+    def display = {
+      <em>{ this.is }</em> ++ Text("次回答")
+    }
   }
 
   object isRecommend extends MappedBoolean(this) { //是否推荐问题
@@ -106,15 +121,15 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
     def displayRecommend = if (this.get) "是" else "否"
   }
 
-  def replies = {
+  def replies: List[WendaReply] = {
     val results = WendaReply.findAll(By(WendaReply.wenda, id.is));
     val (recommend, noRecommend) = results.partition(_.isRecommend.is)
-    recommend :: noRecommend //将推荐答案放在最前面
+    recommend ::: noRecommend //将推荐答案放在最前面
   }
 
   override lazy val createdAt = new MyCreatedAt(this) {
     override def dbColumnName = "created_at"
-    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
+    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.df)
   }
 
   override lazy val updatedAt = new MyUpdatedAt(this) {

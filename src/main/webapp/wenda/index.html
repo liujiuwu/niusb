@@ -1,19 +1,56 @@
 <div class="container" data-lift="surround?with=default;at=content">
-	<div class='lift:embed?what=wenda/_create'>我要提问</div>
-	<div class="row">
-		<div class="span25">
-			<ul id="myTab" class="nav nav-tabs">
-				<li><a href="#home" data-toggle="tab">Home</a></li>
-				<li><a href="#profile" data-toggle="tab">Profile</a></li>
-			</ul>
-			<div id="myTabContent" class="tab-content">
-				<div class="tab-pane fade in active" id="home">
-					<p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p>
-				</div>
-				<div class="tab-pane fade" id="profile">
-					<p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.</p>
-				</div>
+	<style>
+#wendaList {
+	margin-bottom: 20px;
+}
+
+#wendaList li {
+	overflow: hidden;
+	padding-left: 10px;
+	height: 28px;
+	line-height: 28px;
+	height: 28px;
+}
+
+#wendaList .wendaType {
+	float: left;
+	font-weight: bold;
+}
+
+#wendaList h3 {
+	float: left;
+	line-height: 28px;
+	font-weight: normal;
+	width:550px;
+	overflow: hidden;
+}
+
+#wendaList .date {
+	float: right;
+}
+
+#wendaList .stat {
+	float: right;
+	padding-right:10px;
+}
+
+#wendaList .stat em{
+	color:#EE472C;
+	padding-right:2px;
+	font-weight:normal;
+}
+</style>
+	<div class="lift:embed?what=wenda/_create">我要提问</div>
+	<div class="row" data-lift="WendaOps.list?eager_eval=true">
+		<div class="span19">
+			<div id="wendaNav"></div>
+			<div id="dataList">
+				<ul id="wendaList">
+					<li><h3>问答标题</h3> <span class="date">发布时间</span><span class="stat">统计</span></li>
+				</ul>
 			</div>
+			<div data-lift="embed?what=_paginator"></div>
 		</div>
+		<div class="span6"></div>
 	</div>
 </div>

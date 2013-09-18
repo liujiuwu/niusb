@@ -59,7 +59,7 @@ object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
       val len = newContent.length()
       val fcontent = if (len > 100) newContent.substring(0, 100) + " ..." else newContent
       ".news-type *" #> news.articleType.asHtml &
-        ".news-title *" #> news.title.displayTitle &
+        ".news-title *" #> news.title.displayTitle() &
         ".news-time *" #> { "(" + news.shortCreatedAt + ")" } &
         ".news-content *" #> fcontent
     }
@@ -68,10 +68,10 @@ object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def helpList = {
-    val limit = S.attr("limit").map(_.toInt).openOr(15)
+    val limit = S.attr("limit").map(_.toInt).openOr(30)
     val paginatorModel = Article.paginator(originalUri, By(Article.articleType, ArticleType.Help))(itemsOnPage = limit)
     val dataList = "#dataList li" #> paginatorModel.datas.map { help =>
-        "#help-title" #> help.title.displayTitle &
+        "#help-title" #> help.title.displayTitle(false) &
         ".box-content *" #> Unparsed(help.content.get)
     }
 

@@ -27,8 +27,12 @@ object ArticleStatus extends Enumeration {
 class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
   def getSingleton = Article
   object title extends MappedString(this, 100) {
-    def displayTitle = {
-      <a href={ "/news/view/" + id.get } title={ this.get } target="_blank" style={ if (isRecommend.is) "color:#EE472C" else null }>{ this.get }</a>
+    def displayTitle(isLink: Boolean = true, linkUrl: String = "/news/view/") = {
+      if (isLink) {
+        <a href={ linkUrl + id.get } title={ this.get } target="_blank" style={ if (isRecommend.is) "color:#EE472C" else null }>{ this.get }</a>
+      } else {
+        <span style={ if (isRecommend.is) "color:#EE472C" else null }>{ this.get }</span>
+      }
     }
   }
 

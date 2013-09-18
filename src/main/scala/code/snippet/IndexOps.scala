@@ -67,7 +67,7 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
     val limit = S.attr("limit").map(_.toInt).openOr(6)
     val bies = By(Article.articleType, ArticleType.News)
     val paginatorModel = Article.paginator(originalUri, bies)(itemsOnPage = limit)
-    val dataList = "li *" #> paginatorModel.datas.map(_.title.displayTitle)
+    val dataList = "li *" #> paginatorModel.datas.map(_.title.displayTitle())
     dataList
   }
 }

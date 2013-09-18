@@ -21,12 +21,14 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
     def incr(v: Int = 1) = {
       require(v > 0)
       this(this.is + v)
+      save
     }
 
     def decr(v: Int = 1) = {
       require(v > 0)
       val nv = this.is - v
       this(if (nv < 0) 0 else nv)
+      save
     }
   }
 
