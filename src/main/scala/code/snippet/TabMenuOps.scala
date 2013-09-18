@@ -16,12 +16,12 @@ class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
   def topMainNav = {
     val url = originalUri
     "*" #> <ul class="ui-nav-main">
-             <li><a class={ if (url == "" || url == "/" || url == "/index") "active" else null } href="/index">首页</a></li>
-             <li><a class={ if (url.startsWith("/market")) "active" else null } href="/market">商标集市</a></li>
-             <li><a class={ if (url.startsWith("/recommend")) "active" else null } href="/recommend">精品商标</a></li>
-             <li><a class={ if (url.startsWith("/offer")) "active" else null } href="/offer">特价商标</a></li>
-             <li><a class={ if (url.startsWith("/own")) "active" else null } href="/own">自有商标</a></li>
-             <li><a class={ if (url.startsWith("/wenda")) "active" else null } href="/wenda">问答频道</a></li>
+             <li><a class={ if (url == "" || url == "/" || url == "/index") "active" else null } href="/index"><i class="icon-home"></i> 首页</a></li>
+             <li><a class={ if (url.startsWith("/market")) "active" else null } href="/market"><i class="icon-globe"></i> 商标集市</a></li>
+             <li><a class={ if (url.startsWith("/recommend")) "active" else null } href="/recommend"><i class="icon-sun"></i> 精品商标</a></li>
+             <li><a class={ if (url.startsWith("/offer")) "active" else null } href="/offer"><i class="icon-tag"></i> 特价商标</a></li>
+             <li><a class={ if (url.startsWith("/own")) "active" else null } href="/own"><i class="icon-asterisk"></i> 自有商标</a></li>
+             <li><a class={ if (url.startsWith("/wenda")) "active" else null } href="/wenda"><i class="icon-question-sign"></i> 问答频道</a></li>
            </ul>
   }
 

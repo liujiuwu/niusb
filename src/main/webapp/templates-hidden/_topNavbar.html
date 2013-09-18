@@ -15,7 +15,7 @@
 	font-size: 14px;
 	height: 44px;
 	line-height: 44px;
-	width: 75px;
+	width: 95px;
 }
 
 .ui-nav .ui-nav-main li a {
@@ -24,20 +24,18 @@
 	color: #000000;
 	display: inline-block;
 	text-align: center;
-	width: 75px;
+	width: 95px;
 }
 
 .ui-nav .ui-nav-main li>a:hover {
 	background: none repeat scroll 0 0 #2D2D2D;
 	color: #FFFFFF;
-	font-weight: bold;
 	text-decoration: none;
 }
 
 .ui-nav .ui-nav-main li a.active {
 	background: none repeat scroll 0 0 #2D2D2D;
 	color: #FFFFFF;
-	font-weight: bold;
 	text-decoration: none;
 }
 
@@ -51,89 +49,14 @@
 	margin-right: 10px;
 }
 
-span.navMore {
-	color: #000000;
-	cursor: default;
-	display: inline-block;
-	float: left;
-	font-size: 14px;
-	height: 43px;
-	line-height: 44px;
-	padding-right: 10px;
-	position: relative;
-	text-align: center;
-	width: 50px;
-}
-
-span.navMore b {
-	border-color: #8C6000 #FFAE00 #FFAE00;
-	border-style: solid;
-	border-width: 5px;
-	font-size: 0;
-	height: 0;
-	line-height: 0;
-	position: absolute;
-	right: 7px;
-	top: 21px;
-	width: 0;
-}
-
-span.navMore:hover b {
-	border-color: #8C8C8C #2D2D2D #2D2D2D;
-}
-
-span.navMore:hover {
-	background: none repeat scroll 0 0 #2D2D2D;
-	color: #FFFFFF;
-	font-weight: bold;
-	text-decoration: none;
-	cursor: pointer;
-}
-
 .topNavRight {
 	float: right;
 	//padding: 8px 0;
 }
 
-span.navMore:hover .navMoreUl {
-	display: block;
-}
-
-.navMoreUl {
-	background: none repeat scroll 0 0 #2D2D2D;
-	display: none;
-	left: 0;
-	position: absolute;
-	text-align: left;
-	top: 43px;
-	z-index: 10;
-}
-
-.navMoreUl li {
-	line-height: 34px;
-	width: 100px;
-}
-
-.navMoreUl a {
-	color: #ABABAB;
-	display: block;
-	font-size: 12px;
-	font-weight: normal;
-	height: 34px;
-	line-height: 34px;
-	padding-left: 15px;
-	white-space: nowrap;
-}
-
-.navMoreUl a:hover {
-	background: none repeat scroll 0 0 #111111;
-	color: #FFBA00;
-	text-decoration: none;
-}
-
-
 
 span.user-info {
+font-family: "Helvetica Neue";
 	color: #000000;
 	cursor: default;
 	display: inline-block;
@@ -167,7 +90,6 @@ span.user-info:hover b {
 span.user-info:hover {
 	background: none repeat scroll 0 0 #2D2D2D;
 	color: #FFFFFF;
-	font-weight: bold;
 	text-decoration: none;
 	cursor: pointer;
 }
@@ -213,16 +135,6 @@ span.user-info:hover .user-menu {
 		<div class="container">
 			<a class="nav-logo" href="http://www.niusb.com"></a>
 			<div data-lift="TabMenuOps.topMainNav"></div>
-			<span class="navMore">更多<b></b>
-				<ul class="navMoreUl">
-					<li><a href="http://www.zcool.com.cn/toDesigners.do">酷友/设计师</a></li>
-					<li><a href="http://www.zcool.com.cn/newestComment.do">酷友精彩评论</a></li>
-					<!--<li><a href="http://www.zcool.com.cn/special.html">站酷专题</a></li>-->
-					<li><a target="_blank" href="http://www.hellorf.com/">HelloRF</a></li>
-					<li><a target="_blank" href="http://group.zcool.com.cn/">小组</a></li>
-					<li><a target="_blank" href="http://f.zcool.com.cn">找服务</a></li>
-				</ul>
-			</span>
 			<div class="topNavRight" data-lift="Menus.userStatus2" />
 		</div>
 	</div>
