@@ -23,14 +23,32 @@ h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
 del,ins,u,s,a,a:hover{text-decoration:none;}
 body{background:#fff;}
 
-@mainColor:#EE472C;
+@mainColor:#E13335;
 @mainLinkColor:#666;
 @boxBottomLineColor:#666;
 @textColor:#666;
 
+
+
+@navTextFontSize:14px;
+@navTextColor:#FFFFFF;
+@navTextHoverColor:#FFFFFF;
+@navTextActiveColor:#FFFFFF;
+
+@navColor:#A91E09;
+@navHoverColor:#A91E09;
+@navActiveColor:#A91E09;
+
+@navGradientStartColor:#fff;
+@navGradientEndColor:#fff;
+@navHeight:45px;
+@navBorderBottomHeight:2px;
+@navMenuHeight:@navHeight+@navBorderBottomHeight;
+
+
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei UI", "Microsoft YaHei", SimHei, "\5B8B\4F53", simsun, sans-serif;
-  padding-top: 60px;
+  padding-top: @navHeight+20px;
   color:@mainLinkColor
   //background: url("../img/noise-f1.gif") repeat fixed left top #F9F9EF;
 }
@@ -51,6 +69,148 @@ p.indent{
 .fc_organge {
  color:@mainColor;
 }
+
+
+
+
+.ui-nav {
+	position: fixed;
+	top: 0;
+	right: 0;
+	height: @navHeight;
+	border-bottom: @navBorderBottomHeight solid @navActiveColor;
+	#gradient > .vertical(@navGradientStartColor, @navGradientEndColor);
+}
+
+.ui-nav .ui-nav-main>li {
+	float: left;
+	font-family: "Helvetica Neue";
+	height: @navHeight;
+	line-height: @navHeight;
+}
+
+.ui-nav .ui-nav-main>li>a {
+	color: @navTextColor;
+	font-size: @navTextFontSize;
+	display: inline-block;
+	text-align: center;
+	width: 80px;
+	text-decoration: none;
+}
+
+.ui-nav .ui-nav-main>li>a:hover {
+	color: @navTextHoverColor;
+	background: none repeat scroll 0 0 @navHoverColor;
+	text-decoration: none;
+}
+
+.ui-nav .ui-nav-main>li>a.active {
+	color: @navTextActiveColor;
+	background: none repeat scroll 0 0 @navActiveColor;
+	text-decoration: none;
+}
+
+.ui-nav .user-info {
+    float: right;
+	font-family: "Helvetica Neue";
+	color: @navTextColor;
+	cursor: default;
+	display: inline-block;
+	font-size: @navTextFontSize;
+	height: @navMenuHeight;
+	line-height: @navMenuHeight;
+	padding-right: 20px;
+	position: relative;
+	text-align: right;
+	width: 100px;
+}
+
+.ui-nav .user-info b {
+	border-color: @navColor @navGradientEndColor @navGradientEndColor;
+	border-style: solid;
+	border-width: 5px;
+	font-size: 0;
+	height: 0;
+	line-height: 0;
+	position: absolute;
+	right: 6px;
+	top: @navHeight/2;
+	width: 0;
+}
+
+@userInfoMenuBackgroundColor:#645656;
+@arrowLeftRightColor:@userInfoMenuBackgroundColor;
+
+.ui-nav .user-info:hover b {
+	border-color: @arrowLeftRightColor @arrowLeftRightColor #8c8c8c;
+	right: 6px;
+	top: @navHeight/2-8px;
+}
+
+.ui-nav .user-info:hover {
+	background: none repeat scroll 0 0 @userInfoMenuBackgroundColor;
+	color: @navTextHoverColor;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.ui-nav .user-info:hover .user-menu {
+	display: block;
+}
+
+.ui-nav .user-menu {
+	background: none repeat scroll 0 0 @userInfoMenuBackgroundColor;
+	display: none;
+	right: 0;
+	position: absolute;
+	text-align: left;
+	top: @navMenuHeight;
+	z-index: 10;
+	border-top: none;
+}
+
+.ui-nav .user-menu li {
+	line-height: 30px;
+	width: 120px;
+}
+
+.ui-nav .user-menu a {
+	color: #bfb4b4;
+	display: block;
+	font-size: 14px;
+	font-weight: normal;
+	height: 30px;
+	line-height: 30px;
+	padding-left: 12px;
+	white-space: nowrap;
+	text-align: left;
+}
+
+.ui-nav .user-menu a:hover {
+	background: none repeat scroll 0 0 #4a3e3e;
+	color: #dbd1d1;
+	text-decoration: none;
+}
+
+
+.nav-logo {
+	background: url("http://static.zcool.com.cn/images/logo.png") repeat scroll 0 0 transparent;
+	display: inline-block;
+	float: left;
+	height: 31px;
+	margin: (@navHeight - 31px)/2 0 0;
+	width: 124px;
+	margin-right: 10px;
+}
+
+
+
+
+
+
+
+
+
 
 
 .navbar .nav {

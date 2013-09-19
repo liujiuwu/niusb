@@ -1,32 +1,34 @@
 <div data-lift="surround?with=default;at=content">
 	<div class="row">
-		<div class="span25 m-box10">
-			<div class="m-box10-1">
-				<div id="topBanner" class="banner" data-lift="AdOps.index?code=1">
-					<ul>
-						<li><img src="/img/ads/ad1.jpg" style="height: 300px; width: 700px" /></li>
-					</ul>
-				</div>
-				<div class="slider">
-					<div class="mn">
-						<div class="tp" style="height: 18px; padding: 5px; border-bottom: 2px solid #000000">
-							<div class="tit">新闻公告</div>
-							<div class="pull-right">
-								<a href="/news/index" target="_blank">查看更多...</a>
-							</div>
-						</div>
-						<ul data-lift="IndexOps.news?limit=6" class="mod-list main-list">
-							<li>新闻标题</li>
+		<div class="span25">
+			<div class="m-box10">
+				<div class="m-box10-1">
+					<div id="topBanner" class="banner" data-lift="AdOps.index?code=1">
+						<ul>
+							<li><img src="/img/ads/ad1.jpg" style="height: 300px; width: 700px" /></li>
 						</ul>
 					</div>
+					<div class="slider">
+						<div class="mn">
+							<div class="tp" style="height: 18px; padding: 5px; border-bottom: 2px solid #000000">
+								<div class="tit">新闻公告</div>
+								<div class="pull-right">
+									<a href="/news/index" target="_blank">查看更多...</a>
+								</div>
+							</div>
+							<ul data-lift="IndexOps.news?limit=6" class="mod-list main-list">
+								<li>新闻标题</li>
+							</ul>
+						</div>
 
-					<div class="sd">
-						<ul>
-							<li><a target="_blank" href="/trust.do">购物保障计划</a></li>
-							<li><a target="_blank" href="/help.do">新手帮助</a></li>
-							<li><a href="" target="_blank">反馈</a></li>
-							<li><span class="txt6">关注牛标网：</span> <a><span>关注微信 </span> </a> <a target="_blank" href="">关注新浪微博</a></li>
-						</ul>
+						<div class="sd">
+							<ul>
+								<li><a target="_blank" href="/trust.do">购物保障计划</a></li>
+								<li><a target="_blank" href="/help.do">新手帮助</a></li>
+								<li><a href="" target="_blank">反馈</a></li>
+								<li><span class="txt6">关注牛标网：</span> <a><span>关注微信 </span> </a> <a target="_blank" href="">关注新浪微博</a></li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -150,7 +152,7 @@
 			$(function() {
 				$("#topBanner").simpeSlider();
 				$("#mainTab").simpeTab();
-				
+
 				$(".brand-tp").hover(function() {
 					$(this).addClass("brand-tp-hover");
 				}, function() {

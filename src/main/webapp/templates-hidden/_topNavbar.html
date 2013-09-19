@@ -1,140 +1,64 @@
 <lift:children>
 	<style>
-.ui-nav {
-	position: fixed;
-	top: 0;
-	right: 0;
-	background-color: #EE472C;
-	height: 45px;
-	background: url("/img/topBg.png") repeat scroll 0 0 transparent;
-}
-
-.ui-nav .ui-nav-main li {
-	font-family: "Helvetica Neue";
-	float: left;
-	font-size: 14px;
-	height: 44px;
-	line-height: 44px;
-	width: 95px;
-}
-
-.ui-nav .ui-nav-main li a {
-	height: 43px;
-	line-height: 44px;
-	color: #000000;
-	display: inline-block;
-	text-align: center;
-	width: 95px;
-}
-
-.ui-nav .ui-nav-main li>a:hover {
-	background: none repeat scroll 0 0 #2D2D2D;
-	color: #FFFFFF;
-	text-decoration: none;
-}
-
-.ui-nav .ui-nav-main li a.active {
-	background: none repeat scroll 0 0 #2D2D2D;
-	color: #FFFFFF;
-	text-decoration: none;
-}
-
-.nav-logo {
-	background: url("http://static.zcool.com.cn/images/logo.png") repeat scroll 0 0 transparent;
-	display: inline-block;
-	float: left;
-	height: 31px;
-	margin: 5px 0 0;
-	width: 124px;
-	margin-right: 10px;
-}
-
 .topNavRight {
 	float: right;
-	//padding: 8px 0;
 }
 
-
-span.user-info {
-font-family: "Helvetica Neue";
-	color: #000000;
-	cursor: default;
-	display: inline-block;
+input.search-input {
+	border: 1px solid #FFFFFF;
+	color: #BBBBBB;
 	float: left;
-	font-size: 14px;
-	height: 43px;
-	line-height: 44px;
-	padding-right: 10px;
-	position: relative;
-	text-align: center;
-	width: 80px;
+	width: 160px;
+	box-shadow: none;
+	border-radius: 0;
+	height: 20px;
+	line-height: 20px;
 }
 
-span.user-info b {
-	border-color: #8C6000 #FFAE00 #FFAE00;
-	border-style: solid;
-	border-width: 5px;
-	font-size: 0;
-	height: 0;
-	line-height: 0;
-	position: absolute;
-	right: 7px;
-	top: 21px;
-	width: 0;
+input.search-input:hover,input.search-input:focus {
+	border-color: #FFFFFF;
+	color: #444444;
+	box-shadow: none;
+	border-radius: 0;
+	height: 20px;
+	line-height: 20px;
 }
 
-span.user-info:hover b {
-	border-color: #8C8C8C #2D2D2D #2D2D2D;
-}
-
-span.user-info:hover {
-	background: none repeat scroll 0 0 #2D2D2D;
+.ui-nav .search-submit {
+	background-color: #A91E09;
 	color: #FFFFFF;
-	text-decoration: none;
+	border-radius: 0;
+	line-height: 30px;
+	height: 30px;
+}
+
+.mbtn {
+	border: 0 none;
+	border-radius: 0 0 0 0;
 	cursor: pointer;
+	display: inline-block;
+	font-size: 12px;
+	line-height: 20px;
+	margin-bottom: 0;
+	padding: 0 10px;
+	text-align: center;
+	vertical-align: middle;
+	background-color: #EEEEEE;
+	color: #666666;
 }
 
-span.user-info:hover .user-menu {
-	display: block;
+.search-submit:hover,.search-submit:focus,.search-submit:active {
+	background-color: #A91E09;
+	color: #FFFFFF;
 }
-
-.user-menu {
-	background: none repeat scroll 0 0 #2D2D2D;
-	display: none;
-	right: 0;
-	position: absolute;
-	text-align: left;
-	top: 43px;
-	z-index: 10;
-}
-
-.user-menu li {
-	line-height: 34px;
-	width: 130px;
-}
-
-.user-menu a {
-	color: #ABABAB;
-	display: block;
-	font-size: 14px;
-	font-weight: normal;
-	height: 34px;
-	line-height: 34px;
-	padding-left: 15px;
-	white-space: nowrap;
-}
-
-.user-menu a:hover {
-	background: none repeat scroll 0 0 #111111;
-	color: #FFBA00;
-	text-decoration: none;
-}
-
 </style>
 	<div class="ui-nav navbar-fixed-top">
 		<div class="container">
 			<a class="nav-logo" href="http://www.niusb.com"></a>
 			<div data-lift="TabMenuOps.topMainNav"></div>
+			<div style="padding: 8px; float: left">
+				<input type="text" class="search-input" style="border-radius: none" autofocus="" placeholder="输入关键字搜索" /> <button type="submit" class="mbtn mbtn-success search-submit"><i class="icon-search"></i> 搜索</button>
+			</div>
 			<div class="topNavRight" data-lift="Menus.userStatus2" />
 		</div>
 	</div>
