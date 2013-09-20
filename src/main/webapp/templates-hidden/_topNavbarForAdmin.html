@@ -1,162 +1,27 @@
 <lift:children>
-	<style>
-.ui-nav {
-	position: fixed;
-	top: 0;
-	right: 0;
-	background-color: #EE472C;
-	height: 45px;
-	background: url("/img/topBg.png") repeat scroll 0 0 transparent;
-}
-
-.ui-nav .ui-nav-main li {
-	font-family: "Helvetica Neue";
-	float: left;
-	font-size: 14px;
-	height: 44px;
-	line-height: 44px;
-	width: 95px;
-}
-
-.ui-nav .ui-nav-main li a {
-	height: 43px;
-	line-height: 44px;
-	color: #000000;
-	display: inline-block;
-	text-align: center;
-	width: 95px;
-}
-
-.ui-nav .ui-nav-main li>a:hover {
-	background: none repeat scroll 0 0 #2D2D2D;
-	color: #FFFFFF;
-	text-decoration: none;
-}
-
-.ui-nav .ui-nav-main li a.active {
-	background: none repeat scroll 0 0 #2D2D2D;
-	color: #FFFFFF;
-	text-decoration: none;
-}
-
-.nav-logo {
-	background: url("http://static.zcool.com.cn/images/logo.png") repeat scroll 0 0 transparent;
-	display: inline-block;
-	float: left;
-	height: 31px;
-	margin: 5px 0 0;
-	width: 124px;
-	margin-right: 10px;
-}
-
-.topNavRight {
-	float: right;
-	//padding: 8px 0;
-}
-
-
-span.user-info {
-font-family: "Helvetica Neue";
-	color: #000000;
-	cursor: default;
-	display: inline-block;
-	float: left;
-	font-size: 14px;
-	height: 43px;
-	line-height: 44px;
-	padding-right: 10px;
-	position: relative;
-	text-align: center;
-	width: 80px;
-}
-
-span.user-info b {
-	border-color: #8C6000 #FFAE00 #FFAE00;
-	border-style: solid;
-	border-width: 5px;
-	font-size: 0;
-	height: 0;
-	line-height: 0;
-	position: absolute;
-	right: 7px;
-	top: 21px;
-	width: 0;
-}
-
-span.user-info:hover b {
-	border-color: #8C8C8C #2D2D2D #2D2D2D;
-}
-
-span.user-info:hover {
-	background: none repeat scroll 0 0 #2D2D2D;
-	color: #FFFFFF;
-	text-decoration: none;
-	cursor: pointer;
-}
-
-span.user-info:hover .user-menu {
-	display: block;
-}
-
-.user-menu {
-	background: none repeat scroll 0 0 #2D2D2D;
-	display: none;
-	right: 0;
-	position: absolute;
-	text-align: left;
-	top: 43px;
-	z-index: 10;
-}
-
-.user-menu li {
-	line-height: 34px;
-	width: 130px;
-}
-
-.user-menu a {
-	color: #ABABAB;
-	display: block;
-	font-size: 14px;
-	font-weight: normal;
-	height: 34px;
-	line-height: 34px;
-	padding-left: 15px;
-	white-space: nowrap;
-}
-
-.user-menu a:hover {
-	background: none repeat scroll 0 0 #111111;
-	color: #FFBA00;
-	text-decoration: none;
-}
-
-</style>
-	<div class="ui-nav navbar-fixed-top">
-		<div class="container-fluid">
-			<a class="nav-logo" href="http://www.niusb.com"></a>
-			<div data-lift="TabMenuOps.topMainNav"></div>
-			<div class="topNavRight" data-lift="Menus.userStatus2" />
+	<div class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+				</button>
+				<a class="nav-logo" href="http://www.niusb.conm">牛标</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<div data-lift="TabMenuOps.topMainNav"></div>
+				<form class="navbar-form navbar-left" role="search">
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="输入搜索关键词" />
+					</div>
+					<button type="submit" class="btn btn-success">搜索</button>
+				</form>
+				
+					<span data-lift="Menus.userStatus"></span>
+				</ul>
+			</div>
 		</div>
 	</div>
-
 	<lift:test_cond.loggedout>
 		<div class='lift:embed?what=_login_dialog'>login dialog</div>
 	</lift:test_cond.loggedout>
-
-	<!-- <div class="navbar navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container">
-				<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-					<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-				</button>
-				<h1 class="niusb_logo">
-					<a href="http://www.niusb.com" _hover-ignore="1">牛标网</a>
-				</h1>
-				<div class="nav-collapse collapse">
-					<ul class="nav cnav" data-lift="Menus.group?group=topbar"></ul>
-					<ul class="nav pull-right" data-lift="Menus.userStatus"></ul>
-				</div>
-			</div>
-		</div>
-	</div> -->
 </lift:children>

@@ -93,15 +93,21 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     val searchForm = "#searchForm" #>
       <form class="form-inline" action={ url } method="get">
-        <select id="searchType" name="type">
-          <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>注册号</option>
-          <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>用户ID</option>
-        </select>
-        <input type="text" id="keyword" name="keyword" value={ keywordVal }/>
-        <select id="status" name="status">
-          { for ((k, v) <- Brand.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
-        </select>
-        <button type="submit" class="btn"><i class="icon-search"></i> 搜索</button>
+        <div class="form-group">
+          <select class="form-control" id="searchType" name="type" style="width:120px">
+            <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>注册号</option>
+            <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>用户ID</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" id="keyword" name="keyword" value={ keywordVal } style="width:250px"/>
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="status" name="status" style="width:200px">
+            { for ((k, v) <- Brand.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="icon-search"></i> 搜索</button>
       </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
@@ -225,7 +231,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         S.redirectTo("/admin/brand/view?id=" + brand.id.get)
       }
 
-      "@name" #> text(brand.name.get, name = _, "disabled" -> "disabled") &
+      "#name *" #> brand.name.is &
         "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
         "@recommend" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isRecommend.get), recommend = _) &
         "@own" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isOwn.get), own = _) &

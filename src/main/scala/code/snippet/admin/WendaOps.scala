@@ -74,11 +74,15 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     val paginatorModel = Wenda.paginator(url, bies: _*)()
     val searchForm = "#searchForm" #>
       <form class="form-inline" action={ url } method="get">
-        <input type="text" id="keyword" name="keyword" class="span8" value={ keywordVal } placeholder="搜索标题关键词"/>
-        <select id="type" name="type">
-          { WendaType.wendaTypeOptions(wendaTypeVal) }
-        </select>
-        <button type="submit" class="btn"><i class="icon-search"></i> 搜索</button>
+        <div class="form-group">
+          <select class="form-control" id="type" name="type" style="width:180px">
+            { WendaType.wendaTypeOptions(wendaTypeVal) }
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" id="keyword" name="keyword" value={ keywordVal } placeholder="搜索标题关键词" style="width:300px"/>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="icon-search"></i> 搜索</button>
       </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(wenda => {

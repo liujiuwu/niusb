@@ -94,14 +94,20 @@ object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     val searchForm = "#searchForm" #>
       <form class="form-inline" action={ url } method="get">
-        <input type="text" id="keyword" name="keyword" class="span8" value={ keywordVal } placeholder="搜索标题关键词"/>
-        <select id="type" name="type">
-          { for ((k, v) <- Article.validArticleTypeSelectValues) yield <option value={ k } selected={ if (articleTypeVal == k) "selected" else null }>{ v }</option> }
-        </select>
-        <select id="status" name="status">
-          { for ((k, v) <- Article.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
-        </select>
-        <button type="submit" class="btn"><i class="icon-search"></i> 搜索</button>
+        <div class="form-group">
+          <select id="type" class="form-control" name="type" style="width:150px">
+            { for ((k, v) <- Article.validArticleTypeSelectValues) yield <option value={ k } selected={ if (articleTypeVal == k) "selected" else null }>{ v }</option> }
+          </select>
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="status" name="status" style="width:150px">
+            { for ((k, v) <- Article.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
+          </select>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" id="keyword" name="keyword" value={ keywordVal } placeholder="搜索标题关键词" style="width:250px"/>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="icon-search"></i> 搜索</button>
         <a href="/admin/article/create" class="btn btn-primary"><i class="icon-plus"></i> 发布文章</a>
       </form>
 

@@ -1,86 +1,27 @@
 <lift:children>
-	<style>
-.topNavRight {
-	float: right;
-}
-
-input.search-input {
-	border: 1px solid #FFFFFF;
-	color: #BBBBBB;
-	float: left;
-	width: 160px;
-	box-shadow: none;
-	border-radius: 0;
-	height: 20px;
-	line-height: 20px;
-}
-
-input.search-input:hover,input.search-input:focus {
-	border-color: #FFFFFF;
-	color: #444444;
-	box-shadow: none;
-	border-radius: 0;
-	height: 20px;
-	line-height: 20px;
-}
-
-.ui-nav .search-submit {
-	background-color: #A91E09;
-	color: #FFFFFF;
-	border-radius: 0;
-	line-height: 30px;
-	height: 30px;
-}
-
-.mbtn {
-	border: 0 none;
-	border-radius: 0 0 0 0;
-	cursor: pointer;
-	display: inline-block;
-	font-size: 12px;
-	line-height: 20px;
-	margin-bottom: 0;
-	padding: 0 10px;
-	text-align: center;
-	vertical-align: middle;
-	background-color: #EEEEEE;
-	color: #666666;
-}
-
-.search-submit:hover,.search-submit:focus,.search-submit:active {
-	background-color: #A91E09;
-	color: #FFFFFF;
-}
-</style>
-	<div class="ui-nav navbar-fixed-top">
+	<div class="navbar navbar-default navbar-fixed-top">
 		<div class="container">
-			<a class="nav-logo" href="http://www.niusb.com"></a>
-			<div data-lift="TabMenuOps.topMainNav"></div>
-			<div style="padding: 8px; float: left">
-				<input type="text" class="search-input" style="border-radius: none" autofocus="" placeholder="输入关键字搜索" /> <button type="submit" class="mbtn mbtn-success search-submit"><i class="icon-search"></i> 搜索</button>
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+				</button>
+				<a class="nav-logo" href="http://www.niusb.conm">牛标</a>
 			</div>
-			<div class="topNavRight" data-lift="Menus.userStatus2" />
+			<div class="navbar-collapse collapse">
+				<div data-lift="TabMenuOps.topMainNav"></div>
+				<form class="navbar-form navbar-left" role="search">
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="输入搜索关键词" style="width:250px"/>
+					</div>
+					<button type="submit" class="btn btn-success">
+						<i class="icon-search"></i> 搜索
+					</button>
+				</form>
+				<span data-lift="Menus.userStatus"></span>
+			</div>
 		</div>
 	</div>
-
 	<lift:test_cond.loggedout>
 		<div class='lift:embed?what=_login_dialog'>login dialog</div>
 	</lift:test_cond.loggedout>
-
-	<!-- <div class="navbar navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container">
-				<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-					<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-				</button>
-				<h1 class="niusb_logo">
-					<a href="http://www.niusb.com" _hover-ignore="1">牛标网</a>
-				</h1>
-				<div class="nav-collapse collapse">
-					<ul class="nav cnav" data-lift="Menus.group?group=topbar"></ul>
-					<ul class="nav pull-right" data-lift="Menus.userStatus"></ul>
-				</div>
-			</div>
-		</div>
-	</div> -->
 </lift:children>

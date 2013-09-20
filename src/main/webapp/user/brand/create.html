@@ -1,70 +1,69 @@
 <div data-lift="surround?with=user;at=content">
-	<div data-lift="user.BrandOps.create">
-		<div class="g-left">
-			<div class="g-left-c">
+	<div class="row">
+		<div class="col-lg-8">
+			<div data-lift="user.BrandOps.create">
 				<form data-lift="form.ajax?class=form-horizontal">
 					<div id="opt_brand_tip" class="alert hide"></div>
-					<div id="group_regNo" class="control-group">
-						<label for="regNo" class="control-label">商标注册号</label>
-						<div class="controls">
-							<div class="input-append">
-								<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required="required" class="input-medium" />
-								<button class="btn" type="button" id="queryRemoteData" name="queryRemoteData" data-lift="user.BrandOps.queryRemoteData">从标局获取数据</button>
+					<div id="group_regNo" class="form-group">
+						<label for="regNo" class="col-lg-3 control-label">商标注册号</label>
+						<div class="col-lg-6">
+							<div class="input-group">
+								<input type="text" class="form-control" id="regNo" name="regNo" placeholder="输入商标注册号" required="required" /> <span class="input-group-btn"><button class="btn" type="button" id="queryRemoteData" name="queryRemoteData" data-lift="user.BrandOps.queryRemoteData">从标局获取数据</button>
+
+									<button class="btn btn-success" type="button" data-toggle="modal" data-target="#uploadDialog">商标图上传</button></span>
 							</div>
-							<span id="error_regNo" class="help-inline"></span> <input type="hidden" id="pic" name="pic" />
-							<button class="btn btn-success" type="button" data-toggle="modal" data-target="#uploadDialog">商标图上传</button>
+							<span id="error_regNo" class="help-block"></span> <input type="hidden" id="pic" name="pic" />
+
 						</div>
 					</div>
-					<div id="group_brandType" class="control-group">
-						<label for="brandType" class="control-label">商标类别</label>
-						<div class="controls">
-							<input type="hidden" id="brandType" name="brandType" required="required" /> <span id="error_brandType" class="help-inline"></span>
+					<div id="group_brandType" class="form-group">
+						<label for="brandType" class="col-lg-3 control-label">商标类别</label>
+						<div class="col-lg-3">
+							<select class="form-control" id="brandType" name="brandType"></select> <span id="error_brandType" class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_basePrice" class="control-group">
-						<label for="basePrice" class="control-label">出售底价</label>
-						<div class="controls">
-							<div class="input-prepend input-append">
-								<span class="add-on">￥</span> <input type="text" id="basePrice" name="basePrice" class="input-small" required="required" /> <span class="add-on">元</span>
+					<div id="group_basePrice" class="form-group">
+						<label for="basePrice" class="col-lg-3 control-label">出售底价</label>
+						<div class="col-lg-3">
+							<div class="input-group">
+								<span class="input-group-addon">￥</span> <input type="text" class="form-control" id="basePrice" name="basePrice" required="required" /> <span class="input-group-addon">元</span>
 							</div>
-							<span id="error_basePrice" class="help-inline"></span>
+							<span id="error_basePrice" class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_name" class="control-group">
-						<label for="name" class="control-label">商标名称</label>
-						<div class="controls">
-							<input type="text" id="name" name="name" required="required" /> <span id="error_name" class="help-inline"></span>
+					<div id="group_name" class="form-group">
+						<label for="name" class="col-lg-3 control-label">商标名称</label>
+						<div class="col-lg-8">
+							<input type="text" class="form-control" id="name" name="name" required="required" /> <span id="error_name" class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_regDate" class="control-group">
-						<label for="regDate" class="control-label">注册日期</label>
-						<div class="controls">
-							<input type="text" id="regDate" name="regDate" placeholder="格式:xxxx-xx-xx" /><span id="error_regDate" class="help-inline"></span>
+					<div id="group_regDate" class="form-group">
+						<label for="regDate" class="col-lg-3 control-label">注册日期</label>
+						<div class="col-lg-4">
+							<input type="text" class="form-control" id="regDate" name="regDate" placeholder="格式:xxxx-xx-xx" /><span id="error_regDate" class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_applicant" class="control-group">
-						<label for="applicant" class="control-label">申请人</label>
-						<div class="controls">
-							<input type="text" id="applicant" name="applicant" placeholder="填写商标申请人" required="required" /> <span id="error_applicant" class="help-inline"></span>
+					<div id="group_applicant" class="form-group">
+						<label for="applicant" class="col-lg-3 control-label">申请人</label>
+						<div class="col-lg-4">
+							<input type="text" class="form-control" id="applicant" name="applicant" placeholder="填写商标申请人" required="required" /> <span id="error_applicant" class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_useDescn" class="control-group">
-						<label for="useDescn" class="control-label">使用范围</label>
-						<div class="controls">
-							<textarea rows="3" id="useDescn" name="useDescn" class="span10"></textarea>
+					<div id="group_useDescn" class="form-group">
+						<label for="useDescn" class="col-lg-3 control-label">使用范围</label>
+						<div class="col-lg-8">
+							<textarea rows="3" class="form-control" id="useDescn" name="useDescn"></textarea>
 						</div>
 					</div>
-					<div id="group_descn" class="control-group">
-						<label for="descn" class="control-label">商标创意说明</label>
-						<div class="controls">
-							<textarea rows="3" id="descn" name="descn" class="span10"></textarea>
+					<div id="group_descn" class="form-group">
+						<label for="descn" class="col-lg-3 control-label">商标创意说明</label>
+						<div class="col-lg-8">
+							<textarea rows="3" class="form-control" id="descn" name="descn"></textarea>
 						</div>
 					</div>
-					<div class="control-group">
-						<div class="controls">
-							<button class="btn btn-primary" type="submit">
-								<i class="icon-ok"></i> 确认发布
-							</button>
+					<div class="form-group">
+						<div class="col-lg-offset-3 col-lg-9">
+							<button class="btn btn-primary" type="submit">发布</button>
 							<input type="hidden" id="lsqz" name="lsqz" />
 						</div>
 					</div>
@@ -72,10 +71,8 @@
 				<div class='lift:embed?what=_uploadBrand'>上传组件</div>
 			</div>
 		</div>
-		<div class="g-right">
-			<div class="brand-bimg-box pull-right">
-				<img id="brand_pic" src="/img/no-img.png" />
-			</div>
+		<div class="col-lg-4">
+		   <img id="brand_pic" class="brand-bimg-box" src="/img/no-img.png" width="320" height="200"/>
 		</div>
 	</div>
 	<lift:tail>

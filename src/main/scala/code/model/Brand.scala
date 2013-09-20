@@ -60,9 +60,9 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def defaultValue = BrandStatus.ShenHeZhong
     def displayStatus: NodeSeq = {
       status.get match {
-        case BrandStatus.ShenHeShiBai => <span class="label label-important">{ BrandStatus.ShenHeShiBai }</span>
-        case BrandStatus.ShenHeZhong => <span class="label">审核中</span>
-        case BrandStatus.ChuShoZhong => <span class="label label-info">出售中</span>
+        case BrandStatus.ShenHeShiBai => <span class="label label-danger">{ BrandStatus.ShenHeShiBai }</span>
+        case BrandStatus.ShenHeZhong => <span class="label label-default">审核中</span>
+        case BrandStatus.ChuShoZhong => <span class="label label-primary">出售中</span>
         case BrandStatus.JiaoYiZhong => <span class="label label-warning">交易中</span>
         case BrandStatus.ZantiJiaoYi => <span class="label label-warning">{ BrandStatus.ZantiJiaoYi }</span>
         case BrandStatus.JiaoYiChengGong => <span class="label label-success">交易成功</span>
@@ -250,9 +250,9 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   def displayBrand = {
     def viewLink(c: NodeSeq) = <a href={ "/market/view/" + id.get } target="_blank">{ c }</a>
-    "#brand-img" #> viewLink(<img class="lazy" src="/img/grey.gif" data-original={ pic.src } alt={ name.get.trim }/>) &
+    "img" #> viewLink(<img class="brand-img lazy" src="/img/grey.gif" data-original={ pic.src } alt={ name.get.trim }/>) &
+      ".brandTypeCode *" #> brandTypeCode.displayTypeLabel &
       ".price *" #> sellPrice.displaySellPrice() &
-      ".brand-type-code *" #> brandTypeCode.displayTypeLabel &
       ".brand-name *" #> viewLink(Text(name.get.trim))
   }
 }

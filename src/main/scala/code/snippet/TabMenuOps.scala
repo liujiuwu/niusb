@@ -5,6 +5,7 @@ import net.liftweb.common._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import net.liftweb.http.DispatchSnippet
+import scala.collection.mutable.LinkedHashMap
 
 class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -13,15 +14,23 @@ class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "helpNav" => helpNav
   }
 
+  val navMenus = LinkedHashMap[String, NodeSeq](
+    "/index" -> <lift:children><i class="icon-home"></i> 首页</lift:children>,
+    "/market" -> Text("商标集市"),
+    "/recommend" -> Text("精品商标"),
+    "/offer" -> Text("特价商标"),
+    "/own" -> Text("自有商标"),
+    "/wenda" -> Text("问答频道"))
+
   def topMainNav = {
     val url = originalUri
-    "*" #> <ul class="ui-nav-main">
-             <li><a class={ if (url == "" || url == "/" || url == "/index") "active" else null } href="/index"><i class="icon-home"></i> 首页</a></li>
-             <li><a class={ if (url.startsWith("/market")) "active" else null } href="/market">商标集市</a></li>
-             <li><a class={ if (url.startsWith("/recommend")) "active" else null } href="/recommend">精品商标</a></li>
-             <li><a class={ if (url.startsWith("/offer")) "active" else null } href="/offer">特价商标</a></li>
-             <li><a class={ if (url.startsWith("/own")) "active" else null } href="/own">自有商标</a></li>
-             <li><a class={ if (url.startsWith("/wenda")) "active" else null } href="/wenda">问答频道</a></li>
+    "*" #> <ul class="nav navbar-nav">
+             {
+               for (menu <- navMenus) yield {
+                 val cls = if (url.startsWith(menu._1)) "active" else null
+                 <li class={ cls }><a href={ menu._1 }>{ menu._2 }</a></li>
+               }
+             }
            </ul>
   }
 
@@ -33,18 +42,25 @@ class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
     "span" #> menu
   }
 
+  val helpNavMenus = LinkedHashMap[String, String](
+    "/about" -> "关于我们",
+    "/contact_us" -> "联系我们",
+    "/pay_info" -> "付款账户",
+    "/news" -> "新闻公告",
+    "/sitemap" -> "网站地图",
+    "/help" -> "帮助中心")
+
   def helpNav = {
     val url = originalUri
 
-    "*" #> <ul class="nav nav-list">
-             <li class={ if (url == "/about") "active" else null }><a href="/about">关于我们</a></li>
-             <li class={ if (url == "/contact_us") "active" else null }><a href="/contact_us">联系我们</a></li>
-             <li class={ if (url == "/pay_info") "active" else null }><a href="/pay_info">付款账户</a></li>
-             <li class={ if (url.startsWith("/news")) "active" else null }><a href="/news">新闻公告</a></li>
-             <li class={ if (url == "/sitemap") "active" else null }><a href="/sitemap">网站地图</a></li>
-             <li class="divider"></li>
-             <li class={ if (url == "/help") "active" else null }><a href="/help">帮助中心</a></li>
-           </ul>
+    "*" #> <div class="list-group">
+             {
+               for (menu <- helpNavMenus) yield {
+                 val cls = if (url.startsWith(menu._1)) "active" else null
+                 <a class={ "list-group-item " + cls } href={ menu._1 }>{ menu._2 }</a>
+               }
+             }
+           </div>
   }
 
 }

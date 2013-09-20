@@ -48,47 +48,32 @@ object Menus extends BsMenu {
   def userStatus = {
     val menus: NodeSeq = User.currentUser match {
       case Full(user) =>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> <span id="displayName">{ user.displayName } </span><b class='caret'></b></a>
-          <ul class="dropdown-menu">
-            <lift:Menu.group group="userMenu">
-              <li><menu:bind/></li>
-            </lift:Menu.group>
-            {
-              if (User.superUser_?)
-                <li class="last"><a href="/admin/web/set"><span><i class="icon-cogs"></i> 后台管理</span></a></li>
-            }
-            <li class="divider"></li>
-            <li class="last"><a href="/user/sign_out"><span><i class="icon-signout"></i> 退出</span></a></li>
-          </ul>
-        </li>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="icon-user"></i>
+              <span id="displayName">{ user.displayName } </span><b class='caret'></b>
+            </a>
+            <ul class="dropdown-menu">
+              <lift:Menu.group group="userMenu">
+                <li><menu:bind/></li>
+              </lift:Menu.group>
+              {
+                if (User.superUser_?)
+                  <li class="last"><a href="/admin/web/set"><span><i class="icon-cogs"></i> 后台管理</span></a></li>
+              }
+              <li class="divider"></li>
+              <li class="last"><a href="/user/sign_out"><span><i class="icon-signout"></i> 退出</span></a></li>
+            </ul>
+          </li>
+        </ul>
       case _ =>
-        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#loginDialog">登录或注册</button>
-    }
-
-    "* *" #> menus
-  }
-  
-  def userStatus2 = {
-    val menus: NodeSeq = User.currentUser match {
-      case Full(user) =>
-        <div class="user-info">
-          <span class="user-name"><i class="icon-user"></i> <span id="displayName">{ user.displayName } </span><b></b></span>
-          <ul class="user-menu">
-            <lift:Menu.group group="userMenu">
-              <li><menu:bind/></li>
-            </lift:Menu.group>
-            {
-              if (User.superUser_?)
-                <li class="last"><a href="/admin/web/set"><span><i class="icon-cogs"></i> 后台管理</span></a></li>
-            }
-            <li class="last"><a href="/user/sign_out"><span><i class="icon-signout"></i> 退出登录</span></a></li>
-          </ul>
+        <div class="nav navbar-nav navbar-right">
+          <button type="button" class="btn btn-success navbar-btn" data-toggle="modal" data-target="#loginDialog">登录</button>
+          <button type="button" class="btn btn-primary navbar-btn">注册</button>
         </div>
-      case _ =>
-        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#loginDialog">登录或注册</button>
     }
 
-    "* *" #> menus
+    "span" #> menus
   }
 }
