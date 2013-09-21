@@ -20,11 +20,39 @@ h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
 del,ins,u,s,a,a:hover{text-decoration:none;}
 body{background:#fff;}
 
+// CSS3 PROPERTIES
+// --------------------------------------------------
+
+// Single side border-radius
+.border-top-radius(@radius) {
+  border-top-right-radius: @radius;
+   border-top-left-radius: @radius;
+}
+.border-right-radius(@radius) {
+  border-bottom-right-radius: @radius;
+     border-top-right-radius: @radius;
+}
+.border-bottom-radius(@radius) {
+  border-bottom-right-radius: @radius;
+   border-bottom-left-radius: @radius;
+}
+.border-left-radius(@radius) {
+  border-bottom-left-radius: @radius;
+     border-top-left-radius: @radius;
+}
+
+// Drop shadows
+.box-shadow(@shadow) {
+  -webkit-box-shadow: @shadow; // iOS <4.3 & Android <4.1
+          box-shadow: @shadow;
+}
 
 @mainColor:#E13335;
 @mainLinkColor:#666;
-@boxBottomLineColor:#666;
+@boxBottomLineColor:#AAA;
 @textColor:#666;
+
+@borderRadius: 4px;
 
 p.indent{
 	text-indent: 2em;
@@ -56,7 +84,7 @@ body {
 }
 
 
-.main-box:after,.m-box .tp:after,.m-box .tp:after,.m-box .ct:after{
+.main-box:after,.m-box .tp:after,.m-box .tp:after,.m-box .ct:after,.box .box-content:after{
     clear: both;
     content: ".";
     display: block;
@@ -66,8 +94,10 @@ body {
 
 .main-box {
     background-color: #FFFFFF;
-    border: 1px solid #DBDBDB;
-    margin-bottom: 15px;
+    border: 1px solid #DDDDDD;
+	border-radius: @borderRadius;
+    .box-shadow(0 1px 1px rgba(0,0,0,.05));
+    margin-bottom: 20px;
 }
 
 .main-box-1{
@@ -81,22 +111,26 @@ body {
 
 .main-box .slider {
     float:right;
-    width:420px;
+    width:455px;
 }
 
 .main-box .mn{
-    height:225px;
+    height:170px;
 }
 
 .main-box .mn .tp{
-	height: 18px;
 	padding: 5px;
 	border-bottom: 2px solid @boxBottomLineColor;
+	height: 40px; 
+	padding-top: 15px;
 }
 
 .main-box .mn .tp .tit{
 	float:left;
-	font-size: 16px;
+	//font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei UI", "Microsoft YaHei", SimHei, "\5B8B\4F53", simsun, sans-serif;
+	font-size: 14px;
+	font-weight:bold;
+	color:@mainLinkColor;
 }
 
 
@@ -547,23 +581,17 @@ margin-bottom:20px
 
 
 .box{
-  margin-bottom:10px;
+  margin-bottom:20px;
 }
 
 .box-header {
 border-bottom: 1px solid #dddddd;
 border: 1px solid #DDDDDD;
-border-radius: 2px 2px 0 0;
+border-radius: @borderRadius @borderRadius 0 0;
 box-shadow: none;
 margin-bottom: -1px;
 overflow: hidden;
 padding: 8px 10px;
-}
-
-.box-header-1{
-}
-
-.box-header-2{
 }
 
 .box-header h2 {
@@ -576,6 +604,19 @@ margin-top: 2px;
 text-shadow: 0 1px 0 #FFFFFF;
 }
 
+.box-header-1{
+  padding: 12px 10px;
+}
+
+.box-header-1 h2 {
+color: @mainLinkColor;
+font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei UI", "Microsoft YaHei", SimHei, "\5B8B\4F53", simsun, sans-serif;
+font-size: 16px;
+font-weight: bold;
+line-height: 16px;
+}
+
+
 .box-icon {
 float: right;
 margin-top: 1px;
@@ -586,9 +627,15 @@ padding: 10px;
 line-height: 25px;
 background: none repeat scroll 0 0 #FCFCFC;
 border: 1px solid #DDDDDD;
-border-radius: 0 0 2px 2px;
+border-radius: 0 0 @borderRadius @borderRadius;
+.box-shadow(0 1px 1px rgba(0,0,0,.05));
 margin-top: -1px;
 }
+
+.box-content-1{
+background: none repeat scroll 0 0 #FFFFFF;
+}
+
 
 
 .wendaList {
@@ -658,4 +705,24 @@ line-height: 25px;
 .help-block-hide{
     display: none;
 	margin-bottom:0;
+}
+
+#niusb-news ul{
+  width:455px;
+  height: 100px;
+  overflow: hidden;
+  padding:5px 0;
+}
+
+#niusb-news li {
+    float: left;
+    height: 25px;
+    line-height: 25px;
+    overflow: hidden;
+    padding: 0 10px;
+    width: 225px;
+}
+
+#niusb-news li.odd{
+  border-right:1px solid #DDDDDD;
 }

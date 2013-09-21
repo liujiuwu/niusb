@@ -79,8 +79,8 @@ object Menus extends BsMenu {
           JsRaw("""$("#loginDialog").modal({marginTop:80})""") &
             JsRaw("""$('#loginDialogTab a[href="#%s"]').tab('show')""".format(action))
         }
-        val btns = "#loginBtn" #> SHtml.ajaxButton("登录", () => modal("login-panel"), "class" -> "btn btn-success navbar-btn") &
-          "#regBtn" #> SHtml.ajaxButton("注册", () => modal("reg-panel"), "class" -> "btn btn-primary navbar-btn")
+        val btns = "#loginBtn [onclick]" #> SHtml.ajaxInvoke(() => modal("login-panel")) &
+          "#regBtn [onclick]" #> SHtml.ajaxInvoke(() => modal("reg-panel"))
 
         btns(<div class="nav navbar-nav navbar-right">
                <button type="button" class="btn btn-success navbar-btn" id="loginBtn" name="loginBtn">登录</button>

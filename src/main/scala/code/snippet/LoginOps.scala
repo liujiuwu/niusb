@@ -23,7 +23,6 @@ import com.niusb.util.WebHelpers
 import com.niusb.util.SmsHelpers
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
-  val mobileError = "请输入正确的手机号！"
   def dispatch = {
     case "login" => login
     case "create" => create
@@ -122,7 +121,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
               S.redirectTo(redirectUrl())
             case _ => return WebHelpers.formError("loginMobile", "此手机号还未注册，请先注册！")
           }
-        case _ => return WebHelpers.formError("loginMobile", mobileError)
+        case _ => return WebHelpers.formError("loginMobile", "请输入正确的手机号！")
       }
     }
 
@@ -162,7 +161,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
           user.save()
           User.logUserIn(user)
           S.redirectTo(redirectUrl())
-        case _ => return WebHelpers.formError("regMobile", mobileError)
+        case _ => return WebHelpers.formError("regMobile", "请输入正确的手机号！")
       }
     }
 
@@ -178,9 +177,9 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             SmsHelpers.sendCodeSms(mobile)
             JsRaw("""$("#getCodeBtn").countdown();$("#opt_login_tip").hide().text("")""")
           } else {
-            JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
+            JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
           }) & Alert(SmsHelpers.smsCode(mobile).code)
-        case _ => return WebHelpers.formError("regMobile", mobileError)
+        case _ => return WebHelpers.formError("regMobile", "请输入正确的手机号！")
       }
     }
 

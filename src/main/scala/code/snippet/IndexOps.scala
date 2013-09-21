@@ -1,18 +1,20 @@
 package code.snippet
 
+import scala.xml.NodeSeq
 import scala.xml.Text
+
+import com.niusb.util.SearchBrandFormHelpers
+import com.niusb.util.WebHelpers._
+
 import code.lib.WebCacheHelper
+import code.model.Article
+import code.model.ArticleType
 import net.liftweb.common.Full
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
-import net.liftweb.util.Helpers.strToCssBindPromoter
-import scala.xml.NodeSeq
-import com.niusb.util.WebHelpers._
-import com.niusb.util.SearchBrandFormHelpers
-import code.model.Article
 import net.liftweb.mapper.By
-import code.model.ArticleType
+import net.liftweb.util.Helpers.strToCssBindPromoter
 
 object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -64,10 +66,15 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def news = {
+    
     val limit = S.attr("limit").map(_.toInt).openOr(6)
     val bies = By(Article.articleType, ArticleType.News)
     val paginatorModel = Article.paginator(originalUri, bies)(itemsOnPage = limit)
-    val dataList = "li *" #> paginatorModel.datas.map(_.title.displayTitle())
+    val dataList = "*" #> paginatorModel.datas.zipWithIndex.map {
+      case (news, i) =>
+        "li *" #> news.title.displayTitle() &
+          "li [class]" #> { if (i % 2 == 0) "odd" else "even" }
+    }
     dataList
   }
 }

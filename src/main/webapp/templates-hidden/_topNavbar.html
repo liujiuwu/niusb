@@ -9,9 +9,13 @@
 			</div>
 			<div class="navbar-collapse collapse">
 				<div data-lift="TabMenuOps.topMainNav"></div>
-				<form class="navbar-form navbar-left" role="search">
+				<form class="navbar-form navbar-left" role="search" action="/market/" method="get">
 					<div class="form-group">
-						<input type="text" class="form-control" placeholder="输入搜索关键词" style="width:250px"/>
+						<input type="hidden" name="btc" value="all"/>
+						<input type="hidden" name="kt" value="0"/>
+						<input type="hidden" name="lt" value="1"/>
+						<input type="hidden" name="ot" value="0"/>
+						<input type="text" name="k" class="form-control" placeholder="输入搜索商标关键词" style="width:250px"/>
 					</div>
 					<button type="submit" class="btn btn-success">
 						<i class="icon-search"></i> 搜索
