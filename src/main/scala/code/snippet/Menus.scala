@@ -9,6 +9,13 @@ import sitemap.{ Loc, SiteMap }
 import util._
 import util.Helpers._
 import code.model.User
+import net.liftweb.http.SHtml
+import net.liftweb.http.js.JsCmds.Alert
+import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.http.js.JsCmd
+import net.liftweb.http.js.JsCmd._
+import net.liftweb.http.js.JsCmds._
+import net.liftweb.http.js.JsCmds
 
 object Menus extends BsMenu {
 
@@ -68,10 +75,17 @@ object Menus extends BsMenu {
           </li>
         </ul>
       case _ =>
-        <div class="nav navbar-nav navbar-right">
-          <button type="button" class="btn btn-success navbar-btn" data-toggle="modal" data-target="#loginDialog">登录</button>
-          <button type="button" class="btn btn-primary navbar-btn">注册</button>
-        </div>
+        def modal(action: String): JsCmd = {
+          JsRaw("""$("#loginDialog").modal({marginTop:80})""") &
+            JsRaw("""$('#loginDialogTab a[href="#%s"]').tab('show')""".format(action))
+        }
+        val btns = "#loginBtn" #> SHtml.ajaxButton("登录", () => modal("login-panel"), "class" -> "btn btn-success navbar-btn") &
+          "#regBtn" #> SHtml.ajaxButton("注册", () => modal("reg-panel"), "class" -> "btn btn-primary navbar-btn")
+
+        btns(<div class="nav navbar-nav navbar-right">
+               <button type="button" class="btn btn-success navbar-btn" id="loginBtn" name="loginBtn">登录</button>
+               <button type="button" class="btn btn-primary navbar-btn" id="regBtn" name="regBtn">注册</button>
+             </div>)
     }
 
     "span" #> menus

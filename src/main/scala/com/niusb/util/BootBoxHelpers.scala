@@ -7,7 +7,7 @@ import net.liftweb.util.Helpers._
 object BootBoxHelpers extends BootBoxHelpers
 
 trait BootBoxHelpers {
-  def setLocale(locale: String = "zh_CN") = s"bootbox.setLocale('${locale}');"
+  def setLocale(locale: String = "zh_CN") = s"bootbox.setDefaults({locale:'${locale}'});"
 
   case class BoxConfirm(text: String, yes: JsCmd, locale: String = "zh_CN") extends JsCmd {
     def toJsCmd = setLocale(locale) + "bootbox.confirm(" + text.encJs + ",function(result){if(result){" + yes.toJsCmd + "}})"

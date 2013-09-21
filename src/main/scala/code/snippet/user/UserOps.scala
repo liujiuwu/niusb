@@ -55,11 +55,11 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
 
       if (code.trim.isEmpty()) {
-        return removeFormError() & formError("code", "请填写正确的短信验证码或旧密码!")
+        return formError("code", "请填写正确的短信验证码或旧密码!")
       }
 
       val user = loginUser
-      removeFormError() & (if (loginUser.authSmsCodeOrPwd(code)) {
+      (if (loginUser.authSmsCodeOrPwd(code)) {
         user.password(pwd)
         user.save()
         BoxAlert("密码修改成功，请牢记！", Reload)
@@ -72,7 +72,7 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
       val mobile = loginUser.mobile.get
       val cacheTime = SmsHelpers.smsCode(mobile).cacheTime
       val user = loginUser
-      removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
+      (if ((WebHelpers.now - cacheTime) > 60) {
         SmsHelpers.sendCodeSms(mobile)
         JsRaw("""$("#getCodeBtn").countdown();$("#opt_pwd_tip").hide().text("")""")
       } else {

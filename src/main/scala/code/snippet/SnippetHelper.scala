@@ -54,7 +54,7 @@ trait SnippetHelper {
       <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以{ tip }。</span>
     }
   }
-
+  
   implicit protected def boxCssSelToCssSel(in: Box[CssSel]): CssSel = in match {
     case Full(cssSel) => cssSel
     case Failure(msg, except, _) =>

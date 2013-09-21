@@ -26,7 +26,7 @@ module.exports = function(grunt) {
 			other : {
 				files : {
 					'<%=setting.distJs%>/jquery-1.10.2.min.js' : [ '<%=setting.srcJs%>/jquery-1.10.2.js' ],
-					'<%=setting.distJs%>/bootstrap.min.js' : [ '<%=concat.bootstrap.dest%>' ],
+					'<%=setting.distJs%>/bootstrap.min.js' : [ '<%=setting.srcJs%>/bootstrap.js' ],
 					'<%=setting.distJs%>/jquery.ui.widget.min.js' : [ '<%=setting.srcJs%>/jquery.ui.widget.js' ],
 					'<%=setting.distJs%>/bootbox.min.js' : [ '<%=setting.srcJs%>/bootbox.js' ],
 					'<%=setting.distJs%>/bootstrap-modal.min.js' : [ '<%=setting.srcJs%>/bootstrap-modal.js' ],
@@ -51,9 +51,7 @@ module.exports = function(grunt) {
 			},
 			thirdCompile : {
 				files : {
-					'build/bootstrap.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ],
-					'build/bootstrap-responsive.css' : [ '<%=setting.srcLess%>/bootstrap/responsive.less' ],
-					'build/font-awesome-ie7.css' : [ '<%=setting.srcLess%>/font-awesome/font-awesome-ie7.less' ]
+					'build/bootstrap.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ]
 				}
 			},
 			mainMin : {
@@ -72,8 +70,8 @@ module.exports = function(grunt) {
 				},
 				files : {
 					'<%=setting.distCss%>/bootstrap.min.css' : [ '<%=setting.srcLess%>/bootstrap/bootstrap.less' ],
-					'<%=setting.distCss%>/bootstrap-responsive.min.css' : [ '<%=setting.srcLess%>/bootstrap/responsive.less' ],
-					'<%=setting.distCss%>/font-awesome-ie7.min.css' : [ '<%=setting.srcLess%>/font-awesome/font-awesome-ie7.less' ],
+					'<%=setting.distCss%>/font-awesome.min.css' : [ '<%=setting.srcLess%>/font-awesome.css' ],
+					'<%=setting.distCss%>/bootstrap-modal-bs3patch.min.css' : [ '<%=setting.srcLess%>/bootstrap-modal-bs3patch.css' ],
 					'<%=setting.distCss%>/bootstrap-modal.min.css' : [ '<%=setting.srcLess%>/bootstrap-modal.css' ],
 					'<%=setting.distCss%>/jquery.fileupload-ui.min.css' : [ '<%=setting.srcLess%>/jquery.fileupload-ui.css' ],
 					'<%=setting.distCss%>/jquery.jcrop.min.css' : [ '<%=setting.srcLess%>/jquery.jcrop.css' ]
@@ -107,7 +105,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('dist-recess-main', [ 'recess:mainMin' ]);
 	grunt.registerTask('dist-recess-third', [ 'recess:thirdMin' ]);
 	grunt.registerTask('dist-js-main', [ 'uglify:main' ]);
-	grunt.registerTask('dist-js', [ 'concat', 'uglify' ]);
+	grunt.registerTask('dist-js', [ 'uglify' ]);
 	grunt.registerTask('dist-css', [ 'recess' ]);
 	grunt.registerTask('default', [ 'clean', 'dist-js', 'dist-css' ]);
 

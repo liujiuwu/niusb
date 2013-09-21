@@ -166,7 +166,7 @@ object UserOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@address" #> text(user.address.is, user.address(_)) &
         "#view-btn" #> <a href={ "/admin/user/view?id=" + user.id.get } class="btn btn-primary"><i class="icon-info"></i> 查看用户</a> &
         "#list-btn" #> <a href="/admin/user/" class="btn btn-success"><i class="icon-list"></i> 用户列表</a> &
-        "@sub" #> hidden(process)
+        "type=submit" #> ajaxSubmit("保存修改", process)
     }): CssSel
   }
 }
