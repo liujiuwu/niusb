@@ -17,11 +17,13 @@ import net.liftweb.mapper.By
 import net.liftweb.util.CssSel
 import net.liftweb.util.Helpers._
 import com.niusb.util.SearchBrandFormHelpers
+import code.lib.WebCacheHelper
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "list" => list
     case "view" => view
+    case "brandTypes" => brandTypes
   }
 
   def list = {
@@ -73,5 +75,9 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#descn" #> brand.descn
 
     }): CssSel
+  }
+
+  def brandTypes = {
+    "li *" #> WebCacheHelper.brandTypes.values.map(_.name.displayTypeName())
   }
 }

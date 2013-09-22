@@ -3,6 +3,8 @@ package code.model
 import net.liftweb.mapper._
 import scala.collection.mutable.LinkedHashMap
 import code.lib.WebCacheHelper
+import scala.xml.NodeSeq
+import scala.xml.Text
 
 class BrandType extends LongKeyedMapper[BrandType] with IdPK {
   def getSingleton = BrandType
@@ -12,7 +14,11 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
   }
 
   object name extends MappedString(this, 30) {
-    def displayTypeName() = { if (isRecommend.get) <span style="color:red;">{ code.get + "." + this.is }</span> else code.get + "." + this.is }
+    def displayTypeName(): NodeSeq = {
+      val oname = Text((if (code.is < 10) "0" + code.is else code.is) + "类-" + this.is)
+      val dname = if (isRecommend.get) <span style="color:red;">oname</span> else oname
+      <a href={ "/market/?btc=" + code.is }>{ dname }</a>
+    }
   }
 
   object brandCount extends MappedInt(this) {

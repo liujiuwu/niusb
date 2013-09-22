@@ -14,20 +14,20 @@
 			<div data-lift="LoginOps.login" class="tab-pane active" id="login-panel">
 				<form data-lift="form.ajax?class=form-horizontal">
 					<div id="group-loginMobile" class="form-group">
-						<label for="loginMobile" class="control-label col-xs-2">手机号</label>
+						<label for="loginMobile" class="control-label col-xs-3">手机号</label>
 						<div class="col-xs-5">
-							<input type="text" class="form-control" id="loginMobile" name="loginMobile" placeholder="请输入您注册的手机号" /> <span id="error-loginMobile" class="help-block help-block-hide"></span>
+							<input type="text" class="form-control" id="loginMobile" name="loginMobile" placeholder="请输入您注册的手机号"/> <span id="error-loginMobile" class="help-block help-block-hide"></span>
 						</div>
 					</div>
 					<div id="group-loginPwd" class="form-group">
-						<label for="loginPwd" class="control-label col-xs-2">密码</label>
+						<label for="loginPwd" class="control-label col-xs-3">密码</label>
 						<div class="col-xs-5">
 							<input type="password" id="loginPwd" name="loginPwd" placeholder="输入密码" class="form-control" /> <span id="error-loginPwd" class="help-block help-block-hide"></span>
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="col-lg-offset-2 col-lg-10">
-							<button class="btn btn-primary" type="submit">登录</button>
+						<div class="col-lg-offset-3 col-lg-5">
+							<button class="btn btn-primary btn-block" type="submit">登录</button>
 						</div>
 					</div>
 				</form>
@@ -35,10 +35,10 @@
 			<div data-lift="LoginOps.create" class="tab-pane" id="reg-panel">
 				<form data-lift="form.ajax?class=form-horizontal">
 					<div id="group-regMobile" class="form-group">
-						<label for="regMobile" class="control-label col-xs-2">手机号</label>
+						<label for="regMobile" class="control-label col-xs-3">手机号</label>
 						<div class="col-xs-7">
 							<div class="input-group">
-								<input type="text" class="form-control" id="regMobile" name="regMobile" placeholder="请输入您的手机号" /> <span class="input-group-btn">
+								<input type="text" class="form-control" id="regMobile" name="regMobile" placeholder="请输入您的手机号"/> <span class="input-group-btn">
 									<button class="btn btn-info" name="getCodeBtn" id="getCodeBtn">获取短信验证码</button>
 								</span>
 							</div>
@@ -46,20 +46,20 @@
 						</div>
 					</div>
 					<div id="group-regCode" class="form-group">
-						<label for="regCode" class="control-label col-xs-2">短信验证码</label>
+						<label for="regCode" class="control-label col-xs-3">短信验证码</label>
 						<div class="col-xs-5">
 							<input type="text" id="regCode" name="regCode" placeholder="输入短信验证码" class="form-control" /> <span id="error-regCode" class="help-block help-block-hide"></span>
 						</div>
 					</div>
 					<div id="group-regPwd" class="form-group">
-						<label for="regPwd" class="control-label col-xs-2">设置密码</label>
+						<label for="regPwd" class="control-label col-xs-3">设置密码</label>
 						<div class="col-xs-5">
 							<input type="password" id="regPwd" name="regPwd" placeholder="输入密码" class="form-control" /> <span id="error-regPwd" class="help-block help-block-hide"></span>
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="col-lg-offset-2 col-lg-10">
-							<button class="btn btn-primary" type="submit">注册</button>
+						<div class="col-lg-offset-3 col-lg-5">
+							<button class="btn btn-primary btn-block" type="submit">注册</button>
 						</div>
 					</div>
 				</form>

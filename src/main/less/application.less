@@ -49,8 +49,10 @@ body{background:#fff;}
 
 @mainColor:#E13335;
 @mainLinkColor:#666;
+@mainLinkHoverColor:#E13335;
 @boxBottomLineColor:#AAA;
 @textColor:#666;
+@borderColor:#DDDDDD;
 
 @borderRadius: 4px;
 
@@ -120,14 +122,13 @@ body {
 
 .main-box .mn .tp{
 	padding: 5px;
-	border-bottom: 2px solid @boxBottomLineColor;
+	border-bottom: 2px solid @borderColor;
 	height: 40px; 
 	padding-top: 15px;
 }
 
 .main-box .mn .tp .tit{
 	float:left;
-	//font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei UI", "Microsoft YaHei", SimHei, "\5B8B\4F53", simsun, sans-serif;
 	font-size: 14px;
 	font-weight:bold;
 	color:@mainLinkColor;
@@ -724,5 +725,12 @@ line-height: 25px;
 }
 
 #niusb-news li.odd{
-  border-right:1px solid #DDDDDD;
+  border-right:1px solid @borderColor;
+}
+
+#niusb-news li a{
+	color:@mainLinkColor;
+}
+#niusb-news li a:hover{
+	color:@mainLinkHoverColor;
 }
