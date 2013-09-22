@@ -27,6 +27,8 @@ module.exports = function(grunt) {
 				files : {
 					'<%=setting.distJs%>/jquery-1.10.2.min.js' : [ '<%=setting.srcJs%>/jquery-1.10.2.js' ],
 					'<%=setting.distJs%>/bootstrap.min.js' : [ '<%=setting.srcJs%>/bootstrap.js' ],
+					'<%=setting.distJs%>/html5shiv.min.js' : [ '<%=setting.srcJs%>/html5shiv.js' ],
+					'<%=setting.distJs%>/respond.min.js' : [ '<%=setting.srcJs%>/respond.min.js' ],
 					'<%=setting.distJs%>/jquery.ui.widget.min.js' : [ '<%=setting.srcJs%>/jquery.ui.widget.js' ],
 					'<%=setting.distJs%>/bootbox.min.js' : [ '<%=setting.srcJs%>/bootbox.js' ],
 					'<%=setting.distJs%>/bootstrap-modal.min.js' : [ '<%=setting.srcJs%>/bootstrap-modal.js' ],
@@ -99,6 +101,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-recess');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	grunt.registerTask('dist-compile-main', [ 'recess:mainCompile' ]);
 	grunt.registerTask('dist-compile-third', [ 'recess:thirdCompile' ]);
