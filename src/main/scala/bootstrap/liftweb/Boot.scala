@@ -71,6 +71,8 @@ class Boot extends Loggable {
         RewriteResponse("market" :: "offer" :: Nil)
       case RewriteRequest(ParsePath("own" :: Nil, _, _, _), _, _) =>
         RewriteResponse("market" :: "own" :: Nil)
+      case RewriteRequest(ParsePath("market" :: "btc" :: typeId :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "index" :: Nil, Map("btc" -> typeId))
 
       case RewriteRequest(ParsePath("user" :: "sign_out" :: Nil, _, _, _), _, _) =>
         RewriteResponse("user_mgt" :: "logout" :: Nil)

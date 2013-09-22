@@ -173,7 +173,7 @@ $(function() {
 	$('#toTop').click(function() {
 		$('body,html').animate({
 			scrollTop : 0
-		}, 600);
+		}, 100);
 	});
 
 	$(".help-box,.news-box").find(".box-header").addClass("pointer").click(function() {

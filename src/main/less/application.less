@@ -20,6 +20,8 @@ h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
 del,ins,u,s,a,a:hover{text-decoration:none;}
 body{background:#fff;}
 
+
+
 // CSS3 PROPERTIES
 // --------------------------------------------------
 
@@ -60,7 +62,7 @@ p.indent{
 	text-indent: 2em;
 }
 
-#toTop{position:fixed;bottom:100px;right:10px;cursor:pointer;display:none;width:55px;height:55px;background-image:url(../img/gotop.gif);background-repeat:no-repeat;}
+#toTop{position:fixed;bottom:150px;right:20px;cursor:pointer;display:none;width:55px;height:55px;background-image:url(../img/gotop.gif);background-repeat:no-repeat;}
 
 body {
   padding-top: 70px;
@@ -75,18 +77,25 @@ body {
   //background-color: #000;
 }
 
+.nav-logo-spt,.weixin-spt{
+	background: url("/img/sprite.png") no-repeat scroll -9999px -9999px transparent;
+}
+
+
 .nav-logo{
-	background: url("/img/logo.png") repeat scroll 0 0 transparent;
+	//background: url("/img/logo.png") repeat scroll 0 0 transparent;
+	background-position: 0 0;
     display: inline-block;
     float: left;
-    height: 48px;
-    width: 168px;
+    height: 39px;
+    width: 156px;
+    margin-top:3px;
     margin-right:10px;
     text-indent:-9999px;
 }
 
 
-.main-box:after,.m-box .tp:after,.m-box .tp:after,.m-box .ct:after,.box .box-content:after{
+.main-box:after,.tp:after,.ct:after,.box .box-content:after,.panel-heading:after{
     clear: both;
     content: ".";
     display: block;
@@ -97,7 +106,7 @@ body {
 .main-box {
     background-color: #FFFFFF;
     border: 1px solid #DDDDDD;
-	border-radius: @borderRadius;
+	border-radius: 3px;
     .box-shadow(0 1px 1px rgba(0,0,0,.05));
     margin-bottom: 20px;
 }
@@ -117,32 +126,7 @@ body {
 }
 
 .main-box .mn{
-    height:170px;
-}
-
-.main-box .mn .tp{
-	padding: 5px;
-	border-bottom: 2px solid @borderColor;
-	height: 40px; 
-	padding-top: 15px;
-}
-
-.main-box .mn .tp .tit{
-	float:left;
-	font-size: 14px;
-	font-weight:bold;
-	color:@mainLinkColor;
-}
-
-
-.main-box .sd{
-	border-top: 1px solid #ECECEC;
-}
-
-.main-box .sd li{
-	float:left;
-	margin-top:12px;
-	padding:0 10px;
+    height:120px;
 }
 
 #topBanner {
@@ -586,23 +570,25 @@ margin-bottom:20px
 }
 
 .box-header {
-border-bottom: 1px solid #dddddd;
-border: 1px solid #DDDDDD;
-border-radius: @borderRadius @borderRadius 0 0;
-box-shadow: none;
-margin-bottom: -1px;
-overflow: hidden;
-padding: 8px 10px;
+	border-bottom: 1px solid #dddddd;
+	border: 1px solid #DDDDDD;
+	border-radius: @borderRadius @borderRadius 0 0;
+	box-shadow: none;
+	margin-bottom: -1px;
+	overflow: hidden;
+	padding: 8px 10px;
+	background-color: #f5f5f5;
+	color: #333333;
 }
 
 .box-header h2 {
-color: #646464;
-float: left;
-font-size: 14px;
-font-weight: normal;
-line-height: 16px;
-margin-top: 2px;
-text-shadow: 0 1px 0 #FFFFFF;
+	color: #646464;
+	float: left;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 16px;
+	margin-top: 2px;
+	text-shadow: 0 1px 0 #FFFFFF;
 }
 
 .box-header-1{
@@ -708,6 +694,28 @@ line-height: 25px;
 	margin-bottom:0;
 }
 
+.home-top-small-ad{
+	height:50px;
+}
+
+#niusb-news .tp{
+	padding: 5px;
+	border-bottom: 1px solid @borderColor;
+	padding-top: 15px;
+}
+
+#niusb-news .tp .tit{
+	float:left;
+	font-size: 16px;
+	color:@mainLinkColor;
+}
+
+
+#niusb-news .tag {
+  font-siz:13px;
+  float:right;
+}
+
 #niusb-news ul{
   width:455px;
   height: 100px;
@@ -722,6 +730,7 @@ line-height: 25px;
     overflow: hidden;
     padding: 0 10px;
     width: 225px;
+    color:#999;
 }
 
 #niusb-news li.odd{
@@ -729,8 +738,115 @@ line-height: 25px;
 }
 
 #niusb-news li a{
-	color:@mainLinkColor;
+	color:#999;
 }
 #niusb-news li a:hover{
 	color:@mainLinkHoverColor;
+}
+
+
+.panel-brand {
+  border-color: #dddddd;
+}
+
+.panel-brand > .panel-heading {
+  color: #646464;
+  background-color: #f5f5f5;
+  border-color: #dddddd;
+  padding:12px 12px 8px 12px;
+}
+
+.panel-brand > .panel-heading h2 {
+    float:left;
+	font-size: 16px;
+	width:400px;
+	text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.panel-brand > .panel-heading > .tag {
+    float:right;
+}
+
+.panel-brand > .panel-body {
+    padding: 10px 5px 10px 12px;
+}
+
+
+.panel-brand > .panel-heading + .panel-collapse .panel-body {
+  border-top-color: #dddddd;
+}
+
+.panel-brand > .panel-footer + .panel-collapse .panel-body {
+  border-bottom-color: #dddddd;
+}
+
+
+.brand-type li {
+	float: left;
+	width: 193px;
+	height: 28px;
+	line-height: 25px;
+}
+
+
+#niusb-kefu .tp {
+	padding:5px;
+	border-bottom: 1px solid @borderColor;
+	margin-bottom:5px;
+}
+
+#niusb-kefu .tp .tit {
+	float: left;
+	font-size:16px;
+}
+
+
+#niusb-kefu .tp .tag {
+	float:right
+}
+
+#niusb-kefu .tp .tag .tel{
+	background: url("/img/tel.png") repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 24px;
+    width: 143px;
+    text-indent:-9999px;
+}
+
+#niusb-kefu li{
+  float:left;
+  padding:5px 20px 0 0;
+}
+
+#niusb-kefu li .qq{
+  padding-left:5px;
+  color:#999;
+}
+
+
+.txt-gray{
+float:left;
+color:#999;
+}
+
+.weixin{
+	float:left;
+    //background: url("/img/sprite.png") no-repeat scroll -165px -19px transparent;
+    background-position: -165px -19px;
+    display: block;
+	width:21px;
+	height:20px;
+	position: relative;
+}
+
+.weixin:hover .weixin-pop{
+background: url("/img/sprite.png") no-repeat scroll -195px 0 transparent;
+	//background-position: 0 -40px;
+    bottom: 22px;
+    display: block;
+    height: 261px;
+    left: -105px;
+    position: absolute;
+    width: 211px;
+    z-index: 3;
 }
