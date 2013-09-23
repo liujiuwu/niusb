@@ -120,7 +120,11 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     def displaySellPrice(forUser: Boolean = true, style: Boolean = false): NodeSeq = {
       val isQuote = basePrice.get > 0
       val isFloatSellPrice = if (sellPrice.get >= basePrice.get || !isQuote) false else true
-      val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * 0.5
+      val basePriceFloat = WebCacheHelper.websets.values.headOption match {
+        case Some(webset) => (webset.basePriceFloat.is / 100.0f)
+        case _ => 1f
+      }
+      val realSellPrice = if (sellPrice.get >= basePrice.get) sellPrice.get else basePrice.get + basePrice.get * basePriceFloat
       val result = if (realSellPrice <= 0) "面议" else (realSellPrice / 10000) + "万"
       val displayLabel = if (forUser || !isFloatSellPrice) result else result + " - 浮"
 
@@ -250,8 +254,8 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   def displayBrand = {
     def viewLink(c: NodeSeq) = <a href={ "/market/view/" + id.get } target="_blank">{ c }</a>
-    //"img" #> viewLink(<img class="brand-img lazy" src="/img/grey.gif" data-original={ pic.src } alt={ name.get.trim }/>) &
-    "img" #> viewLink(<img class="brand-img" src={ pic.src } alt={ name.get.trim }/>) &
+    "img" #> viewLink(<img class="brand-img lazy" src="/img/grey.gif" data-original={ pic.src } alt={ name.is.trim }/>) &
+      //"img" #> viewLink(<img class="brand-img" src={ pic.src } alt={ name.get.trim }/>) &
       ".brandTypeCode *" #> brandTypeCode.displayTypeLabel &
       ".price *" #> sellPrice.displaySellPrice() &
       ".brand-name *" #> viewLink(Text(name.get.trim))

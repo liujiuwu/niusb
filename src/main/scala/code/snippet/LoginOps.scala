@@ -21,11 +21,14 @@ import net.liftweb.util.StringHelpers
 import net.liftweb.util.Helpers
 import com.niusb.util.WebHelpers
 import com.niusb.util.SmsHelpers
+import net.liftweb.http.SHtml
+import net.liftweb.util.PassThru
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "login" => login
     case "create" => create
+    case "forgot" => forgot
   }
 
   /*  def create = {
@@ -105,7 +108,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
     def process(): JsCmd = {
       WebHelpers.realMobile(Full(mobile)) match {
         case Full(mb) =>
-          User.find(By(User.mobile, mobile)) match {
+          User.find(By(User.mobile, mb)) match {
             case Full(user) =>
               if (pwd.trim().isEmpty()) {
                 return WebHelpers.formError("loginPwd", "请输入登录密码！")
@@ -125,8 +128,14 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
     }
 
+    def modal(action: String): JsCmd = {
+      JsRaw("""$("#loginDialog").modal({marginTop:80})""") &
+        JsRaw("""$('#loginDialogTab a[href="#%s"]').tab('show')""".format(action))
+    }
+
     "@loginMobile" #> text(mobile, mobile = _) &
       "@loginPwd" #> password(pwd, pwd = _) &
+      "#forgotPwdBtn [onclick]" #> ajaxInvoke(() => modal("forgot-panel")) &
       "type=submit" #> ajaxSubmit("登录", process)
   }
 
@@ -144,7 +153,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             return WebHelpers.formError("regCode", "请输入短信验证码或密码！")
           }
 
-          val smsCode = SmsHelpers.smsCode(mobile).code
+          val smsCode = SmsHelpers.smsCode(mb).code
           if (smsCode != code) {
             return WebHelpers.formError("regCode", "短信验证码错误，请确认！")
           }
@@ -154,7 +163,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
           }
 
           val user = User.create
-          user.mobile(mobile)
+          user.mobile(mb)
           user.password(pwd)
           user.loginTime(Helpers.now)
           user.lastLoginTime(user.loginTime.get)
@@ -172,13 +181,13 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             return WebHelpers.formError("regMobile", "此手机号已经注册，请登录！")
           }
 
-          val cacheTime = SmsHelpers.smsCode(mobile).cacheTime
+          val cacheTime = SmsHelpers.smsCode(mb).cacheTime
           WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
-            SmsHelpers.sendCodeSms(mobile)
+            SmsHelpers.sendCodeSms(mb)
             JsRaw("""$("#getCodeBtn").countdown();$("#opt_login_tip").hide().text("")""")
           } else {
             JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
-          }) & Alert(SmsHelpers.smsCode(mobile).code)
+          }) & Alert(SmsHelpers.smsCode(mb).code)
         case _ => return WebHelpers.formError("regMobile", "请输入正确的手机号！")
       }
     }
@@ -188,5 +197,9 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
       "@regPwd" #> password(pwd, pwd = _) &
       "@getCodeBtn [onclick]" #> ajaxCall(ValById("regMobile"), sendCodeSms) &
       "type=submit" #> ajaxSubmit("确认注册", process)
+  }
+
+  def forgot = {
+    PassThru
   }
 }

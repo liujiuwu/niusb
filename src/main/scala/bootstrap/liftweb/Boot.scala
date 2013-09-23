@@ -22,6 +22,8 @@ import code.lib.SyncData
 import code.model._
 import code.lib.WebCacheHelper
 import com.niusb.util.SearchBrandHelpers
+import scala.util.Try
+import scala.util.Success
 
 class Boot extends Loggable {
   def boot {
@@ -104,6 +106,11 @@ class Boot extends Loggable {
         RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "hot"))
       case RewriteRequest(ParsePath("wenda" :: "wait" :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "wait"))
+      case RewriteRequest(ParsePath("wenda" :: wendTypeCode :: Nil, _, _, _), _, _) if (Try(wendTypeCode.toInt) match {
+        case Success(code) => true
+        case _ => false
+      }) =>
+        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> wendTypeCode))
     }
 
     LiftRules.uriNotFound.prepend(NamedPF("404handler") {

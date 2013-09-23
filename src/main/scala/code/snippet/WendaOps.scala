@@ -20,9 +20,12 @@ import scala.xml.XML
 import net.liftweb.mapper._
 import scala.collection.mutable.ArrayBuffer
 import code.model.Brand
-import net.liftweb.util.CssSel
+import net.liftweb.util._
 import scala.xml.Unparsed
 import net.liftweb.http.js.JE.JsRaw
+import scala.collection.mutable.LinkedHashMap
+import scala.util.Try
+import scala.util.Success
 
 object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -30,6 +33,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "reply" => reply
     case "list" => list
     case "view" => view
+    case "wendaTypes" => wendaTypes
     case "createWendaBtn" => createWendaBtn
     case "replyWendaBtn" => replyWendaBtn
   }
@@ -44,6 +48,10 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
         byBuffer += OrderBy(Wenda.readCount, Descending)
       case "hot" => byBuffer += OrderBy(Wenda.readCount, Descending)
       case "wait" => byBuffer += By(Wenda.replyCount, 0)
+      case code if (Try(code.toInt) match {
+        case Success(c) => true
+        case _ => false
+      }) => byBuffer += By(Wenda.wendaTypeCode, code.toInt)
       case _ => (OrderBy(Wenda.id, Descending))
     }
     keyword match {
@@ -54,14 +62,35 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     byBuffer.toList
   }
 
+  val wendaMenus = LinkedHashMap[String, NodeSeq](
+    "/wenda/all" -> Text("所有问答"),
+    "/wenda/common" -> Text("常见问答"),
+    "/wenda/hot" -> Text("热门问答"),
+    "/wenda/wait" -> Text("待回答问题"))
+
   def list = {
     val pageType = S.param("pageType").openOr("all")
+
+    val headLis = for (menu <- wendaMenus) yield {
+      val cls = if (menu._1.endsWith(pageType)) "active" else null
+      <li class={ cls }><a href={ menu._1 }>{ menu._2 }</a></li>
+    }
+
+    val appendLis = Try(pageType.toInt) match {
+      case Success(wendaTypeCode) =>
+        WebCacheHelper.wendaTypes.get(wendaTypeCode) match {
+          case Some(wendaType) =>
+            <li class="active"><a href={ "/wenda/" + wendaType.code.is }>{ wendaType.name.is }</a></li>
+          case _ => Text("")
+        }
+      case _ => Text("")
+    }
+
     val wendaNav =
       <ul class="nav nav-tabs">
-        <li class={ if (pageType == "all") "active" else null }><a href="/wenda/all">所有问答</a></li>
-        <li class={ if (pageType == "common") "active" else null }><a href="/wenda/common">常见问答</a></li>
-        <li class={ if (pageType == "hot") "active" else null }><a href="/wenda/hot">热门问答</a></li>
-        <li class={ if (pageType == "wait") "active" else null }><a href="/wenda/wait">待回答问题</a></li>
+        {
+          headLis ++ appendLis
+        }
         <div class="pull-right" data-lift="WendaOps.createWendaBtn">
           <button class="btn btn-danger">我要提问</button>
         </div>
@@ -160,6 +189,14 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
     }
     ".btn" #> a(() => process, Text("我来回答"), "class" -> ("btn " + btnCss))
+  }
+
+  def wendaTypes = {
+    "li *" #> WebCacheHelper.wendaTypes.values.map(wendaType => {
+      "#type-name" #> wendaType.name.displayTypeName() &
+        ".badge *" #> wendaType.wendaCount
+    })
+
   }
 
 }

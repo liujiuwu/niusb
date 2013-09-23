@@ -83,16 +83,16 @@ trait WebHelpers {
 
   def removeFormError(fieldName: String = "") = {
     if (fieldName.trim.isEmpty()) {
-      JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$(".help-block-hide").text("")""")
+      JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$("form .help-block").html("")""")
     } else {
-      JsRaw("""$("#group-%1$s").removeClass("has-success has-error has-warning");$("#error-%1$s").hide().text("%2$s")""" format (fieldName, ""))
+      JsRaw("""$("#form-%1$s").removeClass("has-success has-error has-warning");$("#form-%1$s .help-block").hide().text("%2$s")""" format (fieldName, ""))
     }
   }
 
   def formError(fieldName: String, msg: String) = {
-    JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$(".help-block-hide").text("")""") &
+    JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$("form .help-block").html("")""") &
       JsRaw("""$("#%1$s").focus()""".format(fieldName)) &
-      JsRaw("""$("#group-%1$s").removeClass("has-success has-error has-warning");$("#group-%1$s").addClass("has-error");$("#error-%1$s").show().text("%2$s")""" format (fieldName, msg))
+      JsRaw("""$("#form-%1$s").removeClass("has-success has-error has-warning");$("#form-%1$s").addClass("has-error");$("#form-%1$s .help-block").show().html("%2$s")""" format (fieldName, msg))
   }
 
   /* def succMsg(where: String, msg: NodeSeq, cssClass: String = "alert-success", duration: TimeSpan = 0 second, fadeTime: TimeSpan = 2 second): JsCmd = {

@@ -4,6 +4,7 @@ import net.liftweb.mapper._
 import scala.collection.mutable.LinkedHashMap
 import code.lib.WebCacheHelper
 import scala.xml.NodeSeq
+import scala.xml.Text
 
 class WendaType extends LongKeyedMapper[WendaType] with IdPK {
   def getSingleton = WendaType
@@ -13,7 +14,11 @@ class WendaType extends LongKeyedMapper[WendaType] with IdPK {
   }
 
   object name extends MappedString(this, 30) {
-    def displayTypeName() = { if (isRecommend.get) <span style="color:red;">{ code.get + "." + this.is }</span> else code.get + "." + this.is }
+    def displayTypeName(): NodeSeq = {
+      val oname = Text(this.is)
+      val dname = if (isRecommend.is) <span style="color:#E13335;">{ oname }</span> else oname
+      <a href={ "/wenda/" + code.is } title={ oname }>{ dname }</a>
+    }
   }
 
   object wendaCount extends MappedInt(this) {

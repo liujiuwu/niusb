@@ -9,10 +9,13 @@ import net.liftweb.util.Helpers._
 import scala.util.Try
 import scala.util.Success
 import net.liftweb.http.S
+import net.liftweb.http.js.JE.JsRaw
 import net.liftweb.http.js.JsCmd
 import com.niusb.util.WebHelpers
 import net.liftweb.http.js.JsCmds
 import net.liftweb.http.js.JsCmds._
+import code.lib.WebCacheHelper
+import net.liftweb.http.js.JE
 
 object WebSetOps extends DispatchSnippet {
   val dispatch: DispatchIt = {
@@ -33,7 +36,8 @@ object WebSetOps extends DispatchSnippet {
         case _ => return WebHelpers.formError("basePriceFloat", "商标基价浮动百分比必须是数字")
       }
       webset.save()
-      WebHelpers.alertSuccess("保存设置成功！")
+      WebCacheHelper.loadWebsets()
+      WebHelpers.removeFormError() & WebHelpers.alertSuccess("保存设置成功！")
     }
 
     "@basePriceFloat" #> text(webset.basePriceFloat.is.toString(), basePriceFloat = _) &
