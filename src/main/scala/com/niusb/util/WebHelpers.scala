@@ -3,21 +3,20 @@ package com.niusb.util
 import net.liftweb.util.Helpers
 import net.liftweb.common._
 import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.http.js.JE.JsRaw._
 import net.liftweb.http.LiftResponse
 import net.liftweb.http.js.JsCmd
-import net.liftweb.http.js.jquery.JqJsCmds._
+import net.liftweb.http.js.JsCmd._
+import net.liftweb.http.js.JsCmds._
 import java.awt.image._
 import javax.imageio.ImageIO
 import java.text.SimpleDateFormat
 import scala.xml.NodeSeq
-import net.liftweb.util.Helpers.TimeSpan
-import net.liftweb.util.Helpers.intToTimeSpanBuilder
+import net.liftweb.util.Helpers._
 import net.liftweb.http.InMemoryResponse
 import net.liftweb.http.S
 import scala.util.Random
-import net.liftweb.http.js.jquery.JqJsCmds.Show
 import java.io.ByteArrayOutputStream
-import net.liftweb.http.js.jquery.JqJsCmds.JqSetHtml
 import scala.language.postfixOps
 import scala.math.abs
 import scala.xml.NodeSeq
@@ -25,7 +24,7 @@ import java.awt.RenderingHints
 import java.awt.GradientPaint
 import java.awt.Font
 import java.awt.Color
-import net.liftweb.util.Helpers
+import net.liftweb.http.js.jquery.JqJsCmds.FadeOut
 
 object WebHelpers extends WebHelpers with BootBoxHelpers {
 }
@@ -84,25 +83,25 @@ trait WebHelpers {
 
   def removeFormError(fieldName: String = "") = {
     if (fieldName.trim.isEmpty()) {
-      JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$(".help-block").text("")""")
+      JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$(".help-block-hide").text("")""")
     } else {
       JsRaw("""$("#group-%1$s").removeClass("has-success has-error has-warning");$("#error-%1$s").hide().text("%2$s")""" format (fieldName, ""))
     }
   }
 
   def formError(fieldName: String, msg: String) = {
-    JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$(".help-block").text("")""") &
+    JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$(".help-block-hide").text("")""") &
       JsRaw("""$("#%1$s").focus()""".format(fieldName)) &
       JsRaw("""$("#group-%1$s").removeClass("has-success has-error has-warning");$("#group-%1$s").addClass("has-error");$("#error-%1$s").show().text("%2$s")""" format (fieldName, msg))
   }
 
-  def succMsg(where: String, msg: NodeSeq, cssClass: String = "alert-success", duration: TimeSpan = 0 second, fadeTime: TimeSpan = 2 second): JsCmd = {
+  /* def succMsg(where: String, msg: NodeSeq, cssClass: String = "alert-success", duration: TimeSpan = 0 second, fadeTime: TimeSpan = 2 second): JsCmd = {
     (Show(where) & JqSetHtml(where, msg) & JsRaw("""$("#%s").removeClass("alert-error alert-success")""".format(where, cssClass)) & JsRaw("""$("#%s").addClass("%s")""".format(where, cssClass)) & FadeOut(where, duration, fadeTime))
   }
 
   def errorMsg(where: String, msg: NodeSeq, cssClass: String = "alert-error", duration: TimeSpan = 0 second, fadeTime: TimeSpan = 3 second): JsCmd = {
     succMsg(where, msg, cssClass, duration, fadeTime)
-  }
+  }*/
 
   def realMobile(mobile: Box[String]): Box[String] = {
     mobile match {
@@ -201,5 +200,34 @@ trait WebHelpers {
 
   def options(value: String, label: String, selected: String, prependValue: Boolean = false) = {
     <option value={ value } selected={ if (selected == value) "selected" else null }>{ if (prependValue) value + "." + label else label }</option>
+  }
+
+  def alert(title: String, message: String, cls: String, isReload: Boolean = false, duration: TimeSpan = 1 second, byId: String = "alert-msg"): JsCmd = {
+    val alertHtml = <div class={ "alert alert-block " + cls + "  fade in" }>
+                      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                      {
+                        if (!title.isEmpty())
+                          <h4> { title } </h4>
+                      }
+                      <p>{ message }</p>
+                    </div>
+
+    SetHtml(byId, alertHtml) & JsShowId(byId) & (if (isReload) After(duration, Reload) else FadeOut(byId, duration, 2 second))
+  }
+
+  def alertSuccess(message: String): JsCmd = {
+    alert("", message, "alert-success")
+  }
+
+  def alertError(message: String): JsCmd = {
+    alert("", message, "alert-danger")
+  }
+
+  def alertWarning(message: String): JsCmd = {
+    alert("", message, "alert-warning")
+  }
+
+  def alertInfo(message: String): JsCmd = {
+    alert("", message, "alert-info")
   }
 }

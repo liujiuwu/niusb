@@ -10,6 +10,7 @@ import code.model.BrandType
 import net.liftweb.mapper._
 import net.liftweb.common.Loggable
 import code.model.WendaType
+import code.model.BrandStatus
 
 object WebCacheHelper extends Loggable {
   val brandTypes = LinkedHashMap[Int, BrandType]()
@@ -54,16 +55,16 @@ object WebCacheHelper extends Loggable {
       for (i <- 0 to 3) {
         i match {
           case 0 =>
-            val brands = Brand.findAll(MaxRows[Brand](limit), OrderBy(Brand.id, Descending))
+            val brands = Brand.findAll(By(Brand.status, BrandStatus.ChuShoZhong), By(Brand.isRecommend, true), StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.id, Descending))
             indexTabBrands.put("0", brands)
           case 1 =>
-            val brands = Brand.findAll(StartAt(30), MaxRows[Brand](limit), OrderBy(Brand.id, Descending))
+            val brands = Brand.findAll(By(Brand.status, BrandStatus.ChuShoZhong), StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.id, Descending))
             indexTabBrands.put("1", brands)
           case 2 =>
-            val brands = Brand.findAll(StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.createdAt, Descending))
+            val brands = Brand.findAll(By(Brand.status, BrandStatus.ChuShoZhong), StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.viewCount, Descending))
             indexTabBrands.put("2", brands)
           case 3 =>
-            val brands = Brand.findAll(StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.name, Descending))
+            val brands = Brand.findAll(By(Brand.status, BrandStatus.ChuShoZhong), By(Brand.isOwn, true), StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.id, Descending))
             indexTabBrands.put("3", brands)
         }
       }
@@ -72,13 +73,13 @@ object WebCacheHelper extends Loggable {
   }
 
   val indexBrandsByType = LinkedHashMap[Int, List[Brand]]() //首页分类数据
-  def loadIndexBrandTypeBrands(force: Boolean = false, limit: Int = 30) {
+  def loadIndexBrandTypeBrands(force: Boolean = false, limit: Int = 35) {
     if (indexBrandsByType.isEmpty || force) {
       logger.info("load indexTabBrands ...")
       indexBrandsByType.clear()
       val brandTypeCodes = List(25, 3, 43)
       for (brandTypeCode <- brandTypeCodes) {
-        val brands = Brand.findAll(By(Brand.brandTypeCode, brandTypeCode), StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.createdAt, Descending))
+        val brands = Brand.findAll(By(Brand.status, BrandStatus.ChuShoZhong), By(Brand.brandTypeCode, brandTypeCode), StartAt(0), MaxRows[Brand](limit), OrderBy(Brand.id, Descending))
         indexBrandsByType.put(brandTypeCode, brands)
       }
       logger.info("load indexTabBrands finished.")

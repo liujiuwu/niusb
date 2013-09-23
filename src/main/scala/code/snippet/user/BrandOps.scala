@@ -102,7 +102,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
               SetValById("useDescn", data.fwlb) &
               SetValById("lsqz", data.lsqz) &
               JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
-          case _ => JsRaw(errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
+          case _ => Noop//JsRaw(errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
         }
       })
   }

@@ -1,10 +1,27 @@
 <div data-lift="surround?with=admin;at=content">
-	<form data-lift="form.ajax?class=form-horizontal">
-		<fieldset data-lift="admin.WebSetOps.edit">
-			<div class="form-actions">
-				<button class="btn btn-primary" type="submit">保存</button>
-				<input type="hidden" name="sub"/>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">网站常规设置</h3>
+				</div>
+				<div data-lift="admin.WebSetOps.edit" class="panel-body">
+					<div id="alert-msg"></div>
+					<form data-lift="form.ajax?class=form-horizontal">
+						<div id="group-basePriceFloat" class="form-group">
+							<label for="basePriceFloat" class="col-lg-2 control-label">商标基价浮动百分比</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control" id="basePriceFloat" name="basePriceFloat" required="required" placeholder="填写相应数值即可，如5%输入5就可以了" /> <span id="error-basePriceFloat" class="help-block help-block-hide"></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-lg-offset-2 col-lg-2">
+								<button class="btn btn-primary btn-block" type="submit">保存设置</button>
+							</div>
+						</div>
+					</form>
+				</div>
 			</div>
-		</fieldset>
-	</form>
+		</div>
+	</div>
 </div>

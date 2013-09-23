@@ -46,7 +46,7 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   private def mainBrandDatas(brandTypeCode: Int) = {
-    val limit = S.attr("limit").map(_.toInt).openOr(24)
+    val limit = S.attr("limit").map(_.toInt).openOr(28)
     val dataList = WebCacheHelper.indexBrandsByType.get(brandTypeCode) match {
       case Some(brands) => ".brands li" #> brands.slice(0, limit).map(_.displayBrand)
       case _ => "*" #> "无数据"
@@ -66,7 +66,6 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def news = {
-    
     val limit = S.attr("limit").map(_.toInt).openOr(6)
     val bies = By(Article.articleType, ArticleType.News)
     val paginatorModel = Article.paginator(originalUri, bies)(itemsOnPage = limit)

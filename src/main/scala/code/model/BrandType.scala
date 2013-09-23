@@ -18,7 +18,7 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
     def displayTypeName(): NodeSeq = {
       val oname = Text("第" + (if (code.is < 10) "0" + code.is else code.is) + "类-" + this.is + "(" + brandCount + ")")
       val dname = if (isRecommend.get) <span style="color:#E13335;">{ oname }</span> else oname
-      <a href={ "/market/btc/" + code.is } title={ descn.is }>{ dname }</a>
+      <a href={ "/market/btc/" + code.is } title={ descn.is } target="_blank">{ dname }</a>
     }
   }
 
