@@ -16,6 +16,7 @@ import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmd._
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.http.js.JsCmds
+import com.niusb.util.WebHelpers
 
 object Menus extends BsMenu {
 
@@ -75,12 +76,8 @@ object Menus extends BsMenu {
           </li>
         </ul>
       case _ =>
-        def modal(action: String): JsCmd = {
-          JsRaw("""$("#loginDialog").modal({marginTop:80})""") &
-            JsRaw("""$('#loginDialogTab a[href="#%s"]').tab('show')""".format(action))
-        }
-        val btns = "#loginBtn [onclick]" #> SHtml.ajaxInvoke(() => modal("login-panel")) &
-          "#regBtn [onclick]" #> SHtml.ajaxInvoke(() => modal("reg-panel"))
+        val btns = "#loginBtn [onclick]" #> SHtml.ajaxInvoke(() => WebHelpers.showLoginModal("login-panel")) &
+          "#regBtn [onclick]" #> SHtml.ajaxInvoke(() => WebHelpers.showLoginModal("reg-panel"))
 
         btns(<div class="nav navbar-nav navbar-right">
                <button type="button" class="btn btn-success navbar-btn" id="loginBtn" name="loginBtn">登录</button>

@@ -31,70 +31,6 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "forgot" => forgot
   }
 
-  /*  def create = {
-    var mobileBox: Box[String] = Full("")
-    var pwdBox: Box[String] = Full("")
-
-    def process(): JsCmd = {
-      val mobile = WebHelpers.realMobile(mobileBox) match {
-        case Full(mb) => mb
-        case _ => return WebHelpers.formError("mobile", "请输入正确的手机号！")
-      }
-
-      val pwd = pwdBox match {
-        case Full(p) if (!p.trim.isEmpty()) => p
-        case _ => return WebHelpers.removeFormError() & WebHelpers.formError("pwd", "请输入短信验证码或密码！")
-      }
-
-      val code = SmsHelpers.smsCode(mobile).code
-      User.find(By(User.mobile, mobile)) match {
-        case Full(user) =>
-          if (user.authSmsCodeOrPwd(pwd)) {
-            user.lastLoginTime(user.loginTime.get)
-            user.loginTime(Helpers.now)
-            user.save()
-            User.logUserIn(user)
-            S.redirectTo(redirectUrl())
-          } else {
-            WebHelpers.formError("pwd", "验证码或密码错误，请确认！")
-          }
-        case _ =>
-          val user = User.create
-          user.mobile(mobile)
-          user.password(StringHelpers.randomString(6))
-          if (user.authSmsCodeOrPwd(pwd)) {
-            user.loginTime(Helpers.now)
-            user.lastLoginTime(user.loginTime.get)
-            user.save()
-            User.logUserIn(user)
-            S.redirectTo(redirectUrl())
-          } else {
-            WebHelpers.formError("pwd", "验证码错误，请确认！")
-          }
-      }
-    }
-
-    def sendCodeSms(mobileVal: String): JsCmd = {
-      val mobile = WebHelpers.realMobile(Full(mobileVal)) match {
-        case Full(mb) => mb
-        case _ => return WebHelpers.formError("mobile", "请输入正确的手机号！")
-      }
-
-      val cacheTime = SmsHelpers.smsCode(mobile).cacheTime
-      WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
-        SmsHelpers.sendCodeSms(mobile)
-        JsRaw("""$("#getCodeBtn").countdown();$("#opt_login_tip").hide().text("")""")
-      } else {
-        JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mobile))
-      }) & Alert(SmsHelpers.smsCode(mobile).code)
-    }
-
-    "@mobile" #> text(mobileBox.get, mobile => mobileBox = Full(mobile)) &
-      "@pwd" #> password(pwdBox.get, pwd => pwdBox = Full(pwd)) &
-      "@getCodeBtn [onclick]" #> ajaxCall(ValById("mobile"), sendCodeSms) &
-      "type=submit" #> ajaxSubmit("登录", process)
-  }*/
-
   private def isRegUser(mobile: String): Boolean = {
     User.find(By(User.mobile, mobile)) match {
       case Full(user) => true
@@ -128,14 +64,9 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
       }
     }
 
-    def modal(action: String): JsCmd = {
-      JsRaw("""$("#loginDialog").modal({marginTop:80})""") &
-        JsRaw("""$('#loginDialogTab a[href="#%s"]').tab('show')""".format(action))
-    }
-
     "@loginMobile" #> text(mobile, mobile = _) &
       "@loginPwd" #> password(pwd, pwd = _) &
-      "#forgotPwdBtn [onclick]" #> ajaxInvoke(() => modal("forgot-panel")) &
+      "#forgotPwdBtn [onclick]" #> ajaxInvoke(() => WebHelpers.showLoginModal("forgot-panel")) &
       "type=submit" #> ajaxSubmit("登录", process)
   }
 

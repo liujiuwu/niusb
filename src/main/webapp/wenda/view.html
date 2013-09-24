@@ -1,7 +1,15 @@
 <div class="container" data-lift="surround?with=default;at=content">
 	<div class="lift:embed?what=wenda/_reply">我来回答</div>
-	<div class="row" data-lift="WendaOps.view?eager_eval=true">
-		<div class="col-xs-9">
+	<div class="row">
+		<div class="col-xs-3">
+			<div data-lift="WendaOps.wendaTypes" class="panel panel-default">
+				<div class="panel-heading">问答分类</div>
+				<div class="list-group">
+					<a href="#" class="list-group-item"><span class="wenda-type-name"></span><span class="badge">14</span></a>
+				</div>
+			</div>
+		</div>
+		<div data-lift="WendaOps.view?eager_eval=true" class="col-xs-9">
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<i class="icon-question-sign  wenda-icon"></i> <span class="wenda-title">Q0：什么是返利，返利有什么用？</span>
@@ -21,6 +29,5 @@
 				</li>
 			</ul>
 		</div>
-		<div class="col-xs-3"></div>
 	</div>
 </div>

@@ -26,6 +26,7 @@ import net.liftweb.http.js.JE.JsRaw
 import scala.collection.mutable.LinkedHashMap
 import scala.util.Try
 import scala.util.Success
+import com.niusb.util.WebHelpers
 
 object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -71,12 +72,12 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   def list = {
     val pageType = S.param("pageType").openOr("all")
 
-    val headLis = for (menu <- wendaMenus) yield {
+    val defaultTab = for (menu <- wendaMenus) yield {
       val cls = if (menu._1.endsWith(pageType)) "active" else null
       <li class={ cls }><a href={ menu._1 }>{ menu._2 }</a></li>
     }
 
-    val appendLis = Try(pageType.toInt) match {
+    val newTab = Try(pageType.toInt) match {
       case Success(wendaTypeCode) =>
         WebCacheHelper.wendaTypes.get(wendaTypeCode) match {
           case Some(wendaType) =>
@@ -89,7 +90,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     val wendaNav =
       <ul class="nav nav-tabs">
         {
-          headLis ++ appendLis
+          newTab ++ defaultTab
         }
         <div class="pull-right" data-lift="WendaOps.createWendaBtn">
           <button class="btn btn-danger">我要提问</button>
@@ -174,7 +175,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
       User.currentUser match {
         case Full(user) =>
           JsRaw("""$("#createWendaDialog").modal();editorInit()""")
-        case _ => JsRaw("""$("#loginDialog").modal()""")
+        case _ => WebHelpers.showLoginModal("login-panel")
       }
     }
     ".btn" #> a(() => process, Text("我要提问?"), "class" -> ("btn " + btnCss))
@@ -185,16 +186,27 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
       User.currentUser match {
         case Full(user) =>
           JsRaw("""$("#replyWendaDialog").modal();editorInit()""")
-        case _ => JsRaw("""$("#loginDialog").modal()""")
+        case _ => WebHelpers.showLoginModal("login-panel")
       }
     }
     ".btn" #> a(() => process, Text("我来回答"), "class" -> ("btn " + btnCss))
   }
 
   def wendaTypes = {
-    "li *" #> WebCacheHelper.wendaTypes.values.map(wendaType => {
-      "#type-name" #> wendaType.name.displayTypeName() &
-        ".badge *" #> wendaType.wendaCount
+    val wendaTypeCode = S.param("pageType") match {
+      case Full(pageType) => Try(pageType.toInt) match {
+        case Success(t) => t
+        case _ => -1
+      }
+      case _ => -1
+    }
+
+    ".list-group-item" #> WebCacheHelper.wendaTypes.values.map(wendaType => {
+      val active = if (wendaTypeCode >= 0 && wendaType.code.is == wendaTypeCode) "active" else null
+      "a .wenda-type-name" #> wendaType.name.is &
+        "a .badge" #> <span class="badge">{ wendaType.wendaCount }</span> &
+        "a [href]" #> { "/wenda/" + wendaType.code.is } &
+        "a [class+]" #> active
     })
 
   }

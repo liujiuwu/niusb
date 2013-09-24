@@ -1,5 +1,13 @@
 <div data-lift="surround?with=default;at=content">
 	<div class="row">
+		<div class="col-xs-3">
+			<div data-lift="WendaOps.wendaTypes" class="panel panel-default">
+				<div class="panel-heading">问答分类</div>
+				<div class="list-group">
+					<a href="#" class="list-group-item"><span class="wenda-type-name"></span><span class="badge">14</span></a>
+				</div>
+			</div>
+		</div>
 		<div data-lift="WendaOps.list?eager_eval=true" class="col-xs-9">
 			<div class="lift:embed?what=wenda/_create">我要提问</div>
 			<div id="wendaNav"></div>
@@ -9,15 +17,6 @@
 				</ul>
 			</div>
 			<div data-lift="embed?what=_paginator"></div>
-		</div>
-		<div class="col-xs-3">
-			<div data-lift="WendaOps.wendaTypes" class="panel panel-default">
-				<div class="panel-heading">问答分类</div>
-				<ul class="list-group">
-					<li class="list-group-item"><span id="type-name"></span><span class="badge">14</span></li>
-				</ul>
-			</div>
-
 		</div>
 	</div>
 </div>
