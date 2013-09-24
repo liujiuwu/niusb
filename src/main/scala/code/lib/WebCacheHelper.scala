@@ -53,7 +53,7 @@ object WebCacheHelper extends Loggable {
   }
 
   val indexTabBrands = LinkedHashMap[String, List[Brand]]() //首页tab数据
-  def loadIndexTabBrands(force: Boolean = false, limit: Int = 18) {
+  def loadIndexTabBrands(force: Boolean = false, limit: Int = 21) {
     logger.info("load indexTabBrands ...")
     indexTabBrands.clear()
     for (i <- 0 to 3) {

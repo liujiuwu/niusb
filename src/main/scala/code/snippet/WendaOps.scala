@@ -49,10 +49,10 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
         byBuffer += OrderBy(Wenda.readCount, Descending)
       case "hot" => byBuffer += OrderBy(Wenda.readCount, Descending)
       case "wait" => byBuffer += By(Wenda.replyCount, 0)
-      case code if (Try(code.toInt) match {
+      case wendaTypeCode if (Try(wendaTypeCode.toInt) match {
         case Success(c) => true
         case _ => false
-      }) => byBuffer += By(Wenda.wendaTypeCode, code.toInt)
+      }) => byBuffer += By(Wenda.wendaTypeCode, wendaTypeCode.toInt)
       case _ => (OrderBy(Wenda.id, Descending))
     }
     keyword match {

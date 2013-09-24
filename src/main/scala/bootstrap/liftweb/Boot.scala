@@ -24,6 +24,7 @@ import code.lib.WebCacheHelper
 import com.niusb.util.SearchBrandHelpers
 import scala.util.Try
 import scala.util.Success
+import net.liftweb.util.Helpers._
 
 class Boot extends Loggable {
   def boot {
@@ -73,17 +74,19 @@ class Boot extends Loggable {
         RewriteResponse("market" :: "offer" :: Nil)
       case RewriteRequest(ParsePath("own" :: Nil, _, _, _), _, _) =>
         RewriteResponse("market" :: "own" :: Nil)
-      case RewriteRequest(ParsePath("market" :: "btc" :: typeId :: Nil, _, _, _), _, _) =>
-        RewriteResponse("market" :: "index" :: Nil, Map("btc" -> typeId))
+      case RewriteRequest(ParsePath("market" :: "btc" :: AsInt(typeId) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "index" :: Nil, Map("btc" -> typeId.toString))
 
       case RewriteRequest(ParsePath("user" :: "sign_out" :: Nil, _, _, _), _, _) =>
         RewriteResponse("user_mgt" :: "logout" :: Nil)
-      case RewriteRequest(ParsePath("market" :: "view" :: id :: Nil, _, _, _), _, _) =>
-        RewriteResponse("market" :: "view" :: Nil, Map("id" -> id))
+      case RewriteRequest(ParsePath("market" :: "view" :: AsLong(id) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "view" :: Nil, Map("id" -> id.toString))
+
       case RewriteRequest(ParsePath("news" :: Nil, _, _, _), _, _) =>
         RewriteResponse("news" :: "index" :: Nil)
-      case RewriteRequest(ParsePath("news" :: "view" :: id :: Nil, _, _, _), _, _) =>
-        RewriteResponse("news" :: "view" :: Nil, Map("id" -> id))
+      case RewriteRequest(ParsePath("news" :: "view" :: AsLong(id) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("news" :: "view" :: Nil, Map("id" -> id.toString))
+
       case RewriteRequest(ParsePath("help" :: Nil, _, _, _), _, _) =>
         RewriteResponse("help" :: "index" :: Nil)
       case RewriteRequest(ParsePath("about" :: Nil, _, _, _), _, _) =>
@@ -94,23 +97,15 @@ class Boot extends Loggable {
         RewriteResponse("help" :: "pay_info" :: Nil)
       case RewriteRequest(ParsePath("sitemap" :: Nil, _, _, _), _, _) =>
         RewriteResponse("help" :: "sitemap" :: Nil)
-      case RewriteRequest(ParsePath("wenda" :: "view" :: id :: Nil, _, _, _), _, _) =>
-        RewriteResponse("wenda" :: "view" :: Nil, Map("id" -> id))
+
       case RewriteRequest(ParsePath("wenda" :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "all"))
-      case RewriteRequest(ParsePath("wenda" :: "all" :: Nil, _, _, _), _, _) =>
-        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "all"))
-      case RewriteRequest(ParsePath("wenda" :: "common" :: Nil, _, _, _), _, _) =>
-        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "common"))
-      case RewriteRequest(ParsePath("wenda" :: "hot" :: Nil, _, _, _), _, _) =>
-        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "hot"))
-      case RewriteRequest(ParsePath("wenda" :: "wait" :: Nil, _, _, _), _, _) =>
-        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "wait"))
-      case RewriteRequest(ParsePath("wenda" :: wendTypeCode :: Nil, _, _, _), _, _) if (Try(wendTypeCode.toInt) match {
-        case Success(code) => true
-        case _ => false
-      }) =>
-        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> wendTypeCode))
+      case RewriteRequest(ParsePath("wenda" :: pageType :: Nil, _, _, _), _, _) if ("all" == pageType || "common" == pageType || "hot" == pageType || "wait" == pageType) =>
+        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> pageType))
+      case RewriteRequest(ParsePath("wenda" :: AsInt(wendTypeCode) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> wendTypeCode.toString))
+      case RewriteRequest(ParsePath("wenda" :: "view" :: AsLong(id) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("wenda" :: "view" :: Nil, Map("id" -> id.toString))
     }
 
     LiftRules.uriNotFound.prepend(NamedPF("404handler") {
