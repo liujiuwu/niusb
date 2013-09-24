@@ -74,8 +74,10 @@ class Boot extends Loggable {
         RewriteResponse("market" :: "offer" :: Nil)
       case RewriteRequest(ParsePath("own" :: Nil, _, _, _), _, _) =>
         RewriteResponse("market" :: "own" :: Nil)
-      case RewriteRequest(ParsePath("market" :: "btc" :: AsInt(typeId) :: Nil, _, _, _), _, _) =>
-        RewriteResponse("market" :: "index" :: Nil, Map("btc" -> typeId.toString))
+      /*  case RewriteRequest(ParsePath("market" :: "btc" :: AsInt(typeId) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "index" :: Nil, Map("btc" -> typeId.toString))*/
+      case RewriteRequest(ParsePath("market" :: AsInt(brandTypeCode) :: AsInt(orderType) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "index" :: Nil, Map("brandTypeCode" -> brandTypeCode.toString, "orderType" -> orderType.toString))
 
       case RewriteRequest(ParsePath("user" :: "sign_out" :: Nil, _, _, _), _, _) =>
         RewriteResponse("user_mgt" :: "logout" :: Nil)
