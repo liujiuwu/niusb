@@ -70,6 +70,8 @@ class Boot extends Loggable {
         RewriteResponse("market" :: "index" :: Nil, Map("pageType" -> "0", "brandTypeCode" -> "0", "orderType" -> "0"))
       case RewriteRequest(ParsePath("market" :: AsInt(pageType) :: AsInt(brandTypeCode) :: AsInt(orderType) :: Nil, _, _, _), _, _) =>
         RewriteResponse("market" :: "index" :: Nil, Map("pageType" -> pageType.toString, "brandTypeCode" -> brandTypeCode.toString, "orderType" -> orderType.toString))
+      case RewriteRequest(ParsePath("brand" :: Nil, _, _, _), _, _) =>
+        RewriteResponse("brand" :: "index" :: Nil)
 
       case RewriteRequest(ParsePath("user" :: "sign_out" :: Nil, _, _, _), _, _) =>
         RewriteResponse("user_mgt" :: "logout" :: Nil)
@@ -96,7 +98,7 @@ class Boot extends Loggable {
         RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "0", "wendaTypeCode" -> "-1", "orderType" -> "0"))
       case RewriteRequest(ParsePath("wenda" :: AsInt(pageType) :: AsInt(wendaTypeCode) :: AsInt(orderType) :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> pageType.toString, "wendaTypeCode" -> wendaTypeCode.toString, "orderType" -> orderType.toString))
-      case RewriteRequest(ParsePath("wenda" :: "view" :: AsLong(id) :: Nil, _, _, _), _, _) =>
+      case RewriteRequest(ParsePath("wenda" :: AsLong(id) :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "view" :: Nil, Map("id" -> id.toString))
     }
 

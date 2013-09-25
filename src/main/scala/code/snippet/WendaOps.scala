@@ -43,7 +43,8 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   val wendaMenus = LinkedHashMap[String, NodeSeq](
     "/wenda/0/-1/0" -> Text("全部问答"),
     "/wenda/1/-1/0" -> Text("常见问答"),
-    "/wenda/2/-1/0" -> Text("待回答问题"))
+    "/wenda/2/-1/0" -> Text("待回答问题"),
+    "/wenda/3/-1/0" -> Text("热门问答"))
 
   def list = {
     val limit = S.attr("limit").map(_.toInt).openOr(30)
@@ -72,6 +73,9 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
       pageType match {
         case 1 => byBuffer += By(Wenda.isRecommend, true)
         case 2 => byBuffer += By_<(Wenda.replyCount, 0)
+        case 3 =>
+          byBuffer += By_>(Wenda.readCount, 10)
+          byBuffer += OrderBy(Wenda.readCount, Descending)
       }
     }
 
@@ -81,7 +85,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     orderType match {
       case 0 => byBuffer += OrderBy(Wenda.id, Descending)
-      case 1 => byBuffer += OrderBy(Wenda.readCount, Ascending)
+      case 1 => byBuffer += OrderBy(Wenda.readCount, Descending)
       case _ => byBuffer += OrderBy(Wenda.id, Descending)
     }
 
@@ -93,15 +97,15 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     val wendaNav = <ul class="nav nav-tabs">
                      { defaultTab }
                      <div class="pull-right" data-lift="WendaOps.createWendaBtn">
-                       <button class="btn btn-danger">我要提问</button>
+                       <button id="createWendaBtn" class="btn btn-danger">我要提问</button>
                      </div>
                    </ul>
 
-    val pageUrl = "/wenda/" + pageType + "/" + wendaTypeCode + "/" + orderType
+    val pageUrl = Wenda.pageUrl(pageType, wendaTypeCode, orderType)
     val paginatorModel = Wenda.paginator(pageUrl, byBuffer.toList: _*)(itemsOnPage = limit)
     val dataList = "#dataList li" #> paginatorModel.datas.map { wenda =>
       ".wendaType *" #> wenda.wendaTypeCode.displayType &
-        ".stat *" #> wenda.readCount.display &
+        ".stat *" #> { wenda.readCount.display ++ Text(" / ") ++ wenda.replyCount.display } &
         "h3 *" #> wenda.title.displayTitle &
         ".date *" #> wenda.createdAt.asHtml
     }
@@ -135,7 +139,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     def process(): JsCmd = {
       wenda.asker(loginUser.id.is)
       wenda.save()
-      S.redirectTo("/wenda/index")
+      S.redirectTo("/wenda")
     }
 
     val wendaTypes = WebCacheHelper.wendaTypes.values.toList
@@ -147,7 +151,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def reply = {
     def process(): JsCmd = {
-      S.redirectTo("/wenda/index")
+      S.redirectTo("/wenda")
     }
 
     "@replyContent" #> textarea("", println(_)) &
@@ -170,7 +174,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
         case _ => WebHelpers.showLoginModal("login-panel")
       }
     }
-    ".btn" #> a(() => process, Text("我要提问?"), "class" -> ("btn " + btnCss))
+    "#createWendaBtn " #> a(() => process, Text("我要提问?"), "class" -> ("btn " + btnCss))
   }
 
   def replyWendaBtn = {
@@ -210,7 +214,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
       val active = if (wendaType.code.is == wendaTypeCode) "active" else null
       "a .wenda-type-name" #> wendaType.name.is &
         "a .badge" #> <span class="badge">{ wendaType.wendaCount }</span> &
-        "a [href]" #> { "/wenda/" + pageType + "/" + wendaType.code.is + "/" + orderType } &
+        "a [href]" #> { Wenda.pageUrl(pageType, wendaType.code.is, orderType) } &
         "a [class+]" #> active
     })
   }

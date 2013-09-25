@@ -1,0 +1,333 @@
+<div data-lift="surround?with=default;at=content">
+	<style>
+#brand-faq dt {
+	font-size: 16px;
+	padding: 5px 0;
+	color: #666;
+}
+
+#brand-faq dd {
+	font-size: 14px;
+	line-height: 28px;
+}
+
+#brand-step dt {
+	padding: 5px 0;
+	color: #666;
+}
+
+#brand-step dd {
+	font-size: 14px;
+	color: #666;
+	line-height: 25px;
+}
+
+.mpanel .panel-heading {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.mpanel .panel-heading .tags {
+	font-size: 14px;
+	font-weight: normal;
+}
+
+.mpanel .panel-heading .tags span {
+	padding-left: 10px;
+}
+
+#jumbotron-box h1 {
+	font-size: 36px;
+	margin-bottom: 10px;
+}
+
+#jumbotron-box p {
+	padding: 5px 0;
+}
+</style>
+
+	<div id="brand-application-dialog" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="630">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3>商标注册申请</h3>
+		</div>
+		<div class="modal-body">
+			<form data-lift="form.ajax?class=form-horizontal">
+				<div id="form-brand-name" class="form-group">
+					<label for="brand-name" class="control-label col-xs-3">商标名称</label>
+					<div class="col-xs-6">
+						<input type="text" class="form-control" id="brand-name" name="brand-name" placeholder="请输入您要注册的商标名称" /> <span class="help-block"></span>
+					</div>
+				</div>
+				<div id="form-brand-type" class="form-group">
+					<label for="brand-type" class="control-label col-xs-3">商标类别</label>
+					<div class="col-xs-6">
+						<select class="form-control" id="brand-type" name="brand-type" /> <span class="help-block"></span>
+					</div>
+				</div>
+				<div id="form-name" class="form-group">
+					<label for="name" class="control-label col-xs-3">联系人</label>
+					<div class="col-xs-6">
+						<input type="text" class="form-control" id="name" name="name" placeholder="请输入联系人姓名" /> <span class="help-block"></span>
+					</div>
+				</div>
+				<div id="form-mobile" class="form-group">
+					<label for="mobile" class="control-label col-xs-3">联系电话</label>
+					<div class="col-xs-6">
+						<input type="text" class="form-control" id="mobile" name="mobile" placeholder="请输入联系人的联系电话" /> <span class="help-block"></span>
+					</div>
+				</div>
+				<div id="form-remark" class="form-group">
+					<label for="remark" class="control-label col-xs-3">附加说明</label>
+					<div class="col-xs-7">
+						<textarea rows="3" class="form-control" id="remark" name="remark" placeholder="如果还有补充说明，请在此输入" /> <span class="help-block"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-lg-offset-3 col-lg-5">
+						<button class="btn btn-primary btn-block btn-lg" type="submit">确认提交申请</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div id="jumbotron-box" class="jumbotron">
+		<h1>商标注册就找牛标网，专业的商标服务平台</h1>
+		<p>牛标网商标注册，全套商标注册只需1600元！ 轻松、准确查询省去您的宝贵时间和烦恼！</p>
+		<p>
+			<a class="btn btn-success btn-lg" target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=97145222&amp;site=qq&amp;menu=yes">开始智能商标查询&raquo;</a>
+			<button id="brand-application" type="button" class="btn btn-primary btn-lg">提交商标注册申请&raquo;</button>
+		</p>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+			<div id="brand-faq" class="panel panel-default">
+				<div class="panel-heading">在线客服</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-xs-9">
+							<ul class="list-inline">
+								<li><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=97145222&amp;site=qq&amp;menu=yes"> <img border="0" src="http://wpa.qq.com/pa?p=2:97145222:51" alt="点击这里给我发消息" title="点击这里给我发消息" /></a><span class="qq">QQ号:97145222</span></li>
+								<li><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=97147222&site=qq&amp;menu=yes"> <img border="0" src="http://wpa.qq.com/pa?p=2:97147222:51" alt="点击这里给我发消息" title="点击这里给我发消息" /></a><span class="qq">QQ号:97147222</span></li>
+								<li><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=97148222&amp;site=qq&amp;menu=yes"> <img border="0" src="http://wpa.qq.com/pa?p=2:97148222:51" alt="点击这里给我发消息" title="点击这里给我发消息" /></a><span class="qq">QQ号:97148222</span></li>
+								<li><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=97149222&amp;site=qq&amp;menu=yes"> <img border="0" src="http://wpa.qq.com/pa?p=2:97149222:51" alt="点击这里给我发消息" title="点击这里给我发消息" /></a><span class="qq">QQ号:97149222</span></li>
+							</ul>
+						</div>
+						<div class="col-xs-3">
+							<div class="text-right">
+								<img src="/img/tel.png" style="margin-bottom: 8px" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-9">
+			<div id="brand-faq" class="panel panel-success mpanel">
+				<div class="panel-heading">商标注册问答</div>
+				<div class="panel-body">
+					<dl>
+						<dt>一、什么叫商标，注册商标为什么要分类</dt>
+						<dd>
+							<div class="alert alert-info">
+								<p class="indent">商标是区别商品或服务来源的一种由文字、图形或者其它组合构成的，具有显著特征的标志，每一个注册商标都是指定用于某一商品或服务上的。离开商标分类而独立存在的商标是不存在的,商标只有对应类别才有意义。 如提到长虹，人们会想到彩色电视机；提到茅台，人们会想到酒；提到美加净，人们会想到化妆品等等。 目前，我国商标法把商品和服务项目分为45个类，其中，商品34个类，服务项目11个类。申请商标注册时,应按商品与服务分类表的分类确定使用商标的商品或服务类别。每个商标只能申请注册在其中一个商品或服务类别上，简单的说就是一份一个申请，一类一个商标。确定商标类别也是商标注册和商标查询的前提。</p>
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>二、注册商标上的TM 和R 的意义？有什么区别？</dt>
+						<dd>
+							<div class="alert alert-info">
+								<p class="indent">TM 是“商标”的英文trademark 的缩写，当获得商标注册受理通知书后可以在商标上加上TM，TM 不是法定的注册标记。R 是法定的注册商标的标记。只要在商标上标注R，表明该商标已在商标局核准注册，是一个注册商标。未核准注册的商标，不得在商标上标注R，否则构成冒充注册商标行为。</p>
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>三、注册商标的有效期是多久？</dt>
+						<dd>
+							<div class="alert alert-info">
+								<p class="indent">根据商标法的规定，注册商标的有效期为十年，自核准之日起计算。有效期期满之前六个月可以进行续展，每次续展有效期仍为十年。</p>
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>四、商标注册能保证100%的成功吗？</dt>
+						<dd>
+							<div class="alert alert-info">
+								<p class="indent">商标注册都是有风险的。但寻找正规的商标代理是可以降低商标注册的风险。因为我们会在提交申请前， 会仔细查阅现已有的商标降低商标注册风险。</p>
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>五、为什么经过你们的审查还是有可能商标注册失败了。</dt>
+						<dd>
+							<div class="alert alert-info">
+								<p class="indent">商标注册的风险可以简单的分为客观风险和主观风险原因很简单。客观风险：我们知道我们进行查询的信息都来源于商标局的商标数据库，而以商标局现有的人员、设备条件尚不能把当天的商标申请信息全部录入数据库，大概有六个月左右的延迟，也就是说六月份提交的商标申请可能要12月份才能录入商标局数据库，这就是造成商标查询盲期的原因。主观风险：因为代理公司审查员的商标审查员在审查商标的时候对一个商标的近似判断、显著性判断、禁用性条款判断虽然大致相同，但是还是会一些细微的差别。有个别少数商标往往会有部分人认为能注册，有部分人认为应该驳回。</p>
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>六、那如果注册失败了， 注册费用会退回来吗？</dt>
+						<dd>
+							<div class="alert alert-info">
+								<p class="indent">注册费在提交申请的那一刻， 商标局已经扣去。即使商标注册失败，商标局也不会退还这部分注册费。</p>
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>七、怎样能够降级商标注册风险？</dt>
+						<dd>
+							<div class="alert alert-info">
+								<p class="indent">除了找专业的商标代理，做好前期的审查工作。另外可以考虑单独文字，图案单独注册。因为一个商标注册内容越多，失败的风险越大。比如又有中文， 英文和图案， 审查员会将3 个部分分开审查，任何其中一个审查不通过都会导致整个商标注册的失败。也就是说单独的商标申请注册比组合申请注册审查时要稍快一些，也就是说单独申请中文要比中文加图形加英文组合申请的风险性小。但这个缺点是注册费用增加。</p>
+							</div>
+						</dd>
+					</dl>
+				</div>
+			</div>
+
+			<div id="brand-step" class="panel panel-info  mpanel">
+				<div class="panel-heading">商标申请步骤</div>
+				<div class="panel-body">
+					<dl>
+						<dt>一、商标注册所需文件</dt>
+						<dd>
+							<p>1、 公司名义：营业执照复印件、商标标识黑白稿一份、商品类别。</p>
+							<p>2、 个人名义：身份证复印件、个体工商户营业执照复印件(执照经营范围必须与申请商标的商品一致)、商标标识黑白稿一份、商品类别。</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>二、商标注册程序</dt>
+						<dd>
+							<p>1、查询 注前查询，提高商标的成功注册率。提交商标名称和保护的产品或者服务，15分钟出查询结果。</p>
+							<p>
+								2、申请注册 <br />
+							<p class="indent">①申请阶段：申请当天即可注册；</p>
+							<p class="indent">②正式受理、审查阶段：形式审查通过 商标局发出受理通知书 实质审查；</p>
+							<p class="indent">③公告、注册阶段：实质审查通过 初审公告 注册公告 商标局发出注册证。</p>
+							</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>三、商标注册时间</dt>
+						<dd>
+							<p>1、商标局大约1个月发出受理通知书；</p>
+							<p>2、公告期3个月；</p>
+							<p>3、商标注册完成整个时间大约需要12-24个月左右；</p>
+						</dd>
+					</dl>
+				</div>
+			</div>
+
+			<div class="panel panel-danger mpanel">
+				<div class="panel-heading">
+					注册流程：<span class="tags"><span>1.免费查询</span><span>2.填写商标注册表</span><span>3.付款 </span><span>4.受理通知书</span></span>
+				</div>
+				<div class="panel-body">
+					<ul>
+						<li>1、申请注册后商标局大约15个工作日发出受理通知书( 隔天出受理号)；</li>
+						<li>2、公告期3个月；</li>
+						<li>3、商标注册完成整个时间大约需要一年左右；</li>
+					</ul>
+					<div class="text-center">
+						<img src="/img/brand-step.gif" />
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-info mpanel">
+				<div class="panel-heading">商标注册费用</div>
+				<div class="panel-body">
+					<ul>
+						<li>1、商标名称查询：免费</li>
+						<li>2、商标图形查询：100元/个</li>
+						<li>3、商标注册 :1600元 (其中1000元官费, 600元代理费—包含商标查询,文书编写,商标监视,商标邮寄,商标取证)</li>
+					</ul>
+					<div class="alert alert-warning" style="margin-top: 10px">
+						<p>
+							<strong>注1 ：</strong>如需发票，我们将收取总金额的5%作为发票的手续费和快递费用
+						</p>
+						<p>
+							<strong>注2 ：</strong>如果您选择我们 商标图形查询，并最终选择我们商标注册，您已支付的商标图形查询费用将抵消部分商标注册费用。
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-xs-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">最新受理通知书</div>
+				<div class="panel-body">
+					<ul class="shu outul">
+						<li><a title="杭州厚思贸易有限公司&nbsp;申请号：13104479&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>杭州厚思贸易有限公司</span> <span>申请号：13104479</span>
+						</a></li>
+						<li><a title="田维军&nbsp;申请号：13093685&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>田维军</span> <span>申请号：13093685</span>
+						</a></li>
+						<li><a title="上海净晖环保科技有限公司&nbsp;申请号：13081356&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>上海净晖环保科技有限公司</span> <span>申请号：13081356</span>
+						</a></li>
+						<li><a title="天津和诺科技有限公司·&nbsp;申请号：13001158&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>天津和诺科技有限公司·</span> <span>申请号：13001158</span>
+						</a></li>
+						<li><a title="张家口市飘维日用化工有限公司&nbsp;申请号：12985564&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>张家口市飘维日用化工有限公司</span> <span>申请号：12985564</span>
+						</a></li>
+						<li><a title="深圳市金垛涞服装有限公司&nbsp;申请号：12972129/12972156&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>深圳市金垛涞服装有限公司</span> <span>申请号：12972129/12972156</span>
+						</a></li>
+						<li><a title="云南滇农益品生物科技有限公司&nbsp;申请号：12962501/12962539/12&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>云南滇农益品生物科技有限公司</span> <span>申请号：12962501/12962539/12</span>
+						</a></li>
+						<li><a title="银洲(上海)融资租赁有限公司&nbsp;申请号：12955592&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>银洲(上海)融资租赁有限公司</span> <span>申请号：12955592</span>
+						</a></li>
+						<li><a title="上海益派进出口有限公司&nbsp;申请号：13142419&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>上海益派进出口有限公司</span> <span>申请号：13142419</span>
+						</a></li>
+						<li><a title="广东劼豪建筑装饰有限公司&nbsp;申请号：13122842&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>广东劼豪建筑装饰有限公司</span> <span>申请号：13122842</span>
+						</a></li>
+						<li><a title="杭州厚思贸易有限公司&nbsp;申请号：13104479&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>杭州厚思贸易有限公司</span> <span>申请号：13104479</span>
+						</a></li>
+						<li><a title="田维军&nbsp;申请号：13093685&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>田维军</span> <span>申请号：13093685</span>
+						</a></li>
+						<li><a title="上海净晖环保科技有限公司&nbsp;申请号：13081356&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>上海净晖环保科技有限公司</span> <span>申请号：13081356</span>
+						</a></li>
+						<li><a title="天津和诺科技有限公司·&nbsp;申请号：13001158&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>天津和诺科技有限公司·</span> <span>申请号：13001158</span>
+						</a></li>
+						<li><a title="张家口市飘维日用化工有限公司&nbsp;申请号：12985564&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>张家口市飘维日用化工有限公司</span> <span>申请号：12985564</span>
+						</a></li>
+						<li><a title="深圳市金垛涞服装有限公司&nbsp;申请号：12972129/12972156&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>深圳市金垛涞服装有限公司</span> <span>申请号：12972129/12972156</span>
+						</a></li>
+						<li><a title="云南滇农益品生物科技有限公司&nbsp;申请号：12962501/12962539/12&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>云南滇农益品生物科技有限公司</span> <span>申请号：12962501/12962539/12</span>
+						</a></li>
+						<li><a title="银洲(上海)融资租赁有限公司&nbsp;申请号：12955592&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>银洲(上海)融资租赁有限公司</span> <span>申请号：12955592</span>
+						</a></li>
+						<li><a title="上海益派进出口有限公司&nbsp;申请号：13142419&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>上海益派进出口有限公司</span> <span>申请号：13142419</span>
+						</a></li>
+						<li><a title="广东劼豪建筑装饰有限公司&nbsp;申请号：13122842&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>广东劼豪建筑装饰有限公司</span> <span>申请号：13122842</span>
+						</a></li>
+						<li><a title="杭州厚思贸易有限公司&nbsp;申请号：13104479&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>杭州厚思贸易有限公司</span> <span>申请号：13104479</span>
+						</a></li>
+						<li><a title="田维军&nbsp;申请号：13093685&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>田维军</span> <span>申请号：13093685</span>
+						</a></li>
+						<li><a title="上海净晖环保科技有限公司&nbsp;申请号：13081356&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>上海净晖环保科技有限公司</span> <span>申请号：13081356</span>
+						</a></li>
+						<li><a title="天津和诺科技有限公司·&nbsp;申请号：13001158&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>天津和诺科技有限公司·</span> <span>申请号：13001158</span>
+						</a></li>
+						<li><a title="张家口市飘维日用化工有限公司&nbsp;申请号：12985564&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>张家口市飘维日用化工有限公司</span> <span>申请号：12985564</span>
+						</a></li>
+						<li><a title="深圳市金垛涞服装有限公司&nbsp;申请号：12972129/12972156&nbsp;商标注册受理通知书已下！" href="../brand/?act=5"> <span>深圳市金垛涞服装有限公司</span> <span>申请号：12972129/12972156</span>
+						</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<lift:tail>
+		<script>
+			// <![CDATA[
+			$(function() {
+				$("#brand-application").click(function() {
+					$("#brand-application-dialog").modal();
+				})
+			});
+			// ]]>
+		</script>
+	</lift:tail>
+</div>

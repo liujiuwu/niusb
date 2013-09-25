@@ -16,36 +16,11 @@ import java.util.Date
 import scala.xml.NodeSeq
 import code.lib.WebCacheHelper
 
-object WendaType2 extends Enumeration {
-  type WendaType2 = Value
-  val WendaType0 = Value(0, "商标知识")
-  val WendaType1 = Value(1, "商标注册")
-  val WendaType2 = Value(2, "商标查询")
-  val WendaType3 = Value(3, "商标分类")
-  val WendaType4 = Value(4, "商标设计")
-  val WendaType5 = Value(5, "商标取名")
-  val WendaType6 = Value(6, "商标维权")
-  val WendaType7 = Value(7, "驰名商标")
-  val WendaType8 = Value(8, "商标转让")
-  val WendaType9 = Value(9, "商标法")
-
-  /*3=商标知识
-5=商标注册
-2=商标查询
-4=商标分类
-6=商标设计
-7=商标取名
-8=商标维权
-9=驰名商标
-10=商标转让
-11=商标法*/
-}
-
 class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   def getSingleton = Wenda
   object title extends MappedString(this, 100) {
     def displayTitle = {
-      <a href={ "/wenda/view/" + id.get } title={ this.get } target="_blank">{ this.is }</a>
+      <i class="icon-question-sign"></i> ++ Text(" ") ++ <a href={ "/wenda/" + id.is } title={ this.is } target="_blank">{ this.is }</a>
     }
   }
 
@@ -110,7 +85,7 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
     }
 
     def display = {
-      <em>{ this.is }</em> ++ Text("次回答")
+      <em>{ this.is }</em> ++ Text("次回复")
     }
   }
 
@@ -141,4 +116,6 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
 object Wenda extends Wenda with CRUDify[Long, Wenda] with Paginator[Wenda] {
   override def dbTableName = "wendas"
   override def fieldOrder = List(id, title, wendaTypeCode, content, asker, readCount, createdAt, updatedAt)
+
+  def pageUrl(pageType: Int = 0, wendaTypeCode: Int = 0, orderType: Int = 0) = "/wenda/" + pageType + "/" + wendaTypeCode + "/" + orderType
 }

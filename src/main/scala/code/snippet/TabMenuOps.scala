@@ -17,6 +17,7 @@ class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
   val navMenus = LinkedHashMap[String, NodeSeq](
     "/index" -> <lift:children><i class="icon-home"></i> 首页</lift:children>,
     "/market" -> Text("商标集市"),
+    "/brand" -> Text("商标注册"),
     "/wenda" -> Text("问答频道"))
 
   def topMainNav = {

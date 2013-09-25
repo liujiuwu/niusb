@@ -13,13 +13,7 @@ class WendaType extends LongKeyedMapper[WendaType] with IdPK {
     override def dbIndexed_? = true
   }
 
-  object name extends MappedString(this, 30) {
-    def displayTypeName(): NodeSeq = {
-      val oname = Text(this.is)
-      val dname = if (isRecommend.is) <span style="color:#E13335;">{ oname }</span> else oname
-      <a href={ "/wenda/" + code.is } title={ oname }>{ dname }</a>
-    }
-  }
+  object name extends MappedString(this, 30)
 
   object wendaCount extends MappedInt(this) {
     override def dbColumnName = "brand_count"
