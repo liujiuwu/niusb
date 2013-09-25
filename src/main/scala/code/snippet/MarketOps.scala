@@ -1,11 +1,16 @@
 package code.snippet
 
-import scala.xml.NodeSeq
-import scala.xml.Text
+import scala.collection.mutable.ArrayBuffer
+import scala.util.Success
+import scala.util.Try
+import scala.xml._
+import com.niusb.util.SearchBrandFormHelpers
+import com.niusb.util.WebHelpers._
+import code.lib.WebCacheHelper
 import code.model.Brand
+import code.model.BrandType
 import code.model.User
 import code.model.UserData
-import com.niusb.util.WebHelpers._
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
@@ -13,30 +18,34 @@ import net.liftweb.http.SHtml
 import net.liftweb.http.SHtml.ElemAttr.pairToBasic
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds.SetHtml
-import net.liftweb.mapper.By
-import net.liftweb.util.CssSel
-import net.liftweb.util.Helpers._
-import com.niusb.util.SearchBrandFormHelpers
-import code.lib.WebCacheHelper
-import scala.util.Try
-import scala.util.Success
-import net.liftweb.common.Full
-import net.liftweb.mapper.QueryParam
-import scala.collection.mutable.ArrayBuffer
-import code.model.BrandStatus
 import net.liftweb.mapper._
-import code.model.BrandType
+import net.liftweb.mapper.By
+import net.liftweb.mapper.QueryParam
+import net.liftweb.util._
+import net.liftweb.util.Helpers._
+import scala.collection.mutable.LinkedHashMap
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
     case "list" => list
     case "view" => view
     case "brandTypes" => brandTypes
-    case "selectBox" => selectBox
+    case "brandNavBox" => brandNavBox
   }
+
+  val marketMenus = LinkedHashMap[String, NodeSeq](
+    "/market/0/0/0" -> Text("全部商标"),
+    "/market/1/0/0" -> Text("精品商标"),
+    "/market/2/0/0" -> Text("特价商标"),
+    "/market/3/0/0" -> Text("自有商标"))
 
   def list = {
     val limit = S.attr("limit").map(_.toInt).openOr(40)
+    val pageType = Try(S.param("pageType").openOr("0").toInt) match {
+      case Success(code) => code
+      case _ => 0
+    }
+
     val brandTypeCode = Try(S.param("brandTypeCode").openOr("0").toInt) match {
       case Success(code) => code
       case _ => 0
@@ -53,6 +62,14 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     }
 
     val byBuffer = ArrayBuffer[QueryParam[Brand]]()
+    if (pageType > 0) {
+      pageType match {
+        case 1 => byBuffer += By(Brand.isRecommend, true)
+        case 2 => byBuffer += By(Brand.isOffer, true)
+        case 3 => byBuffer += By(Brand.isOwn, true)
+      }
+    }
+
     if (brandTypeCode > 0) {
       byBuffer += By(Brand.brandTypeCode, brandTypeCode)
     }
@@ -66,18 +83,25 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       case _ => byBuffer += OrderBy(Brand.id, Descending)
     }
 
-    val pageUrl = "/market/" + brandTypeCode + "/" + orderType
+    val defaultTab = for (menu <- marketMenus) yield {
+      val cls = if (menu._1.startsWith("/market/" + pageType)) "active" else null
+      <li class={ cls }><a href={ menu._1 }>{ menu._2 }</a></li>
+    }
+
+    val marketNav = <ul class="nav nav-tabs">{ defaultTab }</ul>
+
+    val pageUrl = "/market/" + pageType + "/" + brandTypeCode + "/" + orderType
     val paginatorModel = Brand.paginator(pageUrl, byBuffer.toList: _*)(itemsOnPage = limit)
     val pagination = "#pagination" #> paginatorModel.paginate _
 
     val dataList = ".brands li" #> paginatorModel.datas.map(_.displayBrand)
     val orderTypeList = "#order-type-list dd" #> SearchBrandFormHelpers.orderTypes.map { ot =>
       "a *" #> ot._2 &
-        "a [href]" #> { "/market/" + brandTypeCode + "/" + ot._1 } &
-        "a [class+]" #> { if (ot._1.toInt == orderType) "active" else "" }
+        "a [href]" #> { "/market/" + pageType + "/" + brandTypeCode + "/" + ot._1 } &
+        (if (ot._1.toInt == orderType) "a [class+]" #> "active" else "a [class!]" #> "active")
     }
 
-    "#title" #> brandTypeName & orderTypeList & dataList & pagination
+    "#title" #> brandTypeName & "#marketNav" #> marketNav & orderTypeList & dataList & pagination
   }
 
   def view = {
@@ -124,7 +148,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     "li *" #> WebCacheHelper.brandTypes.values.map(_.name.displayTypeName())
   }
 
-  def selectBox = {
+  def brandNavBox = {
     val brandTypeList = "#brand-type-list li *" #> WebCacheHelper.brandTypes.values.map(_.name.displayTypeName(false))
 
     brandTypeList

@@ -67,17 +67,9 @@ class Boot extends Loggable {
       case RewriteRequest(ParsePath("/" :: Nil, _, _, _), _, _) =>
         RewriteResponse("index" :: Nil)
       case RewriteRequest(ParsePath("market" :: Nil, _, _, _), _, _) =>
-        RewriteResponse("market" :: "index" :: Nil)
-      case RewriteRequest(ParsePath("recommend" :: Nil, _, _, _), _, _) =>
-        RewriteResponse("market" :: "recommend" :: Nil)
-      case RewriteRequest(ParsePath("offer" :: Nil, _, _, _), _, _) =>
-        RewriteResponse("market" :: "offer" :: Nil)
-      case RewriteRequest(ParsePath("own" :: Nil, _, _, _), _, _) =>
-        RewriteResponse("market" :: "own" :: Nil)
-      /*  case RewriteRequest(ParsePath("market" :: "btc" :: AsInt(typeId) :: Nil, _, _, _), _, _) =>
-        RewriteResponse("market" :: "index" :: Nil, Map("btc" -> typeId.toString))*/
-      case RewriteRequest(ParsePath("market" :: AsInt(brandTypeCode) :: AsInt(orderType) :: Nil, _, _, _), _, _) =>
-        RewriteResponse("market" :: "index" :: Nil, Map("brandTypeCode" -> brandTypeCode.toString, "orderType" -> orderType.toString))
+        RewriteResponse("market" :: "index" :: Nil, Map("pageType" -> "0", "brandTypeCode" -> "0", "orderType" -> "0"))
+      case RewriteRequest(ParsePath("market" :: AsInt(pageType) :: AsInt(brandTypeCode) :: AsInt(orderType) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("market" :: "index" :: Nil, Map("pageType" -> pageType.toString, "brandTypeCode" -> brandTypeCode.toString, "orderType" -> orderType.toString))
 
       case RewriteRequest(ParsePath("user" :: "sign_out" :: Nil, _, _, _), _, _) =>
         RewriteResponse("user_mgt" :: "logout" :: Nil)

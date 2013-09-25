@@ -35,7 +35,7 @@ object SyncData extends App {
   implicit val getKehuResult = GetResult(r => Kehu(r.nextInt, r.nextString, r.nextString, r.nextString(), r.nextString(), r.nextString(), r.nextDate(), r.nextString()))
   DB.defineConnectionManager(DefaultConnectionIdentifier, MyDBVendor)
   Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
-  lazy val db = Database.forURL("jdbc:mysql://localhost:3306/haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
+  lazy val db = Database.forURL("jdbc:mysql://localhost:3306/new_haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
 
   /*if (args.length < 3) {
     println("use source dir , dist dir and data limit .")
@@ -57,7 +57,7 @@ object SyncData extends App {
       | id,name,pic,indate,price,`range`,`category`,`number`,
       |regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id 
       | from trademark 
-      | where sell=0 and del=0 and LENGTH(kehu_1id)>0
+      | where sell=0 and del=0 and LENGTH(kehu_1id)>0 and LENGTH(name)>0 and pic like '%/2011/%' 
       """ + (if (limit > 0) " limit " + limit)
 
     db.withSession {
@@ -115,14 +115,16 @@ object SyncData extends App {
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
-      Q.queryNA[Kehu]("select * from kehu_1 where id!=4 " + (if (limit > 0) " limit " + limit else "")) foreach { u =>
+      Q.queryNA[Kehu]("select id,name,tel,tel1,qq,bz,indate,sqname,count(distinct(tel))as c from kehu_1 where id>10 and LENGTH(name)>0 and LENGTH(tel)>0 GROUP BY tel " + (if (limit > 0) " limit " + limit else "")) foreach { u =>
         Option(u.tel) match {
           case Some(tel) =>
             val tels = tel.split(",")
             val regTel = tels(0).replaceAll("""\s|-""", "")
+            println(regTel+"==")
             WebHelpers.realMobile(Full(regTel)) match {
               case Full(mobile) =>
-                val user = User.create
+               // println(u.name+"|"+mobile)
+               /* val user = User.create
                 user.srcId(u.id)
                 user.mobile(mobile)
                 user.phone(if (u.tel1 != null && !u.tel1.isEmpty()) u.tel1 + "," + tels.mkString(",") else tels.mkString(","))
@@ -135,7 +137,7 @@ object SyncData extends App {
                 user.password(Helpers.randomString(6))
                 user.descn(u.sqname)
                 user.remark(u.bz)
-                user.save
+                user.save*/
                 syncNum += 1
               case _ => println(u.id + "=" + tel)
             }

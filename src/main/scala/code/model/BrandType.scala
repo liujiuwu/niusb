@@ -18,6 +18,11 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
 
   object name extends MappedString(this, 30) {
     def displayTypeName(isBrandCount: Boolean = true): NodeSeq = {
+      val pageType = Try(S.param("pageType").openOr("0").toInt) match {
+        case Success(code) => code
+        case _ => 0
+      }
+
       val brandTypeCode = Try(S.param("brandTypeCode").openOr("0").toInt) match {
         case Success(code) => code
         case _ => 0
@@ -35,7 +40,7 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
         } else {
           oname
         }
-      <a href={ "/market/" + code.is + "/" + orderType } class={ if (brandTypeCode == code.is) "active" else null } title={ descn.is } target={ if (isBrandCount) "_blank" else null }>{ dname }</a>
+      <a href={ "/market/" + pageType + "/" + code.is + "/" + orderType } class={ if (brandTypeCode == code.is) "active" else null } title={ descn.is } target={ if (isBrandCount) "_blank" else null }>{ dname }</a>
     }
   }
 
