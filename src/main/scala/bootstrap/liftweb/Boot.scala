@@ -93,11 +93,9 @@ class Boot extends Loggable {
         RewriteResponse("help" :: "sitemap" :: Nil)
 
       case RewriteRequest(ParsePath("wenda" :: Nil, _, _, _), _, _) =>
-        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "all"))
-      case RewriteRequest(ParsePath("wenda" :: pageType :: Nil, _, _, _), _, _) if ("all" == pageType || "common" == pageType || "hot" == pageType || "wait" == pageType) =>
-        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> pageType))
-      case RewriteRequest(ParsePath("wenda" :: AsInt(wendTypeCode) :: Nil, _, _, _), _, _) =>
-        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> wendTypeCode.toString))
+        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "0", "wendaTypeCode" -> "-1", "orderType" -> "0"))
+      case RewriteRequest(ParsePath("wenda" :: AsInt(pageType) :: AsInt(wendaTypeCode) :: AsInt(orderType) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> pageType.toString, "wendaTypeCode" -> wendaTypeCode.toString, "orderType" -> orderType.toString))
       case RewriteRequest(ParsePath("wenda" :: "view" :: AsLong(id) :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "view" :: Nil, Map("id" -> id.toString))
     }

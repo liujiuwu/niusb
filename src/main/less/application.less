@@ -92,6 +92,26 @@ body {
     text-indent:-9999px;
 }
 
+a:active {
+   outline :none ;
+}
+
+a:focus  {
+   outline :none ;
+  -moz-outline :none ;
+}
+
+input[type="text"]:focus, input[type="password"]:focus,input[type="submit"]:focus textarea:focus {
+    outline: 0 none;
+}
+
+textarea {
+    border: 0 none;
+    outline: 0 none;
+    overflow: auto;
+    resize: none;
+}
+
 
 .main-box:after,.tp:after,.ct:after,.box .box-content:after,.panel-heading:after{
     clear: both;
