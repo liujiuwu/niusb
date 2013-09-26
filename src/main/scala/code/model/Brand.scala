@@ -253,9 +253,8 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   }
 
   def displayBrand = {
-    def viewLink(c: NodeSeq) = <a href={ "/market/view/" + id.get } target="_blank">{ c }</a>
+    def viewLink(c: NodeSeq) = <a href={ "/market/" + id.get } target="_blank">{ c }</a>
     "img" #> viewLink(<img class="brand-img lazy" src="/img/transparent.gif" data-original={ pic.src } alt={ name.is.trim }/>) &
-      //"img" #> viewLink(<img class="brand-img" src={ pic.src } alt={ name.get.trim }/>) &
       ".brandTypeCode *" #> brandTypeCode.displayTypeLabel &
       ".price *" #> sellPrice.displaySellPrice() &
       ".brand-name *" #> viewLink(Text(name.get.trim))
@@ -273,4 +272,6 @@ object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
     val status = BrandStatus.values.toList.map(v => (v.id.toString, v.toString))
     ("all", "所有状态") :: status
   }
+
+  def pageUrl(pageType: Int = 0, brandTypeCode: Int = 0, orderType: Int = 0) = "/market/" + pageType + "/" + brandTypeCode + "/" + orderType
 }

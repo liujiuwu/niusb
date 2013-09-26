@@ -1,30 +1,27 @@
 package bootstrap.liftweb
 
-import java.util.Date
 import code.config.Site
-import code.model.MyDBVendor
-import code.model.User
+import code.lib.WebCacheHelper
+import code.model._
 import code.rest.UploadManager
 import net.liftweb.common._
 import net.liftweb.db.DB
 import net.liftweb.db.DB1.db1ToDb
 import net.liftweb.db.DefaultConnectionIdentifier
-import net.liftweb.http.Html5Properties
-import net.liftweb.http._
-import net.liftweb.http.S
-import net.liftweb.mapper.By
-import net.liftweb.util._
-import net.liftweb.util.Vendor._
-import net.liftweb.mapper.Schemifier
-import code.model.Brand
-import scala.collection.Parallel
-import code.lib.SyncData
-import code.model._
-import code.lib.WebCacheHelper
-import com.niusb.util.SearchBrandHelpers
-import scala.util.Try
-import scala.util.Success
+import net.liftweb.http.LiftRules
+import net.liftweb.http.LiftRulesMocker.toLiftRules
+import net.liftweb.http.NotFoundAsTemplate
+import net.liftweb.http.NoticeType
+import net.liftweb.http.ParsePath
+import net.liftweb.http.Req
+import net.liftweb.http.RewriteRequest
+import net.liftweb.http.RewriteResponse
+import net.liftweb.http.js.JE
+import net.liftweb.http.js.JsCmds._
+import net.liftweb.mapper._
 import net.liftweb.util.Helpers._
+import net.liftweb.util._
+import net.liftweb.util.Vendor.valToVender
 
 class Boot extends Loggable {
   def boot {
@@ -40,7 +37,7 @@ class Boot extends Loggable {
       }
     }*/
     //DB.addLogFunc((query, len) => logger.info("The query: " + query + " took " + len + " milliseconds"))
-    Schemifier.schemify(true, Schemifier.infoF _, User, Webset, BrandType, Brand, AdSpace, Ad, Article, Message, UserData, WendaType, Wenda, WendaReply)
+    Schemifier.schemify(true, Schemifier.infoF _, User, Webset, BrandType, Brand, AdSpace, Ad, Article, Message, UserData, WendaType, Wenda, WendaReply, BrandApplication)
 
     LiftRules.setSiteMap(Site.siteMap)
 
@@ -51,9 +48,36 @@ class Boot extends Loggable {
     LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
     LiftRules.early.append(_.setCharacterEncoding("utf-8"))
+    LiftRules.noticesAutoFadeOut.default.set((noticeType: NoticeType.Value) => Full((1 seconds, 2 seconds)))
     //LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
     LiftRules.htmlProperties.default.set((r: Req) => new StarXHtmlInHtml5OutProperties(r.userAgent))
     //LiftRules.handleMimeFile = OnDiskFileParamHolder.apply
+
+    val jsNotice =
+      """$('#lift__noticesContainer___notice')
+        |.addClass("alert alert-success")
+        |.prepend('<button type="button" class="close" data-dismiss="alert">×</button>')""".stripMargin
+
+    val jsWarning =
+      """$('#lift__noticesContainer___warning')
+        |.addClass("alert alert-warning")
+        |.prepend('<button type="button" class="close" data-dismiss="alert">×</button>')""".stripMargin
+
+    val jsError =
+      """$('#lift__noticesContainer___error')
+        |.addClass("alert alert-danger")
+        |.prepend('<button type="button" class="close" data-dismiss="alert">×</button>')""".stripMargin
+
+   LiftRules.noticesEffects.default.set(
+      (notice: Box[NoticeType.Value], id: String) => {
+        val js = notice.map( _.title) match{
+          case Full("Notice")   => Full(JE.JsRaw( jsNotice ).cmd)
+          case Full("Warning")  => Full(JE.JsRaw( jsWarning ).cmd)
+          case Full("Error")    => Full(JE.JsRaw( jsError ).cmd)
+          case _                => Full(Noop)//Full(JE.JsRaw( jsNotice ).cmd)
+        }
+        js
+    })
 
     LiftRules.loggedInTest = Full(
       () => {
@@ -75,7 +99,7 @@ class Boot extends Loggable {
 
       case RewriteRequest(ParsePath("user" :: "sign_out" :: Nil, _, _, _), _, _) =>
         RewriteResponse("user_mgt" :: "logout" :: Nil)
-      case RewriteRequest(ParsePath("market" :: "view" :: AsLong(id) :: Nil, _, _, _), _, _) =>
+      case RewriteRequest(ParsePath("market" :: AsLong(id) :: Nil, _, _, _), _, _) =>
         RewriteResponse("market" :: "view" :: Nil, Map("id" -> id.toString))
 
       case RewriteRequest(ParsePath("news" :: Nil, _, _, _), _, _) =>

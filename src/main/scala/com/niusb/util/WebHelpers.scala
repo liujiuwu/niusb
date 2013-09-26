@@ -89,10 +89,10 @@ trait WebHelpers {
     }
   }
 
-  def formError(fieldName: String, msg: String) = {
+  def formError(formGroupId: String, msg: String) = {
     JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$("form .help-block").html("")""") &
-      JsRaw("""$("#%1$s").focus()""".format(fieldName)) &
-      JsRaw("""$("#form-%1$s").removeClass("has-success has-error has-warning");$("#form-%1$s").addClass("has-error");$("#form-%1$s .help-block").show().html("%2$s")""" format (fieldName, msg))
+      JsRaw("""$("#%1$s").focus()""".format(formGroupId)) &
+      JsRaw("""$("#form-%1$s").removeClass("has-success has-error has-warning");$("#form-%1$s").addClass("has-error");$("#form-%1$s .help-block").show().html("%2$s")""" format (formGroupId, msg))
   }
 
   /* def succMsg(where: String, msg: NodeSeq, cssClass: String = "alert-success", duration: TimeSpan = 0 second, fadeTime: TimeSpan = 2 second): JsCmd = {
@@ -215,20 +215,20 @@ trait WebHelpers {
     SetHtml(byId, alertHtml) & JsShowId(byId) & (if (isReload) After(duration, Reload) else FadeOut(byId, duration, 2 second))
   }
 
-  def alertSuccess(message: String): JsCmd = {
-    alert("", message, "alert-success")
+  def alertSuccess(message: String, isReload: Boolean = false): JsCmd = {
+    WebHelpers.removeFormError() & alert("", message, "alert-success", isReload)
   }
 
-  def alertError(message: String): JsCmd = {
-    alert("", message, "alert-danger")
+  def alertError(message: String, isReload: Boolean = false): JsCmd = {
+    WebHelpers.removeFormError() & alert("", message, "alert-danger", isReload)
   }
 
-  def alertWarning(message: String): JsCmd = {
-    alert("", message, "alert-warning")
+  def alertWarning(message: String, isReload: Boolean = false): JsCmd = {
+    WebHelpers.removeFormError() & alert("", message, "alert-warning", isReload)
   }
 
-  def alertInfo(message: String): JsCmd = {
-    alert("", message, "alert-info")
+  def alertInfo(message: String, isReload: Boolean = false): JsCmd = {
+    WebHelpers.removeFormError() & alert("", message, "alert-info", isReload)
   }
 
   def showLoginModal(action: String): JsCmd = {

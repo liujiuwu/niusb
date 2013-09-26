@@ -51,28 +51,45 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     var brandType: BrandType = WebCacheHelper.brandTypes.get(25).get
 
     def process(): JsCmd = {
-      val brand = Brand.create.regNo(regNo).name(name).pic(pic)
+      val brand = Brand.create
+
+      if (regNo.trim().isEmpty()) {
+        return WebHelpers.formError("regNo", "商标注册号不能为空，请填写。")
+      } else {
+        brand.regNo(regNo)
+      }
+
+      if (name.trim().isEmpty()) {
+        return WebHelpers.formError("name", "商标名称不能为空，请填写。")
+      } else if (name.trim().length() > 30) {
+        return WebHelpers.formError("name", "商标名称长度为30字以内。")
+      } else {
+        brand.name(name)
+      }
+
       Try { basePrice.toInt } match {
-        case Success(b) => brand.basePrice(b)
+        case Success(b) if (b >= 0) => brand.basePrice(b)
         case _ => return WebHelpers.formError("basePrice", "商标出售底价格式错误，请确认")
       }
+
       Try { WebHelpers.df.parse(regDateStr) } match {
         case Success(regDate) => brand.regDate(regDate)
         case _ => return WebHelpers.formError("regDate", "商标注册日期格式错误，请确认")
       }
+
       brand.applicant(applicant)
       brand.useDescn(useDescn).descn(descn)
       brand.owner(loginUser)
-      brand.brandTypeCode(brandType.code.get)
-
-      brand.sellPrice(brand.basePrice + (brand.basePrice.get * 0.1).toInt)
+      brand.brandTypeCode(brandType.code.is)
       brand.lsqz(lsqz)
+
       brand.validate match {
         case Nil =>
           UploadHelpers.handleBrandImg(pic)
           brand.save
-          S.redirectTo("/user/brand/")
-        case errors => println(errors); Noop
+          Reload
+        case errors =>
+          Noop
       }
     }
 
@@ -93,16 +110,20 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def queryRemoteData = {
     "@queryRemoteData [onclick]" #> ajaxCall(ValById("regNo"),
       regNo => {
-        SearchBrandHelpers.searchBrandByRegNo(regNo) match {
-          case Some(data) =>
-            SetValById("name", data.name) &
-              SetValById("applicant", data.zwsqr) &
-              SetValById("brand_type", data.brandType) &
-              SetValById("regDate", data.zcggrq) &
-              SetValById("useDescn", data.fwlb) &
-              SetValById("lsqz", data.lsqz) &
-              JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
-          case _ => Noop//JsRaw(errorMsg("opt_brand_tip", Text("商标信息查询失败，请稍候再试！")))
+        if (regNo.trim().isEmpty()) {
+          WebHelpers.formError("regNo", "商标注册号不能为空，请填写") & JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
+        } else {
+          SearchBrandHelpers.searchBrandByRegNo(regNo) match {
+            case Some(data) =>
+              SetValById("name", data.name) &
+                SetValById("applicant", data.zwsqr) &
+                SetValById("brand_type", data.brandType) &
+                SetValById("regDate", data.zcggrq) &
+                SetValById("useDescn", data.fwlb) &
+                SetValById("lsqz", data.lsqz) &
+                WebHelpers.removeFormError() & JsRaw("""$('#queryRemoteData').removeClass("disabled")""")
+            case _ => WebHelpers.formError("regNo", "商标信息查询失败，请稍候再试！")
+          }
         }
       })
   }
@@ -139,7 +160,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
                 }
               })._2
             })
-          }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
+          }, <i class="icon-trash"></i>, "class" -> "btn btn-danger btn-xs")
         case _ => Text("")
       }
     }
@@ -243,7 +264,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
           userData.cancelFollow(brand.id.get)
         }
         Reload
-      }, Text("取消关注"), "class" -> "btn btn-danger")
+      }, Text("取消关注"), "class" -> "btn btn-danger btn-xs")
     }
 
     val datas = (for (follow <- userData.userFollows; brand <- Brand.findByKey(follow.brandId)) yield {
@@ -253,7 +274,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     val paginatorModel = PaginatorByMem.paginator(url, datas)()
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
       "#regNo" #> brand.regNo &
-        "#name" #> <a href={ "/market/view/" + brand.id.get }>{ brand.name }</a> &
+        "#name" #> <a href={ "/market/" + brand.id.is } target="_blank">{ brand.name }</a> &
         "#brandType" #> brand.brandTypeCode.displayType &
         "#status" #> brand.status.displayStatus &
         "#regDate" #> brand.regDate.asHtml &

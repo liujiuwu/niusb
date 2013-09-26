@@ -14,16 +14,19 @@ import code.model.UserData
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
-import net.liftweb.http.SHtml
+import net.liftweb.http.SHtml._
 import net.liftweb.http.SHtml.ElemAttr.pairToBasic
 import net.liftweb.http.js.JsCmd
-import net.liftweb.http.js.JsCmds.SetHtml
+import net.liftweb.http.js.JsCmds._
 import net.liftweb.mapper._
 import net.liftweb.mapper.By
 import net.liftweb.mapper.QueryParam
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import scala.collection.mutable.LinkedHashMap
+import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.common.Full
+import com.niusb.util.WebHelpers
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -90,14 +93,14 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     val marketNav = <ul class="nav nav-tabs">{ defaultTab }</ul>
 
-    val pageUrl = "/market/" + pageType + "/" + brandTypeCode + "/" + orderType
+    val pageUrl = Brand.pageUrl(pageType, brandTypeCode, orderType)
     val paginatorModel = Brand.paginator(pageUrl, byBuffer.toList: _*)(itemsOnPage = limit)
     val pagination = "#pagination" #> paginatorModel.paginate _
 
     val dataList = ".brands li" #> paginatorModel.datas.map(_.displayBrand)
     val orderTypeList = "#order-type-list dd" #> SearchBrandFormHelpers.orderTypes.map { ot =>
       "a *" #> ot._2 &
-        "a [href]" #> { "/market/" + pageType + "/" + brandTypeCode + "/" + ot._1 } &
+        "a [href]" #> { Brand.pageUrl(pageType, brandTypeCode, ot._1.toInt) } &
         (if (ot._1.toInt == orderType) "a [class+]" #> "active" else "a [class!]" #> "active")
     }
 
@@ -105,11 +108,12 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def view = {
-    def followBtn(brand: Brand) = {
+    def followBtn(brand: Brand): NodeSeq = {
+      def cancelFollowBtn = a(() => requiredLogin(follow), Text("取消关注"), "class" -> "btn btn-danger btn-xs")
+      def followBtn = a(() => requiredLogin(follow), Text("关注此商标"), "class" -> "btn btn-primary btn-xs")
       def userData = UserData.getOrCreateUserData(loginUser.id.get)
       def isFollow = userData.isFollow(brand.id.get)
-      def cancelFollowBtn = SHtml.a(() => follow(), Text("取消关注"), "class" -> "btn btn-small btn-danger")
-      def followBtn = SHtml.a(() => follow(), Text("关注此商标"), "class" -> "btn btn-small btn-primary")
+
       def follow(): JsCmd = {
         if (isFollow) {
           val followCount = brand.followCount.decr
@@ -121,7 +125,11 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
           SetHtml("followCount", Text(followCount.toString)) & SetHtml("followCountBtn", cancelFollowBtn)
         }
       }
-      if (isFollow) cancelFollowBtn else followBtn
+      if (User.loggedIn_?) {
+        if (isFollow) cancelFollowBtn else followBtn
+      } else {
+        followBtn
+      }
     }
 
     (for {
@@ -129,7 +137,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
       "#title" #> brand.name &
-        "img" #> <img src={ brand.pic.src } alt={ brand.name.get.trim } width="320" height="200"/> &
+        "#brand-img" #> <img src={ brand.pic.src } alt={ brand.name.get.trim } width="320" height="200"/> &
         "#brandId" #> Text(brand.brandTypeCode + "-" + brand.id) &
         "#regNo" #> brand.regNo &
         "#sellPrice" #> brand.sellPrice.displaySellPrice() &
@@ -138,9 +146,8 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#useDescn" #> brand.useDescn &
         "#viewCount *" #> brand.viewCount.incr(realIp) &
         "#followCount *" #> brand.followCount.get &
-        "#followCountBtn *" #> requiredLogin("关注此商标", followBtn(brand)) &
+        "#followCountBtn *" #> followBtn(brand) &
         "#descn" #> brand.descn
-
     }): CssSel
   }
 
@@ -149,7 +156,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def brandNavBox = {
-    val brandTypeList = "#brand-type-list li *" #> WebCacheHelper.brandTypes.values.map(_.name.displayTypeName(false))
+    val brandTypeList = "li *" #> WebCacheHelper.brandTypes.values.map(_.name.displayTypeName(false))
 
     brandTypeList
   }

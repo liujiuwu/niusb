@@ -1,17 +1,17 @@
 <div data-lift="surround?with=user;at=content">
 	<div data-lift="user.UserOps.updatePwd">
-		<div id="opt_pwd_tip" class="alert hide"></div>
+		<div id="alert-msg"></div>
 		<form data-lift="form.ajax?class=form-horizontal">
-			<div id="form-old-pwd" class="form-group">
-				<label class="col-lg-2 control-label" for="old-pwd">旧密码</label>
+			<div id="form-pwd" class="form-group">
+				<label class="col-lg-2 control-label" for="pwd">旧密码</label>
 				<div class="col-lg-3">
-					<input type="password" class="form-control" id="old-pwd" name="old-pwd" placeholder="输入旧的登录密码" /> <span class="help-block"></span>
+					<input type="password" class="form-control" id="pwd" name="pwd" placeholder="输入旧的登录密码" /> <span class="help-block"></span>
 				</div>
 			</div>
-			<div id="form-pwd" class="form-group">
-				<label for="pwd" class="col-lg-2 control-label">新密码</label>
+			<div id="form-newPwd" class="form-group">
+				<label for="newPwd" class="col-lg-2 control-label">新密码</label>
 				<div class="col-lg-3">
-					<input type="password" class="form-control" id="pwd" name="pwd" placeholder="输入您的新密码" /> <span class="help-block"></span>
+					<input type="password" class="form-control" id="newPwd" name="newPwd" placeholder="输入您的新密码" /> <span class="help-block"></span>
 				</div>
 			</div>
 

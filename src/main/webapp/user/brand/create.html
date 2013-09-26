@@ -3,62 +3,60 @@
 		<div class="col-lg-8">
 			<div data-lift="user.BrandOps.create">
 				<form data-lift="form.ajax?class=form-horizontal">
-					<div id="opt_brand_tip" class="alert hide"></div>
-					<div id="group_regNo" class="form-group">
+					<div id="form-regNo" class="form-group">
 						<label for="regNo" class="col-lg-3 control-label">商标注册号</label>
 						<div class="col-lg-6">
 							<div class="input-group">
-								<input type="text" class="form-control" id="regNo" name="regNo" placeholder="输入商标注册号" required="required" /> <span class="input-group-btn"><button class="btn btn-info" type="button" id="queryRemoteData" name="queryRemoteData" data-lift="user.BrandOps.queryRemoteData">从标局获取数据</button>
+								<input type="text" class="form-control" id="regNo" name="regNo" placeholder="填写商标注册号" /> <span class="input-group-btn"><button class="btn btn-info" type="button" id="queryRemoteData" name="queryRemoteData" data-lift="user.BrandOps.queryRemoteData">从标局获取数据</button>
 
 									<button class="btn btn-primary" type="button" data-toggle="modal" data-target="#uploadDialog">商标图上传</button></span>
 							</div>
-							<span id="error_regNo" class="help-block"></span> <input type="hidden" id="pic" name="pic" />
-
+							<span class="help-block"></span> <input type="hidden" id="pic" name="pic" />
 						</div>
 					</div>
-					<div id="group_brandType" class="form-group">
+					<div id="form-brandType" class="form-group">
 						<label for="brandType" class="col-lg-3 control-label">商标类别</label>
-						<div class="col-lg-3">
-							<select class="form-control" id="brandType" name="brandType"></select> <span id="error_brandType" class="help-block"></span>
+						<div class="col-lg-4">
+							<select class="form-control" id="brandType" name="brandType"></select> <span class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_basePrice" class="form-group">
+					<div id="form-basePrice" class="form-group">
 						<label for="basePrice" class="col-lg-3 control-label">出售底价</label>
-						<div class="col-lg-3">
+						<div class="col-lg-4">
 							<div class="input-group">
-								<span class="input-group-addon">￥</span> <input type="text" class="form-control" id="basePrice" name="basePrice" required="required" /> <span class="input-group-addon">元</span>
+								<span class="input-group-addon">￥</span> <input type="text" class="form-control" id="basePrice" name="basePrice" /> <span class="input-group-addon">元</span>
 							</div>
-							<span id="error_basePrice" class="help-block"></span>
+							<span class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_name" class="form-group">
+					<div id="form-name" class="form-group">
 						<label for="name" class="col-lg-3 control-label">商标名称</label>
 						<div class="col-lg-8">
-							<input type="text" class="form-control" id="name" name="name" required="required" /> <span id="error_name" class="help-block"></span>
+							<input type="text" class="form-control" id="name" name="name"  placeholder="填写您的商标名称" /> <span class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_regDate" class="form-group">
+					<div id="form-regDate" class="form-group">
 						<label for="regDate" class="col-lg-3 control-label">注册日期</label>
 						<div class="col-lg-4">
-							<input type="text" class="form-control" id="regDate" name="regDate" placeholder="格式:xxxx-xx-xx" /><span id="error_regDate" class="help-block"></span>
+							<input type="text" class="form-control" id="regDate" name="regDate" placeholder="格式:xxxx-xx-xx" /><span class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_applicant" class="form-group">
+					<div id="form-applicant" class="form-group">
 						<label for="applicant" class="col-lg-3 control-label">申请人</label>
 						<div class="col-lg-4">
-							<input type="text" class="form-control" id="applicant" name="applicant" placeholder="填写商标申请人" required="required" /> <span id="error_applicant" class="help-block"></span>
+							<input type="text" class="form-control" id="applicant" name="applicant" placeholder="填写商标申请人" /> <span class="help-block"></span>
 						</div>
 					</div>
-					<div id="group_useDescn" class="form-group">
+					<div id="form-useDescn" class="form-group">
 						<label for="useDescn" class="col-lg-3 control-label">使用范围</label>
 						<div class="col-lg-8">
 							<textarea rows="3" class="form-control" id="useDescn" name="useDescn"></textarea>
 						</div>
 					</div>
-					<div id="group_descn" class="form-group">
+					<div id="form-descn" class="form-group">
 						<label for="descn" class="col-lg-3 control-label">商标创意说明</label>
 						<div class="col-lg-8">
-							<textarea rows="3" class="form-control" id="descn" name="descn"></textarea>
+							<textarea rows="3" class="form-control" id="descn" name="descn" placeholder="为了提高转让成功率，请对商标创意进行说明。"></textarea>
 						</div>
 					</div>
 					<div class="form-group">
@@ -72,7 +70,7 @@
 			</div>
 		</div>
 		<div class="col-lg-4">
-		   <img id="brand_pic" class="brand-bimg-box" src="/img/no-img.png" width="320" height="200"/>
+			<img id="brand_pic" class="brand-bimg-box" src="/img/no-img.png" width="320" height="200" />
 		</div>
 	</div>
 	<lift:tail>

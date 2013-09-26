@@ -1,7 +1,6 @@
 package code.snippet
 
 import scala.xml.NodeSeq
-
 import code.model.User
 import net.liftweb.common.Box
 import net.liftweb.common.Box.box2Option
@@ -12,6 +11,9 @@ import net.liftweb.http.RequestVar
 import net.liftweb.http.S
 import net.liftweb.util.CssSel
 import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.http.js.JsCmd
+import net.liftweb.http.js.JsCmds._
 
 object SnippetHelper extends SnippetHelper
 
@@ -54,7 +56,11 @@ trait SnippetHelper {
       <span><a class="btn btn-small btn-success" data-toggle="modal" data-target="#loginDialog">注册登录</a> 后可以{ tip }。</span>
     }
   }
-  
+
+  def requiredLogin(execJs: => JsCmd): JsCmd = {
+    if (User.loggedIn_?) execJs else JsRaw("""$("#loginDialog").modal();""")
+  }
+
   implicit protected def boxCssSelToCssSel(in: Box[CssSel]): CssSel = in match {
     case Full(cssSel) => cssSel
     case Failure(msg, except, _) =>

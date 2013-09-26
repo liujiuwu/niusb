@@ -1,68 +1,21 @@
 <div data-lift="surround?with=default;at=content">
-	<style>
-#brand-faq dt {
-	font-size: 16px;
-	padding: 5px 0;
-	color: #666;
-}
-
-#brand-faq dd {
-	font-size: 14px;
-	line-height: 28px;
-}
-
-#brand-step dt {
-	padding: 5px 0;
-	color: #666;
-}
-
-#brand-step dd {
-	font-size: 14px;
-	color: #666;
-	line-height: 25px;
-}
-
-.mpanel .panel-heading {
-	font-size: 16px;
-	font-weight: bold;
-}
-
-.mpanel .panel-heading .tags {
-	font-size: 14px;
-	font-weight: normal;
-}
-
-.mpanel .panel-heading .tags span {
-	padding-left: 10px;
-}
-
-#jumbotron-box h1 {
-	font-size: 36px;
-	margin-bottom: 10px;
-}
-
-#jumbotron-box p {
-	padding: 5px 0;
-}
-</style>
-
-	<div id="brand-application-dialog" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="630">
+	<div id="brand-application-dialog" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="650">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 			<h3>商标注册申请</h3>
 		</div>
-		<div class="modal-body">
+		<div data-lift="BrandOps.brandApplication" class="modal-body">
 			<form data-lift="form.ajax?class=form-horizontal">
 				<div id="form-brand-name" class="form-group">
 					<label for="brand-name" class="control-label col-xs-3">商标名称</label>
 					<div class="col-xs-6">
-						<input type="text" class="form-control" id="brand-name" name="brand-name" placeholder="请输入您要注册的商标名称" /> <span class="help-block"></span>
+						<input type="text" class="form-control" id="brandName" name="brandName" placeholder="请输入您要注册的商标名称" /> <span class="help-block"></span>
 					</div>
 				</div>
 				<div id="form-brand-type" class="form-group">
 					<label for="brand-type" class="control-label col-xs-3">商标类别</label>
 					<div class="col-xs-6">
-						<select class="form-control" id="brand-type" name="brand-type" /> <span class="help-block"></span>
+						<select class="form-control" id="brandType" name="brandType"></select>
 					</div>
 				</div>
 				<div id="form-name" class="form-group">
@@ -71,16 +24,18 @@
 						<input type="text" class="form-control" id="name" name="name" placeholder="请输入联系人姓名" /> <span class="help-block"></span>
 					</div>
 				</div>
-				<div id="form-mobile" class="form-group">
-					<label for="mobile" class="control-label col-xs-3">联系电话</label>
-					<div class="col-xs-6">
-						<input type="text" class="form-control" id="mobile" name="mobile" placeholder="请输入联系人的联系电话" /> <span class="help-block"></span>
+				<div id="form-contact-info" class="form-group">
+					<label for="mobile" class="control-label col-xs-3">联系方式</label>
+					<div class="col-xs-8">
+						<textarea rows="2" class="form-control" id="contactInfo" name="contactInfo" placeholder="请输入联系人的联系方式，可以是电话、邮件、QQ号等"></textarea>
+						<span class="help-block"></span>
 					</div>
 				</div>
-				<div id="form-remark" class="form-group">
-					<label for="remark" class="control-label col-xs-3">附加说明</label>
-					<div class="col-xs-7">
-						<textarea rows="3" class="form-control" id="remark" name="remark" placeholder="如果还有补充说明，请在此输入" /> <span class="help-block"></span>
+				<div id="form-additional" class="form-group">
+					<label for="additional" class="control-label col-xs-3">附加说明</label>
+					<div class="col-xs-8">
+						<textarea rows="2" class="form-control" id="additional" name="additional" placeholder="如果还有补充说明，请在此输入，300字以内。"></textarea>
+						<span class="help-block"></span>
 					</div>
 				</div>
 				<div class="form-group">
@@ -196,7 +151,7 @@
 						<dt>一、商标注册所需文件</dt>
 						<dd>
 							<p>1、 公司名义：营业执照复印件、商标标识黑白稿一份、商品类别。</p>
-							<p>2、 个人名义：身份证复印件、个体工商户营业执照复印件(执照经营范围必须与申请商标的商品一致)、商标标识黑白稿一份、商品类别。</p>
+							<p>2、 个人名义：身份证复印件、个体工商户营业执照复印件(执照经营范围必须与申请商标的商品一致)、商标标识黑白稿一份、商标类别。</p>
 						</dd>
 					</dl>
 					<dl>

@@ -33,14 +33,14 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
         case _ => 0
       }
 
-      val oname = Text("第" + (if (code.is < 10) "0" + code.is else code.is) + "类-" + this.is + { if (isBrandCount) "(" + brandCount + ")" else "" })
+      val oname = Text((if (code.is < 10) "0" + code.is else code.is) + "." + this.is + { if (isBrandCount) "(" + brandCount + ")" else "" })
       val dname =
         if (isRecommend.is) {
           <span style={ if (brandTypeCode != code.is) "color:#E13335;" else null }>{ oname }</span>
         } else {
           oname
         }
-      <a href={ "/market/" + pageType + "/" + code.is + "/" + orderType } class={ if (brandTypeCode == code.is) "active" else null } title={ descn.is } target={ if (isBrandCount) "_blank" else null }>{ dname }</a>
+      <a href={ Brand.pageUrl(pageType, code.is, orderType) } class={ if (brandTypeCode == code.is) "active" else null } title={ descn.is } target={ if (isBrandCount) "_blank" else null }>{ dname }</a>
     }
   }
 

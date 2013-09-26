@@ -25,7 +25,7 @@ class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
     "*" #> <ul class="nav navbar-nav">
              {
                for (menu <- navMenus) yield {
-                 val cls = if (url.startsWith(menu._1) || ((url == "" || url == "/") && menu._2.indexOf("首页") != -1)) "active" else null
+                 val cls = if (url.startsWith(menu._1) || ((url == "" || url == "/") && menu._2.text.indexOf("首页") != -1)) "active" else null
                  <li class={ cls }><a href={ menu._1 }>{ menu._2 }</a></li>
                }
              }

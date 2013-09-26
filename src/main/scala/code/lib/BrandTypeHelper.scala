@@ -1,7 +1,6 @@
 package code.lib
 
 import scala.collection.mutable.LinkedHashMap
-import code.model.WendaType2
 
 case class BrandType2(id: Int, name: String, descn: String)
 

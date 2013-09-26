@@ -477,7 +477,7 @@ window.bootbox = window.bootbox || (function init($, undefined) {
     appendTo.append(dialog);
 
     dialog.modal({
-	  marginTop:50,
+	  marginTop:80,
       backdrop: options.backdrop,
       keyboard: false,
       show: false
@@ -581,7 +581,7 @@ window.bootbox = window.bootbox || (function init($, undefined) {
       CONFIRM : "Применить"
     },
     zh_CN : {
-      OK      : "OK",
+      OK      : "确定",
       CANCEL  : "取消",
       CONFIRM : "确认"
     },

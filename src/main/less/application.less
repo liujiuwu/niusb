@@ -20,27 +20,6 @@ h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
 del,ins,u,s,a,a:hover{text-decoration:none;}
 body{background:#fff;}
 
-// CSS3 PROPERTIES
-// --------------------------------------------------
-
-// Single side border-radius
-.border-top-radius(@radius) {
-  border-top-right-radius: @radius;
-   border-top-left-radius: @radius;
-}
-.border-right-radius(@radius) {
-  border-bottom-right-radius: @radius;
-     border-top-right-radius: @radius;
-}
-.border-bottom-radius(@radius) {
-  border-bottom-right-radius: @radius;
-   border-bottom-left-radius: @radius;
-}
-.border-left-radius(@radius) {
-  border-bottom-left-radius: @radius;
-     border-top-left-radius: @radius;
-}
-
 // Drop shadows
 .box-shadow(@shadow) {
   -webkit-box-shadow: @shadow; // iOS <4.3 & Android <4.1
@@ -778,7 +757,7 @@ line-height: 25px;
 .panel-brand > .panel-heading h2 {
     float:left;
 	font-size: 16px;
-	width:400px;
+	width:200px;
 	text-shadow: 0 1px 0 #FFFFFF;
 }
 
@@ -799,12 +778,48 @@ line-height: 25px;
   border-bottom-color: #dddddd;
 }
 
+.panel-kefu {
+  border-color: #dddddd;
+}
 
-.brand-type li {
-	float: left;
-	width: 193px;
-	height: 28px;
-	line-height: 25px;
+.panel-kefu > .panel-heading {
+  color: #646464;
+  background-color: #f5f5f5;
+  border-color: #dddddd;
+  padding:12px 12px 8px 12px;
+}
+
+.panel-kefu > .panel-heading h2 {
+    float:left;
+	font-size: 16px;
+	text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.panel-kefu > .panel-heading .tel {
+    margin-left:30px;
+    margin-top:-10px;
+}
+
+.panel-kefu > .panel-body {
+    padding: 10px 5px 10px 12px;
+}
+
+.panel-kefu > .panel-body li{
+	padding:5px;
+}
+
+.panel-kefu > .panel-body li .qq{
+	padding:5px;
+	font-size:12px;
+}
+
+
+.panel-kefu > .panel-heading + .panel-collapse .panel-body {
+  border-top-color: #dddddd;
+}
+
+.panel-kefu > .panel-footer + .panel-collapse .panel-body {
+  border-bottom-color: #dddddd;
 }
 
 
@@ -871,6 +886,13 @@ background: url("/img/sprite.png") no-repeat scroll -195px 0 transparent;
     z-index: 3;
 }
 
+#big-brand-type-list li {
+	float: left;
+	width: 130px;
+	height: 28px;
+	line-height: 25px;
+}
+
 
 #brand-type-list {
 	border-bottom: 1px dotted #DDDDDD;
@@ -891,8 +913,8 @@ background: url("/img/sprite.png") no-repeat scroll -195px 0 transparent;
 
 #brand-type-list li {
 	float: left;
-	width: 144px;
-	height: 25px;
+	width: 96px;
+	height: 26px;
 }
 
 #order-type-list dt {
@@ -913,4 +935,55 @@ background: url("/img/sprite.png") no-repeat scroll -195px 0 transparent;
 #brand-type-list li a.active,#order-type-list a.active {
 	color: #FFF;
 	background-color:#E13335
+}
+
+#brand-faq dt {
+	font-size: 16px;
+	padding: 5px 0;
+	color: #666;
+}
+
+#brand-faq dd {
+	font-size: 14px;
+	line-height: 28px;
+}
+
+#brand-step dt {
+	padding: 5px 0;
+	color: #666;
+}
+
+#brand-step dd {
+	font-size: 14px;
+	color: #666;
+	line-height: 25px;
+}
+
+.mpanel .panel-heading {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.mpanel .panel-heading .tags {
+	font-size: 14px;
+	font-weight: normal;
+}
+
+.mpanel .panel-heading .tags span {
+	padding-left: 10px;
+}
+
+#jumbotron-box h1 {
+	font-size: 36px;
+	margin-bottom: 10px;
+}
+
+#jumbotron-box p {
+	padding: 5px 0;
+}
+
+#view-brand-type-list li{
+	float:left;
+	width:85px;
+	height:28px;
 }

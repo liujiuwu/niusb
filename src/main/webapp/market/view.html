@@ -1,15 +1,15 @@
-<div id="main" class="container" data-lift="surround?with=default;at=content">
-	<div data-lift="MarketOps.view">
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="box">
-					<div class="box-header box-header-1">
-						<h2>
-							<span id="title">服装鞋帽</span>
-						</h2>
-					</div>
-					<div class="box-content box-content-1">
-						<div style="float: left; width: 750px">
+<div data-lift="surround?with=default;at=content">
+	<div class="row">
+		<div data-lift="MarketOps.view" class="col-xs-9">
+			<div class="panel panel-brand">
+				<div class="panel-heading">
+					<h2>
+						<span id="title">服装鞋帽</span>
+					</h2>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-lg-7">
 							<table class="table table-striped table-bordered">
 								<tbody>
 									<tr>
@@ -40,36 +40,55 @@
 										<th>创意说明</th>
 										<td><span id="descn"></span></td>
 									</tr>
-									<tr>
-										<th>浏览次数</th>
-										<td><span id="viewCount"></span></td>
-									</tr>
 								</tbody>
 							</table>
 						</div>
-						<div style="float: right; width: 330px;height:138px">
-							<img />
+						<div class="col-lg-5">
+							<span id="brand-img"></span>
 							<div style="margin: 0; margin-top: 20px">
-								已有<span id="followCount"></span>人关注 <span id="followCountBtn" style="margin-left: 10px"><a class="btn btn-small btn-success">登录</a> 后可以关注此商标。</span>
+								<div class="alert alert-info">
+									已有<em><span id="viewCount"></span></em>人查看，<em><span id="followCount"></span></em>人关注 <span id="followCountBtn"></span>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<span data-lift="embed?what=_paginator"></span>
 			</div>
 		</div>
+		<div class="col-xs-3">
+			<div class="panel panel-kefu">
+				<div class="panel-heading">
+					<h2>
+						在线客服 <img src="/img/tel.png" class="tel" />
+					</h2>
+				</div>
+				<div class="panel-body">
+					<ul>
+						<li><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=97145222&amp;site=qq&amp;menu=yes"> <img border="0" src="http://wpa.qq.com/pa?p=2:97145222:51" alt="点击这里给我发消息" title="点击这里给我发消息" /></a><span class="qq">QQ号:97145222</span></li>
+						<li><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=97147222&site=qq&amp;menu=yes"> <img border="0" src="http://wpa.qq.com/pa?p=2:97147222:51" alt="点击这里给我发消息" title="点击这里给我发消息" /></a><span class="qq">QQ号:97147222</span></li>
+						<li><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=97148222&amp;site=qq&amp;menu=yes"> <img border="0" src="http://wpa.qq.com/pa?p=2:97148222:51" alt="点击这里给我发消息" title="点击这里给我发消息" /></a><span class="qq">QQ号:97148222</span></li>
+						<li><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&amp;uin=97149222&amp;site=qq&amp;menu=yes"> <img border="0" src="http://wpa.qq.com/pa?p=2:97149222:51" alt="点击这里给我发消息" title="点击这里给我发消息" /></a><span class="qq">QQ号:97149222</span></li>
+					</ul>
+				</div>
+			</div>
 
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="box">
-					<div class="box-header box-header-1">
-						<h2>
-							<span id="adtitle">效果图</span>
-						</h2>
-					</div>
-					<div class="box-content box-content-1"></div>
+			<div class="panel panel-brand">
+				<div class="panel-heading">
+					<h2>商标分类</h2>
+				</div>
+				<div id="view-brand-type-list" data-lift="MarketOps.brandNavBox" class="panel-body">
+					<ul>
+						<li><a>类型名</a></li>
+					</ul>
 				</div>
 			</div>
 		</div>
 	</div>
+	<lift:tail>
+		<script type="text/javascript" id="bdshare_js" data="type=slide&amp;img=2&amp;pos=right&amp;uid=6644048"></script>
+		<script type="text/javascript" id="bdshell_js"></script>
+		<script type="text/javascript">
+			document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date() / 3600000);
+		</script>
+	</lift:tail>
 </div>
