@@ -27,6 +27,7 @@ import scala.collection.mutable.LinkedHashMap
 import net.liftweb.http.js.JE.JsRaw
 import net.liftweb.common.Full
 import com.niusb.util.WebHelpers
+import code.model.BrandStatus
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -64,7 +65,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       case _ => 0
     }
 
-    val byBuffer = ArrayBuffer[QueryParam[Brand]]()
+    val byBuffer = ArrayBuffer[QueryParam[Brand]](By(Brand.status,BrandStatus.ChuShoZhong))
     if (pageType > 0) {
       pageType match {
         case 1 => byBuffer += By(Brand.isRecommend, true)

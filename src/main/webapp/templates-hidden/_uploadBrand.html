@@ -22,30 +22,34 @@
 }
 </style>
 	</head_merge>
-	<div id="uploadDialog" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="765">
+	<div id="uploadDialog" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="780">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3 id="loginModalLabel">商标图片上传</h3>
 		</div>
 		<div class="modal-body">
 			<div class="row">
-				<div class="pull-left" style="margin-right: 10px;">
-					<form id="file-upload" action="/uploading" method="POST" enctype="multipart/form-data">
-						<span class="btn btn-success fileinput-button"> <i class="icon-plus icon-white"></i> <span>选择要上传的商标图片...</span> <input id="fileupload" type="file" name="files[]"/>
-						</span>
-					</form>
-				</div>
-				<div id="progress" class="progress progress-striped active" style="margin-top: 5px; margin-bottom: 0">
-					<div id="progress-bar" class="bar" style="width: 40%;"></div>
+				<div class="col-xs-12">
+					<div class="pull-left" style="margin-right: 10px;">
+						<form id="file-upload" action="/uploading" method="POST" enctype="multipart/form-data">
+							<span class="btn btn-success fileinput-button"> <i class="icon-plus icon-white"></i> <span>选择要上传的商标图片...</span> <input id="fileupload" type="file" name="files[]" />
+							</span>
+						</form>
+					</div>
+					<div id="progress" class="progress progress-striped active" style="margin-top: 5px; margin-bottom: 0">
+						<div id="progress-bar" class="bar" style="width: 40%;"></div>
+					</div>
 				</div>
 			</div>
 			<div class="row">
-				<div style="margin-top: 10px">
-					<div id="original-img-box" class="jcrop pull-left">
-						<img id="original-img" />
-					</div>
-					<div id="preview-img-box" class="jcrop pull-right">
-						<img id="preview-img" />
+				<div class="col-xs-12">
+					<div style="margin-top: 10px">
+						<div id="original-img-box" class="jcrop pull-left">
+							<img id="original-img" />
+						</div>
+						<div id="preview-img-box" class="jcrop pull-right">
+							<img id="preview-img" />
+						</div>
 					</div>
 				</div>
 			</div>
@@ -58,7 +62,6 @@
 					<button type="submit" id="submit-avatar" class="btn btn-primary">保存商标图</button>
 				</div>
 			</form>
-
 		</div>
 	</div>
 

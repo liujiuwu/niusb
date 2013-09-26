@@ -1,109 +1,113 @@
-<div id="loginDialog" class="modal fade" tabindex="-1" data-backdrop="static" data-width="650" style="display: none;">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title">登录</h4>
-	</div>
-	<div class="modal-body">
-		<ul id="loginDialogTab" class="nav nav-tabs">
-			<li class="active"><a href="#login-panel">登录</a></li>
-			<li><a href="#reg-panel">注册新用户</a></li>
-			<li><a href="#forgot-panel">找回密码</a></li>
-		</ul>
+<div id="loginDialog" class="modal fade" tabindex="-1" data-backdrop="static" data-width="650">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">登录</h4>
+			</div>
+			<div class="modal-body">
+				<ul id="loginDialogTab" class="nav nav-tabs">
+					<li class="active"><a href="#login-panel">登录</a></li>
+					<li><a href="#reg-panel">注册新用户</a></li>
+					<li><a href="#forgot-panel">找回密码</a></li>
+				</ul>
 
-		<div class="tab-content" style="padding-top: 20px">
-			<div data-lift="LoginOps.login" class="tab-pane active" id="login-panel">
-				<form data-lift="form.ajax?class=form-horizontal">
-					<div id="form-loginMobile" class="form-group">
-						<label for="loginMobile" class="control-label col-xs-3">手机号</label>
-						<div class="col-xs-5">
-							<input type="text" class="form-control" id="loginMobile" name="loginMobile" placeholder="请输入您注册的手机号" /> <span class="help-block"></span>
-						</div>
-					</div>
-					<div id="form-loginPwd" class="form-group">
-						<label for="loginPwd" class="control-label col-xs-3">登录密码</label>
-						<div class="col-xs-5">
-							<input type="password" id="loginPwd" name="loginPwd" placeholder="输入您设置的登录密码" class="form-control" /> <span class="help-block"></span>
-						</div>
-						<div class="col-xs-3" style="margin-left: -15px; padding-top: 8px">
-							<a id="forgotPwdBtn">忘记登录密码?</a>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-lg-offset-3 col-lg-5">
-							<button class="btn btn-primary btn-block btn-lg" type="submit">登录</button>
-						</div>
-					</div>
-				</form>
-			</div>
-			<div data-lift="LoginOps.create" class="tab-pane" id="reg-panel">
-				<form data-lift="form.ajax?class=form-horizontal">
-					<div id="form-regMobile" class="form-group">
-						<label for="regMobile" class="control-label col-xs-3">手机号</label>
-						<div class="col-xs-7">
-							<div class="input-group">
-								<input type="text" class="form-control" id="regMobile" name="regMobile" placeholder="请输入您的手机号" /> <span class="input-group-btn">
-									<button class="btn btn-info" name="getCodeBtn" id="getCodeBtn">获取短信验证码</button>
-								</span>
+				<div class="tab-content" style="padding-top: 20px">
+					<div data-lift="LoginOps.login" class="tab-pane active" id="login-panel">
+						<form data-lift="form.ajax?class=form-horizontal">
+							<div id="form-loginMobile" class="form-group">
+								<label for="loginMobile" class="control-label col-xs-3">手机号</label>
+								<div class="col-xs-5">
+									<input type="text" class="form-control" id="loginMobile" name="loginMobile" placeholder="请输入您注册的手机号" /> <span class="help-block"></span>
+								</div>
 							</div>
-							<span class="help-block"></span>
-						</div>
-					</div>
-					<div id="form-regCode" class="form-group">
-						<label for="regCode" class="control-label col-xs-3">短信验证码</label>
-						<div class="col-xs-5">
-							<input type="text" id="regCode" name="regCode" placeholder="输入收到的短信验证码" class="form-control" /> <span class="help-block"></span>
-						</div>
-					</div>
-					<div id="form-regPwd" class="form-group">
-						<label for="regPwd" class="control-label col-xs-3">设置密码</label>
-						<div class="col-xs-5">
-							<input type="password" id="regPwd" name="regPwd" placeholder="设置您的登录密码" class="form-control" /> <span class="help-block"></span>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-lg-offset-3 col-lg-5">
-							<button class="btn btn-success btn-block btn-lg" type="submit">注册</button>
-						</div>
-					</div>
-					<div class="form-group">
-							<p class="text-muted text-center">
-								<small>通过点击“确认注册”，您将同意我们的 <a target="_blank" href="/terms">服务条款</a> 和 <a target="_blank" href="/privacy">隐私政策</a>。
-								</small>
-							</p>
-					</div>
-				</form>
-			</div>
-			<div data-lift="LoginOps.forgot" class="tab-pane" id="forgot-panel">
-				<form data-lift="form.ajax?class=form-horizontal">
-					<div id="form-forgotMobile" class="form-group">
-						<label for="forgotMobile" class="control-label col-xs-3">手机号</label>
-						<div class="col-xs-7">
-							<div class="input-group">
-								<input type="text" class="form-control" id="forgotMobile" name="forgotMobile" placeholder="请输入您注册的手机号" /> <span class="input-group-btn">
-									<button class="btn btn-info" name="getCodeBtn" id="getCodeBtn">获取短信验证码</button>
-								</span>
+							<div id="form-loginPwd" class="form-group">
+								<label for="loginPwd" class="control-label col-xs-3">登录密码</label>
+								<div class="col-xs-5">
+									<input type="password" id="loginPwd" name="loginPwd" placeholder="输入您设置的登录密码" class="form-control" /> <span class="help-block"></span>
+								</div>
+								<div class="col-xs-3" style="margin-left: -15px; padding-top: 8px">
+									<a id="forgotPwdBtn">忘记登录密码?</a>
+								</div>
 							</div>
-							<span class="help-block"></span>
-						</div>
+							<div class="form-group">
+								<div class="col-lg-offset-3 col-lg-5">
+									<button class="btn btn-primary btn-block btn-lg" type="submit">登录</button>
+								</div>
+							</div>
+						</form>
 					</div>
-					<div id="form-forgotCode" class="form-group">
-						<label for="forgotCode" class="control-label col-xs-3">短信验证码</label>
-						<div class="col-xs-5">
-							<input type="text" id="forgotCode" name="forgotCode" placeholder="输入收到的短信验证码" class="form-control" /> <span class="help-block"></span>
-						</div>
+					<div data-lift="LoginOps.create" class="tab-pane" id="reg-panel">
+						<form data-lift="form.ajax?class=form-horizontal">
+							<div id="form-regMobile" class="form-group">
+								<label for="regMobile" class="control-label col-xs-3">手机号</label>
+								<div class="col-xs-7">
+									<div class="input-group">
+										<input type="text" class="form-control" id="regMobile" name="regMobile" placeholder="请输入您的手机号" /> <span class="input-group-btn">
+											<button class="btn btn-info" name="getCodeBtn" id="getCodeBtn">获取短信验证码</button>
+										</span>
+									</div>
+									<span class="help-block"></span>
+								</div>
+							</div>
+							<div id="form-regCode" class="form-group">
+								<label for="regCode" class="control-label col-xs-3">短信验证码</label>
+								<div class="col-xs-5">
+									<input type="text" id="regCode" name="regCode" placeholder="输入收到的短信验证码" class="form-control" /> <span class="help-block"></span>
+								</div>
+							</div>
+							<div id="form-regPwd" class="form-group">
+								<label for="regPwd" class="control-label col-xs-3">设置密码</label>
+								<div class="col-xs-5">
+									<input type="password" id="regPwd" name="regPwd" placeholder="设置您的登录密码" class="form-control" /> <span class="help-block"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-lg-offset-3 col-lg-5">
+									<button class="btn btn-success btn-block btn-lg" type="submit">注册</button>
+								</div>
+							</div>
+							<div class="form-group">
+								<p class="text-muted text-center">
+									<small>通过点击“确认注册”，您将同意我们的 <a target="_blank" href="/terms">服务条款</a> 和 <a target="_blank" href="/privacy">隐私政策</a>。
+									</small>
+								</p>
+							</div>
+						</form>
 					</div>
-					<div id="form-forgotPwd" class="form-group">
-						<label for="forgotPwd" class="control-label col-xs-3">设置新密码</label>
-						<div class="col-xs-5">
-							<input type="password" id="forgotPwd" name="forgotPwd" placeholder="输入设置您的新密码" class="form-control" /> <span class="help-block"></span>
-						</div>
+					<div data-lift="LoginOps.forgot" class="tab-pane" id="forgot-panel">
+						<form data-lift="form.ajax?class=form-horizontal">
+							<div id="form-forgotMobile" class="form-group">
+								<label for="forgotMobile" class="control-label col-xs-3">手机号</label>
+								<div class="col-xs-7">
+									<div class="input-group">
+										<input type="text" class="form-control" id="forgotMobile" name="forgotMobile" placeholder="请输入您注册的手机号" /> <span class="input-group-btn">
+											<button class="btn btn-info" name="getCodeBtn" id="getCodeBtn">获取短信验证码</button>
+										</span>
+									</div>
+									<span class="help-block"></span>
+								</div>
+							</div>
+							<div id="form-forgotCode" class="form-group">
+								<label for="forgotCode" class="control-label col-xs-3">短信验证码</label>
+								<div class="col-xs-5">
+									<input type="text" id="forgotCode" name="forgotCode" placeholder="输入收到的短信验证码" class="form-control" /> <span class="help-block"></span>
+								</div>
+							</div>
+							<div id="form-forgotPwd" class="form-group">
+								<label for="forgotPwd" class="control-label col-xs-3">设置新密码</label>
+								<div class="col-xs-5">
+									<input type="password" id="forgotPwd" name="forgotPwd" placeholder="输入设置您的新密码" class="form-control" /> <span class="help-block"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-lg-offset-3 col-lg-5">
+									<button class="btn btn-danger btn-block btn-lg" type="submit">确认修改</button>
+								</div>
+							</div>
+						</form>
 					</div>
-					<div class="form-group">
-						<div class="col-lg-offset-3 col-lg-5">
-							<button class="btn btn-danger btn-block btn-lg" type="submit">确认修改</button>
-						</div>
-					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</div>

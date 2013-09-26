@@ -37,7 +37,7 @@ trait SnippetHelper {
     case _ => default
   }
 
-  def alertHtml(msg: NodeSeq, title: String = "出错啦！", alertType: String = "error"): NodeSeq = {
+  def alertHtml(msg: NodeSeq, title: String = "出错啦！", alertType: String = "danger"): NodeSeq = {
     <div class={ "alert alert-" + alertType }>
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <h4>{ title }</h4>
@@ -47,7 +47,7 @@ trait SnippetHelper {
 
   def noticeHtml(msg: NodeSeq, title: String = "消息提示！"): NodeSeq = alertHtml(msg, title, "info")
   def warningHtml(msg: NodeSeq, title: String = "警告！"): NodeSeq = alertHtml(msg, title, "warning")
-  def errorHtml(msg: NodeSeq, title: String = "出错啦！"): NodeSeq = alertHtml(msg, title, "error")
+  def errorHtml(msg: NodeSeq, title: String = "出错啦！"): NodeSeq = alertHtml(msg, title, "danger")
 
   def requiredLogin(tip: String, logined: => NodeSeq): NodeSeq = {
     if (User.loggedIn_?) {

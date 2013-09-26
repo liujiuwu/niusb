@@ -63,7 +63,7 @@ object MessageOps extends DispatchSnippet with SnippetHelper with Loggable {
             JsCmds.Reload
           })._2
         })
-      }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
+      }, <i class="icon-trash"></i>, "class" -> "btn btn-danger btn-xs")
     }
 
     var url = originalUri

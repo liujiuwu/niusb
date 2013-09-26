@@ -162,7 +162,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     def displaySmallPic: NodeSeq = displayPic("brand-simg-box")
 
     def displayPic(css: String = "brand-bimg-box", alt: String = ""): NodeSeq = {
-      <div class={ css }><img src={ src } alt={ alt }/></div>
+      <img src={ src } alt={ alt } height="200" width="320" class={ css }/>
     }
 
     def src = UploadHelpers.srcPath(pic.get)

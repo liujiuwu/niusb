@@ -11,7 +11,11 @@ window.bootbox = window.bootbox || (function init($, undefined) {
   var templates = {
     dialog:
       "<div class='bootbox modal' tabindex='-1' role='dialog'>" +
-          "<div class='modal-body'><div class='bootbox-body'></div></div>" +
+        "<div class='modal-dialog'>" +
+          "<div class='modal-content'>" +
+            "<div class='modal-body'><div class='bootbox-body'></div></div>" +
+          "</div>" +
+        "</div>" +
       "</div>",
     header:
       "<div class='modal-header'>" +
@@ -364,7 +368,7 @@ window.bootbox = window.bootbox || (function init($, undefined) {
       // @TODO I don't like this string appending to itself; bit dirty. Needs reworking
       // can we just build up button elements instead? slower but neater. Then button
       // can just become a template too
-      buttonStr += "<button data-dismiss='modal' data-bb-handler='" + key + "' type='button' class='btn " + button.className + "'>" + button.label + "</button>";
+      buttonStr += "<button data-bb-handler='" + key + "' type='button' class='btn " + button.className + "'>" + button.label + "</button>";
       callbacks[key] = button.callback;
     });
 
@@ -477,7 +481,6 @@ window.bootbox = window.bootbox || (function init($, undefined) {
     appendTo.append(dialog);
 
     dialog.modal({
-	  marginTop:80,
       backdrop: options.backdrop,
       keyboard: false,
       show: false
@@ -581,7 +584,7 @@ window.bootbox = window.bootbox || (function init($, undefined) {
       CONFIRM : "Применить"
     },
     zh_CN : {
-      OK      : "确定",
+      OK      : "OK",
       CANCEL  : "取消",
       CONFIRM : "确认"
     },

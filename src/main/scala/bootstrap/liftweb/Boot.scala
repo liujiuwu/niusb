@@ -68,16 +68,16 @@ class Boot extends Loggable {
         |.addClass("alert alert-danger")
         |.prepend('<button type="button" class="close" data-dismiss="alert">×</button>')""".stripMargin
 
-   LiftRules.noticesEffects.default.set(
+    LiftRules.noticesEffects.default.set(
       (notice: Box[NoticeType.Value], id: String) => {
-        val js = notice.map( _.title) match{
-          case Full("Notice")   => Full(JE.JsRaw( jsNotice ).cmd)
-          case Full("Warning")  => Full(JE.JsRaw( jsWarning ).cmd)
-          case Full("Error")    => Full(JE.JsRaw( jsError ).cmd)
-          case _                => Full(Noop)//Full(JE.JsRaw( jsNotice ).cmd)
+        val js = notice.map(_.title) match {
+          case Full("Notice") => Full(JE.JsRaw(jsNotice).cmd)
+          case Full("Warning") => Full(JE.JsRaw(jsWarning).cmd)
+          case Full("Error") => Full(JE.JsRaw(jsError).cmd)
+          case _ => Full(Noop) //Full(JE.JsRaw( jsNotice ).cmd)
         }
         js
-    })
+      })
 
     LiftRules.loggedInTest = Full(
       () => {
@@ -101,6 +101,9 @@ class Boot extends Loggable {
         RewriteResponse("user_mgt" :: "logout" :: Nil)
       case RewriteRequest(ParsePath("market" :: AsLong(id) :: Nil, _, _, _), _, _) =>
         RewriteResponse("market" :: "view" :: Nil, Map("id" -> id.toString))
+
+      case RewriteRequest(ParsePath("user" :: "brand" :: AsLong(id) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("user" :: "brand" :: "view" :: Nil, Map("id" -> id.toString))
 
       case RewriteRequest(ParsePath("news" :: Nil, _, _, _), _, _) =>
         RewriteResponse("news" :: "index" :: Nil)

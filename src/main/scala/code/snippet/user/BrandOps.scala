@@ -34,6 +34,7 @@ import com.niusb.util.WebHelpers
 import com.niusb.util.UploadHelpers
 import com.niusb.util.SearchBrandHelpers
 import scala.util._
+import com.niusb.util.BootBoxHelpers
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -56,7 +57,11 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       if (regNo.trim().isEmpty()) {
         return WebHelpers.formError("regNo", "商标注册号不能为空，请填写。")
       } else {
-        brand.regNo(regNo)
+        Brand.find(By(Brand.regNo, regNo.trim())) match {
+          case Full(b) =>
+            return WebHelpers.formError("regNo", "商标注册号已经存在，如需修改资料或认领，请联系客服！")
+          case _ => brand.regNo(regNo)
+        }
       }
 
       if (name.trim().isEmpty()) {
@@ -77,20 +82,23 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         case _ => return WebHelpers.formError("regDate", "商标注册日期格式错误，请确认")
       }
 
+      if (pic.trim.isEmpty()) {
+        return WebHelpers.formError("regNo", "请上传商标图片")
+      } else if (!pic.endsWith(".jpg")) {
+        return WebHelpers.formError("regNo", "上传的商标图片格式错误")
+      } else {
+        brand.pic(pic)
+      }
+
       brand.applicant(applicant)
       brand.useDescn(useDescn).descn(descn)
       brand.owner(loginUser)
       brand.brandTypeCode(brandType.code.is)
       brand.lsqz(lsqz)
 
-      brand.validate match {
-        case Nil =>
-          UploadHelpers.handleBrandImg(pic)
-          brand.save
-          Reload
-        case errors =>
-          Noop
-      }
+      UploadHelpers.handleBrandImg(pic)
+      brand.save
+      BootBoxHelpers.BoxAlert("您发布的商标转让信息已经成功提交，我们将尽快进行资料审核，通过后即可在商标集市查询到您发布的商标信息！", S.redirectTo("/user/brand/view?id=" + brand.id.is))
     }
 
     val brandTypes = WebCacheHelper.brandTypes.values.toList
@@ -117,7 +125,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
             case Some(data) =>
               SetValById("name", data.name) &
                 SetValById("applicant", data.zwsqr) &
-                SetValById("brand_type", data.brandType) &
+                SetValById("brandType", data.brandType) &
                 SetValById("regDate", data.zcggrq) &
                 SetValById("useDescn", data.fwlb) &
                 SetValById("lsqz", data.lsqz) &
@@ -199,7 +207,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(brand => {
       "#regNo" #> brand.regNo &
-        "#name" #> <a href={ "/user/brand/view?id=" + brand.id.get }>{ brand.name }</a> &
+        "#name" #> <a href={ "/user/brand/" + brand.id.is }>{ brand.name.is }</a> &
         "#brandType" #> brand.brandTypeCode.displayType &
         "#applicant" #> brand.applicant &
         "#regDate" #> brand.regDate.asHtml &
@@ -219,14 +227,15 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     } yield {
       "#regNo" #> brand.regNo &
         "#name" #> brand.name &
-        "#pic" #> brand.pic.displayPic(alt = brand.name.get) &
-        "#spic" #> brand.pic.displaySmallPic &
+        "#pic" #> brand.pic.displayPic(alt = brand.name.is) &
         "#brand-type" #> brand.brandTypeCode.displayType &
         "#status" #> brand.status.displayStatus &
         "#basePrice" #> brand.basePrice.displayBasePrice &
         "#regdate" #> brand.regDate.asHtml &
         "#useDescn" #> brand.useDescn &
-        "#descn" #> brand.descn
+        "#descn" #> brand.descn &
+        "#followCount" #> brand.followCount.is &
+        "#viewCount" #> brand.viewCount.is
     }): CssSel
   }
 

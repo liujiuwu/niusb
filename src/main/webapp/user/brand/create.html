@@ -70,7 +70,7 @@
 			</div>
 		</div>
 		<div class="col-lg-4">
-			<img id="brand_pic" class="brand-bimg-box" src="/img/no-img.png" width="320" height="200" />
+			<img id="brandPic" class="brand-bimg-box" src="/img/no-img.png" width="320" height="200" />
 		</div>
 	</div>
 	<lift:tail>
@@ -78,6 +78,8 @@
 			$(function() {
 				$('#queryRemoteData').click(function() {
 					$('#queryRemoteData').addClass("disabled");
+                    $(".form-group").removeClass("has-success has-error has-warning");
+                    $(".form-group .help-block").html("");
 				});
 			});
 		</script>
