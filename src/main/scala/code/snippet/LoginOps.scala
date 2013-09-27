@@ -115,9 +115,9 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
           val cacheTime = SmsHelpers.smsCode(mb).cacheTime
           WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
             SmsHelpers.sendCodeSms(mb)
-            JsRaw("""$("#getCodeBtn").countdown();$("#opt_login_tip").hide().text("")""")
+            JsRaw("""$("#getCodeBtn").countdown();$("#msg-tip").hide().text("")""")
           } else {
-            JsRaw("""$("#opt_login_tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
+            JsRaw("""$("#msg-tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
           }) & Alert(SmsHelpers.smsCode(mb).code)
         case _ => return WebHelpers.formError("regMobile", "请输入正确的手机号！")
       }
@@ -131,6 +131,57 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def forgot = {
-    PassThru
+    var mobile, code, pwd = ""
+
+    def process(): JsCmd = {
+      WebHelpers.realMobile(Full(mobile)) match {
+        case Full(mb) =>
+          User.find(By(User.mobile, mb)) match {
+            case Full(user) =>
+              if (code.trim().isEmpty()) {
+                return WebHelpers.formError("forgotCode", "请输入短信验证码或密码！")
+              }
+
+              val smsCode = SmsHelpers.smsCode(mb).code
+              if (smsCode != code) {
+                return WebHelpers.formError("forgotCode", "短信验证码错误，请确认！")
+              }
+
+              if (pwd.trim().isEmpty()) {
+                return WebHelpers.formError("forgotPwd", "请设置您的新密码！")
+              }
+              user.password(pwd)
+              user.save()
+              WebHelpers.showLoginModal("login-panel")
+            case _ =>
+              return WebHelpers.formError("forgotMobile", "此手机号未注册，无法找回密码！")
+          }
+        case _ => return WebHelpers.formError("forgotMobile", "请输入正确的手机号！")
+      }
+    }
+
+    def sendCodeSms(mobileVal: String): JsCmd = {
+      WebHelpers.realMobile(Full(mobileVal)) match {
+        case Full(mb) =>
+          if (!isRegUser(mb)) {
+            return WebHelpers.formError("regMobile", "此手机号未注册，无法找回密码！")
+          }
+
+          val cacheTime = SmsHelpers.smsCode(mb).cacheTime
+          WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
+            SmsHelpers.sendCodeSms(mb)
+            JsRaw("""$("#forgotGetCodeBtn").countdown();$("#msg-tip").hide().text("")""")
+          } else {
+            JsRaw("""$("#msg-tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
+          }) & Alert(SmsHelpers.smsCode(mb).code)
+        case _ => return WebHelpers.formError("forgotMobile", "请输入正确的手机号！")
+      }
+    }
+
+    "@forgotMobile" #> text(mobile, mobile = _) &
+      "@forgotCode" #> text(code, code = _) &
+      "@forgotPwd" #> password(pwd, pwd = _) &
+      "@forgotGetCodeBtn [onclick]" #> ajaxCall(ValById("forgotMobile"), sendCodeSms) &
+      "type=submit" #> ajaxSubmit("确认修改", process)
   }
 }

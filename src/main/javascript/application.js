@@ -195,6 +195,18 @@ $(function() {
 		}, 100);
 	});
 
+	$("#searchBrandName").focusin(function() {
+		$(this).animate({
+			"width" : "300"
+		});
+	});
+
+	$("#searchBrandName").focusout(function() {
+		$(this).animate({
+			"width" : "250"
+		});
+	});
+
 	$(".help-box,.news-box").find(".box-header").addClass("pointer").click(function() {
 		$(this).parent().find(".box-content").toggle();
 		var $boxIcon = $(this).find(".box-icon i");
@@ -211,4 +223,11 @@ $(function() {
 	}, function() {
 		$(this).removeClass("brand-tp-hover");
 	})
+
+	$("#searchBrandName").keypress(function(e) {
+		var keyCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
+		if (keyCode == 13) {
+			$("#search-btn").click();
+		}
+	});
 });

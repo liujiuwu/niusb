@@ -35,6 +35,7 @@ import com.niusb.util.UploadHelpers
 import com.niusb.util.SearchBrandHelpers
 import scala.util._
 import com.niusb.util.BootBoxHelpers
+import code.model.BrandApplication
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -44,6 +45,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "uploadBrandPic" => uploadBrandPic
     case "queryRemoteData" => queryRemoteData
     case "follow" => follow
+    case "application" => application
   }
 
   def create = {
@@ -289,6 +291,25 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#regDate" #> brand.regDate.asHtml &
         "#actions " #> actions(brand)
     })
+    dataList & "#pagination" #> paginatorModel.paginate _
+  }
+
+  def application = {
+    val byBuffer = ArrayBuffer[QueryParam[BrandApplication]](By(BrandApplication.owner, loginUser.id.is))
+    var url = originalUri
+    val paginatorModel = BrandApplication.paginator(url, byBuffer.toList: _*)()
+
+    val dataList = "#dataList tr" #> paginatorModel.datas.map(brandApplication => {
+      val brandType = WebCacheHelper.brandTypes.get(brandApplication.brandTypeCode.is).get
+      "#applicationId" #> brandApplication.id.is &
+        "#brandName" #> brandApplication.brandName.is &
+        "#brandType" #> brandType.name.display() &
+        "#name" #> brandApplication.name.is &
+        "#contactInfo" #> brandApplication.contactInfo.is &
+        "#status" #> brandApplication.status.asHtml &
+        "#createdAt" #> brandApplication.createdAt.asHtml
+    })
+
     dataList & "#pagination" #> paginatorModel.paginate _
   }
 }

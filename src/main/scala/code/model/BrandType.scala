@@ -8,6 +8,9 @@ import net.liftweb.mapper._
 import scala.util.Try
 import scala.util.Success
 import net.liftweb.http.S
+import net.liftweb.util.HttpHelpers
+import net.liftweb.util.Helpers
+import com.niusb.util.WebHelpers
 
 class BrandType extends LongKeyedMapper[BrandType] with IdPK {
   def getSingleton = BrandType
@@ -17,6 +20,10 @@ class BrandType extends LongKeyedMapper[BrandType] with IdPK {
   }
 
   object name extends MappedString(this, 30) {
+    def display(sp: String = "->") = {
+      code.is.toString() + sp + this.is
+    }
+
     def displayTypeName(isBrandCount: Boolean = true): NodeSeq = {
       val pageType = Try(S.param("pageType").openOr("0").toInt) match {
         case Success(code) => code
@@ -75,22 +82,4 @@ object BrandType extends BrandType with CRUDify[Long, BrandType] with LongKeyedM
   override def dbTableName = "brand_types"
   override def fieldOrder = List(id, code, name, brandCount, isRecommend, descn)
   def isBrandType(code: Int) = WebCacheHelper.brandTypes.contains(code)
-
-  def viewLink = {
-    val brandTypeCode = Try(S.param("brandTypeCode").openOr("0").toInt) match {
-      case Success(code) => code
-      case _ => 0
-    }
-
-    val orderType = Try(S.param("orderType").openOr("0").toInt) match {
-      case Success(code) => code
-      case _ => 0
-    }
-
-    val pageNo = Try(S.param("page").openOr("0").toInt) match {
-      case Success(p) => p
-      case _ => 0
-    }
-    "/market/" + brandTypeCode + "/" + orderType + "/" + pageNo
-  }
 }

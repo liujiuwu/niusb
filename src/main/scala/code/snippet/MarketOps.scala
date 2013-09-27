@@ -1,33 +1,32 @@
 package code.snippet
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.LinkedHashMap
 import scala.util.Success
 import scala.util.Try
-import scala.xml._
+import scala.xml.NodeSeq
+import scala.xml.Text
+import com.niusb.util.MemHelpers
 import com.niusb.util.SearchBrandFormHelpers
-import com.niusb.util.WebHelpers._
 import code.lib.WebCacheHelper
 import code.model.Brand
-import code.model.BrandType
+import code.model.BrandStatus
 import code.model.User
 import code.model.UserData
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
-import net.liftweb.http.SHtml._
 import net.liftweb.http.SHtml.ElemAttr.pairToBasic
+import net.liftweb.http.SHtml._
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.mapper._
-import net.liftweb.mapper.By
-import net.liftweb.mapper.QueryParam
 import net.liftweb.util._
-import net.liftweb.util.Helpers._
-import scala.collection.mutable.LinkedHashMap
-import net.liftweb.http.js.JE.JsRaw
-import net.liftweb.common.Full
-import com.niusb.util.WebHelpers
-import code.model.BrandStatus
+import net.liftweb.util.Helpers.asLong
+import net.liftweb.util.Helpers.intToTimeSpanBuilder
+import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.util.Helpers.strToSuperArrowAssoc
+import net.liftweb.http.js.JE.ValById
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -35,6 +34,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "view" => view
     case "brandTypes" => brandTypes
     case "brandNavBox" => brandNavBox
+    case "searchBrand" => searchBrand
   }
 
   val marketMenus = LinkedHashMap[String, NodeSeq](
@@ -42,6 +42,13 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     "/market/1/0/0" -> Text("精品商标"),
     "/market/2/0/0" -> Text("特价商标"),
     "/market/3/0/0" -> Text("自有商标"))
+
+  def getSearchBrandName() = {
+    MemHelpers.get(realIp + "_searchBrandName") match {
+      case Some(k) => k.asInstanceOf[String]
+      case _ => ""
+    }
+  }
 
   def list = {
     val limit = S.attr("limit").map(_.toInt).openOr(40)
@@ -65,7 +72,12 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       case _ => 0
     }
 
-    val byBuffer = ArrayBuffer[QueryParam[Brand]](By(Brand.status,BrandStatus.ChuShoZhong))
+    val byBuffer = ArrayBuffer[QueryParam[Brand]](By(Brand.status, BrandStatus.ChuShoZhong))
+    val searchBrandName = getSearchBrandName()
+    if (!searchBrandName.trim().isEmpty()) {
+      byBuffer += Like(Brand.name, s"%${searchBrandName}%")
+    }
+
     if (pageType > 0) {
       pageType match {
         case 1 => byBuffer += By(Brand.isRecommend, true)
@@ -105,7 +117,12 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         (if (ot._1.toInt == orderType) "a [class+]" #> "active" else "a [class!]" #> "active")
     }
 
-    "#title" #> brandTypeName & "#marketNav" #> marketNav & orderTypeList & dataList & pagination
+    val pageTitle = if (!searchBrandName.isEmpty()) {
+      s"""与"${searchBrandName}"相关的${brandTypeName}商标"""
+    } else {
+      brandTypeName
+    }
+    "#title" #> pageTitle & "#marketNav" #> marketNav & orderTypeList & dataList & pagination
   }
 
   def view = {
@@ -158,7 +175,16 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def brandNavBox = {
     val brandTypeList = "li *" #> WebCacheHelper.brandTypes.values.map(_.name.displayTypeName(false))
-
     brandTypeList
+  }
+
+  def searchBrand = {
+    var keyword = getSearchBrandName()
+    "#searchBrandName" #> text(keyword, keyword = _) &
+      "#search-btn [onclick]" #> ajaxCall(ValById("searchBrandName"), searchBrandName => {
+        MemHelpers.set(realIp + "_searchBrandName", searchBrandName, 1 hour)
+        S.redirectTo("/market")
+      })
+
   }
 }

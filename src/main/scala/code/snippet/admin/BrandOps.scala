@@ -2,28 +2,43 @@ package code.snippet.admin
 
 import java.io.File
 import scala.collection.mutable.ArrayBuffer
-import scala.xml._
+import scala.xml.NodeSeq
+import scala.xml.Text
 import org.apache.commons.io.FileUtils
-import code.model.Brand
-import code.model.BrandStatus
-import code.model.BrandType
+import com.niusb.util.UploadHelpers
+import com.niusb.util.WebHelpers.BoxConfirm
+import com.niusb.util.WebHelpers.TrueOrFalse
+import com.niusb.util.WebHelpers.TrueOrFalse2Str
+import code.lib.WebCacheHelper
+import code.model._
 import code.snippet.SnippetHelper
-import net.liftweb.common._
+import net.liftweb.common.Full
+import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
-import net.liftweb.http.SHtml
-import net.liftweb.http.SHtml._
+import net.liftweb.http.SHtml.ElemAttr.pairToBasic
+import net.liftweb.http.SHtml.a
+import net.liftweb.http.SHtml.ajaxInvoke
+import net.liftweb.http.SHtml.ajaxSubmit
+import net.liftweb.http.SHtml.hidden
+import net.liftweb.http.SHtml.select
+import net.liftweb.http.SHtml.selectObj
+import net.liftweb.http.SHtml.text
+import net.liftweb.http.SHtml.textarea
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.JsCmds
-import net.liftweb.http.js.JsCmds._
 import net.liftweb.http.js.JsCmds.Noop
-import net.liftweb.mapper._
-import net.liftweb.util._
-import net.liftweb.util.Helpers._
-import code.lib.WebCacheHelper
-import com.niusb.util.WebHelpers._
+import net.liftweb.http.js.JsCmds.jsExpToJsCmd
+import net.liftweb.mapper.By
+import net.liftweb.mapper.Descending
+import net.liftweb.mapper.OrderBy
+import net.liftweb.mapper.QueryParam
+import net.liftweb.util.CssSel
+import net.liftweb.util.Helpers.appendParams
+import net.liftweb.util.Helpers.asLong
+import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.util.Helpers.strToSuperArrowAssoc
 import com.niusb.util.WebHelpers
-import com.niusb.util.UploadHelpers
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -31,6 +46,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "view" => view
     case "edit" => edit
     case "sedit" => sedit
+    case "application" => application
   }
 
   private def bies: List[QueryParam[Brand]] = {
@@ -246,6 +262,37 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a> &
         "type=submit" #> ajaxSubmit("保存修改", process)
     }): CssSel
+  }
+
+  def application = {
+    def actions(brandApplication: BrandApplication): NodeSeq = {
+      a(() => {
+        BoxConfirm("确定删除【" + brandApplication.name.is + "】商标注册申请？此操作不可恢复，请谨慎！", {
+          ajaxInvoke(() => {
+            brandApplication.delete_!
+            JsCmds.Reload
+          })._2
+        })
+      }, <i class="icon-trash"></i>, "class" -> "btn btn-danger btn-xs")
+    }
+
+    val byBuffer = ArrayBuffer[QueryParam[BrandApplication]](OrderBy(BrandApplication.id, Descending))
+    var url = originalUri
+    val paginatorModel = BrandApplication.paginator(url, byBuffer.toList: _*)()
+
+    val dataList = "#dataList tr" #> paginatorModel.datas.map(brandApplication => {
+      val brandType = WebCacheHelper.brandTypes.get(brandApplication.brandTypeCode.is).get
+      "#applicationId" #> brandApplication.id.is &
+        "#brandName" #> brandApplication.brandName.is &
+        "#brandType" #> brandType.name.display() &
+        "#name" #> brandApplication.name.is &
+        "#contactInfo" #> brandApplication.contactInfo.is &
+        "#status" #> brandApplication.status.asHtml &
+        "#createdAt" #> brandApplication.createdAt.asHtml &
+        "#actions " #> actions(brandApplication)
+    })
+
+    dataList & "#pagination" #> paginatorModel.paginate _
   }
 
 }

@@ -76,13 +76,14 @@
 						</form>
 					</div>
 					<div data-lift="LoginOps.forgot" class="tab-pane" id="forgot-panel">
+						<div id="msg-tip" class="alert alert-warning"></div>
 						<form data-lift="form.ajax?class=form-horizontal">
 							<div id="form-forgotMobile" class="form-group">
 								<label for="forgotMobile" class="control-label col-xs-3">手机号</label>
 								<div class="col-xs-7">
 									<div class="input-group">
 										<input type="text" class="form-control" id="forgotMobile" name="forgotMobile" placeholder="请输入您注册的手机号" /> <span class="input-group-btn">
-											<button class="btn btn-info" name="getCodeBtn" id="getCodeBtn">获取短信验证码</button>
+											<button class="btn btn-info" name="forgotGetCodeBtn" id="forgotGetCodeBtn">获取短信验证码</button>
 										</span>
 									</div>
 									<span class="help-block"></span>

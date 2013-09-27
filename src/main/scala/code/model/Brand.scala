@@ -15,6 +15,7 @@ import com.niusb.util.UploadHelpers
 import com.niusb.util.MemHelpers
 import scala.util.Try
 import scala.util.Success
+import net.liftweb.http.S
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -273,5 +274,8 @@ object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
     ("all", "所有状态") :: status
   }
 
-  def pageUrl(pageType: Int = 0, brandTypeCode: Int = 0, orderType: Int = 0) = "/market/" + pageType + "/" + brandTypeCode + "/" + orderType
+  def pageUrl(pageType: Int = 0, brandTypeCode: Int = 0, orderType: Int = 0) = {
+    val url = "/market/" + pageType + "/" + brandTypeCode + "/" + orderType
+    url
+  }
 }

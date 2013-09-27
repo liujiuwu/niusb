@@ -1,0 +1,29 @@
+<div data-lift="surround?with=user;at=content">
+	<div data-lift="user.BrandOps.application?eager_eval=true">
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th style="width: 80px">注册序号</th>
+					<th>商标名称</th>
+					<th style="width: 150px">商标类型</th>
+					<th style="width: 150px">联系人</th>
+					<th style="width: 200px">联系方式</th>
+					<th style="width: 120px">商标注册状态</th>
+					<th style="width: 120px">提交时间</th>
+				</tr>
+			</thead>
+			<tbody id="dataList">
+				<tr>
+					<td><span id="applicationId"></span></td>
+					<td><span id="brandName"></span></td>
+					<td><span id="brandType"></span></td>
+					<td><span id="name"></span></td>
+					<td><span id="contactInfo"></span></td>
+					<td><span class="label label-primary"><span id="status"></span></span></td>
+					<td><span id="createdAt"></span></td>
+				</tr>
+			</tbody>
+		</table>
+		<span data-lift="embed?what=_paginator"></span>
+	</div>
+</div>

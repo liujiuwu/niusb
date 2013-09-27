@@ -44,6 +44,7 @@ object Site {
     Menu(Loc("Pwd", List("user", "pwd"), menuText("修改密码", "key"), RequireLoggedIn, UserMenuGroup)),
     Menu(Loc("UserCreateBrand", List("user", "brand", "create"), menuText("转让商标", "plus"), RequireLoggedIn, UserMenuGroup)),
     Menu(Loc("UserListBrand", List("user", "brand", "index"), menuText("我的商标", "list"), RequireLoggedIn, UserMenuGroup)),
+    Menu(Loc("UserBrandApplication", List("user", "brand", "application"), menuText("商标注册", "list"), RequireLoggedIn, UserMenuGroup)),
     Menu(Loc("UserViewBrand", List("user", "brand", "view"), menuText("查看商标"), RequireLoggedIn, Hidden)),
     Menu(Loc("UserEditBrand", List("user", "brand", "edit"), menuText("修改商标"), RequireLoggedIn, Hidden)),
     Menu(Loc("UserFollow", List("user", "brand", "follow"), menuText("我的关注", "heart"), RequireLoggedIn, UserMenuGroup)),
@@ -58,6 +59,7 @@ object Site {
     Menu(Loc("AdminEditUser", List("admin", "user", "edit"), menuText("修改用户"), RequireAdminLoggedIn, Hidden)),
 
     Menu(Loc("AdminListBrand", List("admin", "brand", "index"), menuText("商标管理", "list"), RequireAdminLoggedIn, AdminMenuGroup)),
+    Menu(Loc("AdminListBrandApplication", List("admin", "brand", "application"), menuText("商标注册", "list"), RequireAdminLoggedIn, AdminMenuGroup)),
     Menu(Loc("AdminViewBrand", List("admin", "brand", "view"), menuText("查看商标"), RequireAdminLoggedIn, Hidden)),
     Menu(Loc("AdminEditBrand", List("admin", "brand", "edit"), menuText("修改商标"), RequireAdminLoggedIn, Hidden)),
     Menu(Loc("AdminSeditBrand", List("admin", "brand", "sedit"), menuText("商标设置"), RequireAdminLoggedIn, Hidden)),

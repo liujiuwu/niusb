@@ -54,13 +54,6 @@ class BrandApplication extends LongKeyedMapper[BrandApplication] with CreatedUpd
     override def displayName = "客服备注"
   }
 
-  object isAccept extends MappedBoolean(this) {
-    override def displayName = "是否受理"
-    override def defaultValue = false
-    override def dbColumnName = "is_accept"
-    def displayAccept = if (this.is) "是" else "否"
-  }
-
   object acceptInfo extends MappedString(this, 300) {
     override def displayName = "受理信息"
     override def dbColumnName = "accept_info"
@@ -74,7 +67,7 @@ class BrandApplication extends LongKeyedMapper[BrandApplication] with CreatedUpd
   override lazy val createdAt = new MyCreatedAt(this) {
     override def displayName = "申请时间"
     override def dbColumnName = "created_at"
-    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
+    override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.df)
   }
 
   override lazy val updatedAt = new MyUpdatedAt(this) {
@@ -85,8 +78,8 @@ class BrandApplication extends LongKeyedMapper[BrandApplication] with CreatedUpd
 
 }
 
-object BrandApplication extends BrandApplication with CRUDify[Long, BrandApplication] with LongKeyedMetaMapper[BrandApplication] {
+object BrandApplication extends BrandApplication with CRUDify[Long, BrandApplication] with Paginator[BrandApplication] {
   override def dbTableName = "brand_applications"
 
-  override def fieldOrder = List(id, brandName, brandTypeCode, name, contactInfo, additional, isAccept, acceptInfo, remark, createdAt, updatedAt)
+  override def fieldOrder = List(id, brandName, brandTypeCode, name, contactInfo, additional, acceptInfo, remark, createdAt, updatedAt)
 }
