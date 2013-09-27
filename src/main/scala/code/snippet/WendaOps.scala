@@ -165,7 +165,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
         case Some(r) => r.isRecommend.is
         case _ => false
       }
-        
+
       val replyWendaBtn = "#replyWendaBtn" #> (if (isRecommend) Text("") else <span>{ a(() => reply, Text("我来回答"), "class" -> ("btn  btn-xs " + WebHelpers.btnCss)) }</span>)
       val dataList = "#wendaReply li" #> replies.map { wendaReply =>
         val replyer = User.find(By(User.id, wendaReply.reply.is)) match {
@@ -211,6 +211,11 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
         return WebHelpers.formError("askContent", "标题请确认在8~500字之间")
       } else {
         wenda.content(askContent)
+      }
+
+      WebCacheHelper.wendaTypes.get(wenda.wendaTypeCode.is) match {
+        case Some(wendaType) => wendaType.wendaCount.incr()
+        case _ =>
       }
       wenda.save()
       Reload
