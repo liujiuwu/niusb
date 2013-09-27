@@ -158,6 +158,24 @@
 	}
 })(jQuery)
 
+function openLoginDialog(action) {
+	if (action == "") {
+		action = "login-panel"
+	}
+	$('#loginDialog').modal({
+		show : true,
+		keyboard : false
+	});
+	$('#loginDialogTab a[href="#' + action + '"]').tab('show')
+}
+
+function openBrandApplicationDialog() {
+	$('#brand-application-dialog').modal({
+		show : true,
+		keyboard : false
+	});
+}
+
 $(function() {
 	$("img.lazy").lazyload({
 		threshold : 200,
@@ -187,7 +205,7 @@ $(function() {
 		}
 		$boxIcon.attr("class", nc);
 	});
-	
+
 	$(".brand-tp").hover(function() {
 		$(this).addClass("brand-tp-hover");
 	}, function() {

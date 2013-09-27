@@ -232,7 +232,6 @@ trait WebHelpers {
   }
 
   def showLoginModal(action: String): JsCmd = {
-    JsRaw("""$("#loginDialog").modal({marginTop:80})""") &
-      JsRaw("""$('#loginDialogTab a[href="#%s"]').tab('show')""".format(action))
+    JsRaw(s"""openLoginDialog("${action}")""")
   }
 }

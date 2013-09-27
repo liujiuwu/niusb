@@ -18,6 +18,8 @@ import code.model.BrandApplication
 import com.niusb.util.BootBoxHelpers
 import net.liftweb.http.js.JE.JsRaw
 import code.model.BrandApplicationStatus
+import code.model.User
+import net.liftweb.mapper.By
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -27,6 +29,17 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def brandApplication = {
     var brandName, brandTypeCode, name, contactInfo, additional = ""
     var brandType: Option[BrandType] = Empty
+
+    User.currentUser match {
+      case Full(user) =>
+        User.find(By(User.id, user.id.is)) match {
+          case Full(u) =>
+            name = u.name.is
+            contactInfo = u.mobile.is
+          case _ =>
+        }
+      case _ =>
+    }
 
     def process(): JsCmd = {
       val brandApplication = BrandApplication.create
@@ -61,6 +74,10 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         brandApplication.additional(additional.trim)
       }
 
+      User.currentUser match {
+        case Full(user) => brandApplication.owner(user)
+        case _ =>
+      }
       brandApplication.brandTypeCode(brandType.get.code.is)
       brandApplication.status(BrandApplicationStatus.ShenHeZhong)
       brandApplication.save
