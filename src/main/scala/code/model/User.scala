@@ -41,6 +41,7 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
     override def dbIndexed_? = true
     override def dbColumnName = "mobile"
     override def validations = valUnique("手机号已经存在，请确认") _ :: valMinLen(11, "手机号码不少于11位数字。") _ :: super.validations
+    def maskMobile = this.is.substring(0, 3) + "xxxx" + this.is.substring(7)
   }
 
   object phone extends MappedString(this, 90) {
@@ -109,13 +110,10 @@ class User extends MegaProtoUser[User] with LongKeyedMapper[User] with CreatedUp
     }
   }
 
+  def displayMaskName = if (name.is.isEmpty()) mobile.maskMobile else name.is
   def displayName = if (name.get.isEmpty()) mobile.get else name.get
   def displayInfo = if (name.get.isEmpty()) <span>{ mobile.get }-{ id.get }</span> else <span>{ name.get }-{ mobile.get }-{ id.get }</span>
   def displaySuper = if (superUser.get) <span class="badge badge-success">是</span> else <span class="badge badge-important">否</span>
-
-  object srcId extends MappedLong(this) { //同步数据的原id
-    override def dbColumnName = "src_id"
-  }
 
   def authSmsCodeOrPwd(inputCode: String) = {
     val code = SmsHelpers.smsCode(mobile.get).code

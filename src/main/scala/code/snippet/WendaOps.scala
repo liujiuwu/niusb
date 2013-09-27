@@ -7,29 +7,45 @@ import scala.util.Try
 import scala.xml.NodeSeq
 import scala.xml.Text
 import scala.xml.Unparsed
-
 import com.niusb.util.WebHelpers
-
 import code.lib.WebCacheHelper
-import code.model.Brand
 import code.model.User
 import code.model.Wenda
+import code.model.WendaReply
 import code.model.WendaType
-import net.liftweb.common._
+import net.liftweb.common.Box
+import net.liftweb.common.Box.box2Option
+import net.liftweb.common.Empty
 import net.liftweb.common.Full
 import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
+import net.liftweb.http.RequestVar
 import net.liftweb.http.S
-import net.liftweb.http.SHtml._
+import net.liftweb.http.SHtml.ElemAttr.pairToBasic
+import net.liftweb.http.SHtml.a
+import net.liftweb.http.SHtml.ajaxSubmit
+import net.liftweb.http.SHtml.select
+import net.liftweb.http.SHtml.text
+import net.liftweb.http.SHtml.textarea
 import net.liftweb.http.js.JE.JsRaw
 import net.liftweb.http.js.JsCmd
-import net.liftweb.http.js.JsCmd._
-import net.liftweb.http.js.JsCmds._
-import net.liftweb.mapper._
-import net.liftweb.util._
-import net.liftweb.util.Helpers._
+import net.liftweb.http.js.JsCmds.Reload
+import net.liftweb.http.js.JsCmds.jsExpToJsCmd
+import net.liftweb.mapper.By
+import net.liftweb.mapper.{ By_< => By_< }
+import net.liftweb.mapper.{ By_> => By_> }
+import net.liftweb.mapper.Descending
+import net.liftweb.mapper.OrderBy
+import net.liftweb.mapper.QueryParam
+import net.liftweb.util.CssSel
+import net.liftweb.util.Helpers.asLong
+import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.util.Helpers.strToSuperArrowAssoc
+import net.liftweb.util.ClearNodes
 
 object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
+  private object wendaIdVar extends RequestVar[Box[Long]](Empty)
+
   def dispatch = {
     case "create" => create
     case "reply" => reply
@@ -37,7 +53,6 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "view" => view
     case "wendaTypes" => wendaTypes
     case "createWendaBtn" => createWendaBtn
-    case "replyWendaBtn" => replyWendaBtn
   }
 
   val wendaMenus = LinkedHashMap[String, NodeSeq](
@@ -105,7 +120,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
     val paginatorModel = Wenda.paginator(pageUrl, byBuffer.toList: _*)(itemsOnPage = limit)
     val dataList = "#dataList li" #> paginatorModel.datas.map { wenda =>
       ".wendaType *" #> wenda.wendaTypeCode.displayType &
-        ".stat *" #> { wenda.readCount.display ++ Text(" / ") ++ wenda.replyCount.display } &
+        ".stat *" #> { wenda.readCount.display ++ Text("/ ") ++ wenda.replyCount.display } &
         "h3 *" #> wenda.title.displayTitle &
         ".date *" #> wenda.createdAt.asHtml
     }
@@ -114,56 +129,124 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def view = {
+    def reply(): JsCmd = {
+      User.currentUser match {
+        case Full(user) =>
+          JsRaw("""$("#replyWendaDialog").modal();editorInit()""")
+        case _ => WebHelpers.showLoginModal("login-panel")
+      }
+    }
+
+    def acceptTreply(wenda: Wenda, wendaReply: WendaReply): JsCmd = {
+      wenda.replyCount.incr
+      wendaReply.isRecommend(true)
+      wendaReply.save()
+      Reload
+    }
+
     (for {
       id <- S.param("id").flatMap(asLong) ?~ "问答ID不存在或无效"
       wenda <- Wenda.find(By(Wenda.id, id)) ?~ s"ID为${id}的问答不存在。"
     } yield {
+      wendaIdVar(Full(wenda.id.is))
+      val asker = User.find(By(User.id, wenda.asker.is)) match {
+        case Full(u) => u.displayMaskName
+        case _ => s"""<a href="${WebHelpers.WebSiteUrlAndName._1}" target="_blank">${WebHelpers.WebSiteUrlAndName._2}</a>"""
+      }
       wenda.readCount.incr(realIp)
       val wendaSelf = ".wenda-title *" #> wenda.title.is &
         ".wenda-content *" #> Unparsed(wenda.content.is) &
-        ".stat *" #> wenda.readCount.display &
-        ".date *" #> { "发布时间:" + wenda.createdAt.asHtml }
+        ".stat -*" #> <em>{ wenda.readCount.is }</em> &
+        ".author *+" #> asker &
+        ".date *+" #> wenda.createdAt.asHtml
 
-      val dataList = "#wendaReply li" #> wenda.replies.map { wendaReply =>
-        ".wenda-reply-title *" #> { if (wendaReply.isRecommend.is) "最佳回答" else "其它回答" } &
+      val replies = wenda.replies
+      val isRecommend = replies.headOption match {
+        case Some(r) => r.isRecommend.is
+        case _ => false
+      }
+        
+      val replyWendaBtn = "#replyWendaBtn" #> (if (isRecommend) Text("") else <span>{ a(() => reply, Text("我来回答"), "class" -> ("btn  btn-xs " + WebHelpers.btnCss)) }</span>)
+      val dataList = "#wendaReply li" #> replies.map { wendaReply =>
+        val replyer = User.find(By(User.id, wendaReply.reply.is)) match {
+          case Full(u) => u.displayMaskName
+          case _ => s"""<a href="${WebHelpers.WebSiteUrlAndName._1}" target="_blank">${WebHelpers.WebSiteUrlAndName._2}</a>"""
+        }
+
+        val acceptReplyWendaBtn = "#acceptReplyWendaBtn" #> (if (isRecommend) Text("") else <span>{ a(() => acceptTreply(wenda, wendaReply), Text("采纳为最佳答案"), "class" -> ("btn btn-xs " + WebHelpers.btnCss)) }</span>)
+
+        ".wenda-reply-title *" #> { if (wendaReply.isRecommend.is) "最佳回答" else "回答编号#" + wendaReply.id.is } &
           ".panel [class+]" #> { if (wendaReply.isRecommend.is) "panel-success" else null } &
-          ".wenda-reply-content *" #> Unparsed(wendaReply.content.is)
+          ".wenda-reply-content *" #> Unparsed(wendaReply.content.is) &
+          ".reply-author *+" #> replyer &
+          ".reply-date *+" #> wendaReply.createdAt.asHtml & acceptReplyWendaBtn
       }
 
-      wendaSelf & dataList
+      wendaSelf & dataList & replyWendaBtn
     }): CssSel
   }
 
   def create = {
+    var title, askContent = ""
     val wenda = Wenda.create
     def process(): JsCmd = {
-      wenda.asker(loginUser.id.is)
+      User.currentUser match {
+        case Full(user) =>
+          wenda.asker(user.id.is)
+        case _ =>
+          return WebHelpers.showLoginModal("login-panel")
+      }
+
+      if (title.trim().isEmpty()) {
+        return WebHelpers.formError("title", "请填写问题的标题，8~30字之间")
+      } else if (title.trim().length() < 8 || title.trim().length() > 30) {
+        return WebHelpers.formError("title", "标题请确认在8~30字之间")
+      } else {
+        wenda.title(title)
+      }
+
+      if (askContent.trim().isEmpty()) {
+        return WebHelpers.formError("askContent", "请填写问题的详细内容，8~500字之间")
+      } else if (askContent.trim().length() < 8 || askContent.trim().length() > 500) {
+        return WebHelpers.formError("askContent", "标题请确认在8~500字之间")
+      } else {
+        wenda.content(askContent)
+      }
       wenda.save()
-      S.redirectTo("/wenda")
+      Reload
     }
 
     val wendaTypes = WebCacheHelper.wendaTypes.values.toList
-    "@title" #> text(wenda.title.get, wenda.title(_)) &
+    "@title" #> text(title, title = _) &
       "@wendaType" #> select(wendaTypes.map(v => (v.code.is.toString, v.name.is)), Empty, v => wenda.wendaTypeCode(v.toInt)) &
-      "@askContent" #> textarea(wenda.content.is, wenda.content(_)) &
-      "type=submit" #> ajaxSubmit("确认发布", process)
+      "@askContent" #> textarea(askContent, askContent = _) &
+      ":submit" #> ajaxSubmit("确认发布", process)
   }
 
   def reply = {
+    var content = ""
     def process(): JsCmd = {
-      S.redirectTo("/wenda")
+      if (content.trim().isEmpty()) {
+        return WebHelpers.formError("replyContent", "请填写回复内容，8~2000字之间")
+      }
+      wendaIdVar.is match {
+        case Full(wendaId) =>
+          Wenda.find(By(Wenda.id, wendaId)) match {
+            case Full(wenda) =>
+              val wendaReply = WendaReply.create
+              wendaReply.wenda(wendaId)
+              wendaReply.content(content)
+              wendaReply.reply(User.currentUser.get.id.is)
+              wendaReply.save
+            case _ =>
+          }
+        case _ =>
+      }
+      Reload
     }
 
-    "@replyContent" #> textarea("", println(_)) &
+    "@replyContent" #> textarea(content, content = _) &
       "type=submit" #> ajaxSubmit("确认回答", process)
-  }
-
-  private def btnCss = {
-    val isLogined = User.currentUser match {
-      case Full(user) => true
-      case _ => false
-    }
-    if (isLogined) "btn-success" else "btn-danger"
   }
 
   def createWendaBtn = {
@@ -174,18 +257,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
         case _ => WebHelpers.showLoginModal("login-panel")
       }
     }
-    "#createWendaBtn " #> a(() => process, Text("我要提问?"), "class" -> ("btn " + btnCss))
-  }
-
-  def replyWendaBtn = {
-    def process(): JsCmd = {
-      User.currentUser match {
-        case Full(user) =>
-          JsRaw("""$("#replyWendaDialog").modal();editorInit()""")
-        case _ => WebHelpers.showLoginModal("login-panel")
-      }
-    }
-    ".btn" #> a(() => process, Text("我来回答"), "class" -> ("btn " + btnCss))
+    "#createWendaBtn " #> a(() => process, Text("我要提问?"), "class" -> ("btn " + WebHelpers.btnCss))
   }
 
   def wendaTypes = {

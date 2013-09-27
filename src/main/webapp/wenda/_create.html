@@ -1,39 +1,42 @@
-<div id="createWendaDialog" data-lift="WendaOps.create" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="750" data-height="290">
+<div id="createWendaDialog" data-lift="WendaOps.create" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
 	<head_merge>
 	<link rel="stylesheet" href="/kindeditor/themes/default/default.css" />
 	</head_merge>
-	<form data-lift="form.ajax?class=form-horizontal">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h3>我要提问</h3>
-		</div>
-		<div class="modal-body">
-			<div class="row-fluid">
-				<div id="group_title" class="control-group">
-					<label for="title" class="control-label">标题</label>
-					<div class="controls">
-						<input type="text" id="title" name="title" required="required" placeholder="请输入问题的简短标题" class="span20" /> <span id="error_title" class="help-inline"></span>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form data-lift="form.ajax?class=form-horizontal">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3>我要提问</h3>
+				</div>
+				<div class="modal-body" style="margin:0;padding:10px 0 0">
+					<div id="form-title" class="form-group">
+						<label for="title" class="control-label col-xs-2">标题</label>
+						<div class="col-xs-8">
+							<input type="text" id="title" name="title" placeholder="请输入问题的简短标题" class="form-control" /> <span class="help-block"></span>
+						</div>
+					</div>
+					<div id="form-wendaType" class="form-group">
+						<label for="wendaType" class="control-label col-xs-2">类型</label>
+						<div class="col-xs-4">
+							<select id="wendaType" name="wendaType" class="form-control"></select> <span class="help-block"></span>
+						</div>
+					</div>
+					<div id="form-askContent" class="form-group">
+						<label for="askContent" class="control-label col-xs-2">问题内容</label>
+						<div class="col-xs-8">
+							<textarea id="askContent" name="askContent"></textarea>
+							<span class="help-block"></span>
+						</div>
 					</div>
 				</div>
-				<div id="group_wendaType" class="control-group">
-					<label class="control-label" for="wendaType">类型</label>
-					<div class="controls">
-						<select id="wendaType" name="wendaType"></select> <span id="error_wendaType" class="help-block"></span>
-					</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+					<button class="btn btn-primary" type="submit">发布</button>
 				</div>
-				<div id="group_askContent" class="control-group">
-					<label for="askContent" class="control-label">问题内容</label>
-					<div class="controls">
-						<textarea id="askContent" name="askContent"></textarea>
-					</div>
-				</div>
-			</div>
+			</form>
 		</div>
-		<div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
-			<button class="btn btn-primary" type="submit">发布</button>
-		</div>
-	</form>
+	</div>
 	<lift:tail>
 		<script charset="utf-8" src="/kindeditor/kindeditor-min.js"></script>
 		<script charset="utf-8" src="/kindeditor/lang/zh_CN.js"></script>
@@ -41,8 +44,8 @@
 			// <![CDATA[
 			function editorInit() {
 				window.editor = KindEditor.create('#askContent', {
-					width : '600px',
-					minWidth : '600px',
+					width : '455px',
+					minWidth : '455px',
 					height : '180px',
 					minHeight : '180px',
 					resizeType : 0,

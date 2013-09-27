@@ -25,6 +25,7 @@ import java.awt.GradientPaint
 import java.awt.Font
 import java.awt.Color
 import net.liftweb.http.js.jquery.JqJsCmds.FadeOut
+import code.model.User
 
 object WebHelpers extends WebHelpers with BootBoxHelpers {
 }
@@ -233,5 +234,12 @@ trait WebHelpers {
 
   def showLoginModal(action: String): JsCmd = {
     JsRaw(s"""openLoginDialog("${action}")""")
+  }
+
+  def btnCss = {
+    User.currentUser match {
+      case Full(user) => "btn-success"
+      case _ => "btn-danger"
+    }
   }
 }

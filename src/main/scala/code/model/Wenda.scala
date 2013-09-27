@@ -20,7 +20,7 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   def getSingleton = Wenda
   object title extends MappedString(this, 100) {
     def displayTitle = {
-      <i class="icon-question-sign"></i> ++ Text(" ") ++ <a href={ "/wenda/" + id.is } title={ this.is } target="_blank">{ this.is }</a>
+      <i class="icon-question-sign wenda-icon"></i> ++ Text(" ") ++ <a href={ "/wenda/" + id.is } title={ this.is } target="_blank">{ this.is }</a>
     }
   }
 
