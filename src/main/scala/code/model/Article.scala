@@ -38,8 +38,8 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
 
     def display(pageType: Int) = {
       val icon = pageType match {
-        case 12 => "circle-arrow-down wenda-icon"
-        case _ => "chevron-sign-right wenda-icon"
+        case 12 => "circle-arrow-down m-text-color"
+        case _ => "chevron-sign-right m-text-color"
       }
       <i class={ "icon-" + icon }></i> ++ Text(" ") ++ <a href={ "/wenda/" + pageType + "/res/" + id.is } title={ this.is } target="_blank">{ this.is }</a>
     }

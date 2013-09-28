@@ -34,13 +34,6 @@ class AdSpace extends LongKeyedMapper[AdSpace] with IdPK {
     override def defaultValue = AdSpaceStatus.Normal
   }
 
-  object startTime extends MappedDateTime(this) {
-    override def dbColumnName = "start_time"
-  }
-  object endTime extends MappedDateTime(this) {
-    override def dbColumnName = "end_time"
-  }
-
   object descn extends MappedString(this, 600)
 
   var ads = List[Ad]()
@@ -48,5 +41,5 @@ class AdSpace extends LongKeyedMapper[AdSpace] with IdPK {
 
 object AdSpace extends AdSpace with CRUDify[Long, AdSpace] with LongKeyedMetaMapper[AdSpace] {
   override def dbTableName = "ad_spaces"
-  override def fieldOrder = List(id, code, name, adSpaceType, width, height, status, startTime, endTime, descn)
+  override def fieldOrder = List(id, code, name, adSpaceType, width, height, status, descn)
 }

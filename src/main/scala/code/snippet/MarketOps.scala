@@ -27,6 +27,7 @@ import net.liftweb.util.Helpers.intToTimeSpanBuilder
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
 import net.liftweb.http.js.JE.ValById
+import net.liftweb.common.Full
 
 object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -43,11 +44,8 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     "/market/2/0/0" -> Text("特价商标"),
     "/market/3/0/0" -> Text("自有商标"))
 
-  def getSearchBrandName() = {
-    MemHelpers.get(realIp + "_searchBrandName") match {
-      case Some(k) => k.asInstanceOf[String]
-      case _ => ""
-    }
+  def getSearchKeyword() = {
+    S.param("keyword").openOr("")
   }
 
   def list = {
@@ -73,9 +71,9 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
     }
 
     val byBuffer = ArrayBuffer[QueryParam[Brand]](By(Brand.status, BrandStatus.ChuShoZhong))
-    val searchBrandName = getSearchBrandName()
-    if (!searchBrandName.trim().isEmpty()) {
-      byBuffer += Like(Brand.name, s"%${searchBrandName}%")
+    val keyword = getSearchKeyword()
+    if (!keyword.trim().isEmpty()) {
+      byBuffer += Like(Brand.name, s"%${keyword}%")
     }
 
     if (pageType > 0) {
@@ -101,12 +99,12 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     val defaultTab = for (menu <- marketMenus) yield {
       val cls = if (menu._1.startsWith("/market/" + pageType)) "active" else null
-      <li class={ cls }><a href={ menu._1 }>{ menu._2 }</a></li>
+      <li class={ cls }><a href={ Helpers.appendParams(menu._1, List("keyword" -> keyword)) }>{ menu._2 }</a></li>
     }
 
     val marketNav = <ul class="nav nav-tabs">{ defaultTab }</ul>
 
-    val pageUrl = Brand.pageUrl(pageType, brandTypeCode, orderType)
+    val pageUrl = Helpers.appendParams(Brand.pageUrl(pageType, brandTypeCode, orderType), List("keyword" -> keyword))
     val paginatorModel = Brand.paginator(pageUrl, byBuffer.toList: _*)(itemsOnPage = limit)
     val pagination = "#pagination" #> paginatorModel.paginate _
 
@@ -117,8 +115,8 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         (if (ot._1.toInt == orderType) "a [class+]" #> "active" else "a [class!]" #> "active")
     }
 
-    val pageTitle = if (!searchBrandName.isEmpty()) {
-      s"""与"${searchBrandName}"相关的${brandTypeName}商标"""
+    val pageTitle = if (!keyword.isEmpty()) {
+      s"""与"${keyword}"相关的${brandTypeName}商标"""
     } else {
       brandTypeName
     }
@@ -154,6 +152,13 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
       brandId <- S.param("id").flatMap(asLong) ?~ "商标ID不存在或无效"
       brand <- Brand.find(By(Brand.id, brandId)) ?~ s"ID为${brandId}的商标不存在。"
     } yield {
+      val brandAdList = brand.adPic.adPics match {
+        case Full(ads) =>
+          "li *" #> ads.map { ad =>
+            "img [src]" #> (s"/upload/ads/${brand.id.is}/" + ad)
+          }
+        case _ => ClearNodes
+      }
       "#title" #> brand.name &
         "#brand-img" #> <img src={ brand.pic.src } alt={ brand.name.get.trim } width="320" height="200"/> &
         "#brandId" #> Text(brand.brandTypeCode + "-" + brand.id) &
@@ -165,7 +170,8 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#viewCount *" #> brand.viewCount.incr(realIp) &
         "#followCount *" #> brand.followCount.get &
         "#followCountBtn *" #> followBtn(brand) &
-        "#descn" #> brand.descn
+        "#descn" #> brand.descn &
+        "#brand-ad-list" #> brandAdList
     }): CssSel
   }
 
@@ -174,17 +180,17 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def brandNavBox = {
-    val brandTypeList = "li *" #> WebCacheHelper.brandTypes.values.map(_.name.displayTypeName(false))
-    brandTypeList
+    val keyword = getSearchKeyword()
+    val allBrandType = "#allBrandType" #> <a href={ "/market?keyword=" + keyword }>所有商标类型</a>
+    val brandTypeList = "li *" #> WebCacheHelper.brandTypes.values.map(_.name.displayTypeName(keyword, false))
+    brandTypeList & allBrandType
   }
 
   def searchBrand = {
-    var keyword = getSearchBrandName()
-    "#searchBrandName" #> text(keyword, keyword = _) &
-      "#search-btn [onclick]" #> ajaxCall(ValById("searchBrandName"), searchBrandName => {
-        MemHelpers.set(realIp + "_searchBrandName", searchBrandName, 1 hour)
-        S.redirectTo("/market")
-      })
+    val keyword = getSearchKeyword()
+    "#search-btn [onclick]" #> ajaxCall(ValById("keyword"), keyword => {
+      S.redirectTo("/market?keyword=" + keyword)
+    })
 
   }
 }

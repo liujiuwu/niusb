@@ -126,7 +126,7 @@ class Boot extends Loggable {
       case RewriteRequest(ParsePath("wenda" :: AsInt(pageType) :: AsInt(wendaTypeCode) :: AsInt(orderType) :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> pageType.toString, "wendaTypeCode" -> wendaTypeCode.toString, "orderType" -> orderType.toString))
       case RewriteRequest(ParsePath("wenda" :: AsInt(pageType) :: AsLong(id) :: Nil, _, _, _), _, _) =>
-        RewriteResponse("wenda" :: "view" :: Nil, Map("id" -> id.toString))
+        RewriteResponse("wenda" :: "view" :: Nil, Map("pageType" -> pageType.toString, "id" -> id.toString))
       case RewriteRequest(ParsePath("wenda" :: AsInt(pageType) :: "res" :: AsLong(id) :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "resource" :: Nil, Map("pageType" -> pageType.toString, "id" -> id.toString))
     }

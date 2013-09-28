@@ -46,14 +46,14 @@ object WebCacheHelper extends Loggable {
     logger.info("load adSpaces ...")
     adSpaces.clear()
     val now = new Date
-    AdSpace.findAll(By_<(AdSpace.startTime, now), By_>=(AdSpace.endTime, now)).foreach(adSpace => {
+    AdSpace.findAll().foreach(adSpace => {
       adSpaces.put(adSpace.code.get, adSpace)
-      adSpace.ads = Ad.findAll(By(Ad.adSpaceCode, adSpace.code.get))
+      adSpace.ads = Ad.findAll(By(Ad.adSpaceCode, adSpace.code.is))
     })
   }
 
   val indexTabBrands = LinkedHashMap[String, List[Brand]]() //首页tab数据
-  def loadIndexTabBrands(force: Boolean = false, limit: Int = 21) {
+  def loadIndexTabBrands(limit: Int = 21) {
     logger.info("load indexTabBrands ...")
     indexTabBrands.clear()
     for (i <- 0 to 3) {
@@ -76,7 +76,7 @@ object WebCacheHelper extends Loggable {
   }
 
   val indexBrandsByType = LinkedHashMap[Int, List[Brand]]() //首页分类数据
-  def loadIndexBrandTypeBrands(force: Boolean = false, limit: Int = 35) {
+  def loadIndexBrandTypeBrands(limit: Int = 35) {
     logger.info("load indexTabBrands ...")
     indexBrandsByType.clear()
     val brandTypeCodes = List(25, 3, 43)

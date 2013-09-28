@@ -9,6 +9,8 @@ import scala.xml._
 import net.liftweb.common._
 import net.liftweb.util.CssSel
 import code.lib.WebCacheHelper
+import scala.util.Try
+import scala.util.Success
 
 object AdOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -16,12 +18,8 @@ object AdOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def index = {
-    val code = S.attr("code") match {
-      case Full(c) => c.toInt
-      case _ => 0
-    }
-
-    WebCacheHelper.adSpaces.get(code.toInt) match {
+    val code = S.attr("code").map(_.toInt).openOr(0)
+    WebCacheHelper.adSpaces.get(code) match {
       case Some(adSpace) =>
         "li" #> adSpace.ads.map { ad =>
           "img [src]" #> ad.pic &

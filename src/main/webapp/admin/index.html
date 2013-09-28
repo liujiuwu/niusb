@@ -1,14 +1,12 @@
 <div data-lift="surround?with=admin;at=content">
 	<div class="row">
 		<div class="col-xs-12">
-			<div class="panel panel-danger">
+			<div data-lift="admin.IndexOps.actions" class="panel panel-danger">
 				<div class="panel-heading">
 					<h3 class="panel-title">网站常规设置</h3>
 				</div>
 				<div class="panel-body">
-					<div class="row">
-						<form data-lift="form.ajax?class=form-horizontal"></form>
-					</div>
+					<button id="reload-btn" type="button" class="btn btn-danger">重新加载资源缓存</button>
 				</div>
 			</div>
 		</div>

@@ -19,9 +19,9 @@ import code.lib.WebCacheHelper
 class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   def getSingleton = Wenda
   object title extends MappedString(this, 100) {
-    def displayTitle(pageType: Int) = {
+    def displayTitle(pageType: Int = 0) = {
       val newTitle = if (this.is.length() > 40) this.is.substring(0, 40) + "..." else this.is
-      <i class="icon-question-sign wenda-icon"></i> ++ Text(" ") ++ <a href={ "/wenda/" + pageType + "/" + id.is } title={ this.is } target="_blank">{ newTitle }</a>
+      <i class="icon-question-sign m-text-color"></i> ++ Text(" ") ++ <a href={ "/wenda/" + pageType + "/" + id.is } title={ this.is } target="_blank">{ newTitle }</a>
     }
   }
 
@@ -111,6 +111,11 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   override lazy val updatedAt = new MyUpdatedAt(this) {
     override def dbColumnName = "updated_at"
     override def format(date: java.util.Date): String = WebHelpers.fmtDateStr(date, WebHelpers.dfLongTime)
+  }
+
+  def deleteWendaAndReply() = {
+    WendaReply.bulkDelete_!!(By(WendaReply.wenda, id.is))
+    delete_!
   }
 }
 

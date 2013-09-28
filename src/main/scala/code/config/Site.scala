@@ -50,6 +50,7 @@ object Site {
     Menu(Loc("UserEditBrand", List("user", "brand", "edit"), menuText("修改商标"), RequireLoggedIn, Hidden)),
     Menu(Loc("UserFollow", List("user", "brand", "follow"), menuText("我的关注", "heart"), RequireLoggedIn, UserMenuGroup)),
     Menu(Loc("UserSms", List("user", "sms", "index"), menuText("我的消息", "envelope"), RequireLoggedIn, UserMenuGroup)),
+    Menu(Loc("UserWenda", List("user", "wenda", "index"), menuText("我的问题", "question-sign"), RequireLoggedIn, UserMenuGroup)),
     Menu(Loc("UserViewSms", List("user", "sms", "view"), menuText("查看消息"), RequireLoggedIn, Hidden)))
 
   val adminMenus = List[Menu](

@@ -172,6 +172,14 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
   object adPic extends MappedString(this, 100) {
     override def displayName = "商标广告图"
     override def dbColumnName = "ad_pic"
+    def adPics: Box[List[String]] = {
+      if (!this.is.isEmpty()) {
+        val tempAds = this.is.split(";").toList
+        Full(tempAds.filter(_.endsWith(".jpg")))
+      } else {
+        Empty
+      }
+    }
   }
 
   object lsqz extends MappedString(this, 300) {
@@ -258,7 +266,9 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     "img" #> viewLink(<img class="brand-img lazy" src="/img/transparent.gif" data-original={ pic.src } alt={ name.is.trim }/>) &
       ".brandTypeCode *" #> brandTypeCode.displayTypeLabel &
       ".price *" #> sellPrice.displaySellPrice() &
-      ".brand-name *" #> viewLink(Text(name.get.trim))
+      ".brand-name *" #> viewLink(Text(name.get.trim)) &
+      ".viewCount *+" #> <em>{ viewCount.is }</em> &
+      ".followCount *+" #> <em>{ followCount.is }</em>
   }
 }
 

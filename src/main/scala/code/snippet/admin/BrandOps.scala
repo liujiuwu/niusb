@@ -244,6 +244,9 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         brand.isRecommend(TrueOrFalse(recommend)).isOwn(TrueOrFalse(own)).isOffer(TrueOrFalse(offer))
         brand.remark(remark)
         brand.save
+
+        WebCacheHelper.loadIndexTabBrands()
+        WebCacheHelper.loadIndexBrandTypeBrands()
         S.redirectTo("/admin/brand/view?id=" + brand.id.get)
       }
 

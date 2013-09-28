@@ -1,28 +1,28 @@
-package code.snippet.admin
+package code.snippet.user
 
 import scala.collection.mutable.ArrayBuffer
-import scala.xml._
-import com.niusb.util.WebHelpers._
-import code.model.Article
-import code.model.ArticleStatus
-import code.model.ArticleType
+import scala.xml.NodeSeq
+
+import com.niusb.util.WebHelpers.BoxConfirm
+
 import code.model.Wenda
 import code.model.WendaType
 import code.snippet.SnippetHelper
-import net.liftweb.common._
+import net.liftweb.common.Full
+import net.liftweb.common.Loggable
 import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
-import net.liftweb.http.SHtml
-import net.liftweb.http.SHtml._
-import net.liftweb.http.js.JsCmd
+import net.liftweb.http.SHtml.ElemAttr.pairToBasic
+import net.liftweb.http.SHtml.a
+import net.liftweb.http.SHtml.ajaxInvoke
 import net.liftweb.http.js.JsCmds
-import net.liftweb.http.js.JsCmds._
-import net.liftweb.http.js.JsCmds.Noop
-import net.liftweb.mapper._
-import net.liftweb.util._
-import net.liftweb.util.Helpers._
-import code.lib.WebCacheHelper
-import code.model.WendaReply
+import net.liftweb.http.js.JsCmds.jsExpToJsCmd
+import net.liftweb.mapper.By
+import net.liftweb.mapper.Like
+import net.liftweb.mapper.QueryParam
+import net.liftweb.util.Helpers.appendParams
+import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.util.Helpers.strToSuperArrowAssoc
 
 object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -31,7 +31,7 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   private def bies: List[QueryParam[Wenda]] = {
     val (wendaType, keyword) = (S.param("type"), S.param("keyword"))
-    val byBuffer = ArrayBuffer[QueryParam[Wenda]]()
+    val byBuffer = ArrayBuffer[QueryParam[Wenda]](By(Wenda.asker, loginUser.id.is))
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         val kv = k.trim()
@@ -48,17 +48,6 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def list = {
-    def actions(wenda: Wenda): NodeSeq = {
-      a(() => {
-        BoxConfirm("确定删除【" + wenda.title.get + "】？此操作不可恢复，请谨慎！", {
-          ajaxInvoke(() => {
-            wenda.deleteWendaAndReply()
-            JsCmds.Reload
-          })._2
-        })
-      }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
-    }
-
     val (wendaType, keyword) = (S.param("type"), S.param("keyword"))
     var url = originalUri
     var wendaTypeVal, keywordVal = ""
@@ -90,10 +79,10 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
       </form>
 
     val dataList = "#dataList tr" #> paginatorModel.datas.map(wenda => {
-      "#title" #> wenda.title.is &
+      "#title" #> wenda.title.displayTitle() &
         "#wendaType" #> wenda.wendaTypeCode.displayType &
         "#readCount" #> wenda.readCount.is &
-        "#actions" #> actions(wenda)
+        "#replyCount" #> wenda.replyCount.is
     })
     searchForm & dataList & "#pagination" #> paginatorModel.paginate _
   }

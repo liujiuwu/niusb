@@ -195,13 +195,13 @@ $(function() {
 		}, 100);
 	});
 
-	$("#searchBrandName").focusin(function() {
+	$("#keyword").focusin(function() {
 		$(this).animate({
 			"width" : "300"
 		});
 	});
 
-	$("#searchBrandName").focusout(function() {
+	$("#keyword").focusout(function() {
 		$(this).animate({
 			"width" : "250"
 		});
@@ -224,7 +224,7 @@ $(function() {
 		$(this).removeClass("brand-tp-hover");
 	})
 
-	$("#searchBrandName").keypress(function(e) {
+	$("#keyword").keypress(function(e) {
 		var keyCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
 		if (keyCode == 13) {
 			$("#search-btn").click();
