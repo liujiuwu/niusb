@@ -16,6 +16,7 @@ object ArticleType extends Enumeration {
   val Help = Value(2, "帮助")
   val Knowledge = Value(3, "商标知识")
   val Laws = Value(4, "政策法规")
+  val ResourceDown = Value(5, "资料下载")
 }
 
 object ArticleStatus extends Enumeration {
@@ -33,6 +34,14 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
       } else {
         <span style={ if (isRecommend.is) "color:#EE472C" else null }>{ this.get }</span>
       }
+    }
+
+    def display(pageType: Int) = {
+      val icon = pageType match {
+        case 12 => "circle-arrow-down wenda-icon"
+        case _ => "chevron-sign-right wenda-icon"
+      }
+      <i class={ "icon-" + icon }></i> ++ Text(" ") ++ <a href={ "/wenda/" + pageType + "/res/" + id.is } title={ this.is } target="_blank">{ this.is }</a>
     }
   }
 

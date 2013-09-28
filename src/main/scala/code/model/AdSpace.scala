@@ -9,6 +9,7 @@ object AdSpaceType extends Enumeration {
   val Normal = Value(0, "普通文字")
   val Pic = Value(1, "图片")
   val Slider = Value(2, "幻灯片")
+  val friendlyLink = Value(3, "友情链接")
 }
 
 object AdSpaceStatus extends Enumeration {

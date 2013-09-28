@@ -125,8 +125,10 @@ class Boot extends Loggable {
         RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> "0", "wendaTypeCode" -> "-1", "orderType" -> "0"))
       case RewriteRequest(ParsePath("wenda" :: AsInt(pageType) :: AsInt(wendaTypeCode) :: AsInt(orderType) :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "index" :: Nil, Map("pageType" -> pageType.toString, "wendaTypeCode" -> wendaTypeCode.toString, "orderType" -> orderType.toString))
-      case RewriteRequest(ParsePath("wenda" :: AsLong(id) :: Nil, _, _, _), _, _) =>
+      case RewriteRequest(ParsePath("wenda" :: AsInt(pageType) :: AsLong(id) :: Nil, _, _, _), _, _) =>
         RewriteResponse("wenda" :: "view" :: Nil, Map("id" -> id.toString))
+      case RewriteRequest(ParsePath("wenda" :: AsInt(pageType) :: "res" :: AsLong(id) :: Nil, _, _, _), _, _) =>
+        RewriteResponse("wenda" :: "resource" :: Nil, Map("pageType" -> pageType.toString, "id" -> id.toString))
     }
 
     LiftRules.uriNotFound.prepend(NamedPF("404handler") {

@@ -27,6 +27,11 @@ class WendaReply extends LongKeyedMapper[WendaReply] with CreatedUpdated with Id
     override def defaultValue = 0
     override def displayName = "回答人"
     override def dbColumnName = "reply_id"
+
+    def replyer = User.find(By(User.id, this.is)) match {
+      case Full(u) => Text(u.displayMaskName)
+      case _ => <a href={ WebHelpers.WebSiteUrlAndName._1 } target="_blank">{ WebHelpers.WebSiteUrlAndName._2 }</a>
+    }
   }
 
   object isRecommend extends MappedBoolean(this) { //是否推荐答案
@@ -49,4 +54,5 @@ class WendaReply extends LongKeyedMapper[WendaReply] with CreatedUpdated with Id
 
 object WendaReply extends WendaReply with CRUDify[Long, WendaReply] with Paginator[WendaReply] {
   override def dbTableName = "wenda_replies"
+  override def fieldOrder = List(id, wenda, content, reply, isRecommend, createdAt, updatedAt)
 }

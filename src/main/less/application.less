@@ -92,8 +92,15 @@ body {
 
 @borderRadius: 4px;
 
+a{color:@textColor}
+a:hover{color:@mainLinkHoverColor}
+
 p.indent {
   text-indent: 2em;
+}
+
+.main-text-color{
+color:@mainColor
 }
 
 #toTop {
@@ -114,6 +121,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei UI", "Microsoft YaHei", SimHei, "\5B8B\4F53", simsun, sans-serif;
   //font-family: "Microsoft YaHei","微软雅黑",tahoma,arial,simsun,"宋体";
   //font: 12px/150% Arial,Verdana,"宋体";
+  //font-family:"Microsoft YaHei",Arial;-webkit-text-size-adjust:none;color:#333;
 }
 
 .container {
@@ -617,10 +625,10 @@ td.center {
   border-bottom: 1px solid #DDDDDD;
   font-size: 16px;
   font-weight: bold;
-  height: 30px;
-  line-height: 30px;
+  height: 35px;
+  line-height: 35px;
   margin-bottom: 10px;
-  padding-bottom: 3px;
+  padding-bottom: 5px;
 }
 
 .pointer {

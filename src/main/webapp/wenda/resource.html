@@ -1,0 +1,44 @@
+<div class="container" data-lift="surround?with=default;at=content">
+	<head_merge>
+	<style>
+.info-bar {
+	margin-bottom: 5px;
+	color: #7E7E7E;
+	font-size: 12px;
+	text-align: center;
+}
+
+.info-bar span {
+	margin-right: 10px;
+}
+
+.text-ct {
+	font-size: 13px;
+	line-height: 28px;
+	padding-bottom: 10px
+}
+</style>
+	</head_merge>
+	<div class="row">
+		<div class="col-xs-3">
+			<div data-lift="WendaOps.wendaTypes" class="panel panel-default">
+				<div class="panel-heading">问答分类</div>
+				<div class="list-group">
+					<a href="#" class="list-group-item"><span class="wenda-type-name"></span><span class="badge">14</span></a>
+				</div>
+			</div>
+		</div>
+		<div data-lift="WendaOps.viewResource?eager_eval=true" class="col-xs-9 box_txt">
+			<ol class="breadcrumb">
+				<li><a href="/wenda">问答频道</a></li>
+				<li id="breadcrumb-item"></li>
+				<li class="active"><span id="breadcrumb-title"></span></li>
+			</ol>
+			<h4 class="tit text-center"></h4>
+			<div class="info-bar">
+				<a href="">牛标网</a>发布于：2013-08-31
+			</div>
+			<div class="text-ct">新闻公告内容</div>
+		</div>
+	</div>
+</div>

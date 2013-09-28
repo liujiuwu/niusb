@@ -37,7 +37,8 @@ object Site {
     Menu(Loc("News", List("news", "index"), menuText("新闻公告"), Hidden)),
     Menu(Loc("ViewNews", List("news", "view"), menuText("查看新闻"), Hidden)),
     Menu(Loc("Wenda", List("wenda", "index"), menuText("问答频道", "question-sign"), TopBarGroup)),
-    Menu(Loc("ViewWenda", List("wenda", "view"), menuText("查看问答"), Hidden)))
+    Menu(Loc("ViewWenda", List("wenda", "view"), menuText("查看问答"), Hidden)),
+    Menu(Loc("WendaResource", List("wenda", "resource"), menuText("问答资源"), Hidden)))
 
   val userMenus = List[Menu](
     Menu(Loc("Profile", List("user", "profile"), menuText("帐户信息", "edit"), RequireLoggedIn, UserMenuGroup)),
@@ -81,6 +82,8 @@ object Site {
   val otherMenus = List(
     Menu.i("ajaxExample") / "ajax",
     Menu.i("Error") / "error" >> Hidden,
+    Menu.i("feedback") / "feedback" >> Hidden,
+    Menu.i("terms") / "terms" >> Hidden,
     Menu.i("404") / "404" >> Hidden,
     /* Menu.i("Help") / "help" / ** >> Hidden,*/
     Menu.i("Throw") / "throw" >> Hidden >> EarlyResponse(() => throw new Exception("This is only a test.")))

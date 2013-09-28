@@ -22,6 +22,7 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "mainConent" => mainConent
     case "searchBrandForm" => searchBrandForm
     case "news" => news
+    case "onlineKefu" => onlineKefu
   }
 
   def tabConent = {
@@ -75,5 +76,10 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
           "li [class]" #> { if (i % 2 == 0) "odd" else "even" }
     }
     dataList
+  }
+
+  def onlineKefu = {
+    val cls = S.attr("ul-cls").openOr("list-inline")
+    "ul [class+]" #> cls
   }
 }

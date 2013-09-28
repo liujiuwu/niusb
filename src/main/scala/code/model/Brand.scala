@@ -180,7 +180,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object followCount extends MappedInt(this) { //关注数
     override def defaultValue = 0
-    override def displayName = "观注数"
+    override def displayName = "关注数"
     override def dbColumnName = "follow_count"
     def incr: Int = {
       this(this + 1)

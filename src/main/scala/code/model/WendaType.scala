@@ -16,7 +16,7 @@ class WendaType extends LongKeyedMapper[WendaType] with IdPK {
   object name extends MappedString(this, 30)
 
   object wendaCount extends MappedInt(this) {
-    override def dbColumnName = "brand_count"
+    override def dbColumnName = "wenda_count"
     override def defaultValue = 0
     def incr(v: Int = 1) = {
       require(v > 0)

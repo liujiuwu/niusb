@@ -1,36 +1,26 @@
 <div data-lift="surround?with=_help-wrap;at=content">
 	<head_merge>
 	<style>
-		.news-content {
-			text-indent: 2em;
-			font-size: 12px;
-			color: #777
-		}
-		.news-time {
-			padding-left: 5px;
-		}
-		.news-type {
-			font-size: 14px;
-			font-weight: bold;
-		}
-	</style>
+.news-content {
+	text-indent: 2em;
+	font-size: 12px;
+	color: #777
+}
+
+.news-time {
+	padding-left: 5px;
+}
+
+.news-type {
+	font-size: 14px;
+	font-weight: normal;
+}
+</style>
 	</head_merge>
 	<div data-lift="ArticleOps.newsList?eager_eval=true">
 		<h4>新闻公告</h4>
 		<ul id="dataList">
-			<li>
-				<div class="box news-box">
-					<div class="box-header">
-						<h2>
-							<i class="icon-list"></i>【<span class="news-type">新闻</span>】<span class="news-title"><a href="#">新闻标题</a></span><span class="news-time"></span>
-						</h2>
-						<div class="box-icon">
-							<a href="#"><i class="icon-chevron-down"></i></a>
-						</div>
-					</div>
-					<div class="box-content news-content">返利是指用户通过爱返利网去淘宝或其它商城购物交易成功以后，爱返利网将会返还一定比例的现金。 该现金是直接返还到用户的"爱返利网账户"，账户返利金额满1元就可以免费申请提现到支付宝， 那么这些钱就又可以当现金使用了。</div>
-				</div>
-			</li>
+			<li><i class="icon-chevron-sign-right wenda-icon"></i>【<span class="news-type">新闻</span>】<span class="news-title"><a href="#">新闻标题</a></span><span class="news-time"></span></li>
 		</ul>
 		<div style="padding-top: 10px">
 			<span data-lift="embed?what=_paginator"></span>

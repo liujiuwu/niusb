@@ -19,8 +19,9 @@ import code.lib.WebCacheHelper
 class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
   def getSingleton = Wenda
   object title extends MappedString(this, 100) {
-    def displayTitle = {
-      <i class="icon-question-sign wenda-icon"></i> ++ Text(" ") ++ <a href={ "/wenda/" + id.is } title={ this.is } target="_blank">{ this.is }</a>
+    def displayTitle(pageType: Int) = {
+      val newTitle = if (this.is.length() > 40) this.is.substring(0, 40) + "..." else this.is
+      <i class="icon-question-sign wenda-icon"></i> ++ Text(" ") ++ <a href={ "/wenda/" + pageType + "/" + id.is } title={ this.is } target="_blank">{ newTitle }</a>
     }
   }
 
@@ -115,7 +116,10 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
 
 object Wenda extends Wenda with CRUDify[Long, Wenda] with Paginator[Wenda] {
   override def dbTableName = "wendas"
-  override def fieldOrder = List(id, title, wendaTypeCode, content, asker, readCount, createdAt, updatedAt)
+  override def fieldOrder = List(id, title, wendaTypeCode, content, asker, readCount, isRecommend, replyCount, createdAt, updatedAt)
 
-  def pageUrl(pageType: Int = 0, wendaTypeCode: Int = 0, orderType: Int = 0) = "/wenda/" + pageType + "/" + wendaTypeCode + "/" + orderType
+  def pageUrl(pageType: Int = 0, wendaTypeCode: Int = 0, orderType: Int = 0) = {
+    val newPageType = if (pageType < 10) pageType else 0
+    "/wenda/" + newPageType + "/" + wendaTypeCode + "/" + orderType
+  }
 }

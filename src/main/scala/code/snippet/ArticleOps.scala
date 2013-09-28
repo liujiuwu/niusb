@@ -27,6 +27,10 @@ import scala.xml.XML
 import com.niusb.util.WebHelpers
 import net.liftweb.mapper.BySql
 import net.liftweb.mapper.IHaveValidatedThisSQL
+import scala.collection.mutable.ArrayBuffer
+import net.liftweb.mapper.QueryParam
+import net.liftweb.mapper.OrderBy
+import net.liftweb.mapper.Descending
 
 object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -52,16 +56,14 @@ object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
 
   def newsList = {
     val limit = S.attr("limit").map(_.toInt).openOr(15)
-    val bies = BySql[Article]("article_type=? or article_type=?", IHaveValidatedThisSQL("liujiuwu", "2013-09-14"), ArticleType.News.id, ArticleType.Notice.id)
-    val paginatorModel = Article.paginator(originalUri, bies)(itemsOnPage = limit)
+    val byBuffer = ArrayBuffer[QueryParam[Article]](OrderBy(Article.id, Descending))
+    byBuffer += BySql[Article]("article_type=? or article_type=?", IHaveValidatedThisSQL("liujiuwu", "2013-09-14"), ArticleType.News.id, ArticleType.Notice.id)
+
+    val paginatorModel = Article.paginator(originalUri, byBuffer.toList: _*)(itemsOnPage = limit)
     val dataList = "#dataList li" #> paginatorModel.datas.map { news =>
-      val newContent = XML.loadString({ "<b>" + news.content.get + "</b>" }).text
-      val len = newContent.length()
-      val fcontent = if (len > 100) newContent.substring(0, 100) + " ..." else newContent
       ".news-type *" #> news.articleType.asHtml &
         ".news-title *" #> news.title.displayTitle() &
-        ".news-time *" #> { "(" + news.shortCreatedAt + ")" } &
-        ".news-content *" #> fcontent
+        ".news-time *" #> { "(" + news.shortCreatedAt + ")" }
     }
 
     dataList & "#pagination" #> paginatorModel.paginate _
@@ -71,7 +73,7 @@ object ArticleOps extends DispatchSnippet with SnippetHelper with Loggable {
     val limit = S.attr("limit").map(_.toInt).openOr(30)
     val paginatorModel = Article.paginator(originalUri, By(Article.articleType, ArticleType.Help))(itemsOnPage = limit)
     val dataList = "#dataList li" #> paginatorModel.datas.map { help =>
-        "#help-title" #> help.title.displayTitle(false) &
+      "#help-title" #> help.title.displayTitle(false) &
         ".box-content *" #> Unparsed(help.content.get)
     }
 
