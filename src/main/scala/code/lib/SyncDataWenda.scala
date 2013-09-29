@@ -39,13 +39,23 @@ object SyncDataWenda extends App {
 
   S.initIfUninitted(session)(init())
   def init() {
-    //syncWenwen(-1)
-    syncNews(-1)
+    syncWenwen(-1)
+    //syncNews(-1)
   }
 
+  lazy val re1 = ("""szsbpp.com|haotm.cn|haotm.com|jsjb.org|hw-tm.com|jpsb.cn""", "niusb.com")
+  lazy val re2 = ("""好标网""", "牛标网")
+  lazy val re3 = ("""好标""", "牛标")
+  lazy val re4 = ("""好商标""", "牛商标")
+  lazy val re5 = ("""61559900|82826837""", "97145222")
+  lazy val re6 = ("""义乌博锐知识产权代理有限公司""", "深圳牛标知识产权代理有限公司")
+  lazy val re7 = ("""义乌""", "深圳")
+  lazy val re8 = ("""zhcsb.aspx|news.aspx?id=770""", "")
+  lazy val res = List(re1, re2, re3, re4, re5, re6, re7, re8)
+
   def syncWenwen(limit: Int) = {
-    val restr = """http://www.haotm.cn|www.haotm.com|haotm.cn|haotm.cn|http|好标网|标网"""
-    val sql = """SELECT id,content,classid FROM `wenwen` where status=1 and hf=0 """ + (if (limit > 0) " limit " + limit else "")
+
+    val sql = """SELECT id,content,classid FROM `wenwen` where  hf=0 """
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
@@ -53,9 +63,17 @@ object SyncDataWenda extends App {
         val replySql = s"""SELECT id,hfcontent,classid FROM `wenwen` where hf=1 and hfid=${wenwen.id} limit 1"""
         Q.queryNA[Wenwen](replySql) foreach { reply =>
           val wenda = Wenda.create
-          val title = wenwen.content.replaceAll(restr, "")
-          if (title.indexOf("义乌") == -1) {
-            wenda.title(title)
+          val realContent = {
+            var newContent = wenwen.content
+            for (re <- res) {
+              newContent = newContent.replaceAll(re._1, re._2)
+            }
+            newContent
+          }
+
+          if (realContent.length() < 100) {
+
+            wenda.title(realContent)
             wenda.asker(0)
             val wendaTypeCode = wenwen.classid match {
               case 2 => 2
@@ -70,7 +88,7 @@ object SyncDataWenda extends App {
               case 11 => 9
             }
             wenda.wendaTypeCode(wendaTypeCode)
-            wenda.content(title)
+            wenda.content(realContent)
             wenda.replyCount(1)
             wenda.save
 
@@ -80,9 +98,17 @@ object SyncDataWenda extends App {
               case _ =>
             }
 
+            val realReplyContent = {
+              var newContent = reply.content
+              for (re <- res) {
+                newContent = newContent.replaceAll(re._1, re._2)
+              }
+              newContent
+            }
+
             val wendaReply = WendaReply.create
             wendaReply.wenda(wenda.id.is)
-            wendaReply.content(reply.content.replaceAll(restr, ""))
+            wendaReply.content(realReplyContent)
             wendaReply.isRecommend(true)
             wendaReply.reply(0)
             wendaReply.save
@@ -93,23 +119,34 @@ object SyncDataWenda extends App {
   }
 
   def syncNews(limit: Int) = {
-    val sql = """SELECT id,title,TContent,classid FROM `hy_news` where status=1 """ + (if (limit > 0) " limit " + limit else "")
+    val sql = """SELECT id,title,TContent,classid FROM `hy_news` """
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
       Q.queryNA[HyNews](sql) foreach { news =>
-        if (List(100101, 100102, 100103, 100104).exists(_ == news.classid)) {
-          val article = Article.create
-          article.title(news.title)
-          article.content(news.content)
-          val articleType = news.classid match {
-            case 100101 => ArticleType.News
-            case 100103 => ArticleType.Laws
-            case 100104 => ArticleType.ResourceDown
-            case 100102 => ArticleType.Knowledge
+        if (news.content != null && !news.content.trim.isEmpty()) {
+          if (List(100101, 100102, 100103, 100104).exists(_ == news.classid)) {
+            val article = Article.create
+            article.title(news.title)
+
+            val realContent = {
+              var newContent = news.content
+              for (re <- res) {
+                newContent = newContent.replaceAll(re._1, re._2)
+              }
+              newContent
+            }
+
+            article.content(realContent)
+            val articleType = news.classid match {
+              case 100101 => ArticleType.News
+              case 100103 => ArticleType.Laws
+              case 100104 => ArticleType.ResourceDown
+              case 100102 => ArticleType.Knowledge
+            }
+            article.articleType(articleType)
+            article.save()
           }
-          article.articleType(articleType)
-          article.save()
         }
       }
     }

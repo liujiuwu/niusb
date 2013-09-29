@@ -45,7 +45,7 @@ object SyncData extends App {
   Schemifier.schemify(true, Schemifier.infoF _, User, Brand, BrandType)
   lazy val db = Database.forURL("jdbc:mysql://localhost:3306/new_haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
   lazy val session: LiftSession = new LiftSession("", StringHelpers.randomString(20), Empty)
-  S.initIfUninitted(session)(init())
+  //S.initIfUninitted(session)(init())
 
   def init() {
     val user1 = User.create
@@ -62,7 +62,7 @@ object SyncData extends App {
     user2.superUser(true)
     user2.save
 
-    syncKehu("""e:\1\new_haotm""", """d:\new_haotm""",500)
+    syncKehu("""e:\1\new_haotm""", """d:\new_haotm""", 49, 1000)
   }
 
   lazy val sdf = new SimpleDateFormat("yyyy-M-dd")
@@ -72,7 +72,7 @@ object SyncData extends App {
       | id,name,pic,indate,price,`range`,`category`,`number`,
       |regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id 
       | from trademark 
-      | where kehu_1id=${kehuId} and sell=0 and del=0 and regdate!='' and LENGTH(kehu_1id)>0 and LENGTH(name)>0 and pic like '%/2011/%' 
+      | where kehu_1id=${kehuId} 
       """
     db.withSession {
       var syncNum = 0
@@ -123,14 +123,14 @@ object SyncData extends App {
     }
   }
 
-  def syncKehu(sdir: String, ddir: String, limitId: Int) = {
+  def syncKehu(sdir: String, ddir: String, start: Int, limitId: Int) = {
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
-      Q.queryNA[Kehu](s"select id,name,tel,tel1,qq,bz,indate,sqname,count(distinct(tel))as c from kehu_1 where id>=50 and id<= ${limitId} and LENGTH(name)>0 and LENGTH(tel)>0 GROUP BY tel order by id") foreach { u =>
+      Q.queryNA[Kehu](s"select id,name,tel,tel1,qq,bz,indate,sqname,count(distinct(tel))as c from kehu_1 where id>=${start}  GROUP BY tel order by id") foreach { u =>
         Option(u.tel) match {
           case Some(tel) =>
-            val ucount = Q.queryNA[TrademarkCount](s"select count(id) from trademark where regdate!='' and kehu_1id=${u.id} and pic like '%/2011/%'").first().count
+            val ucount = Q.queryNA[TrademarkCount](s"select count(id) from trademark where kehu_1id=${u.id}").first().count
             if (ucount > 0) {
               val tels = tel.split(",")
               val regTel = tels(0).replaceAll("""\s|-""", "")

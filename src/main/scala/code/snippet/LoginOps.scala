@@ -114,7 +114,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
           }
 
           if (SmsHelpers.getSendSmsCount(mb) >= WebCacheHelper.getSmsCountLimit()) {
-            return WebHelpers.formError("regMobile", s"对不起，此手机号获取验证码已超出每天%{WebCacheHelper.getSmsCountLimit()}条")
+            return WebHelpers.formError("regMobile", s"对不起，此手机号获取验证码已超出每天${WebCacheHelper.getSmsCountLimit()}条")
           }
 
           val cacheTime = SmsHelpers.smsCode(mb).cacheTime
@@ -169,11 +169,11 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
       WebHelpers.realMobile(Full(mobileVal)) match {
         case Full(mb) =>
           if (!isRegUser(mb)) {
-            return WebHelpers.formError("regMobile", "此手机号未注册，无法找回密码！")
+            return WebHelpers.formError("forgotMobile", "此手机号未注册，无法找回密码！")
           }
           
          if (SmsHelpers.getSendSmsCount(mb) >= WebCacheHelper.getSmsCountLimit()) {
-            return WebHelpers.formError("regMobile", s"对不起，此手机号获取验证码已超出每天%{WebCacheHelper.getSmsCountLimit()}条")
+            return WebHelpers.formError("forgotMobile", s"对不起，此手机号获取验证码已超出每天${WebCacheHelper.getSmsCountLimit()}条")
           }
 
           val cacheTime = SmsHelpers.smsCode(mb).cacheTime

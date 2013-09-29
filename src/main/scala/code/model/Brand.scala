@@ -1,21 +1,23 @@
 package code.model
 
-import scala.language.postfixOps
 import java.text.SimpleDateFormat
+import java.util.Date
+
+import scala.language.postfixOps
+import scala.util.Success
+import scala.util.Try
 import scala.xml._
+
+import com.niusb.util.MemHelpers
+import com.niusb.util.UploadHelpers
+import com.niusb.util.WebHelpers
+import com.niusb.util.WebHelpers._
+
+import code.lib.WebCacheHelper
 import net.liftweb.common._
 import net.liftweb.mapper._
 import net.liftweb.util._
-import code.lib.WebCacheHelper
-import java.util.Date
 import net.liftweb.util.Helpers._
-import com.niusb.util.WebHelpers
-import com.niusb.util.WebHelpers._
-import com.niusb.util.UploadHelpers
-import com.niusb.util.MemHelpers
-import scala.util.Try
-import scala.util.Success
-import net.liftweb.http.S
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -269,6 +271,27 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
       ".brand-name *" #> viewLink(Text(name.get.trim)) &
       ".viewCount *+" #> <em>{ viewCount.is }</em> &
       ".followCount *+" #> <em>{ followCount.is }</em>
+  }
+
+  def delBrandAndUpdateBrandType = {
+    val brandTypeCode = this.brandTypeCode.is
+    WebCacheHelper.brandTypes.get(brandTypeCode) match {
+      case Some(brandType) => brandType.brandCount.decr()
+      case _ =>
+    }
+    delete_!
+  }
+
+  def saveAndUpdateBrandType(newStatus: BrandStatus.Value) = {
+    if (status == BrandStatus.ShenHeZhong && newStatus == BrandStatus.ChuShoZhong) {
+      val brandTypeCode = this.brandTypeCode.is
+      WebCacheHelper.brandTypes.get(brandTypeCode) match {
+        case Some(brandType) => brandType.brandCount.incr()
+        case _ =>
+      }
+    }
+    status(newStatus)
+    save
   }
 }
 

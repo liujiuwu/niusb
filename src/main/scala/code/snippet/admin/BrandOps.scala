@@ -39,6 +39,7 @@ import net.liftweb.util.Helpers.asLong
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
 import com.niusb.util.WebHelpers
+import code.model.BrandStatus
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -77,7 +78,10 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-info"><i class="icon-edit"></i></a> ++ Text(" ") ++
         a(() => {
           BoxConfirm("确定删除【" + brand.name.get + "】商标？此操作不可恢复，请谨慎！", {
-            ajaxInvoke(() => { brand.delete_!; JsCmds.Reload })._2
+            ajaxInvoke(() => {
+              brand.delBrandAndUpdateBrandType
+              JsCmds.Reload
+            })._2
           })
         }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
     }
@@ -186,6 +190,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       var basePrice = "0"
       var regNo, pic, name, regDateStr, applicant, useDescn, descn, lsqz = ""
       var brandType: BrandType = WebCacheHelper.brandTypes.get(brand.brandTypeCode.get).get
+      var newStatus = BrandStatus.ShenHeZhong
 
       def process(): JsCmd = {
         val oldPic = brand.pic.get
@@ -194,6 +199,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         brand.lsqz(lsqz)
         brand.validate match {
           case Nil =>
+            brand.saveAndUpdateBrandType(newStatus)
             brand.save
             UploadHelpers.handleBrandImg(pic)
             if (oldPic != pic) {
@@ -214,7 +220,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "@name" #> text(brand.name.get, name = _) &
         "@pic" #> hidden(pic = _, brand.pic.get) &
         "#brand_pic [src]" #> brand.pic.src &
-        "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
+        "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), newStatus = _) &
         "@brandType" #> select(brandTypes.map(v => (v.code.is.toString, v.code.is + " -> " + v.name.is)), Full(brandType.code.toString), v => (brandType = WebCacheHelper.brandTypes.get(v.toInt).get)) &
         "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
         "@applicant" #> text(brand.applicant.get, applicant = _) &
@@ -238,20 +244,20 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
       var basePrice, sellPrice, strikePrice = "0"
       var recommend, own, offer = "0"
       var name, remark = ""
+      var newStatus = BrandStatus.ShenHeZhong
 
       def process(): JsCmd = {
         brand.basePrice(basePrice.toInt).sellPrice(sellPrice.toInt).strikePrice(strikePrice.toInt)
         brand.isRecommend(TrueOrFalse(recommend)).isOwn(TrueOrFalse(own)).isOffer(TrueOrFalse(offer))
         brand.remark(remark)
-        brand.save
-
+        brand.saveAndUpdateBrandType(newStatus)
         WebCacheHelper.loadIndexTabBrands()
         WebCacheHelper.loadIndexBrandTypeBrands()
         S.redirectTo("/admin/brand/view?id=" + brand.id.get)
       }
 
       "#name *" #> brand.name.is &
-        "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), brand.status(_)) &
+        "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), newStatus = _) &
         "@recommend" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isRecommend.get), recommend = _) &
         "@own" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isOwn.get), own = _) &
         "@offer" #> select(TrueOrFalse.selectTrueOrFalse, TrueOrFalse2Str(brand.isOffer.get), offer = _) &
