@@ -23,6 +23,7 @@ import com.niusb.util.WebHelpers
 import com.niusb.util.SmsHelpers
 import net.liftweb.http.SHtml
 import net.liftweb.util.PassThru
+import code.lib.WebCacheHelper
 
 object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -112,9 +113,13 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
             return WebHelpers.formError("regMobile", "此手机号已经注册，请登录！")
           }
 
+          if (SmsHelpers.getSendSmsCount(mb) >= WebCacheHelper.getSmsCountLimit()) {
+            return WebHelpers.formError("regMobile", s"对不起，此手机号获取验证码已超出每天%{WebCacheHelper.getSmsCountLimit()}条")
+          }
+
           val cacheTime = SmsHelpers.smsCode(mb).cacheTime
           WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
-            SmsHelpers.sendCodeSms(mb)
+            SmsHelpers.sendCodeSms("注册牛标用户", mb)
             JsRaw("""$("#getCodeBtn").countdown();$("#msg-tip").hide().text("")""")
           } else {
             JsRaw("""$("#msg-tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
@@ -166,10 +171,14 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
           if (!isRegUser(mb)) {
             return WebHelpers.formError("regMobile", "此手机号未注册，无法找回密码！")
           }
+          
+         if (SmsHelpers.getSendSmsCount(mb) >= WebCacheHelper.getSmsCountLimit()) {
+            return WebHelpers.formError("regMobile", s"对不起，此手机号获取验证码已超出每天%{WebCacheHelper.getSmsCountLimit()}条")
+          }
 
           val cacheTime = SmsHelpers.smsCode(mb).cacheTime
           WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
-            SmsHelpers.sendCodeSms(mb)
+            SmsHelpers.sendCodeSms("牛标找回密码", mb)
             JsRaw("""$("#forgotGetCodeBtn").countdown();$("#msg-tip").hide().text("")""")
           } else {
             JsRaw("""$("#msg-tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))

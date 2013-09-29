@@ -87,6 +87,13 @@ object WebCacheHelper extends Loggable {
     logger.info("load indexTabBrands finished.")
   }
 
+  def getSmsCountLimit(): Int = {
+    WebCacheHelper.websets.values.headOption match {
+      case Some(webset) => webset.smsCountLimit.is
+      case _ => 3
+    }
+  }
+
   def load(force: Boolean = false) {
     logger.info("load cahche start ...")
     val startTime = System.currentTimeMillis()

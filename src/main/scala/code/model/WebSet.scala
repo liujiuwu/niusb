@@ -15,10 +15,15 @@ class Webset extends LongKeyedMapper[Webset] with IdPK {
     override def dbColumnName = "base_price_float"
     override def displayName = "商标基价浮动百分比"
   }
+
+  object smsCountLimit extends MappedInt(this) {
+    override def dbColumnName = "sms_count_limit"
+    override def displayName = "每天每手机号短信验证码获取数量限制"
+  }
 }
 
 object Webset extends Webset with CRUDify[Long, Webset] with LongKeyedMetaMapper[Webset] {
   override def dbTableName = "webset"
 
-  override def fieldOrder = List(id)
+  override def fieldOrder = List(id, basePriceFloat, smsCountLimit)
 }

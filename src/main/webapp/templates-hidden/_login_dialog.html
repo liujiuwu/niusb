@@ -70,7 +70,10 @@
 						</form>
 					</div>
 					<div data-lift="LoginOps.forgot" class="tab-pane" id="forgot-panel">
-						<div id="msg-tip" class="alert alert-warning"></div>
+						<div id="msg-tip" class="alert alert-warning alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+							<strong>Warning!</strong> Best check yo self, you're not looking too good.
+						</div>
 						<form data-lift="form.ajax?class=form-horizontal">
 							<div id="form-forgotMobile" class="form-group">
 								<label for="forgotMobile" class="control-label col-xs-3">手机号</label>

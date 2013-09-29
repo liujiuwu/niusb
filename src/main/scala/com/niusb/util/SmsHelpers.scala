@@ -2,12 +2,12 @@ package com.niusb.util
 
 import scala.collection.mutable.LinkedHashSet
 import scala.util.Random
-
 import net.liftweb.actor.LiftActor
 import net.liftweb.common.Loggable
 import net.liftweb.util.Helpers._
+import java.util.Date
 
-case class SendSms(mobile: String, sms: String, sign: String = "牛标网")
+case class SendSms(mobile: String, sms: String, sign: String = "牛标")
 case class SmsCode(code: String, cacheTime: Int = WebHelpers.now)
 
 object SmsActor extends LiftActor {
@@ -32,10 +32,23 @@ trait SmsHelpers {
     result.mkString
   }
 
-  def sendCodeSms(mobile: String) {
+  private def getCountKey(mobile: String) = {
+    mobile + "_count_" + WebHelpers.df.format(new Date)
+  }
+
+  def getSendSmsCount(mobile: String): Int = {
+    val sendCount = MemHelpers.get(getCountKey(mobile)) match {
+      case Some(count) => 0//count.asInstanceOf[Int]
+      case _ => 0
+    }
+    sendCount
+  }
+
+  def sendCodeSms(action: String, mobile: String) {
     val code = random()
-    val sms = s"您正在登录牛标网，校验码：${code}。泄露有风险，请在5分钟内使用此验证码。"
+    val sms = s"您正在${action}，校验码：${code}。泄露有风险，请在5分钟内使用此验证码。"
     MemHelpers.set(mobile, SmsCode(code), 5 minutes)
+    MemHelpers.inc(getCountKey(mobile))
     sendSms(mobile, sms)
   }
 

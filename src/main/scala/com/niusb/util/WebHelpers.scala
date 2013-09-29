@@ -35,7 +35,7 @@ trait WebHelpers {
   val dfShortTime = new SimpleDateFormat("yyyy-MM-dd HH:mm")
   val dfLongTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-  val WebSiteUrlAndName = ("http://www.niusb.com", "牛标网")
+  val WebSiteUrlAndName = ("http://www.niusb.com", "牛标")
 
   case class CacheValue[T](compute: () => T, lifespanInMillis: Long) {
     private var currentValue: Box[T] = Empty

@@ -28,12 +28,17 @@ object WebSetOps extends DispatchSnippet {
       case _ => Webset.create
     }
 
-    var basePriceFloat = ""
+    var basePriceFloat, smsCountLimit = ""
 
     def process(): JsCmd = {
-      Try(basePriceFloat.toInt) match {
+      Try(basePriceFloat.trim().toInt) match {
         case Success(v) => webset.basePriceFloat(v)
         case _ => return WebHelpers.formError("basePriceFloat", "商标基价浮动百分比必须是数字")
+      }
+
+      Try(smsCountLimit.trim().toInt) match {
+        case Success(v) => webset.smsCountLimit(v)
+        case _ => return WebHelpers.formError("smsCountLimit", "每天每手机号短信验证码获取数量限制必须是数字")
       }
       webset.save()
       WebCacheHelper.loadWebsets()
@@ -41,6 +46,7 @@ object WebSetOps extends DispatchSnippet {
     }
 
     "@basePriceFloat" #> text(webset.basePriceFloat.is.toString(), basePriceFloat = _) &
+      "@smsCountLimit" #> text(webset.smsCountLimit.is.toString(), smsCountLimit = _) &
       "type=submit" #> ajaxSubmit("保存设置", process)
   }
 }

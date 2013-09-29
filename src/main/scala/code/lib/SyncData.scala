@@ -2,13 +2,17 @@ package code.lib
 
 import java.io.File
 import java.sql.Date
+import java.text.SimpleDateFormat
 import scala.slick.driver.MySQLDriver.simple.Database
 import scala.slick.driver.MySQLDriver.simple.Database.threadLocalSession
 import scala.slick.jdbc.GetResult
 import scala.slick.jdbc.{ StaticQuery => Q }
+import com.niusb.util.UploadHelpers
+import com.niusb.util.WebHelpers
 import com.sksamuel.scrimage.Format
 import com.sksamuel.scrimage.Image
 import code.model.Brand
+import code.model.BrandType
 import code.model.MyDBVendor
 import code.model.User
 import net.liftweb.common.Box
@@ -17,17 +21,15 @@ import net.liftweb.common.Full
 import net.liftweb.db.DB
 import net.liftweb.db.DB1.db1ToDb
 import net.liftweb.db.DefaultConnectionIdentifier
+import net.liftweb.http.LiftSession
 import net.liftweb.mapper.Schemifier
+import net.liftweb.util.Helpers
+import net.liftweb.util.StringHelpers
 import scala.util.Try
-import java.text.SimpleDateFormat
 import scala.util.Success
 import scala.util.Failure
-import net.liftweb.util.Helpers
-import com.niusb.util.UploadHelpers
-import com.niusb.util.WebHelpers
+import net.liftweb.mapper.By
 import net.liftweb.http.S
-import net.liftweb.http.LiftSession
-import net.liftweb.util.StringHelpers
 
 case class Fbtm(id: Int, number: String, name: String, sbsm: String)
 case class Kehu(id: Int, name: String, tel: String, tel1: String, qq: String, bz: String, indate: Date, sqname: String)
@@ -40,13 +42,13 @@ object SyncData extends App {
   implicit val getTrademarkCountResult = GetResult(r => TrademarkCount(r.nextInt()))
 
   DB.defineConnectionManager(DefaultConnectionIdentifier, MyDBVendor)
-  Schemifier.schemify(true, Schemifier.infoF _, User, Brand)
+  Schemifier.schemify(true, Schemifier.infoF _, User, Brand, BrandType)
   lazy val db = Database.forURL("jdbc:mysql://localhost:3306/new_haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
   lazy val session: LiftSession = new LiftSession("", StringHelpers.randomString(20), Empty)
   S.initIfUninitted(session)(init())
 
   def init() {
-    syncKehu("""e:\1\new_haotm""", """d:\new_haotm""", 100)
+    syncKehu("""e:\1\new_haotm""", """d:\new_haotm""", -1)
   }
 
   lazy val sdf = new SimpleDateFormat("yyyy-M-dd")
@@ -80,6 +82,11 @@ object SyncData extends App {
             brand.owner(user.id.is)
             brand.lsqz(t.lsqz.trim())
             brand.save()
+
+            BrandType.find(By(BrandType.code, brand.brandTypeCode.is)) match {
+              case Full(brandType) => brandType.brandCount.incr()
+              case _ =>
+            }
             syncNum += 1
           //println(t.id);
           case _ => println(t.id + "=没商标图")
@@ -103,6 +110,20 @@ object SyncData extends App {
   }
 
   def syncKehu(sdir: String, ddir: String, limit: Int) = {
+    val user1 = User.create
+    user1.name("刘久武")
+    user1.mobile("13826526941")
+    user1.password("pure2012!@#")
+    user1.superUser(true)
+    user1.save
+
+    val user2 = User.create
+    user2.name("黄伟")
+    user2.mobile("18922831800")
+    user2.password("huangwei2013!@#")
+    user2.superUser(true)
+    user2.save
+
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
@@ -116,7 +137,6 @@ object SyncData extends App {
               WebHelpers.realMobile(Full(regTel)) match {
                 case Full(mobile) =>
                   val user = User.create
-                  syncTrademark(user, u.id, sdir, ddir, -1)
                   user.mobile(mobile)
                   user.phone(if (u.tel1 != null && !u.tel1.trim.isEmpty()) u.tel1 + "," + tels.mkString(",") else tels.mkString(","))
                   user.name(u.name)
@@ -129,6 +149,7 @@ object SyncData extends App {
                   user.descn(u.sqname)
                   user.remark(u.bz)
                   user.save
+                  syncTrademark(user, u.id, sdir, ddir, -1)
                   syncNum += 1
                 case _ => println("Tel error:" + u.id + "=" + tel)
               }

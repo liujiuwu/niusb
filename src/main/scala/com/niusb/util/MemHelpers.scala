@@ -29,6 +29,16 @@ trait MemHelpers {
     client.set(key, (exp.millis / 1000L).toInt, value)
   }
 
+  def inc(key: String, setp: Long = 1, default: Int = 1): Long = {
+    checkKey(key)
+    client.incr(key, setp, default)
+  }
+
+  def desc(key: String, setp: Long = 1, default: Int = 1): Long = {
+    checkKey(key)
+    client.decr(key, setp, default)
+  }
+
   def get(key: String): Option[Any] = {
     checkKey(key)
     Option(client.get(key))
@@ -38,4 +48,9 @@ trait MemHelpers {
     checkKey(key)
     client.delete(key)
   }
+}
+
+object MyTest extends App {
+  MemHelpers.inc("13826526941_count", 1)
+  println(MemHelpers.get("13826526941_count").get)
 }
