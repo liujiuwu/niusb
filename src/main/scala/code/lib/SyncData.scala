@@ -58,7 +58,7 @@ object SyncData extends App {
       | id,name,pic,indate,price,`range`,`category`,`number`,
       |regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id 
       | from trademark 
-      | where kehu_1id=${kehuId} and sell=0 and del=0 and LENGTH(kehu_1id)>0 and LENGTH(name)>0 and pic like '%/2011/%' 
+      | where kehu_1id=${kehuId} and sell=0 and del=0 and regdate!='' and LENGTH(kehu_1id)>0 and LENGTH(name)>0 and pic like '%/2011/%' 
       """ + (if (limit > 0) " limit " + limit else "")
     db.withSession {
       var syncNum = 0
@@ -89,10 +89,10 @@ object SyncData extends App {
             }
             syncNum += 1
           //println(t.id);
-          case _ => println(t.id + "=没商标图")
+          case _ => println(t.id + "|no pic")
         }
       }
-      println("sync kehu " + syncNum + "|" + (System.currentTimeMillis() - startTime) + "ms")
+      println("sync brand " + syncNum + "|" + (System.currentTimeMillis() - startTime) + "ms")
     }
   }
 
@@ -130,7 +130,7 @@ object SyncData extends App {
       Q.queryNA[Kehu]("select id,name,tel,tel1,qq,bz,indate,sqname,count(distinct(tel))as c from kehu_1 where id>10 and LENGTH(name)>0 and LENGTH(tel)>0 GROUP BY tel " + (if (limit > 0) " limit " + limit else "")) foreach { u =>
         Option(u.tel) match {
           case Some(tel) =>
-            val ucount = Q.queryNA[TrademarkCount](s"select count(id) from trademark where kehu_1id=${u.id} and pic like '%/2011/%'").first().count
+            val ucount = Q.queryNA[TrademarkCount](s"select count(id) from trademark where regdate!='' and kehu_1id=${u.id} and pic like '%/2011/%'").first().count
             if (ucount > 0) {
               val tels = tel.split(",")
               val regTel = tels(0).replaceAll("""\s|-""", "")
