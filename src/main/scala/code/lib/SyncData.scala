@@ -48,7 +48,21 @@ object SyncData extends App {
   S.initIfUninitted(session)(init())
 
   def init() {
-    syncKehu("""e:\1\new_haotm""", """d:\new_haotm""", -1)
+    val user1 = User.create
+    user1.name("刘久武")
+    user1.mobile("13826526941")
+    user1.password("pure2012!@#")
+    user1.superUser(true)
+    user1.save
+
+    val user2 = User.create
+    user2.name("黄伟")
+    user2.mobile("18922831800")
+    user2.password("huangwei2013!@#")
+    user2.superUser(true)
+    user2.save
+
+    syncKehu("""e:\1\new_haotm""", """d:\new_haotm""",500)
   }
 
   lazy val sdf = new SimpleDateFormat("yyyy-M-dd")
@@ -59,7 +73,7 @@ object SyncData extends App {
       |regdate,sell,address,tel,fax,coname,email,lsqz,kehu_1id 
       | from trademark 
       | where kehu_1id=${kehuId} and sell=0 and del=0 and regdate!='' and LENGTH(kehu_1id)>0 and LENGTH(name)>0 and pic like '%/2011/%' 
-      """ + (if (limit > 0) " limit " + limit else "")
+      """
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
@@ -109,25 +123,11 @@ object SyncData extends App {
     }
   }
 
-  def syncKehu(sdir: String, ddir: String, limit: Int) = {
-    val user1 = User.create
-    user1.name("刘久武")
-    user1.mobile("13826526941")
-    user1.password("pure2012!@#")
-    user1.superUser(true)
-    user1.save
-
-    val user2 = User.create
-    user2.name("黄伟")
-    user2.mobile("18922831800")
-    user2.password("huangwei2013!@#")
-    user2.superUser(true)
-    user2.save
-
+  def syncKehu(sdir: String, ddir: String, limitId: Int) = {
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
-      Q.queryNA[Kehu]("select id,name,tel,tel1,qq,bz,indate,sqname,count(distinct(tel))as c from kehu_1 where id>10 and LENGTH(name)>0 and LENGTH(tel)>0 GROUP BY tel " + (if (limit > 0) " limit " + limit else "")) foreach { u =>
+      Q.queryNA[Kehu](s"select id,name,tel,tel1,qq,bz,indate,sqname,count(distinct(tel))as c from kehu_1 where id>=50 and id<= ${limitId} and LENGTH(name)>0 and LENGTH(tel)>0 GROUP BY tel order by id") foreach { u =>
         Option(u.tel) match {
           case Some(tel) =>
             val ucount = Q.queryNA[TrademarkCount](s"select count(id) from trademark where regdate!='' and kehu_1id=${u.id} and pic like '%/2011/%'").first().count

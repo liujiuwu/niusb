@@ -109,7 +109,7 @@ trait WebHelpers {
       case Full(m) if (!m.trim().isEmpty()) =>
         val mobileRegx = """^(13[0-9]|14[0-9]|15[0-9]|18[0-9])(\d{8})$""".r
         m match {
-          case mobileRegx(mp, ms) => Full(mp + ms)
+          case mobileRegx(mp, ms) => Full((mp + ms).trim())
           case _ => Empty
         }
       case _ => Empty
