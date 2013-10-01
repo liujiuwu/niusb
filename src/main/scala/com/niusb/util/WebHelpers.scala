@@ -32,10 +32,11 @@ object WebHelpers extends WebHelpers with BootBoxHelpers {
 
 trait WebHelpers {
   val df = new SimpleDateFormat("yyyy-MM-dd")
+  val ndf = new SimpleDateFormat("yyyyMMdd")
   val dfShortTime = new SimpleDateFormat("yyyy-MM-dd HH:mm")
   val dfLongTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-  val WebSiteUrlAndName = ("http://www.niusb.com", "牛标")
+  val WebSiteUrlAndName = ("http://www.niusb.com", "牛标网")
 
   case class CacheValue[T](compute: () => T, lifespanInMillis: Long) {
     private var currentValue: Box[T] = Empty
@@ -84,16 +85,16 @@ trait WebHelpers {
 
   def removeFormError(fieldName: String = "") = {
     if (fieldName.trim.isEmpty()) {
-      JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$("form .help-block").html("")""")
+      JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$("form .help-block").html("")""").cmd
     } else {
-      JsRaw("""$("#form-%1$s").removeClass("has-success has-error has-warning");$("#form-%1$s .help-block").hide().text("%2$s")""" format (fieldName, ""))
+      JsRaw("""$("#form-%1$s").removeClass("has-success has-error has-warning");$("#form-%1$s .help-block").hide().text("%2$s")""" format (fieldName, "")).cmd
     }
   }
 
   def formError(formGroupId: String, msg: String) = {
-    JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$("form .help-block").html("")""") &
-      JsRaw("""$("#%1$s").focus()""".format(formGroupId)) &
-      JsRaw("""$("#form-%1$s").removeClass("has-success has-error has-warning");$("#form-%1$s").addClass("has-error");$("#form-%1$s .help-block").show().html("%2$s")""" format (formGroupId, msg))
+    JsRaw("""$(".form-group").removeClass("has-success has-error has-warning");$("form .help-block").html("")""").cmd &
+      JsRaw("""$("#%1$s").focus()""".format(formGroupId)).cmd &
+      JsRaw("""$("#form-%1$s").removeClass("has-success has-error has-warning");$("#form-%1$s").addClass("has-error");$("#form-%1$s .help-block").show().html("%2$s")""" format (formGroupId, msg)).cmd
   }
 
   /* def succMsg(where: String, msg: NodeSeq, cssClass: String = "alert-success", duration: TimeSpan = 0 second, fadeTime: TimeSpan = 2 second): JsCmd = {

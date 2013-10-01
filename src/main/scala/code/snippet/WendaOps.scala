@@ -332,11 +332,21 @@ object WendaOps extends DispatchSnippet with SnippetHelper with Loggable {
       bies = BySql[Article]("article_type=? or article_type=?  or article_type=?", IHaveValidatedThisSQL("liujiuwu", "2013-09-14"), ArticleType.Knowledge.id, ArticleType.Laws.id, ArticleType.ResourceDown.id)
       resource <- Article.find(By(Article.id, id), bies) ?~ s"ID为${id}的文档不存在。"
     } yield {
+      val downResources = if (resource.downResources.resources.isEmpty) { "" } else {
+        <ul class="list-inline downfile-box">
+          {
+            for ((resource, i) <- resource.downResources.resources.zipWithIndex) yield {
+              <li><a href={ "/upload/download/" + resource }>附件{ i + 1 }下载</a></li>
+            }
+          }
+        </ul>
+      }
+
       "#breadcrumb-item *" #> <a href={ "/wenda/" + pageType + "/-1/0" }>{ getPageName(pageType) }</a> &
         "#breadcrumb-title" #> resource.title.is &
         ".tit *" #> resource.title.is &
         ".info-bar *" #> info(resource) &
-        ".text-ct *" #> Unparsed(resource.content.is)
+        ".text-ct *" #> Unparsed(resource.content.is + downResources)
     }): CssSel
   }
 

@@ -5,18 +5,9 @@
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 					<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
 				</button>
-				<a class="nav-logo-spt nav-logo" href="http://www.niusb.conm">牛标</a>
+				<a class="nav-logo-spt nav-logo" href="http://www.niusb.conm">牛标网</a>
 			</div>
-			<div data-lift="MarketOps.searchBrand" class="navbar-collapse collapse">
-				<div data-lift="TabMenuOps.topMainNav"></div>
-				<div class="navbar-form navbar-left">
-						<input type="text" id="keyword" name="keyword" class="form-control" placeholder="输入搜索商标关键词" style="width: 250px" />
-					<button id="search-btn" type="button" class="btn btn-success">
-						<i class="icon-search"></i> 搜索
-					</button>
-					</div>
-				<span data-lift="Menus.userStatus"></span>
-			</div>
+			<div class='lift:embed?what=_search_form'>search form</div>
 		</div>
 	</div>
 	<lift:test_cond.loggedout>

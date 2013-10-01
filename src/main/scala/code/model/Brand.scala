@@ -247,7 +247,7 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     def displayOwn = if (this.get) "是" else "否"
   }
 
-  object remark extends MappedString(this, 300) {
+  object remark extends MappedString(this, 500) {
     override def displayName = "备注"
   }
 

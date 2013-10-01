@@ -70,6 +70,15 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
     override def dbColumnName = "article_order"
   }
 
+  object downResources extends MappedString(this, 500) {
+    override def dbColumnName = "down_resources"
+    def resources = if (this.is != null && !this.is.trim().isEmpty()) {
+      this.is.split(";").toList
+    } else {
+      List[String]()
+    }
+  }
+
   object status extends MappedEnum(this, ArticleStatus) {
     override def defaultValue = ArticleStatus.Normal
   }
@@ -112,7 +121,7 @@ class Article extends LongKeyedMapper[Article] with CreatedUpdated with IdPK {
 
 object Article extends Article with CRUDify[Long, Article] with Paginator[Article] {
   override def dbTableName = "articles"
-  override def fieldOrder = List(id, title, articleType, articleFrom, readCount, content, createdAt, updatedAt)
+  override def fieldOrder = List(id, title, articleType, articleFrom, status, isRecommend, downResources, readCount, content, createdAt, updatedAt)
 
   def validArticleTypeSelectValues = {
     val articleTypes = ArticleType.values.toList.map(v => (v.id.toString, v.toString))

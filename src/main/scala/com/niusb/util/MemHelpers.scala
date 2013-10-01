@@ -4,6 +4,7 @@ import net.rubyeye.xmemcached.XMemcachedClientBuilder
 import net.rubyeye.xmemcached.command.BinaryCommandFactory
 import net.rubyeye.xmemcached.utils.AddrUtil
 import net.liftweb.util.Helpers._
+import java.util.Date
 
 object MemHelpers extends MemHelpers
 
@@ -29,12 +30,12 @@ trait MemHelpers {
     client.set(key, (exp.millis / 1000L).toInt, value)
   }
 
-  def inc(key: String, setp: Long = 1, default: Int = 1): Long = {
+  def incr(key: String, setp: Long = 1, default: Int = 1): Long = {
     checkKey(key)
     client.incr(key, setp, default)
   }
 
-  def desc(key: String, setp: Long = 1, default: Int = 1): Long = {
+  def decr(key: String, setp: Long = 1, default: Int = 1): Long = {
     checkKey(key)
     client.decr(key, setp, default)
   }
@@ -51,6 +52,10 @@ trait MemHelpers {
 }
 
 object MyTest extends App {
-  MemHelpers.inc("13826526941_count", 1)
-  println(MemHelpers.get("13826526941_count").get)
+  val key = "13826526941_count_"+WebHelpers.ndf.format(new Date)
+  MemHelpers.delete(key)
+  /*for (i <- 1 to 10) {
+    MemHelpers.incr(key, 1)
+    println(MemHelpers.get(key).get)
+  }*/
 }

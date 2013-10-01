@@ -45,10 +45,10 @@ object SyncData extends App {
   Schemifier.schemify(true, Schemifier.infoF _, User, Brand, BrandType)
   lazy val db = Database.forURL("jdbc:mysql://localhost:3306/new_haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
   lazy val session: LiftSession = new LiftSession("", StringHelpers.randomString(20), Empty)
-  //S.initIfUninitted(session)(init())
+  S.initIfUninitted(session)(init())
 
   def init() {
-    val user1 = User.create
+    /*val user1 = User.create
     user1.name("刘久武")
     user1.mobile("13826526941")
     user1.password("pure2012!@#")
@@ -60,9 +60,10 @@ object SyncData extends App {
     user2.mobile("18922831800")
     user2.password("huangwei2013!@#")
     user2.superUser(true)
-    user2.save
+    user2.save*/
 
-    syncKehu("""e:\1\new_haotm""", """d:\new_haotm""", 49, 1000)
+    //syncKehu("""e:\1\new_haotm""", """d:\new_haotm""", 49, 1000)
+    updateBrand
   }
 
   lazy val sdf = new SimpleDateFormat("yyyy-M-dd")
@@ -161,6 +162,26 @@ object SyncData extends App {
       }
       println("sync kehu " + syncNum + "|" + (System.currentTimeMillis() - startTime) + "ms")
 
+    }
+  }
+
+  def updateBrand = {
+    val brands = Brand.findAll()
+    for (brand <- brands) {
+      User.findByKey(brand.owner.is) match {
+        case Full(user) =>
+          var remarkInfo = s"姓名：${user.name.is},手机号:${user.mobile.is},电话:${user.phone.is}"
+          if (user.qq.is != null && !user.qq.is.isEmpty()) {
+            remarkInfo += s",QQ:${user.qq.is}"
+          }
+          if (user.email.is != null && !user.email.is.isEmpty()) {
+            remarkInfo += s",Email:${user.email.is}"
+          }
+          brand.remark(remarkInfo)
+          brand.owner(0)
+          brand.save()
+        case _ =>
+      }
     }
   }
 }

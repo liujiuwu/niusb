@@ -46,7 +46,7 @@ class Wenda extends LongKeyedMapper[Wenda] with CreatedUpdated with IdPK {
     def display = {
       User.findByKey(this.is) match {
         case Full(user) => user.name
-        case _ => "牛标用户"
+        case _ => "牛标网用户"
       }
 
     }

@@ -114,16 +114,16 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
           }
 
           if (SmsHelpers.getSendSmsCount(mb) >= WebCacheHelper.getSmsCountLimit()) {
-            return WebHelpers.formError("regMobile", s"对不起，此手机号获取验证码已超出每天${WebCacheHelper.getSmsCountLimit()}条")
+            return WebHelpers.formError("regMobile", "对不起，此手机号获取验证码次数已超出当天上限。")
           }
 
           val cacheTime = SmsHelpers.smsCode(mb).cacheTime
           WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
-            SmsHelpers.sendCodeSms("注册牛标用户", mb)
-            JsRaw("""$("#getCodeBtn").countdown();$("#msg-tip").hide().text("")""")
+            SmsHelpers.sendCodeSms("注册牛标网", mb)
+            return JsRaw("""$("#getCodeBtn").countdown()""").cmd
           } else {
-            JsRaw("""$("#msg-tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
-          }) & Alert(SmsHelpers.smsCode(mb).code)
+            return WebHelpers.formError("regMobile", "验证码已经发送，请查看短信获取！")
+          })
         case _ => return WebHelpers.formError("regMobile", "请输入正确的手机号！")
       }
     }
@@ -171,18 +171,18 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
           if (!isRegUser(mb)) {
             return WebHelpers.formError("forgotMobile", "此手机号未注册，无法找回密码！")
           }
-          
-         if (SmsHelpers.getSendSmsCount(mb) >= WebCacheHelper.getSmsCountLimit()) {
-            return WebHelpers.formError("forgotMobile", s"对不起，此手机号获取验证码已超出每天${WebCacheHelper.getSmsCountLimit()}条")
+
+          if (SmsHelpers.getSendSmsCount(mb) >= WebCacheHelper.getSmsCountLimit()) {
+            return WebHelpers.formError("forgotMobile", "对不起，此手机号获取验证码次数已超出当天上限。")
           }
 
           val cacheTime = SmsHelpers.smsCode(mb).cacheTime
-          WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
-            SmsHelpers.sendCodeSms("牛标找回密码", mb)
-            JsRaw("""$("#forgotGetCodeBtn").countdown();$("#msg-tip").hide().text("")""")
+          WebHelpers.removeFormError()  & (if ((WebHelpers.now - cacheTime) > 60) {
+            SmsHelpers.sendCodeSms("牛标网找回密码", mb)
+            return JsRaw("""$("#forgotGetCodeBtn").countdown()""").cmd
           } else {
-            JsRaw("""$("#msg-tip").show().text("验证码已经发送至%s，请查看短信获取！")""".format(mb))
-          }) & Alert(SmsHelpers.smsCode(mb).code)
+            return WebHelpers.formError("forgotMobile", "验证码已经发送，请查看短信获取！")
+          })
         case _ => return WebHelpers.formError("forgotMobile", "请输入正确的手机号！")
       }
     }

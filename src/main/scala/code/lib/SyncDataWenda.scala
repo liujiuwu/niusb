@@ -26,11 +26,11 @@ import net.liftweb.mapper.Schemifier
 import net.liftweb.util.StringHelpers
 
 case class Wenwen(id: Int, content: String, classid: Int)
-case class HyNews(id: Int, title: String, content: String, classid: Int)
+case class HyNews(id: Int, title: String, content: String, classid: Int, HeadMessage: String)
 
 object SyncDataWenda extends App {
   implicit val getWenwenResult = GetResult(r => Wenwen(r.nextInt(), r.nextString(), r.nextInt()))
-  implicit val getHyNewsResult = GetResult(r => HyNews(r.nextInt(), r.nextString(), r.nextString(), r.nextInt()))
+  implicit val getHyNewsResult = GetResult(r => HyNews(r.nextInt(), r.nextString(), r.nextString(), r.nextInt(), r.nextString()))
   DB.defineConnectionManager(DefaultConnectionIdentifier, MyDBVendor)
   Schemifier.schemify(true, Schemifier.infoF _, User, WendaType, Wenda, WendaReply, Article)
   lazy val db = Database.forURL("jdbc:mysql://localhost:3306/new_haotm", "ppseaer", "ppseaer@ppsea.com", driver = "com.mysql.jdbc.Driver")
@@ -39,8 +39,8 @@ object SyncDataWenda extends App {
 
   S.initIfUninitted(session)(init())
   def init() {
-    syncWenwen(-1)
-    //syncNews(-1)
+    //syncWenwen(-1)
+    syncNews(-1)
   }
 
   lazy val re1 = ("""szsbpp.com|haotm.cn|haotm.com|jsjb.org|hw-tm.com|jpsb.cn""", "niusb.com")
@@ -119,7 +119,7 @@ object SyncDataWenda extends App {
   }
 
   def syncNews(limit: Int) = {
-    val sql = """SELECT id,title,TContent,classid FROM `hy_news` """
+    val sql = """SELECT id,title,TContent,classid,HeadMessage FROM `hy_news` """
     db.withSession {
       var syncNum = 0
       val startTime = System.currentTimeMillis()
@@ -128,7 +128,7 @@ object SyncDataWenda extends App {
           if (List(100101, 100102, 100103, 100104).exists(_ == news.classid)) {
             val article = Article.create
             article.title(news.title)
-
+            article.downResources(news.HeadMessage)
             val realContent = {
               var newContent = news.content
               for (re <- res) {

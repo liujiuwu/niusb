@@ -25,11 +25,16 @@ import net.liftweb.util.StringHelpers
 import com.sksamuel.scrimage.Format
 import net.liftweb.http.JsonResponse
 import com.niusb.util.UploadHelpers
+import net.liftweb.json.JsonAST.JObject
 
 object UploadManager extends RestHelper with Loggable {
   serve {
     case "uploading" :: Nil Post req => {
-      def saveImage(fph: FileParamHolder) = {
+      def saveImage(fph: FileParamHolder): JObject = {
+        if (fph.mimeType != "image/jpeg" && fph.mimeType != "image/png") {
+          return ("error" -> "只能上传jpeg/png格式的图片文件，请确认！")
+        }
+
         val newFileName = UploadHelpers.genNewFileName()
         val uploadFileName = UploadHelpers.uploadTmpDir + File.separator + newFileName
 
@@ -40,6 +45,7 @@ object UploadManager extends RestHelper with Loggable {
 
       val ojv: Box[JValue] = req.uploadedFiles.map(fph => saveImage(fph)).headOption
       val ajv = ("name" -> "n/a") ~ ("type" -> "n/a") ~ ("size" -> 0L)
+      println(ojv + "**********************")
       val ret = ojv openOr ajv
 
       val jr = JsonResponse(ret).toResponse.asInstanceOf[InMemoryResponse]

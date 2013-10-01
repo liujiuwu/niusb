@@ -22,6 +22,12 @@ import net.liftweb.mapper._
 import net.liftweb.util.Helpers._
 import net.liftweb.util._
 import net.liftweb.util.Vendor.valToVender
+import net.liftweb.http.OnDiskFileParamHolder
+import org.apache.commons.fileupload.FileUploadBase.FileUploadIOException
+import net.liftweb.http.ResponseWithReason
+import net.liftweb.http.BadResponse
+import net.liftweb.http.S
+import net.liftweb.http.InMemFileParamHolder
 
 class Boot extends Loggable {
   def boot {
@@ -41,19 +47,19 @@ class Boot extends Loggable {
 
     LiftRules.setSiteMap(Site.siteMap)
 
-    LiftRules.maxMimeFileSize = 40000000L
-    LiftRules.maxMimeSize = 40000000L
+    LiftRules.maxMimeFileSize = 20 * 1024 * 1024L
+    LiftRules.maxMimeSize = 20 * 1024 * 1024L
     LiftRules.dispatch.append(UploadManager)
 
     LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
     LiftRules.early.append(_.setCharacterEncoding("utf-8"))
-    LiftRules.noticesAutoFadeOut.default.set((noticeType: NoticeType.Value) => Full((1 seconds, 2 seconds)))
+    //LiftRules.noticesAutoFadeOut.default.set((noticeType: NoticeType.Value) => Full((1 seconds, 2 seconds)))
     //LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
     LiftRules.htmlProperties.default.set((r: Req) => new StarXHtmlInHtml5OutProperties(r.userAgent))
     //LiftRules.handleMimeFile = OnDiskFileParamHolder.apply
 
-    val jsNotice =
+    /*val jsNotice =
       """$('#lift__noticesContainer___notice')
         |.addClass("alert alert-success")
         |.prepend('<button type="button" class="close" data-dismiss="alert">×</button>')""".stripMargin
@@ -77,7 +83,7 @@ class Boot extends Loggable {
           case _ => Full(Noop) //Full(JE.JsRaw( jsNotice ).cmd)
         }
         js
-      })
+      })*/
 
     LiftRules.loggedInTest = Full(
       () => {
@@ -135,6 +141,20 @@ class Boot extends Loggable {
       case (req, failure) =>
         NotFoundAsTemplate(ParsePath(List("404"), "html", true, false))
     })
+
+    LiftRules.handleMimeFile = (fieldName, contentType, fileName, inputStream) => {
+      try {
+        OnDiskFileParamHolder(fieldName, contentType, fileName, inputStream)
+      } catch {
+        case _: Exception =>
+          new InMemFileParamHolder("", "", "", null)
+      }
+    }
+
+    LiftRules.exceptionHandler.prepend {
+      case (_, _, x: FileUploadIOException) =>
+        ResponseWithReason(BadResponse(), "Unable to process file. Too large?")
+    }
 
     /*LiftRules.snippetDispatch.append{
       case "AdminBrandOps" => code.snippet.admin.BrandOps

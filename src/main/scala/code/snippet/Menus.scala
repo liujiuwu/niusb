@@ -80,8 +80,8 @@ object Menus extends BsMenu {
           "#regBtn [onclick]" #> SHtml.ajaxInvoke(() => WebHelpers.showLoginModal("reg-panel"))
 
         btns(<div class="nav navbar-nav navbar-right">
-               <button type="button" class="btn btn-success navbar-btn" id="regBtn" name="regBtn">注册</button>
                <button type="button" class="btn btn-primary navbar-btn" id="loginBtn" name="loginBtn">登录</button>
+               <button type="button" class="btn btn-success navbar-btn" id="regBtn" name="regBtn">快速注册</button>
              </div>)
     }
 
