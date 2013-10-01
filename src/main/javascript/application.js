@@ -207,7 +207,7 @@ $(function() {
 		});
 	});
 
-	$(".help-box,.news-box").find(".box-header").addClass("pointer").click(function() {
+	$(".help-box").find(".box-header").addClass("pointer").click(function() {
 		$(this).parent().find(".box-content").toggle();
 		var $boxIcon = $(this).find(".box-icon i");
 		var oc = $boxIcon.attr("class");
