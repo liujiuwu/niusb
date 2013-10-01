@@ -1,5 +1,5 @@
 <div data-lift="surround?with=admin;at=content">
-	<div data-lift="admin.BrandOps.edit">
+	<div class="row">
 		<div class="col-xs-12">
 			<div class="tool-well">
 				<div class="well text-right">
@@ -9,86 +9,77 @@
 				</div>
 			</div>
 		</div>
-		<div class="g-left">
-			<div class="g-left-c">
-				<form data-lift="form.ajax?class=form-horizontal">
-					<div id="opt_brand_tip" class="alert hide"></div>
-					<div id="group_regNo" class="control-group">
-						<label for="regNo" class="control-label">商标注册号</label>
-						<div class="controls">
-							<div class="input-append">
-								<input type="text" id="regNo" name="regNo" placeholder="输入商标注册号" required="required" class="input-medium" />
-								<button class="btn" type="button" id="queryRemoteData" name="queryRemoteData" data-lift="user.BrandOps.queryRemoteData">从标局获取数据</button>
-							</div>
-							<span id="error_regNo" class="help-inline"></span> <input type="hidden" id="pic" name="pic" />
-							<button class="btn btn-success" type="button" data-toggle="modal" data-target="#uploadDialog">商标图上传</button>
+	</div>
+	<div data-lift="admin.BrandOps.edit" class="row">
+		<div class="col-lg-8">
+			<form data-lift="form.ajax?class=form-horizontal">
+				<div id="form-regNo" class="form-group">
+					<label for="regNo" class="col-lg-3 control-label">商标注册号</label>
+					<div class="col-lg-6">
+						<div class="input-group">
+							<input type="text" class="form-control" id="regNo" name="regNo" placeholder="填写商标注册号" /> <span class="input-group-btn"><button class="btn btn-info" type="button" id="queryRemoteData" name="queryRemoteData" data-lift="user.BrandOps.queryRemoteData">从标局获取数据</button>
+
+								<button class="btn btn-primary" type="button" data-toggle="modal" data-target="#uploadDialog">商标图上传</button></span>
 						</div>
+						<span class="help-block"></span> <input type="hidden" id="pic" name="pic" />
 					</div>
-					<div id="group_brand_status" class="control-group">
-						<label for="brand_status" class="control-label">商标状态</label>
-						<div class="controls">
-							<input type="text" id="brand_status" name="brand_status" required="required" />
+				</div>
+				<div id="form-brandType" class="form-group">
+					<label for="brandType" class="col-lg-3 control-label">商标类别</label>
+					<div class="col-lg-4">
+						<select class="form-control" id="brandType" name="brandType"></select> <span class="help-block"></span>
+					</div>
+				</div>
+				<div id="form-basePrice" class="form-group">
+					<label for="basePrice" class="col-lg-3 control-label">出售底价</label>
+					<div class="col-lg-4">
+						<div class="input-group">
+							<span class="input-group-addon">￥</span> <input type="text" class="form-control" id="basePrice" name="basePrice" /> <span class="input-group-addon">元</span>
 						</div>
+						<span class="help-block"></span>
 					</div>
-					<div id="group_brandType" class="control-group">
-						<label for="brandType" class="control-label">商标类别</label>
-						<div class="controls">
-							<input type="text" id="brandType" name="brandType" required="required" />
-						</div>
+				</div>
+				<div id="form-name" class="form-group">
+					<label for="name" class="col-lg-3 control-label">商标名称</label>
+					<div class="col-lg-8">
+						<input type="text" class="form-control" id="name" name="name" placeholder="填写您的商标名称" /> <span class="help-block"></span>
 					</div>
-					<div id="group_basePrice" class="control-group">
-						<label for="basePrice" class="control-label">底价</label>
-						<div class="controls">
-							<div class="input-prepend input-append">
-								<span class="add-on">￥</span> <input type="text" id="basePrice" name="basePrice" class="input-small" required="required" value="0" /> <span class="add-on">元</span>
-							</div>
-							<span id="error_basePrice" class="help-inline"></span>
-						</div>
+				</div>
+				<div id="form-regDate" class="form-group">
+					<label for="regDate" class="col-lg-3 control-label">注册日期</label>
+					<div class="col-lg-4">
+						<input type="text" class="form-control" id="regDate" name="regDate" placeholder="格式:xxxx-xx-xx" /><span class="help-block"></span>
 					</div>
-					<div id="group_name" class="control-group">
-						<label for="name" class="control-label">商标名称</label>
-						<div class="controls">
-							<input type="text" id="name" name="name" required="required" /> <span id="error_name" class="help-inline"></span>
-						</div>
+				</div>
+				<div id="form-applicant" class="form-group">
+					<label for="applicant" class="col-lg-3 control-label">申请人</label>
+					<div class="col-lg-4">
+						<input type="text" class="form-control" id="applicant" name="applicant" placeholder="填写商标申请人" /> <span class="help-block"></span>
 					</div>
-					<div id="group_regDate" class="control-group">
-						<label for="regDate" class="control-label">注册日期</label>
-						<div class="controls">
-							<input type="text" id="regDate" name="regDate" placeholder="格式:xxxx年xx月xx日" /> <span id="error_regDate" class="help-inline"></span>
-						</div>
+				</div>
+				<div id="form-useDescn" class="form-group">
+					<label for="useDescn" class="col-lg-3 control-label">使用范围</label>
+					<div class="col-lg-8">
+						<textarea rows="3" class="form-control" id="useDescn" name="useDescn"></textarea>
 					</div>
-					<div id="group_applicant" class="control-group">
-						<label for="applicant" class="control-label">申请人</label>
-						<div class="controls">
-							<input type="text" id="applicant" name="applicant" placeholder="填写商标申请人" required="required" /> <span id="error_applicant" class="help-inline"></span>
-						</div>
+				</div>
+				<div id="form-descn" class="form-group">
+					<label for="descn" class="col-lg-3 control-label">商标创意说明</label>
+					<div class="col-lg-8">
+						<textarea rows="3" class="form-control" id="descn" name="descn" placeholder="为了提高转让成功率，请对商标创意进行说明。"></textarea>
 					</div>
-					<div id="group_useDescn" class="control-group">
-						<label for="useDescn" class="control-label">使用范围</label>
-						<div class="controls">
-							<textarea rows="3" id="useDescn" name="useDescn" class="span20"></textarea>
-						</div>
+				</div>
+				<div class="form-group">
+					<div class="col-lg-offset-3 col-lg-4">
+						<button class="btn btn-primary btn-block btn-lg" type="submit">发布</button>
+						<input type="hidden" id="lsqz" name="lsqz" />
 					</div>
-					<div id="group_descn" class="control-group">
-						<label for="descn" class="control-label">商标说明</label>
-						<div class="controls">
-							<textarea rows="3" id="descn" name="descn" class="span20"></textarea>
-						</div>
-					</div>
-					<div class="control-group">
-						<div class="controls">
-							<button class="btn btn-primary" type="submit">保存修改</button>
-							<input type="hidden" id="lsqz" name="lsqz" />
-						</div>
-					</div>
-				</form>
-				<div class='lift:embed?what=_uploadBrand'>上传组件</div>
-			</div>
+				</div>
+			</form>
+			<div class='lift:embed?what=_uploadBrand'>上传组件</div>
 		</div>
-		<div class="g-right">
-			<div class="brand-bimg-box pull-right">
-				<img id="brandPic" src="/img/no-img.png" />
-			</div>
+		<div class="col-lg-4">
+			<img id="brandPic" class="brand-bimg-box" src="/img/no-img.gif" width="320" height="200" />
 		</div>
 	</div>
 	<lift:tail>
@@ -96,6 +87,8 @@
 			$(function() {
 				$('#queryRemoteData').click(function() {
 					$('#queryRemoteData').addClass("disabled");
+					$(".form-group").removeClass("has-success has-error has-warning");
+					$(".form-group .help-block").html("");
 				});
 			});
 		</script>

@@ -35,7 +35,18 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     override def dbColumnName = "user_id"
     override def displayName = "商标所属人"
     def getOwner = {
-      User.find(By(User.id, owner.get)).openOrThrowException("not found user")
+      if (owner.is > 0) {
+        User.find(By(User.id, owner.is))
+      } else {
+        Empty
+      }
+    }
+
+    def display = {
+      getOwner match {
+        case Full(user) => user.displayInfo
+        case _ => Text("")
+      }
     }
   }
 

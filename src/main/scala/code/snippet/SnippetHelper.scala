@@ -18,6 +18,7 @@ import net.liftweb.http.js.JsCmds._
 object SnippetHelper extends SnippetHelper
 
 trait SnippetHelper {
+  object loginRedirectUrlRV extends RequestVar[Box[String]](Empty)
   object tabMenuRV extends RequestVar[Box[(String, String)]](Empty)
   protected def loginUser = User.currentUser.openOrThrowException("not found user")
 
@@ -32,9 +33,15 @@ trait SnippetHelper {
 
   def originalUri = S.originalRequest.map(_.uri).openOr(sys.error("No request"))
 
-  def redirectUrl(default: String = originalUri) = S.originalRequest.get.request.queryString match {
-    case Full(queryString) => default + "?" + queryString
-    case _ => default
+  def redirectUrl(default: String = originalUri) = {
+    loginRedirectUrlRV.is match {
+      case Full(url) => url
+      case _ =>
+        S.originalRequest.get.request.queryString match {
+          case Full(queryString) => default + "?" + queryString
+          case _ => default
+        }
+    }
   }
 
   def alertHtml(msg: NodeSeq, title: String = "出错啦！", alertType: String = "danger"): NodeSeq = {

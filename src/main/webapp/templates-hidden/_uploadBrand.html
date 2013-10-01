@@ -128,7 +128,7 @@
 					},
 
 					done : function(e, data) {
-						if (data.result.error != null || data.result.error != "") {
+						if (data.result.error != "") {
 							$('#progress').fadeOut();
 							return alert(data.result.error);
 						}

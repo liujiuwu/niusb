@@ -2,10 +2,8 @@ package code.snippet
 
 import scala.xml.NodeSeq
 import scala.xml.Text
-
 import com.niusb.util.SearchBrandFormHelpers
 import com.niusb.util.WebHelpers._
-
 import code.lib.WebCacheHelper
 import code.model.Article
 import code.model.ArticleType
@@ -15,6 +13,11 @@ import net.liftweb.http.DispatchSnippet
 import net.liftweb.http.S
 import net.liftweb.mapper.By
 import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.http.SHtml
+import net.liftweb.http.js.JE.JsRaw
+import net.liftweb.http.js.JsCmd
+import com.niusb.util.WebHelpers
+import code.model.User
 
 object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -23,6 +26,7 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
     case "searchBrandForm" => searchBrandForm
     case "news" => news
     case "onlineKefu" => onlineKefu
+    case "sellBrandBtn" => sellBrandBtn
   }
 
   def tabConent = {
@@ -67,12 +71,12 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   def news = {
-    val limit = S.attr("limit").map(_.toInt).openOr(6)
+    val limit = S.attr("limit").map(_.toInt).openOr(8)
     val bies = By(Article.articleType, ArticleType.News)
     val paginatorModel = Article.paginator(originalUri, bies)(itemsOnPage = limit)
     val dataList = "*" #> paginatorModel.datas.zipWithIndex.map {
       case (news, i) =>
-        "li *" #> news.title.displayTitle() &
+        "li *+" #> news.title.displayTitle() &
           "li [class]" #> { if (i % 2 == 0) "odd" else "even" }
     }
     dataList
@@ -81,5 +85,18 @@ object IndexOps extends DispatchSnippet with SnippetHelper with Loggable {
   def onlineKefu = {
     val cls = S.attr("ul-cls").openOr("list-inline")
     "ul [class+]" #> cls
+  }
+
+  def sellBrandBtn = {
+    def process(): JsCmd = {
+      User.currentUser match {
+        case Full(user) => S.redirectTo("/user/brand/create")
+        case _ =>
+          loginRedirectUrlRV.set(Full("/user/brand/create"))
+          WebHelpers.showLoginModal("login-panel")
+      }
+    }
+
+    "#sellBrandBtn [onclick]" #> SHtml.ajaxInvoke(process)
   }
 }

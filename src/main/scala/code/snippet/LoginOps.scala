@@ -177,7 +177,7 @@ object LoginOps extends DispatchSnippet with SnippetHelper with Loggable {
           }
 
           val cacheTime = SmsHelpers.smsCode(mb).cacheTime
-          WebHelpers.removeFormError()  & (if ((WebHelpers.now - cacheTime) > 60) {
+          WebHelpers.removeFormError() & (if ((WebHelpers.now - cacheTime) > 60) {
             SmsHelpers.sendCodeSms("牛标网找回密码", mb)
             return JsRaw("""$("#forgotGetCodeBtn").countdown()""").cmd
           } else {

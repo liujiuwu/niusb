@@ -40,12 +40,11 @@ object UploadManager extends RestHelper with Loggable {
 
         val oImg = Image(fph.fileStream)
         UploadHelpers.myFit(oImg, (400, 300), (oImg.width, oImg.height)).writer(Format.JPEG).withProgressive(true).withCompression(100).write(uploadFileName)
-        ("name" -> newFileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
+        ("name" -> newFileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length) ~ ("error" -> "")
       }
 
       val ojv: Box[JValue] = req.uploadedFiles.map(fph => saveImage(fph)).headOption
-      val ajv = ("name" -> "n/a") ~ ("type" -> "n/a") ~ ("size" -> 0L)
-      println(ojv + "**********************")
+      val ajv = ("name" -> "n/a") ~ ("type" -> "n/a") ~ ("size" -> 0L) ~ ("error" -> "")
       val ret = ojv openOr ajv
 
       val jr = JsonResponse(ret).toResponse.asInstanceOf[InMemoryResponse]

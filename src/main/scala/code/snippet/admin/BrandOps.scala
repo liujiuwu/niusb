@@ -173,7 +173,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#remark" #> brand.remark.get &
         "#pic" #> brand.pic.displayPic(alt = brand.name.get) &
         "#spic" #> brand.pic.displaySmallPic &
-        "#owner" #> brand.owner.getOwner.displayInfo &
+        "#owner" #> brand.owner.display &
         "#edit-btn" #> <a href={ "/admin/brand/edit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-edit"></i> 修改商标</a> &
         "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-info"><i class="icon-bolt"></i> 商标设置</a> &
         "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a>
@@ -208,27 +208,26 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
                 FileUtils.deleteQuietly(oldPicFile)
               }
             }
-            //JsRaw(WebHelper.succMsg("opt_brand_tip", Text("商标信息已成功修改！")))
-            S.redirectTo("/admin/brand/view?id=" + brand.id.get)
-          case errors => println(errors); Noop
+            S.redirectTo("/admin/brand/view?id=" + brand.id.is)
+          case errors => logger.error(s"editBrand|${errors}")
         }
       }
 
       val brandTypes = WebCacheHelper.brandTypes.values.toList
-      "@regNo" #> text(brand.regNo.get, regNo = _) &
-        "@basePrice" #> text(brand.basePrice.get.toString, basePrice = _) &
-        "@name" #> text(brand.name.get, name = _) &
-        "@pic" #> hidden(pic = _, brand.pic.get) &
-        "#brand_pic [src]" #> brand.pic.src &
+      "@regNo" #> text(brand.regNo.is, regNo = _) &
+        "@basePrice" #> text(brand.basePrice.is.toString, basePrice = _) &
+        "@name" #> text(brand.name.is, name = _) &
+        "@pic" #> hidden(pic = _, brand.pic.is) &
+        "#brandPic [src]" #> brand.pic.src &
         "@brand_status" #> selectObj[BrandStatus.Value](BrandStatus.values.toList.map(v => (v, v.toString)), Full(brand.status.is), newStatus = _) &
         "@brandType" #> select(brandTypes.map(v => (v.code.is.toString, v.code.is + " -> " + v.name.is)), Full(brandType.code.toString), v => (brandType = WebCacheHelper.brandTypes.get(v.toInt).get)) &
         "@regDate" #> text(brand.regDate.asHtml.text, regDateStr = _) &
-        "@applicant" #> text(brand.applicant.get, applicant = _) &
-        "@useDescn" #> textarea(brand.useDescn.get, useDescn = _) &
-        "@descn" #> textarea(brand.descn.get, descn = _) &
+        "@applicant" #> text(brand.applicant.is, applicant = _) &
+        "@useDescn" #> textarea(brand.useDescn.is, useDescn = _) &
+        "@descn" #> textarea(brand.descn.is, descn = _) &
         "@lsqz" #> hidden(lsqz = _, lsqz) &
-        "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.get } class="btn btn-primary"><i class="icon-bolt"></i> 商标设置</a> &
-        "#view-btn" #> <a href={ "/admin/brand/view?id=" + brand.id.get } class="btn btn-info"><i class="icon-info"></i> 查看商标</a> &
+        "#sedit-btn" #> <a href={ "/admin/brand/sedit?id=" + brand.id.is } class="btn btn-primary"><i class="icon-bolt"></i> 商标设置</a> &
+        "#view-btn" #> <a href={ "/admin/brand/view?id=" + brand.id.is } class="btn btn-info"><i class="icon-info"></i> 查看商标</a> &
         "#list-btn" #> <a href="/admin/brand/" class="btn btn-success"><i class="icon-list"></i> 商标列表</a> &
         "type=submit" #> ajaxSubmit("保存修改", process)
     }): CssSel
