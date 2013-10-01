@@ -40,6 +40,8 @@ import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
 import com.niusb.util.WebHelpers
 import code.model.BrandStatus
+import com.niusb.util.SearchBrandFormHelpers
+import net.liftweb.mapper._
 
 object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   def dispatch = {
@@ -51,14 +53,16 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   private def bies: List[QueryParam[Brand]] = {
-    val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
-    val byBuffer = ArrayBuffer[QueryParam[Brand]](OrderBy(Brand.id, Descending))
+    val (searchType, keyword, status, brandTypeCode, orderBy) = (S.param("type"), S.param("keyword"), S.param("status"), S.param("brandTypeCode"), S.param("orderBy"))
+    val byBuffer = ArrayBuffer[QueryParam[Brand]]()
     keyword match {
       case Full(k) if (!k.trim().isEmpty()) =>
         val kv = k.trim()
         searchType match {
-          case Full("0") => byBuffer += By(Brand.regNo, kv)
-          case Full("1") => byBuffer += By(Brand.owner, kv.toLong)
+          case Full("0") => byBuffer += Like(Brand.name, s"%${kv}%")
+          case Full("1") => byBuffer += By(Brand.regNo, kv)
+          case Full("2") => byBuffer += By(Brand.id, kv.toLong)
+          case Full("3") => byBuffer += By(Brand.owner, kv.toLong)
           case _ =>
         }
       case _ =>
@@ -69,6 +73,28 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         byBuffer += By(Brand.status, BrandStatus(s.toInt))
       case _ =>
     }
+
+    brandTypeCode match {
+      case Full(s) if (s != "all") =>
+        byBuffer += By(Brand.brandTypeCode, s.toInt)
+      case _ =>
+    }
+
+    orderBy match {
+      case Full(ob) =>
+        ob.toInt match {
+          case 0 => byBuffer += OrderBy(Brand.id, Descending)
+          case 1 => byBuffer += OrderBy(Brand.basePrice, Ascending)
+          case 2 => byBuffer += OrderBy(Brand.basePrice, Descending)
+          case 3 => byBuffer += OrderBy(Brand.viewCount, Descending)
+          case 4 => byBuffer += By_>(Brand.followCount, 0)
+          case 5 => byBuffer += By(Brand.isRecommend, true)
+          case 6 => byBuffer += By(Brand.isOwn, true)
+          case 7 => byBuffer += By(Brand.isOffer, true)
+        }
+      case _ =>
+    }
+
     byBuffer.toList
   }
 
@@ -86,9 +112,9 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         }, <i class="icon-trash"></i>, "class" -> "btn btn-danger")
     }
 
-    val (searchType, keyword, status) = (S.param("type"), S.param("keyword"), S.param("status"))
+    val (searchType, keyword, status, brandTypeCode, orderBy) = (S.param("type"), S.param("keyword"), S.param("status"), S.param("brandTypeCode"), S.param("orderBy"))
 
-    var searchTypeVal, keywordVal, statusVal = ""
+    var searchTypeVal, keywordVal, statusVal, brandTypeCodeVal, orderByVal = ""
     var url = originalUri
     searchType match {
       case Full(t) =>
@@ -108,23 +134,44 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         url = appendParams(url, List("status" -> s))
       case _ =>
     }
+    brandTypeCode match {
+      case Full(bt) =>
+        brandTypeCodeVal = bt
+        url = appendParams(url, List("brandTypeCode" -> bt))
+      case _ =>
+    }
+    orderBy match {
+      case Full(ob) =>
+        orderByVal = ob
+        url = appendParams(url, List("orderBy" -> ob))
+      case _ =>
+    }
 
     val paginatorModel = Brand.paginator(url, bies: _*)()
 
     val searchForm = "#searchForm" #>
       <form class="form-inline" action={ url } method="get">
         <div class="form-group">
+          <select class="form-control" id="brandTypeCode" name="brandTypeCode" style="width:150px">
+            { for ((k, v) <- Brand.validBrandTypeSelectValues) yield <option value={ k } selected={ if (brandTypeCodeVal == k) "selected" else null }>{ v }</option> }
+          </select>
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="status" name="status" style="width:150px">
+            { for ((k, v) <- Brand.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
+          </select>
+        </div>
+        <div class="form-group">
           <select class="form-control" id="searchType" name="type" style="width:120px">
-            <option value="0" selected={ if (searchTypeVal == "0") "selected" else null }>注册号</option>
-            <option value="1" selected={ if (searchTypeVal == "1") "selected" else null }>用户ID</option>
+            { for ((k, v) <- SearchBrandFormHelpers.adminKeywordTypes) yield <option value={ k } selected={ if (searchTypeVal == k) "selected" else null }>{ v }</option> }
           </select>
         </div>
         <div class="form-group">
           <input type="text" class="form-control" id="keyword" name="keyword" value={ keywordVal } style="width:250px"/>
         </div>
         <div class="form-group">
-          <select class="form-control" id="status" name="status" style="width:200px">
-            { for ((k, v) <- Brand.validStatusSelectValues) yield <option value={ k } selected={ if (statusVal == k) "selected" else null }>{ v }</option> }
+          <select class="form-control" id="orderBy" name="orderBy" style="width:150px">
+            { for ((k, v) <- Brand.validOrderBySelectValues) yield <option value={ k } selected={ if (orderByVal == k) "selected" else null }>{ v }</option> }
           </select>
         </div>
         <button type="submit" class="btn btn-primary"><i class="icon-search"></i> 搜索</button>

@@ -22,7 +22,10 @@ trait SearchBrandFormHelpers {
   lazy val orderTypes = List[(String, String)]("0" -> "由新至旧", "1" -> "价格从低至高", "2" -> "价格从高至低", "3" -> "浏览次数", "4" -> "热门关注")
   lazy val likeTypes = List[(String, String)]("0" -> "精确", "1" -> "模糊", "2" -> "前包含", "3" -> "后包含")
   lazy val keywordTypes = List[(String, String)]("0" -> "商标名称", "1" -> "商标注册号")
+  lazy val adminKeywordTypes = List[(String, String)]("0" -> "商标名称", "1" -> "商标注册号", "2" -> "商标ID", "3" -> "用户ID")
   lazy val brandTypes = WebCacheHelper.brandTypes.values.toList
+
+  lazy val adminBrderTypes = orderTypes ::: List("5" -> "推荐", "6" -> "自有", "7" -> "特价")
 
   def orderOptions(selected: String): NodeSeq = {
     for (option <- orderTypes; (value, label) = option) yield {

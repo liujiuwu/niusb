@@ -2,22 +2,20 @@ package code.model
 
 import java.text.SimpleDateFormat
 import java.util.Date
-
 import scala.language.postfixOps
 import scala.util.Success
 import scala.util.Try
 import scala.xml._
-
 import com.niusb.util.MemHelpers
 import com.niusb.util.UploadHelpers
 import com.niusb.util.WebHelpers
 import com.niusb.util.WebHelpers._
-
 import code.lib.WebCacheHelper
 import net.liftweb.common._
 import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
+import com.niusb.util.SearchBrandFormHelpers
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -318,8 +316,18 @@ object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
     ("all", "所有状态") :: status
   }
 
+  def validOrderBySelectValues = {
+    SearchBrandFormHelpers.adminBrderTypes
+  }
+
+  def validBrandTypeSelectValues = {
+    val types = WebCacheHelper.brandTypes.values.toList.map(v => (v.code.toString, v.name.display()))
+    ("all", "所有类别") :: types
+  }
+
   def pageUrl(pageType: Int = 0, brandTypeCode: Int = 0, orderType: Int = 0) = {
     val url = "/market/" + pageType + "/" + brandTypeCode + "/" + orderType
     url
   }
+
 }

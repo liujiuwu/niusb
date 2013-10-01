@@ -15,7 +15,7 @@ class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
   }
 
   val navMenus = LinkedHashMap[String, NodeSeq](
-    "/index" -> <lift:children><i class="icon-home"></i> 首页</lift:children>,
+    "/" -> <lift:children><i class="icon-home"></i> 首页</lift:children>,
     "/market" -> Text("商标集市"),
     "/brand" -> Text("商标注册"),
     "/wenda" -> Text("问答频道"))
@@ -24,8 +24,8 @@ class TabMenuOps extends DispatchSnippet with SnippetHelper with Loggable {
     val url = originalUri
     "*" #> <ul class="nav navbar-nav">
              {
-               for (menu <- navMenus) yield {
-                 val cls = if (url.startsWith(menu._1) || ((url == "" || url == "/") && menu._2.text.indexOf("首页") != -1)) "active" else null
+               for ((menu, idx) <- navMenus.zipWithIndex) yield {
+                 val cls = if (idx == 0 && (url == "/" || url == "/index")) "active" else if (url.startsWith(menu._1) && idx > 0) "active" else null
                  <li class={ cls }><a href={ menu._1 }>{ menu._2 }</a></li>
                }
              }
