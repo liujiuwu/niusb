@@ -23,7 +23,9 @@ object AdOps extends DispatchSnippet with SnippetHelper with Loggable {
     WebCacheHelper.adSpaces.get(code) match {
       case Some(adSpace) =>
         "li" #> adSpace.ads.map { ad =>
-          "img [src]" #> ad.pic &
+          "a [href]" #> { if (ad.link.is == null || ad.link.is.isEmpty()) (None: Option[String]) else Option(ad.link.is) } &
+          "a [target]" #> { if (ad.link.is == null || ad.link.is.isEmpty()) (None: Option[String]) else Option("_blank") } &
+            "img [src]" #> ad.pic &
             "img [height]" #> adSpace.height &
             "img [width]" #> adSpace.width
         }
@@ -37,11 +39,11 @@ object AdOps extends DispatchSnippet with SnippetHelper with Loggable {
       case Some(adSpace) =>
         "li" #> adSpace.ads.map { ad =>
           "a [href]" #> ad.link.is &
-          "a *" #> ad.title.is
+            "a *" #> ad.title.is
         }
       case _ => "*" #> Text("无广告图")
     }
-    
+
     /*<ul data-lift="AdOps.friendlyLink?code=2" class="list-inline text-center">
 		<li><a href="/about" target="_blank"></a></li>
 	</ul>*/

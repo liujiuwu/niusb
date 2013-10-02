@@ -90,8 +90,12 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
 
     orderType match {
       case 0 => byBuffer += OrderBy(Brand.id, Descending)
-      case 1 => byBuffer += OrderBy(Brand.basePrice, Ascending)
-      case 2 => byBuffer += OrderBy(Brand.basePrice, Descending)
+      case 1 =>
+        byBuffer += By_>(Brand.basePrice, 0)
+        byBuffer += OrderBy(Brand.basePrice, Ascending)
+      case 2 =>
+        byBuffer += By_>(Brand.basePrice, 0)
+        byBuffer += OrderBy(Brand.basePrice, Descending)
       case 3 => byBuffer += OrderBy(Brand.viewCount, Descending)
       case 4 => byBuffer += OrderBy(Brand.followCount, Descending)
       case _ => byBuffer += OrderBy(Brand.id, Descending)
