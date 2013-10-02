@@ -235,7 +235,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#basePrice" #> brand.basePrice.displayBasePrice &
         "#regdate" #> brand.regDate.asHtml &
         "#useDescn" #> brand.useDescn &
-        "#descn" #> brand.descn &
+        "#descn" #> brand.descn.display &
         "#followCount" #> brand.followCount.is &
         "#viewCount" #> brand.viewCount.is
     }): CssSel

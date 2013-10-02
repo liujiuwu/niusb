@@ -63,7 +63,7 @@ object SyncData extends App {
     user2.save*/
 
     //syncKehu("""e:\1\new_haotm""", """d:\new_haotm""", 49, 1000)
-    updateBrand
+    //updateBrand
   }
 
   lazy val sdf = new SimpleDateFormat("yyyy-M-dd")
@@ -170,7 +170,7 @@ object SyncData extends App {
     for (brand <- brands) {
       User.findByKey(brand.owner.is) match {
         case Full(user) =>
-          var remarkInfo = s"姓名：${user.name.is},手机号:${user.mobile.is},电话:${user.phone.is}"
+          var remarkInfo = s"姓名:${user.name.is},手机号:${user.mobile.is},电话:${user.phone.is}"
           if (user.qq.is != null && !user.qq.is.isEmpty()) {
             remarkInfo += s",QQ:${user.qq.is}"
           }
@@ -179,7 +179,7 @@ object SyncData extends App {
           }
           brand.remark(remarkInfo)
           brand.owner(0)
-          brand.save()
+          brand.save
         case _ =>
       }
     }

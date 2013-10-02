@@ -16,6 +16,7 @@ import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.util.Helpers._
 import com.niusb.util.SearchBrandFormHelpers
+import scala.util.Random
 
 object BrandStatus extends Enumeration {
   type BrandStatus = Value
@@ -167,6 +168,15 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
 
   object descn extends MappedString(this, 300) {
     override def displayName = "商标创意说明"
+
+    def display = {
+      if (this.is != null && !this.is.isEmpty()) {
+        this.is
+      } else {
+        val idx = (id.is % Brand.descns.length.toLong).toInt
+        Brand.descns(idx).replaceAll("name", brandName).replaceAll("useDescn", useDescn.is).replaceAll("brandTypeCode", brandTypeCode.is.toString)
+      }
+    }
   }
 
   object pic extends MappedString(this, 100) {
@@ -291,6 +301,8 @@ class Brand extends LongKeyedMapper[Brand] with CreatedUpdated with IdPK {
     delete_!
   }
 
+  def brandName = name.is
+
   def saveAndUpdateBrandType(newStatus: BrandStatus.Value) = {
     if (status == BrandStatus.ShenHeZhong && newStatus == BrandStatus.ChuShoZhong) {
       val brandTypeCode = this.brandTypeCode.is
@@ -310,6 +322,13 @@ object Brand extends Brand with CRUDify[Long, Brand] with Paginator[Brand] {
   override def fieldOrder = List(id, owner, name, brandTypeCode, status, regNo, regDate, applicant, basePrice, sellPrice, strikePrice, soldDate, useDescn, descn, pic, adPic, followCount, isRecommend, isOwn, isOffer, remark, brandOrder, createdAt, updatedAt)
 
   def picName(pic: String, prefix: String = "s") = prefix + pic
+
+  val descns = List[String](
+    "name的创意根据中国改革开放以来,对世界近万类产品标识进行分析总结,多位资深品牌包装人士认定,设计创意完全符合第1类商标，useDescn的特征。一个好的商标是企业成功的基石，是产品快速进入市场、抢占市场的利器。name商标有助于您快速产品上线、打开市场，从而广受到消费者欢迎。好商标——成就一个企业，推动一个行业。",
+    "name的创意符合第brandTypeCode类商标，useDescn的特征。一个牛的商标是企业成功的基石，name商标有助于您打开市场，受到消费者欢迎。牛商标——成就一个企业，推动一个行业。",
+    "朗朗上口的name商标是第brandTypeCode类商标，设计风格独特，构思大胆严谨，name易于广大消费者快速识别，name的设计风格，同时符合使用在useDescn的相关特征。商标名是走向市场的第一步，是产品形象品质的象征。name商标有助于您快速产 品上线、打开市场，从而广受到消费者欢迎。牛商标——成就一个企业，推动一个行业。",
+    "好听易记的name商标设计风格独特，构思大胆严谨，永驰的设计风格易于广大消费者快速识别，同时符合使用在useDescn的相关特征。商标名是走向市场的第一步，是产品形象品质的象征。name商标有助于您提升产品附加值、加入中高端市场，从而广受到消费者欢迎，把握市场动向的牛商标。",
+    "name商标是第brandTypeCode类商标，图形的设计风格。是使用在useDescn的特征。一个牛的商标是企业成功的基石，商标图案是产品形象品质的象征是走向市场的第一步。name商标有助于您打开市场，受到消费者欢迎。牛商标——成就一个企业，推动一个行业。")
 
   def validStatusSelectValues = {
     val status = BrandStatus.values.toList.map(v => (v.id.toString, v.toString))

@@ -174,7 +174,7 @@ object MarketOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#viewCount *" #> brand.viewCount.incr(realIp) &
         "#followCount *" #> brand.followCount.get &
         "#followCountBtn *" #> followBtn(brand) &
-        "#descn" #> brand.descn &
+        "#descn" #> brand.descn.display &
         "#brand-ad-list" #> brandAdList
     }): CssSel
   }

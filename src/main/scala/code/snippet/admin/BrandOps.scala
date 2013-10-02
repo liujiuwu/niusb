@@ -211,7 +211,7 @@ object BrandOps extends DispatchSnippet with SnippetHelper with Loggable {
         "#regdate" #> brand.regDate.asHtml &
         "#applicant" #> brand.applicant &
         "#useDescn" #> brand.useDescn &
-        "#descn" #> brand.descn &
+        "#descn" #> brand.descn.display &
         "#own" #> brand.isOwn.displayOwn &
         "#recommend" #> brand.isRecommend.displayRecommend &
         "#offer" #> brand.isOffer.displayOffer &
